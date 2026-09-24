@@ -4,6 +4,11 @@
  * Errors carry controlled codes only — never raw third-party messages.
  */
 import type { PreparedImage } from "@/core/ocr/prepare-image";
+import type { PaginationConfigOverrides } from "@/core/pdf/config";
+import type { PdfErrorCode } from "@/core/pdf/errors";
+import type { EncodedPage } from "@/core/pdf/render-pdf";
+import type { RowSignals } from "@/core/pdf/signals";
+import type { PageSetup, PageSlice } from "@/core/pdf/types";
 import type { PreprocessStep } from "@/core/ocr/preprocess";
 import type { StitchConfigOverrides } from "@/core/stitch/config";
 import type { StitchAnalysis, StitchErrorCode, StitchPlan } from "@/core/stitch/types";
@@ -27,6 +32,21 @@ export interface WorkerOps {
     input: { image: Blob; steps: PreprocessStep[] | "auto"; strips?: { y: number; height: number }[] };
     output: PreparedImage;
   };
+  /** Decode each screenshot once → proxy → row signals (pagination runs on these). */
+  "pdf.analyse": {
+    input: { images: Blob[]; config?: PaginationConfigOverrides };
+    output: { images: { width: number; height: number; signals: RowSignals; decodeMs: number; signalMs: number; decoder: string }[] };
+  };
+  /** Decode only (main-thread fallback where the page has no OffscreenCanvas): the bitmap is transferred. */
+  "pdf.decode": {
+    input: { image: Blob };
+    output: { bitmap: ImageBitmap; decodeMs: number };
+  };
+  /** Page-by-page render + pdf-lib assembly. `pages` = pre-encoded pages (no-OffscreenCanvas fallback). */
+  "pdf.create": {
+    input: { images?: Blob[]; slices: PageSlice[]; setup: PageSetup; imageFormat: "jpeg" | "png"; jpegQuality?: number; title?: string; pages?: EncodedPage[] };
+    output: { blob: Blob; ms: number; pages: number };
+  };
 }
 export type OpName = keyof WorkerOps;
 
@@ -39,7 +59,7 @@ export type WorkerRequest =
   | ({ [K in OpName]: Envelope & { type: "RUN"; op: K; input: WorkerOps[K]["input"] } }[OpName])
   | (Envelope & { type: "CANCEL" });
 
-export type WorkerErrorCode = StitchErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY";
+export type WorkerErrorCode = StitchErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode;
 
 export type WorkerResponse =
   | (Envelope & { type: "PROGRESS"; progress: number; stage?: string })
@@ -56,9 +76,11 @@ export type OpHandler<K extends OpName> = (input: WorkerOps[K]["input"], ctx: Jo
 
 /** Worker-side dispatcher with cooperative cancellation. */
 export function serveWorker(
-  scope: { postMessage(msg: WorkerResponse): void; addEventListener(t: "message", l: (e: MessageEvent<WorkerRequest>) => void): void },
+  scope: { postMessage(msg: WorkerResponse, transfer?: Transferable[]): void; addEventListener(t: "message", l: (e: MessageEvent<WorkerRequest>) => void): void },
   handlers: { [K in OpName]?: OpHandler<K> },
   toCode: (err: unknown) => WorkerErrorCode,
+  /** Transferables in an op's output (moved, not copied, to the page). */
+  transferOf?: (op: OpName, output: unknown) => Transferable[],
 ) {
   const jobs = new Map<string, { aborted: boolean }>();
   scope.addEventListener("message", async (e) => {
@@ -85,7 +107,8 @@ export function serveWorker(
         signal,
         progress: (progress, stage) => scope.postMessage({ ...base, type: "PROGRESS", progress, stage }),
       });
-      scope.postMessage(signal.aborted ? { ...base, type: "CANCELLED" } : { ...base, type: "SUCCESS", output });
+      if (signal.aborted) scope.postMessage({ ...base, type: "CANCELLED" });
+      else scope.postMessage({ ...base, type: "SUCCESS", output }, transferOf?.(msg.op, output) ?? []);
     } catch (err) {
       const code = toCode(err);
       scope.postMessage(code === "CANCELLED" || signal.aborted ? { ...base, type: "CANCELLED" } : { ...base, type: "ERROR", code });

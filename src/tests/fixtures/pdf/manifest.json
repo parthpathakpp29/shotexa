@@ -1,0 +1,207 @@
+[
+  {
+    "id": "article",
+    "category": [
+      "article"
+    ],
+    "description": "Headings, paragraphs, lists, quotes, section whitespace",
+    "file": "article/image.png",
+    "width": 1080,
+    "height": 5673,
+    "dpr": 3,
+    "difficult": false,
+    "textLines": 64,
+    "regions": 22
+  },
+  {
+    "id": "chat-light",
+    "category": [
+      "chat"
+    ],
+    "description": "Small and multi-line bubbles, day separators",
+    "file": "chat-light/image.png",
+    "width": 1080,
+    "height": 5355,
+    "dpr": 3,
+    "difficult": false,
+    "textLines": 65,
+    "regions": 23
+  },
+  {
+    "id": "chat-dark",
+    "category": [
+      "chat",
+      "dark"
+    ],
+    "description": "Dark chat",
+    "file": "chat-dark/image.png",
+    "width": 1080,
+    "height": 5157,
+    "dpr": 3,
+    "difficult": false,
+    "textLines": 61,
+    "regions": 23
+  },
+  {
+    "id": "code",
+    "category": [
+      "code",
+      "dark"
+    ],
+    "description": "Syntax-highlighted code, long functions, blank lines, comments (DPR 2)",
+    "file": "code/image.png",
+    "width": 1280,
+    "height": 4772,
+    "dpr": 2,
+    "difficult": false,
+    "textLines": 112,
+    "regions": 98
+  },
+  {
+    "id": "table",
+    "category": [
+      "table"
+    ],
+    "description": "Bordered zebra table with header",
+    "file": "table/image.png",
+    "width": 1080,
+    "height": 6084,
+    "dpr": 3,
+    "difficult": false,
+    "textLines": 50,
+    "regions": 50
+  },
+  {
+    "id": "settings",
+    "category": [
+      "ui"
+    ],
+    "description": "Cards, fields, section separators",
+    "file": "settings/image.png",
+    "width": 1080,
+    "height": 6108,
+    "dpr": 3,
+    "difficult": false,
+    "textLines": 63,
+    "regions": 41
+  },
+  {
+    "id": "receipt",
+    "category": [
+      "receipt"
+    ],
+    "description": "Long receipt: item rows, prices, total",
+    "file": "receipt/image.png",
+    "width": 1080,
+    "height": 5892,
+    "dpr": 3,
+    "difficult": false,
+    "textLines": 85,
+    "regions": 84
+  },
+  {
+    "id": "long-chat-10000",
+    "category": [
+      "chat",
+      "long"
+    ],
+    "description": "Very long chat ≈1080×10000",
+    "file": "long-chat-10000/image.png",
+    "width": 1080,
+    "height": 11586,
+    "dpr": 3,
+    "difficult": false,
+    "textLines": 157,
+    "regions": 35
+  },
+  {
+    "id": "long-article-20000",
+    "category": [
+      "article",
+      "long"
+    ],
+    "description": "Very long article ≈1080×20000",
+    "file": "long-article-20000/image.png",
+    "width": 1080,
+    "height": 21342,
+    "dpr": 3,
+    "difficult": false,
+    "textLines": 253,
+    "regions": 65
+  },
+  {
+    "id": "dense-table",
+    "category": [
+      "table",
+      "difficult"
+    ],
+    "description": "Tight rows, faint borders, no gaps",
+    "file": "dense-table/image.png",
+    "width": 1080,
+    "height": 6132,
+    "dpr": 3,
+    "difficult": true,
+    "textLines": 77,
+    "regions": 77
+  },
+  {
+    "id": "dense-code",
+    "category": [
+      "code",
+      "difficult"
+    ],
+    "description": "Continuous code, 16 px line height, no blank lines (DPR 2)",
+    "file": "dense-code/image.png",
+    "width": 1280,
+    "height": 4100,
+    "dpr": 2,
+    "difficult": true,
+    "textLines": 126,
+    "regions": 126
+  },
+  {
+    "id": "giant-message",
+    "category": [
+      "chat",
+      "difficult"
+    ],
+    "description": "Chat containing one message taller than a page",
+    "file": "giant-message/image.png",
+    "width": 1080,
+    "height": 8961,
+    "dpr": 3,
+    "difficult": true,
+    "textLines": 130,
+    "regions": 15
+  },
+  {
+    "id": "photos",
+    "category": [
+      "article",
+      "difficult"
+    ],
+    "description": "Article with tall photo blocks",
+    "file": "photos/image.png",
+    "width": 1080,
+    "height": 8133,
+    "dpr": 3,
+    "difficult": true,
+    "textLines": 70,
+    "regions": 22
+  },
+  {
+    "id": "dense-cards",
+    "category": [
+      "ui",
+      "difficult"
+    ],
+    "description": "Settings cards with 2 px gaps",
+    "file": "dense-cards/image.png",
+    "width": 1080,
+    "height": 6255,
+    "dpr": 3,
+    "difficult": true,
+    "textLines": 85,
+    "regions": 55
+  }
+]

@@ -1,0 +1,263 @@
+{
+ "combos": 243,
+ "current": {
+  "w": {
+   "edgeDensity": 4,
+   "inkDensity": 1,
+   "whitespace": 1.5,
+   "separator": 0.75,
+   "distance": 0.6
+  },
+  "normalBad": 20,
+  "difficultBad": 14,
+  "text": 0,
+  "meanShift": 43.90551181102362
+ },
+ "normalBadHistogram": {
+  "19": 105,
+  "20": 48,
+  "21": 9,
+  "23": 30,
+  "24": 21,
+  "25": 15,
+  "26": 15
+ },
+ "top": [
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 0.5,
+    "whitespace": 0.75,
+    "separator": 0.75,
+    "distance": 0.3
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 0.5,
+    "whitespace": 0.75,
+    "separator": 1.5,
+    "distance": 0.3
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 0.5,
+    "whitespace": 0.75,
+    "separator": 3,
+    "distance": 0.3
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 0.5,
+    "whitespace": 1.5,
+    "separator": 0.75,
+    "distance": 0.6
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 0.5,
+    "whitespace": 1.5,
+    "separator": 1.5,
+    "distance": 0.6
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 0.5,
+    "whitespace": 1.5,
+    "separator": 3,
+    "distance": 0.6
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 0.5,
+    "whitespace": 3,
+    "separator": 1.5,
+    "distance": 1.2
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 0.5,
+    "whitespace": 3,
+    "separator": 3,
+    "distance": 1.2
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 1,
+    "whitespace": 0.75,
+    "separator": 1.5,
+    "distance": 0.3
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 1,
+    "whitespace": 0.75,
+    "separator": 3,
+    "distance": 0.3
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 1,
+    "whitespace": 1.5,
+    "separator": 1.5,
+    "distance": 0.6
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 1,
+    "whitespace": 1.5,
+    "separator": 3,
+    "distance": 0.6
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 1,
+    "whitespace": 3,
+    "separator": 1.5,
+    "distance": 1.2
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 1,
+    "whitespace": 3,
+    "separator": 3,
+    "distance": 1.2
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  },
+  {
+   "w": {
+    "edgeDensity": 2,
+    "inkDensity": 2,
+    "whitespace": 0.75,
+    "separator": 3,
+    "distance": 0.3
+   },
+   "normalBad": 19,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 44.15748031496063
+  }
+ ],
+ "worst": [
+  {
+   "w": {
+    "edgeDensity": 4,
+    "inkDensity": 2,
+    "whitespace": 0.75,
+    "separator": 1.5,
+    "distance": 0.6
+   },
+   "normalBad": 26,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 30.666666666666668
+  },
+  {
+   "w": {
+    "edgeDensity": 8,
+    "inkDensity": 2,
+    "whitespace": 0.75,
+    "separator": 0.75,
+    "distance": 0.6
+   },
+   "normalBad": 26,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 30.666666666666668
+  },
+  {
+   "w": {
+    "edgeDensity": 8,
+    "inkDensity": 2,
+    "whitespace": 0.75,
+    "separator": 1.5,
+    "distance": 0.6
+   },
+   "normalBad": 26,
+   "difficultBad": 14,
+   "text": 0,
+   "meanShift": 30.666666666666668
+  }
+ ]
+}

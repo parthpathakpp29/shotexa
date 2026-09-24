@@ -1,0 +1,599 @@
+{
+ "environment": {
+  "browser": "chromium",
+  "version": "153.0.8010.12",
+  "date": "2026-09-24T18:15:27.123Z"
+ },
+ "results": {
+  "long-10000": {
+   "id": "long-10000",
+   "images": [
+    "pdf:long-chat-10000"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 43.900000005960464,
+    "wallMs": 1097.1000000089407,
+    "decodeMs": 234.90000000596046,
+    "signalMs": 686.5,
+    "path": "worker",
+    "sizes": [
+     "1080x11586"
+    ],
+    "peakDeltaMiB": 110.2,
+    "afterDeltaMiB": 15.3
+   },
+   "plan": {
+    "pages": 8,
+    "planMs": 0.5,
+    "breaks": [
+     [
+      {
+       "y": 1530,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 3103,
+       "idealY": 3103,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 4580,
+       "idealY": 4676,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 6140,
+       "idealY": 6153,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 7713,
+       "idealY": 7713,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 9246,
+       "idealY": 9286,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 10778,
+       "idealY": 10819,
+       "source": "automatic",
+       "confidence": "medium"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 1811095,
+    "pages": 8,
+    "ms": 1126,
+    "wallMs": 1215.7000000029802,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 9,
+    "maxStallMs": 13.799999997019768,
+    "peakDeltaMiB": 207.1,
+    "afterDeltaMiB": 138.2
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 8,
+    "bytes": 1811095,
+    "minImageBytes": 117037,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 137.9,
+   "crashed": false
+  },
+  "long-20000": {
+   "id": "long-20000",
+   "images": [
+    "pdf:long-article-20000"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 14.700000002980232,
+    "wallMs": 1484,
+    "decodeMs": 412.79999999701977,
+    "signalMs": 931,
+    "path": "worker",
+    "sizes": [
+     "1080x21342"
+    ],
+    "peakDeltaMiB": 188.9,
+    "afterDeltaMiB": -46.5
+   },
+   "plan": {
+    "pages": 14,
+    "planMs": 0.699999988079071,
+    "breaks": [
+     [
+      {
+       "y": 1532,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 3105,
+       "idealY": 3105,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 4662,
+       "idealY": 4678,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 6218,
+       "idealY": 6235,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 7791,
+       "idealY": 7791,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 9320,
+       "idealY": 9364,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 10830,
+       "idealY": 10893,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 12403,
+       "idealY": 12403,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 13954,
+       "idealY": 13976,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 15527,
+       "idealY": 15527,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 17032,
+       "idealY": 17100,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 18548,
+       "idealY": 18605,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 20072,
+       "idealY": 20121,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 4233918,
+    "pages": 14,
+    "ms": 2021,
+    "wallMs": 2102.7000000029802,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 15,
+    "maxStallMs": 13.299999997019768,
+    "peakDeltaMiB": 304.8,
+    "afterDeltaMiB": 118.7
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 14,
+    "bytes": 4233918,
+    "minImageBytes": 241786,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 115.1,
+   "crashed": false
+  },
+  "long-20000-fit": {
+   "id": "long-20000-fit",
+   "images": [
+    "pdf:long-article-20000"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 26.399999991059303,
+    "wallMs": 1411.7999999970198,
+    "decodeMs": 390.80000001192093,
+    "signalMs": 895.9000000059605,
+    "path": "worker",
+    "sizes": [
+     "1080x21342"
+    ],
+    "peakDeltaMiB": 200.9,
+    "afterDeltaMiB": 32.8
+   },
+   "plan": {
+    "pages": 1,
+    "planMs": 0.10000000894069672,
+    "breaks": [
+     []
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 4223719,
+    "pages": 1,
+    "ms": 1889,
+    "wallMs": 1966.1000000089407,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 2,
+    "maxStallMs": 16.700000002980232,
+    "peakDeltaMiB": 335.6,
+    "afterDeltaMiB": 170.1
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 1,
+    "bytes": 4223719,
+    "minImageBytes": 145173,
+    "maxBandsPerPage": 11,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 170.2,
+   "crashed": false
+  },
+  "long-30000": {
+   "id": "long-30000",
+   "images": [
+    "b:tall-1080x30000.png"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 20.900000005960464,
+    "wallMs": 1764.5999999940395,
+    "decodeMs": 442.3999999910593,
+    "signalMs": 1224.2000000029802,
+    "path": "worker",
+    "sizes": [
+     "1080x30000"
+    ],
+    "peakDeltaMiB": 231.7,
+    "afterDeltaMiB": -20.5
+   },
+   "plan": {
+    "pages": 20,
+    "planMs": 0.9000000059604645,
+    "breaks": [
+     [
+      {
+       "y": 1494,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 3058,
+       "idealY": 3067,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 4484,
+       "idealY": 4631,
+       "source": "automatic",
+       "confidence": "low"
+      },
+      {
+       "y": 6008,
+       "idealY": 6057,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 7452,
+       "idealY": 7581,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 8978,
+       "idealY": 9025,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 10506,
+       "idealY": 10551,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 12064,
+       "idealY": 12079,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 13500,
+       "idealY": 13637,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 15073,
+       "idealY": 15073,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 16626,
+       "idealY": 16646,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 18112,
+       "idealY": 18199,
+       "source": "automatic",
+       "confidence": "low"
+      },
+      {
+       "y": 19685,
+       "idealY": 19685,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 21182,
+       "idealY": 21258,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 22630,
+       "idealY": 22755,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 24082,
+       "idealY": 24203,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 25510,
+       "idealY": 25655,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 26926,
+       "idealY": 27083,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 28464,
+       "idealY": 28499,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ]
+    ],
+    "needsReview": 2,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 3992806,
+    "pages": 20,
+    "ms": 2572,
+    "wallMs": 2691.4000000059605,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 21,
+    "maxStallMs": 32.400000005960464,
+    "peakDeltaMiB": 418,
+    "afterDeltaMiB": 159.8
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 20,
+    "bytes": 3992806,
+    "minImageBytes": 95530,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 160.3,
+   "crashed": false
+  },
+  "multi-2x10000": {
+   "id": "multi-2x10000",
+   "images": [
+    "b:pair-1080x10000-a.png",
+    "b:pair-1080x10000-b.png"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 17.799999997019768,
+    "wallMs": 1385.2000000029802,
+    "decodeMs": 381.09999999403954,
+    "signalMs": 914.7999999970198,
+    "path": "worker",
+    "sizes": [
+     "1080x10000",
+     "1080x10000"
+    ],
+    "peakDeltaMiB": 79,
+    "afterDeltaMiB": -106.4
+   },
+   "plan": {
+    "pages": 14,
+    "planMs": 0.5,
+    "breaks": [
+     [
+      {
+       "y": 1564,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 3042,
+       "idealY": 3137,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 4615,
+       "idealY": 4615,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 6184,
+       "idealY": 6188,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 7680,
+       "idealY": 7757,
+       "source": "automatic",
+       "confidence": "low"
+      },
+      {
+       "y": 9096,
+       "idealY": 9253,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ],
+     [
+      {
+       "y": 1524,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 3012,
+       "idealY": 3097,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 4464,
+       "idealY": 4585,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 5952,
+       "idealY": 6037,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 7464,
+       "idealY": 7525,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 8896,
+       "idealY": 9037,
+       "source": "automatic",
+       "confidence": "medium"
+      }
+     ]
+    ],
+    "needsReview": 1,
+    "order": [
+     "image 1",
+     "image 2"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 3514393,
+    "pages": 14,
+    "ms": 2479,
+    "wallMs": 2605.4000000059605,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 15,
+    "maxStallMs": 15.299999997019768,
+    "peakDeltaMiB": 78.6,
+    "afterDeltaMiB": -50.1
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 14,
+    "bytes": 3514393,
+    "minImageBytes": 105328,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": -95.1,
+   "crashed": false
+  }
+ }
+}
