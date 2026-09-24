@@ -1,0 +1,6 @@
+{
+  "opencv": {
+    "url": "/vendor/opencv/opencv-5.0.0-release.1.js",
+    "version": "5.0.0-release.1"
+  }
+}

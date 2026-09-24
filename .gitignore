@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# self-hosted vendor assets (copied from node_modules by scripts/copy-vendor-assets.mjs)
+/public/vendor/
+
+# test output
+/test-results/
+/playwright-report/

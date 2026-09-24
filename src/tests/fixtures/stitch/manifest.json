@@ -1,0 +1,397 @@
+[
+  {
+    "id": "chat-light",
+    "description": "Phone chat, light, fixed status/app bar + input bar, ~36% content overlap",
+    "category": [
+      "chat",
+      "repeated-header",
+      "repeated-footer"
+    ],
+    "files": {
+      "a": "chat-light/a.png",
+      "b": "chat-light/b.png"
+    },
+    "format": "png",
+    "width": 1170,
+    "height": 2532,
+    "dpr": 3,
+    "expect": "match",
+    "expectedOffsetY": 1260,
+    "expectedOverlap": 1272,
+    "scroll": {
+      "a": 600,
+      "b": 1020
+    }
+  },
+  {
+    "id": "chat-dark",
+    "description": "Phone chat, dark mode, fixed chrome",
+    "category": [
+      "chat",
+      "dark-mode",
+      "repeated-header"
+    ],
+    "files": {
+      "a": "chat-dark/a.png",
+      "b": "chat-dark/b.png"
+    },
+    "format": "png",
+    "width": 1170,
+    "height": 2532,
+    "dpr": 3,
+    "expect": "match",
+    "expectedOffsetY": 1050,
+    "expectedOverlap": 1482,
+    "scroll": {
+      "a": 900,
+      "b": 1250
+    }
+  },
+  {
+    "id": "chat-light-jpeg",
+    "description": "chat-light pair re-encoded as JPEG q=0.7",
+    "category": [
+      "chat",
+      "jpeg"
+    ],
+    "files": {
+      "a": "chat-light-jpeg/a.jpg",
+      "b": "chat-light-jpeg/b.jpg"
+    },
+    "format": "jpeg",
+    "width": 1170,
+    "height": 2532,
+    "dpr": 3,
+    "expect": "match",
+    "expectedOffsetY": 1260,
+    "expectedOverlap": 1272,
+    "scroll": {
+      "a": 600,
+      "b": 1020
+    }
+  },
+  {
+    "id": "webpage-article",
+    "description": "Desktop article, no fixed chrome, ~30% overlap",
+    "category": [
+      "webpage"
+    ],
+    "files": {
+      "a": "webpage-article/a.png",
+      "b": "webpage-article/b.png"
+    },
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "expect": "match",
+    "expectedOffsetY": 560,
+    "expectedOverlap": 240,
+    "scroll": {
+      "a": 400,
+      "b": 960
+    }
+  },
+  {
+    "id": "webpage-article-webp",
+    "description": "Desktop article (HiDPI) as WebP q=0.8",
+    "category": [
+      "webpage",
+      "webp"
+    ],
+    "files": {
+      "a": "webpage-article-webp/a.webp",
+      "b": "webpage-article-webp/b.webp"
+    },
+    "format": "webp",
+    "width": 2560,
+    "height": 1600,
+    "dpr": 2,
+    "expect": "match",
+    "expectedOffsetY": 1000,
+    "expectedOverlap": 600,
+    "scroll": {
+      "a": 1200,
+      "b": 1700
+    }
+  },
+  {
+    "id": "webpage-dark",
+    "description": "Desktop article, dark theme, ~40% overlap",
+    "category": [
+      "webpage",
+      "dark-mode"
+    ],
+    "files": {
+      "a": "webpage-dark/a.png",
+      "b": "webpage-dark/b.png"
+    },
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "expect": "match",
+    "expectedOffsetY": 480,
+    "expectedOverlap": 320,
+    "scroll": {
+      "a": 700,
+      "b": 1180
+    }
+  },
+  {
+    "id": "repeated-header-webpage",
+    "description": "Sticky 64px nav + fixed cookie bar, ~25% content overlap",
+    "category": [
+      "webpage",
+      "repeated-header",
+      "repeated-footer"
+    ],
+    "files": {
+      "a": "repeated-header-webpage/a.png",
+      "b": "repeated-header-webpage/b.png"
+    },
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "expect": "match",
+    "expectedOffsetY": 520,
+    "expectedOverlap": 280,
+    "scroll": {
+      "a": 500,
+      "b": 1020
+    }
+  },
+  {
+    "id": "small-overlap-webpage",
+    "description": "Desktop article, 60px (7.5%) overlap",
+    "category": [
+      "webpage",
+      "small-overlap"
+    ],
+    "files": {
+      "a": "small-overlap-webpage/a.png",
+      "b": "small-overlap-webpage/b.png"
+    },
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "expect": "match",
+    "expectedOffsetY": 740,
+    "expectedOverlap": 60,
+    "scroll": {
+      "a": 300,
+      "b": 1040
+    }
+  },
+  {
+    "id": "small-overlap-chat",
+    "description": "Phone chat, ~57 CSS px of content overlap under fixed chrome",
+    "category": [
+      "chat",
+      "small-overlap",
+      "repeated-header"
+    ],
+    "files": {
+      "a": "small-overlap-chat/a.png",
+      "b": "small-overlap-chat/b.png"
+    },
+    "format": "png",
+    "width": 1170,
+    "height": 2532,
+    "dpr": 3,
+    "expect": "match",
+    "expectedOffsetY": 1800,
+    "expectedOverlap": 732,
+    "scroll": {
+      "a": 700,
+      "b": 1300
+    }
+  },
+  {
+    "id": "tiny-overlap-webpage",
+    "description": "Desktop article, 24px (3%) overlap — stress",
+    "category": [
+      "webpage",
+      "small-overlap"
+    ],
+    "files": {
+      "a": "tiny-overlap-webpage/a.png",
+      "b": "tiny-overlap-webpage/b.png"
+    },
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "expect": "match",
+    "expectedOffsetY": 776,
+    "expectedOverlap": 24,
+    "scroll": {
+      "a": 600,
+      "b": 1376
+    }
+  },
+  {
+    "id": "large-overlap-chat",
+    "description": "Phone chat, only 90 CSS px scrolled (~86% content overlap)",
+    "category": [
+      "chat",
+      "large-overlap"
+    ],
+    "files": {
+      "a": "large-overlap-chat/a.png",
+      "b": "large-overlap-chat/b.png"
+    },
+    "format": "png",
+    "width": 1170,
+    "height": 2532,
+    "dpr": 3,
+    "expect": "match",
+    "expectedOffsetY": 270,
+    "expectedOverlap": 2262,
+    "scroll": {
+      "a": 1500,
+      "b": 1590
+    }
+  },
+  {
+    "id": "large-overlap-webpage",
+    "description": "Desktop article, 80px scrolled (90% overlap)",
+    "category": [
+      "webpage",
+      "large-overlap"
+    ],
+    "files": {
+      "a": "large-overlap-webpage/a.png",
+      "b": "large-overlap-webpage/b.png"
+    },
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "expect": "match",
+    "expectedOffsetY": 80,
+    "expectedOverlap": 720,
+    "scroll": {
+      "a": 1000,
+      "b": 1080
+    }
+  },
+  {
+    "id": "code-editor",
+    "description": "Dark code editor, fixed tab bar + status bar, monospace",
+    "category": [
+      "code",
+      "dark-mode",
+      "repeated-header"
+    ],
+    "files": {
+      "a": "code-editor/a.png",
+      "b": "code-editor/b.png"
+    },
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "expect": "match",
+    "expectedOffsetY": 520,
+    "expectedOverlap": 280,
+    "scroll": {
+      "a": 800,
+      "b": 1320
+    }
+  },
+  {
+    "id": "table-rows",
+    "description": "Invoice table — highly repetitive rows",
+    "category": [
+      "table",
+      "repeated-header"
+    ],
+    "files": {
+      "a": "table-rows/a.png",
+      "b": "table-rows/b.png"
+    },
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "expect": "match",
+    "expectedOffsetY": 520,
+    "expectedOverlap": 280,
+    "scroll": {
+      "a": 900,
+      "b": 1420
+    }
+  },
+  {
+    "id": "repetitive-chat",
+    "description": "Chat of near-identical short messages (ambiguity stress)",
+    "category": [
+      "chat",
+      "repetitive"
+    ],
+    "files": {
+      "a": "repetitive-chat/a.png",
+      "b": "repetitive-chat/b.png"
+    },
+    "format": "png",
+    "width": 780,
+    "height": 1688,
+    "dpr": 2,
+    "expect": "match",
+    "expectedOffsetY": 800,
+    "expectedOverlap": 888,
+    "scroll": {
+      "a": 800,
+      "b": 1200
+    }
+  },
+  {
+    "id": "non-overlap-chat",
+    "description": "Same chat, far-apart scroll positions (same chrome, no shared content)",
+    "category": [
+      "chat",
+      "non-overlapping"
+    ],
+    "files": {
+      "a": "non-overlap-chat/a.png",
+      "b": "non-overlap-chat/b.png"
+    },
+    "format": "png",
+    "width": 1170,
+    "height": 2532,
+    "dpr": 3,
+    "expect": "no-match",
+    "expectedOffsetY": null,
+    "expectedOverlap": 0,
+    "scroll": {
+      "a": 300,
+      "b": 2400
+    }
+  },
+  {
+    "id": "non-overlap-unrelated",
+    "description": "Two unrelated articles of the same width",
+    "category": [
+      "webpage",
+      "non-overlapping"
+    ],
+    "files": {
+      "a": "non-overlap-unrelated/a.png",
+      "b": "non-overlap-unrelated/b.png"
+    },
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "expect": "no-match",
+    "expectedOffsetY": null,
+    "expectedOverlap": 0,
+    "scroll": {
+      "a": 400,
+      "b": 400
+    }
+  }
+]

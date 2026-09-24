@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Self-hosted third-party processing libraries (copied from node_modules).
+    "public/vendor/**",
+    "test-results/**",
   ]),
 ]);
 
