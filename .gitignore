@@ -46,3 +46,6 @@ next-env.d.ts
 # test output
 /test-results/
 /playwright-report/
+
+# generated large-image fixtures (Spike B)
+/.cache/

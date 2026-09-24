@@ -1,0 +1,3740 @@
+{
+  "environment": {
+    "forcedCtx": "main",
+    "browser": "webkit",
+    "version": "26.6",
+    "os": "win32 x64",
+    "date": "2026-09-24T12:54:50.596Z"
+  },
+  "results": {
+    "limits-main-dom": {
+      "group": "limits",
+      "ctx": "main",
+      "name": "canvasLimits",
+      "params": {
+        "api": "dom",
+        "widths": [
+          1080,
+          1440
+        ],
+        "heights": [
+          8192,
+          16383,
+          16384,
+          20000,
+          30000,
+          32767,
+          32768,
+          40000,
+          50000,
+          65535,
+          65536,
+          100000
+        ]
+      },
+      "ok": true,
+      "rows": [
+        {
+          "width": 1080,
+          "height": 8192,
+          "ok": true,
+          "ms": 28
+        },
+        {
+          "width": 1080,
+          "height": 16383,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1080,
+          "height": 16384,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1080,
+          "height": 20000,
+          "ok": true,
+          "ms": 5
+        },
+        {
+          "width": 1080,
+          "height": 30000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 32767,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1080,
+          "height": 32768,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1080,
+          "height": 40000,
+          "ok": true,
+          "ms": 5
+        },
+        {
+          "width": 1080,
+          "height": 50000,
+          "ok": true,
+          "ms": 13
+        },
+        {
+          "width": 1080,
+          "height": 65535,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1080,
+          "height": 65536,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1080,
+          "height": 100000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 8192,
+          "ok": true,
+          "ms": 3
+        },
+        {
+          "width": 1440,
+          "height": 16383,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 16384,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 20000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 30000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 32767,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1440,
+          "height": 32768,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 40000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 50000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 65535,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 65536,
+          "ok": true,
+          "ms": 8
+        },
+        {
+          "width": 1440,
+          "height": 100000,
+          "ok": true,
+          "ms": 1
+        }
+      ],
+      "ms": 90,
+      "maxMainStallMs": 91,
+      "memory": {
+        "baselineMiB": 1087,
+        "peakDeltaMiB": 0.5,
+        "peakWsDeltaMiB": 0.6,
+        "retainedAfterMiB": -2.5,
+        "perPhaseDeltaMiB": {
+          "start": 0.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "gpu",
+            "deltaMiB": 0.3,
+            "privMiB": 261.8
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 0.1,
+            "privMiB": 312.4
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0,
+            "privMiB": 252.6
+          }
+        ],
+        "samples": 1,
+        "sampleEndT": 1790254495214
+      },
+      "wallMs": 117,
+      "consoleErrors": []
+    },
+    "limits-main-offscreen": {
+      "group": "limits",
+      "ctx": "main",
+      "name": "canvasLimits",
+      "params": {
+        "api": "offscreen",
+        "widths": [
+          1080,
+          1440
+        ],
+        "heights": [
+          8192,
+          16383,
+          16384,
+          20000,
+          30000,
+          32767,
+          32768,
+          40000,
+          50000,
+          65535,
+          65536,
+          100000
+        ]
+      },
+      "ok": true,
+      "rows": [
+        {
+          "width": 1080,
+          "height": 8192,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 16383,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 16384,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 20000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 30000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 32767,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 32768,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 40000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 50000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 65535,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 65536,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 100000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 8192,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 16383,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 16384,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 20000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 30000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 32767,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 32768,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 40000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 50000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 65535,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 65536,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 100000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        }
+      ],
+      "ms": 2,
+      "maxMainStallMs": 2,
+      "memory": {
+        "baselineMiB": 1021.8,
+        "peakDeltaMiB": 0,
+        "peakWsDeltaMiB": 0,
+        "retainedAfterMiB": -0.3,
+        "perPhaseDeltaMiB": {},
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 0,
+            "privMiB": 252.9
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 261.4
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0,
+            "privMiB": 228.6
+          }
+        ],
+        "samples": 0,
+        "sampleEndT": 1790254500959
+      },
+      "wallMs": 30,
+      "consoleErrors": []
+    },
+    "limits-worker-offscreen": {
+      "group": "limits",
+      "ctx": "main",
+      "name": "canvasLimits",
+      "params": {
+        "api": "offscreen",
+        "widths": [
+          1080,
+          1440
+        ],
+        "heights": [
+          8192,
+          16383,
+          16384,
+          20000,
+          30000,
+          32767,
+          32768,
+          40000,
+          50000,
+          65535,
+          65536,
+          100000
+        ]
+      },
+      "ok": true,
+      "rows": [
+        {
+          "width": 1080,
+          "height": 8192,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 16383,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 16384,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 20000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 30000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 32767,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 32768,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 40000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 50000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 65535,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 65536,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 100000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 8192,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 16383,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 16384,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 20000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 30000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 32767,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 32768,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 40000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 50000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 65535,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 65536,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 100000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        }
+      ],
+      "ms": 2,
+      "maxMainStallMs": 2,
+      "memory": {
+        "baselineMiB": 1086.8,
+        "peakDeltaMiB": 0,
+        "peakWsDeltaMiB": 0,
+        "retainedAfterMiB": -1.5,
+        "perPhaseDeltaMiB": {},
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 0,
+            "privMiB": 252.3
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 261.8
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0,
+            "privMiB": 260.8
+          }
+        ],
+        "samples": 0,
+        "sampleEndT": 1790254507009
+      },
+      "wallMs": 20,
+      "consoleErrors": []
+    },
+    "decode-full-1080x5000-png": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x5000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 5000,
+      "bmW": 1080,
+      "bmH": 5000,
+      "decodeMs": 103,
+      "decodedMiB": 20.6,
+      "encodedKiB": 5582,
+      "ms": 1100,
+      "maxMainStallMs": 108,
+      "memory": {
+        "baselineMiB": 1055.4,
+        "peakDeltaMiB": 85.1,
+        "peakWsDeltaMiB": 162.8,
+        "retainedAfterMiB": -39.3,
+        "perPhaseDeltaMiB": {
+          "start": 43.7,
+          "decode": 85,
+          "hold": 85.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 54.9,
+            "privMiB": 334.9
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 30.1,
+            "privMiB": 282.7
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.2,
+            "privMiB": 261
+          }
+        ],
+        "samples": 10,
+        "sampleEndT": 1790254513994
+      },
+      "wallMs": 1113,
+      "consoleErrors": []
+    },
+    "decode-full-1080x10000-png": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 10000,
+      "bmW": 1080,
+      "bmH": 10000,
+      "decodeMs": 136,
+      "decodedMiB": 41.2,
+      "encodedKiB": 5362,
+      "ms": 1067,
+      "maxMainStallMs": 139,
+      "memory": {
+        "baselineMiB": 1073.5,
+        "peakDeltaMiB": 96.9,
+        "peakWsDeltaMiB": 178.9,
+        "retainedAfterMiB": -31.5,
+        "perPhaseDeltaMiB": {
+          "start": 20.8,
+          "decode": 96.9,
+          "hold": 96.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 67.6,
+            "privMiB": 379.9
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 29.2,
+            "privMiB": 267.6
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 260.9
+          }
+        ],
+        "samples": 9,
+        "sampleEndT": 1790254520961
+      },
+      "wallMs": 1082,
+      "consoleErrors": []
+    },
+    "decode-full-1080x20000-png": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x20000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 20000,
+      "bmW": 1080,
+      "bmH": 20000,
+      "decodeMs": 246,
+      "decodedMiB": 82.4,
+      "encodedKiB": 6034,
+      "ms": 1230,
+      "maxMainStallMs": 238,
+      "memory": {
+        "baselineMiB": 1073.4,
+        "peakDeltaMiB": 152,
+        "peakWsDeltaMiB": 279.4,
+        "retainedAfterMiB": -27.8,
+        "perPhaseDeltaMiB": {
+          "start": 47.8,
+          "decode": 151.8,
+          "hold": 152
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 119.4,
+            "privMiB": 431.8
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 32.1,
+            "privMiB": 270.2
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.3,
+            "privMiB": 262.4
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790254528189
+      },
+      "wallMs": 1249,
+      "consoleErrors": []
+    },
+    "decode-full-1080x30000-png": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 30000,
+      "decodeMs": 357,
+      "decodedMiB": 123.6,
+      "encodedKiB": 6512,
+      "ms": 1357,
+      "maxMainStallMs": 351,
+      "memory": {
+        "baselineMiB": 1041.2,
+        "peakDeltaMiB": 196.9,
+        "peakWsDeltaMiB": 387.3,
+        "retainedAfterMiB": -27.9,
+        "perPhaseDeltaMiB": {
+          "start": 72.6,
+          "decode": 196.9,
+          "hold": 110.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 154.7,
+            "privMiB": 434.4
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 42.1,
+            "privMiB": 280.5
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.2,
+            "privMiB": 261.1
+          }
+        ],
+        "samples": 12,
+        "sampleEndT": 1790254535246
+      },
+      "wallMs": 1376,
+      "consoleErrors": []
+    },
+    "decode-full-1440x20000-png": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1440x20000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1440,
+      "srcH": 20000,
+      "bmW": 1440,
+      "bmH": 20000,
+      "decodeMs": 1382,
+      "decodedMiB": 109.9,
+      "encodedKiB": 9609,
+      "ms": 3516,
+      "maxMainStallMs": 1433,
+      "memory": {
+        "baselineMiB": 1040.9,
+        "peakDeltaMiB": 228.6,
+        "peakWsDeltaMiB": 325.4,
+        "retainedAfterMiB": -12.1,
+        "perPhaseDeltaMiB": {
+          "start": 95.5,
+          "decode": 228.6,
+          "hold": 119.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 169.6,
+            "privMiB": 449
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 58.9,
+            "privMiB": 297.1
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 261.1
+          }
+        ],
+        "samples": 15,
+        "sampleEndT": 1790254544986
+      },
+      "wallMs": 3531,
+      "consoleErrors": []
+    },
+    "decode-full-1080x20000-jpeg": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x20000.jpg",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 20000,
+      "bmW": 1080,
+      "bmH": 20000,
+      "decodeMs": 960,
+      "decodedMiB": 82.4,
+      "encodedKiB": 3718,
+      "ms": 1913,
+      "maxMainStallMs": 958,
+      "memory": {
+        "baselineMiB": 1047.7,
+        "peakDeltaMiB": 108.9,
+        "peakWsDeltaMiB": 242.1,
+        "retainedAfterMiB": -34.3,
+        "perPhaseDeltaMiB": {
+          "start": 22.4,
+          "decode": 108.9,
+          "hold": 58.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 86,
+            "privMiB": 367.2
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 22.8,
+            "privMiB": 266.2
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 261.1
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790254553834
+      },
+      "wallMs": 1922,
+      "consoleErrors": []
+    },
+    "decode-full-1080x30000-jpeg": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.jpg",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 30000,
+      "decodeMs": 552,
+      "decodedMiB": 123.6,
+      "encodedKiB": 5012,
+      "ms": 1515,
+      "maxMainStallMs": 575,
+      "memory": {
+        "baselineMiB": 1045.7,
+        "peakDeltaMiB": 177.6,
+        "peakWsDeltaMiB": 254.3,
+        "retainedAfterMiB": -29,
+        "perPhaseDeltaMiB": {
+          "start": 28.1,
+          "decode": 177.6,
+          "hold": 106.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 149.1,
+            "privMiB": 429.4
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 28.1,
+            "privMiB": 271.4
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.4,
+            "privMiB": 260.4
+          }
+        ],
+        "samples": 10,
+        "sampleEndT": 1790254563060
+      },
+      "wallMs": 1542,
+      "consoleErrors": []
+    },
+    "decode-full-1080x16383-webp": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x16383.webp",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 16383,
+      "bmW": 1080,
+      "bmH": 16383,
+      "decodeMs": 1472,
+      "decodedMiB": 67.5,
+      "encodedKiB": 530,
+      "ms": 3098,
+      "maxMainStallMs": 1350,
+      "memory": {
+        "baselineMiB": 1044.8,
+        "peakDeltaMiB": 126.7,
+        "peakWsDeltaMiB": 235.2,
+        "retainedAfterMiB": -11.2,
+        "perPhaseDeltaMiB": {
+          "start": 3.7,
+          "decode": 126.7,
+          "hold": 126.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 130.9,
+            "privMiB": 409.9
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0.1,
+            "privMiB": 243.1
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 262.3
+          }
+        ],
+        "samples": 19,
+        "sampleEndT": 1790254575476
+      },
+      "wallMs": 3199,
+      "consoleErrors": []
+    },
+    "decode-full-1080x30000-png-main": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 30000,
+      "decodeMs": 379,
+      "decodedMiB": 123.6,
+      "encodedKiB": 6512,
+      "ms": 1362,
+      "maxMainStallMs": 397,
+      "memory": {
+        "baselineMiB": 1045.5,
+        "peakDeltaMiB": 197.9,
+        "peakWsDeltaMiB": 387.2,
+        "retainedAfterMiB": -26.6,
+        "perPhaseDeltaMiB": {
+          "start": 58.9,
+          "decode": 197.9,
+          "hold": 111.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 155.4,
+            "privMiB": 434.9
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 42,
+            "privMiB": 285.3
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.2,
+            "privMiB": 262.6
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790254585119
+      },
+      "wallMs": 1373,
+      "consoleErrors": []
+    },
+    "decode-thumb-1080x30000-png": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "thumb",
+        "thumbWidth": 240,
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 240,
+      "bmH": 6667,
+      "decodeMs": 339,
+      "decodedMiB": 6.1,
+      "encodedKiB": 6512,
+      "ms": 1317,
+      "maxMainStallMs": 345,
+      "memory": {
+        "baselineMiB": 1046.5,
+        "peakDeltaMiB": 197.2,
+        "peakWsDeltaMiB": 288.3,
+        "retainedAfterMiB": -28.4,
+        "perPhaseDeltaMiB": {
+          "start": 58.9,
+          "decode": 197.2,
+          "hold": 110.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 155.3,
+            "privMiB": 435.2
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 41.8,
+            "privMiB": 285.2
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 260.8
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790254592467
+      },
+      "wallMs": 1334,
+      "consoleErrors": []
+    },
+    "decode-thumb-1440x20000-jpeg": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1440x20000.jpg",
+        "mode": "thumb",
+        "thumbWidth": 240,
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1440,
+      "srcH": 20000,
+      "bmW": 240,
+      "bmH": 3334,
+      "decodeMs": 315,
+      "decodedMiB": 3.1,
+      "encodedKiB": 5579,
+      "ms": 1242,
+      "maxMainStallMs": 317,
+      "memory": {
+        "baselineMiB": 1046.2,
+        "peakDeltaMiB": 169.8,
+        "peakWsDeltaMiB": 246.3,
+        "retainedAfterMiB": -29.2,
+        "perPhaseDeltaMiB": {
+          "start": 45,
+          "decode": 169.8,
+          "hold": 100.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 139.4,
+            "privMiB": 418.8
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 30.3,
+            "privMiB": 273.6
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 262.6
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790254599401
+      },
+      "wallMs": 1255,
+      "consoleErrors": []
+    },
+    "decode-crop-1080x30000-png": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "crop",
+        "cropY": 14000,
+        "cropH": 2048,
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 2048,
+      "decodeMs": 321,
+      "decodedMiB": 8.4,
+      "encodedKiB": 6512,
+      "ms": 1257,
+      "maxMainStallMs": 316,
+      "memory": {
+        "baselineMiB": 1047.4,
+        "peakDeltaMiB": 196.3,
+        "peakWsDeltaMiB": 292,
+        "retainedAfterMiB": null,
+        "perPhaseDeltaMiB": {
+          "start": 72.6,
+          "decode": 196.3,
+          "hold": 109.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 154.4,
+            "privMiB": 435.1
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 41.7,
+            "privMiB": 285
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.2,
+            "privMiB": 260.8
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790254606260
+      },
+      "wallMs": 1269,
+      "consoleErrors": []
+    },
+    "decode-crop-1080x30000-jpeg": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.jpg",
+        "mode": "crop",
+        "cropY": 14000,
+        "cropH": 2048,
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 2048,
+      "decodeMs": 350,
+      "decodedMiB": 8.4,
+      "encodedKiB": 5012,
+      "ms": 1281,
+      "maxMainStallMs": 361,
+      "memory": {
+        "baselineMiB": 1047.7,
+        "peakDeltaMiB": 176.7,
+        "peakWsDeltaMiB": 249.5,
+        "retainedAfterMiB": -31.2,
+        "perPhaseDeltaMiB": {
+          "start": 13.4,
+          "decode": 176.7,
+          "hold": 104.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 148.8,
+            "privMiB": 429.4
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 27.8,
+            "privMiB": 271.2
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 260.9
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790254613516
+      },
+      "wallMs": 1298,
+      "consoleErrors": []
+    },
+    "bitmaps-12x1080x10000-closed": {
+      "group": "lifecycle",
+      "ctx": "main",
+      "name": "bitmapLifecycle",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "count": 12,
+        "close": true
+      },
+      "ok": true,
+      "decoded": 12,
+      "closed": true,
+      "gcAvailable": false,
+      "ms": 3713,
+      "maxMainStallMs": 175,
+      "memory": {
+        "baselineMiB": 1046.9,
+        "peakDeltaMiB": 100.3,
+        "peakWsDeltaMiB": 179.5,
+        "retainedAfterMiB": -27,
+        "perPhaseDeltaMiB": {
+          "start": 28.8,
+          "decoding": 100.3,
+          "settle": 32.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 70,
+            "privMiB": 349.8
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 30.2,
+            "privMiB": 273.6
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.2,
+            "privMiB": 260.8
+          }
+        ],
+        "samples": 33,
+        "sampleEndT": 1790254622928
+      },
+      "wallMs": 3719,
+      "consoleErrors": []
+    },
+    "bitmaps-12x1080x10000-leaked": {
+      "group": "lifecycle",
+      "ctx": "main",
+      "name": "bitmapLifecycle",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "count": 12,
+        "close": false
+      },
+      "ok": true,
+      "decoded": 12,
+      "closed": false,
+      "gcAvailable": false,
+      "ms": 3657,
+      "maxMainStallMs": 167,
+      "memory": {
+        "baselineMiB": 1079.3,
+        "peakDeltaMiB": 97.4,
+        "peakWsDeltaMiB": 614.5,
+        "retainedAfterMiB": -27.2,
+        "perPhaseDeltaMiB": {
+          "start": 35.7,
+          "decoding": 97.4,
+          "settle": 32.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 67.8,
+            "privMiB": 380.1
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 29.2,
+            "privMiB": 272.5
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.2,
+            "privMiB": 263.3
+          }
+        ],
+        "samples": 31,
+        "sampleEndT": 1790254632173
+      },
+      "wallMs": 3673,
+      "consoleErrors": []
+    },
+    "objecturls-20x10MiB-revoked": {
+      "group": "lifecycle",
+      "ctx": "main",
+      "name": "objectUrlLifecycle",
+      "params": {
+        "count": 20,
+        "mib": 10,
+        "revoke": true
+      },
+      "ok": true,
+      "created": 20,
+      "mibEach": 10,
+      "revoked": true,
+      "ms": 2268,
+      "maxMainStallMs": 267,
+      "memory": {
+        "baselineMiB": 1078.9,
+        "peakDeltaMiB": 272.4,
+        "peakWsDeltaMiB": 300.7,
+        "retainedAfterMiB": 17.4,
+        "perPhaseDeltaMiB": {
+          "create": 152.2,
+          "settle": 272.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "network",
+            "deltaMiB": 200.5,
+            "privMiB": 461.1
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 71.9,
+            "privMiB": 383.8
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0,
+            "privMiB": 243.4
+          }
+        ],
+        "samples": 17,
+        "sampleEndT": 1790254640470
+      },
+      "wallMs": 2280,
+      "consoleErrors": []
+    },
+    "objecturls-20x10MiB-kept": {
+      "group": "lifecycle",
+      "ctx": "main",
+      "name": "objectUrlLifecycle",
+      "params": {
+        "count": 20,
+        "mib": 10,
+        "revoke": false
+      },
+      "ok": true,
+      "created": 20,
+      "mibEach": 10,
+      "revoked": false,
+      "ms": 2267,
+      "maxMainStallMs": 263,
+      "memory": {
+        "baselineMiB": 1046.6,
+        "peakDeltaMiB": 288,
+        "peakWsDeltaMiB": 320.3,
+        "retainedAfterMiB": 197.1,
+        "perPhaseDeltaMiB": {
+          "create": 111.8,
+          "settle": 288
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "network",
+            "deltaMiB": 200.3,
+            "privMiB": 461.3
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 87.7,
+            "privMiB": 366.8
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0,
+            "privMiB": 243.3
+          }
+        ],
+        "samples": 16,
+        "sampleEndT": 1790254648403
+      },
+      "wallMs": 2278,
+      "consoleErrors": []
+    },
+    "single-1080x5000-png": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 5000,
+      "canvasMiB": 20.6,
+      "cornerAlpha": 255,
+      "encodeMs": 730,
+      "blobType": "image/png",
+      "bytes": 3603784,
+      "encW": 1080,
+      "encH": 5000,
+      "verified": true,
+      "ms": 1236,
+      "maxMainStallMs": 889,
+      "memory": {
+        "baselineMiB": 1046.9,
+        "peakDeltaMiB": 102,
+        "peakWsDeltaMiB": 184.8,
+        "retainedAfterMiB": -27.2,
+        "perPhaseDeltaMiB": {
+          "start": 23,
+          "decode+draw": 80.5,
+          "encode": 102
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 71.6,
+            "privMiB": 350.9
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 30.3,
+            "privMiB": 273.6
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 263.4
+          }
+        ],
+        "samples": 12,
+        "sampleEndT": 1790254655267
+      },
+      "wallMs": 1245,
+      "consoleErrors": []
+    },
+    "single-1080x5000-jpeg": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 5000,
+      "canvasMiB": 20.6,
+      "cornerAlpha": 255,
+      "encodeMs": 127,
+      "blobType": "image/jpeg",
+      "bytes": 1548421,
+      "encW": 1080,
+      "encH": 5000,
+      "verified": true,
+      "ms": 670,
+      "maxMainStallMs": 289,
+      "memory": {
+        "baselineMiB": 1048.1,
+        "peakDeltaMiB": 134.9,
+        "peakWsDeltaMiB": 214.2,
+        "retainedAfterMiB": -30.8,
+        "perPhaseDeltaMiB": {
+          "start": 15.2,
+          "decode+draw": 78,
+          "encode": 134.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 104.7,
+            "privMiB": 385.3
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 30.2,
+            "privMiB": 273.6
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 263.4
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790254661852
+      },
+      "wallMs": 684,
+      "consoleErrors": []
+    },
+    "single-1080x5000-webp": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 5000,
+      "canvasMiB": 20.6,
+      "cornerAlpha": 255,
+      "encodeMs": 2069,
+      "blobType": "image/webp",
+      "bytes": 1323094,
+      "encW": 1080,
+      "encH": 5000,
+      "verified": true,
+      "ms": 2593,
+      "maxMainStallMs": 2235,
+      "memory": {
+        "baselineMiB": 1048.1,
+        "peakDeltaMiB": 119.6,
+        "peakWsDeltaMiB": 191.6,
+        "retainedAfterMiB": -32.2,
+        "perPhaseDeltaMiB": {
+          "start": 37.3,
+          "decode+draw": 78.2,
+          "encode": 119.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 89.2,
+            "privMiB": 369.7
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 30.2,
+            "privMiB": 273.5
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.2,
+            "privMiB": 260.9
+          }
+        ],
+        "samples": 24,
+        "sampleEndT": 1790254669984
+      },
+      "wallMs": 2606,
+      "consoleErrors": []
+    },
+    "single-1080x10000-png": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 10000,
+      "canvasMiB": 41.2,
+      "cornerAlpha": 255,
+      "encodeMs": 1191,
+      "blobType": "image/png",
+      "bytes": 3490465,
+      "encW": 1080,
+      "encH": 10000,
+      "verified": true,
+      "ms": 1739,
+      "maxMainStallMs": 1467,
+      "memory": {
+        "baselineMiB": 1047.9,
+        "peakDeltaMiB": 140.5,
+        "peakWsDeltaMiB": 262.5,
+        "retainedAfterMiB": -27.5,
+        "perPhaseDeltaMiB": {
+          "start": 43.3,
+          "decode+draw": 100,
+          "encode": 140.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 111,
+            "privMiB": 391.2
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 29.2,
+            "privMiB": 272.6
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.2,
+            "privMiB": 261
+          }
+        ],
+        "samples": 15,
+        "sampleEndT": 1790254677335
+      },
+      "wallMs": 1745,
+      "consoleErrors": []
+    },
+    "single-1080x10000-jpeg": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 10000,
+      "canvasMiB": 41.2,
+      "cornerAlpha": 255,
+      "encodeMs": 216,
+      "blobType": "image/jpeg",
+      "bytes": 1935372,
+      "encW": 1080,
+      "encH": 10000,
+      "verified": true,
+      "ms": 794,
+      "maxMainStallMs": 476,
+      "memory": {
+        "baselineMiB": 1046.9,
+        "peakDeltaMiB": 139.2,
+        "peakWsDeltaMiB": 261,
+        "retainedAfterMiB": -28.7,
+        "perPhaseDeltaMiB": {
+          "start": 22.1,
+          "decode+draw": 98.8,
+          "encode": 139.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 109.7,
+            "privMiB": 388.7
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 29.4,
+            "privMiB": 272.7
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.2,
+            "privMiB": 263.8
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790254683619
+      },
+      "wallMs": 802,
+      "consoleErrors": []
+    },
+    "single-1080x10000-webp": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 10000,
+      "canvasMiB": 41.2,
+      "cornerAlpha": 255,
+      "encodeMs": 4429,
+      "blobType": "image/webp",
+      "bytes": 1442326,
+      "encW": 1080,
+      "encH": 10000,
+      "verified": true,
+      "ms": 5130,
+      "maxMainStallMs": 4781,
+      "memory": {
+        "baselineMiB": 1048.1,
+        "peakDeltaMiB": 104.5,
+        "peakWsDeltaMiB": 241.6,
+        "retainedAfterMiB": -29.3,
+        "perPhaseDeltaMiB": {
+          "start": 56.1,
+          "decode+draw": 97.3,
+          "encode": 104.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 119.2,
+            "privMiB": 399.6
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0.1,
+            "privMiB": 243.1
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.1,
+            "privMiB": 263.9
+          }
+        ],
+        "samples": 42,
+        "sampleEndT": 1790254694618
+      },
+      "wallMs": 5140,
+      "consoleErrors": []
+    },
+    "single-1080x20000-png": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 20000,
+      "canvasMiB": 82.4,
+      "cornerAlpha": 255,
+      "encodeMs": 1722,
+      "blobType": "image/png",
+      "bytes": 4048449,
+      "encW": 1080,
+      "encH": 20000,
+      "verified": true,
+      "ms": 2658,
+      "maxMainStallMs": 2290,
+      "memory": {
+        "baselineMiB": 1079.4,
+        "peakDeltaMiB": 153.1,
+        "peakWsDeltaMiB": 370.7,
+        "retainedAfterMiB": -22.6,
+        "perPhaseDeltaMiB": {
+          "start": 69.2,
+          "decode+draw": 152.1,
+          "encode": 153.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 169.4,
+            "privMiB": 480.7
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.1,
+            "privMiB": 243.1
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": -0.1,
+            "privMiB": 264.1
+          }
+        ],
+        "samples": 23,
+        "sampleEndT": 1790254703434
+      },
+      "wallMs": 2667,
+      "consoleErrors": []
+    },
+    "single-1080x20000-jpeg": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 20000,
+      "canvasMiB": 82.4,
+      "cornerAlpha": 255,
+      "encodeMs": 691,
+      "blobType": "image/jpeg",
+      "bytes": 3012412,
+      "encW": 1080,
+      "encH": 20000,
+      "verified": true,
+      "ms": 2185,
+      "maxMainStallMs": 1771,
+      "memory": {
+        "baselineMiB": 1078.8,
+        "peakDeltaMiB": 203.8,
+        "peakWsDeltaMiB": 416.5,
+        "retainedAfterMiB": -23.5,
+        "perPhaseDeltaMiB": {
+          "start": 33,
+          "decode+draw": 152.8,
+          "encode": 203.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 220.2,
+            "privMiB": 531
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.1,
+            "privMiB": 243.1
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": -0.1,
+            "privMiB": 263.8
+          }
+        ],
+        "samples": 15,
+        "sampleEndT": 1790254711430
+      },
+      "wallMs": 2195,
+      "consoleErrors": []
+    },
+    "single-1080x20000-webp": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "outW": 1080,
+      "outH": 20000,
+      "canvasMiB": 82.4,
+      "cornerAlpha": 255,
+      "encodeMs": 682,
+      "blobType": null,
+      "bytes": 0,
+      "verified": false,
+      "encW": null,
+      "encH": null,
+      "ms": 2534,
+      "maxMainStallMs": 1691,
+      "memory": {
+        "baselineMiB": 1081.1,
+        "peakDeltaMiB": 170.4,
+        "peakWsDeltaMiB": 384.6,
+        "retainedAfterMiB": -26.7,
+        "perPhaseDeltaMiB": {
+          "start": 67.6,
+          "decode+draw": 150.4,
+          "encode": 170.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 187.1,
+            "privMiB": 500
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": -0.1,
+            "privMiB": 263.9
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.3,
+            "privMiB": 243
+          }
+        ],
+        "samples": 15,
+        "sampleEndT": 1790254720010
+      },
+      "wallMs": 2673,
+      "consoleErrors": []
+    },
+    "single-1080x30000-png": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "canvasMiB": 123.6,
+      "cornerAlpha": 255,
+      "encodeMs": 2446,
+      "blobType": "image/png",
+      "bytes": 4419332,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 3740,
+      "maxMainStallMs": 3313,
+      "memory": {
+        "baselineMiB": 1079.6,
+        "peakDeltaMiB": 196.4,
+        "peakWsDeltaMiB": 409.1,
+        "retainedAfterMiB": -23.2,
+        "perPhaseDeltaMiB": {
+          "start": 16.9,
+          "decode+draw": 196.4,
+          "encode": 106.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 154.7,
+            "privMiB": 466.2
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 41.7,
+            "privMiB": 285.1
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 264.1
+          }
+        ],
+        "samples": 33,
+        "sampleEndT": 1790254730100
+      },
+      "wallMs": 3761,
+      "consoleErrors": []
+    },
+    "single-1080x30000-jpeg": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "canvasMiB": 123.6,
+      "cornerAlpha": 255,
+      "encodeMs": 655,
+      "blobType": "image/jpeg",
+      "bytes": 4026637,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 1883,
+      "maxMainStallMs": 1384,
+      "memory": {
+        "baselineMiB": 1046.4,
+        "peakDeltaMiB": 321.5,
+        "peakWsDeltaMiB": 622,
+        "retainedAfterMiB": -21.1,
+        "perPhaseDeltaMiB": {
+          "start": 66.6,
+          "decode+draw": 200.1,
+          "encode": 321.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 338.5,
+            "privMiB": 617.3
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0.1,
+            "privMiB": 243.1
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 264.2
+          }
+        ],
+        "samples": 17,
+        "sampleEndT": 1790254737620
+      },
+      "wallMs": 1897,
+      "consoleErrors": []
+    },
+    "single-1080x30000-webp": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "outW": 1080,
+      "outH": 30000,
+      "canvasMiB": 123.6,
+      "cornerAlpha": 255,
+      "encodeMs": 609,
+      "blobType": null,
+      "bytes": 0,
+      "verified": false,
+      "encW": null,
+      "encH": null,
+      "ms": 1756,
+      "maxMainStallMs": 1354,
+      "memory": {
+        "baselineMiB": 1079.8,
+        "peakDeltaMiB": 268.7,
+        "peakWsDeltaMiB": 555.9,
+        "retainedAfterMiB": -35.1,
+        "perPhaseDeltaMiB": {
+          "start": 58,
+          "decode+draw": 198.2,
+          "encode": 268.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 286.1,
+            "privMiB": 597.2
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 264.3
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.2,
+            "privMiB": 243
+          }
+        ],
+        "samples": 16,
+        "sampleEndT": 1790254744983
+      },
+      "wallMs": 1766,
+      "consoleErrors": []
+    },
+    "single-1440x20000-png": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 20000,
+      "canvasMiB": 109.9,
+      "cornerAlpha": 255,
+      "encodeMs": 2556,
+      "blobType": "image/png",
+      "bytes": 6139799,
+      "encW": 1440,
+      "encH": 20000,
+      "verified": true,
+      "ms": 3950,
+      "maxMainStallMs": 3337,
+      "memory": {
+        "baselineMiB": 1079.2,
+        "peakDeltaMiB": 226.7,
+        "peakWsDeltaMiB": 376.4,
+        "retainedAfterMiB": -6.1,
+        "perPhaseDeltaMiB": {
+          "start": 103,
+          "decode+draw": 226.7,
+          "encode": 112.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 172.7,
+            "privMiB": 483.3
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 53.9,
+            "privMiB": 297.2
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.2,
+            "privMiB": 261
+          }
+        ],
+        "samples": 34,
+        "sampleEndT": 1790254754629
+      },
+      "wallMs": 3959,
+      "consoleErrors": []
+    },
+    "single-1440x20000-jpeg": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 20000,
+      "canvasMiB": 109.9,
+      "cornerAlpha": 255,
+      "encodeMs": 3248,
+      "blobType": "image/jpeg",
+      "bytes": 3992260,
+      "encW": 1440,
+      "encH": 20000,
+      "verified": true,
+      "ms": 6761,
+      "maxMainStallMs": 5382,
+      "memory": {
+        "baselineMiB": 1047.4,
+        "peakDeltaMiB": 290.6,
+        "peakWsDeltaMiB": 559.7,
+        "retainedAfterMiB": -12.5,
+        "perPhaseDeltaMiB": {
+          "start": 100,
+          "decode+draw": 198.3,
+          "encode": 290.6,
+          "verify": 8.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 304.5,
+            "privMiB": 583.7
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0.3,
+            "privMiB": 243.1
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.2,
+            "privMiB": 264.6
+          }
+        ],
+        "samples": 25,
+        "sampleEndT": 1790254767562
+      },
+      "wallMs": 6786,
+      "consoleErrors": []
+    },
+    "single-1440x20000-webp": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "outW": 1440,
+      "outH": 20000,
+      "canvasMiB": 109.9,
+      "cornerAlpha": 255,
+      "encodeMs": 2403,
+      "blobType": null,
+      "bytes": 0,
+      "verified": false,
+      "encW": null,
+      "encH": null,
+      "ms": 6550,
+      "maxMainStallMs": 4686,
+      "memory": {
+        "baselineMiB": 1046.9,
+        "peakDeltaMiB": 246.3,
+        "peakWsDeltaMiB": 511.6,
+        "retainedAfterMiB": -24.8,
+        "perPhaseDeltaMiB": {
+          "start": 91.2,
+          "decode+draw": 124.4,
+          "encode": 246.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 260.5,
+            "privMiB": 539
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0,
+            "privMiB": 243.1
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": -0.1,
+            "privMiB": 264.5
+          }
+        ],
+        "samples": 25,
+        "sampleEndT": 1790254787244
+      },
+      "wallMs": 6568,
+      "consoleErrors": []
+    },
+    "single-1080x20000-png-main": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 20000,
+      "canvasMiB": 82.4,
+      "cornerAlpha": 255,
+      "encodeMs": 3799,
+      "blobType": "image/png",
+      "bytes": 4048449,
+      "encW": 1080,
+      "encH": 20000,
+      "verified": true,
+      "ms": 6028,
+      "maxMainStallMs": 4922,
+      "memory": {
+        "baselineMiB": 1046.3,
+        "peakDeltaMiB": 120,
+        "peakWsDeltaMiB": 282.8,
+        "retainedAfterMiB": -18.6,
+        "perPhaseDeltaMiB": {
+          "start": 47.4,
+          "decode+draw": 120,
+          "encode": 67
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 119.5,
+            "privMiB": 397.1
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.4,
+            "privMiB": 260.8
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0.1,
+            "privMiB": 243.3
+          }
+        ],
+        "samples": 36,
+        "sampleEndT": 1790254806625
+      },
+      "wallMs": 6069,
+      "consoleErrors": []
+    },
+    "single-1080x30000-jpeg-main": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "canvasMiB": 123.6,
+      "cornerAlpha": 255,
+      "encodeMs": 1965,
+      "blobType": "image/jpeg",
+      "bytes": 4026637,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 3716,
+      "maxMainStallMs": 3123,
+      "memory": {
+        "baselineMiB": 1049.1,
+        "peakDeltaMiB": 323.1,
+        "peakWsDeltaMiB": 618.8,
+        "retainedAfterMiB": -23.2,
+        "perPhaseDeltaMiB": {
+          "start": 58.7,
+          "decode+draw": 198,
+          "encode": 323.1,
+          "verify": -2.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 339.8,
+            "privMiB": 619.8
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0.2,
+            "privMiB": 243.3
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 265.3
+          }
+        ],
+        "samples": 28,
+        "sampleEndT": 1790254822553
+      },
+      "wallMs": 3723,
+      "consoleErrors": []
+    },
+    "tiled-1080x5000-png": {
+      "group": "export-tiled",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 5000,
+      "tiles": 3,
+      "tileMiB": 8.4,
+      "readbackMs": 1338,
+      "peakDecodedMiB": 20.6,
+      "blobType": "image/png",
+      "bytes": 4139468,
+      "encW": 1080,
+      "encH": 5000,
+      "verified": true,
+      "ms": 9386,
+      "maxMainStallMs": 5600,
+      "memory": {
+        "baselineMiB": 1080,
+        "peakDeltaMiB": 46.9,
+        "peakWsDeltaMiB": 103.2,
+        "retainedAfterMiB": 6.9,
+        "perPhaseDeltaMiB": {
+          "start": 46.9,
+          "compose+encode": 10.6,
+          "verify": 22.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 30,
+            "privMiB": 273.2
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 16.9,
+            "privMiB": 327.4
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 265.4
+          }
+        ],
+        "samples": 25,
+        "sampleEndT": 1790254847496
+      },
+      "wallMs": 9568,
+      "consoleErrors": []
+    },
+    "tiled-1080x10000-png": {
+      "group": "export-tiled",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 10000,
+      "tiles": 5,
+      "tileMiB": 8.4,
+      "readbackMs": 1125,
+      "peakDecodedMiB": 41.2,
+      "blobType": "image/png",
+      "bytes": 3990499,
+      "encW": 1080,
+      "encH": 10000,
+      "verified": true,
+      "ms": 8620,
+      "maxMainStallMs": 6491,
+      "memory": {
+        "baselineMiB": 1074.4,
+        "peakDeltaMiB": 51.6,
+        "peakWsDeltaMiB": 146.7,
+        "retainedAfterMiB": 13.1,
+        "perPhaseDeltaMiB": {
+          "start": 51.6,
+          "compose+encode": 40.7,
+          "verify": 30.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 30.1,
+            "privMiB": 273
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 21.4,
+            "privMiB": 331.7
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.9
+          }
+        ],
+        "samples": 29,
+        "sampleEndT": 1790254894627
+      },
+      "wallMs": 9203,
+      "consoleErrors": []
+    },
+    "tiled-1080x20000-png": {
+      "group": "export-tiled",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 20000,
+      "tiles": 10,
+      "tileMiB": 8.4,
+      "readbackMs": 990,
+      "peakDecodedMiB": 82.4,
+      "blobType": "image/png",
+      "bytes": 4525452,
+      "encW": 1080,
+      "encH": 20000,
+      "verified": true,
+      "ms": 5410,
+      "maxMainStallMs": 4460,
+      "memory": {
+        "baselineMiB": 1049.5,
+        "peakDeltaMiB": 105.6,
+        "peakWsDeltaMiB": 290.4,
+        "retainedAfterMiB": 25.9,
+        "perPhaseDeltaMiB": {
+          "start": 79.6,
+          "compose+encode": 105.6,
+          "verify": 95.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 88.7,
+            "privMiB": 398.2
+          },
+          {
+            "name": "network",
+            "deltaMiB": 16.8,
+            "privMiB": 251.9
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0.2,
+            "privMiB": 243.6
+          }
+        ],
+        "samples": 32,
+        "sampleEndT": 1790254918267
+      },
+      "wallMs": 5518,
+      "consoleErrors": []
+    },
+    "tiled-1080x30000-png": {
+      "group": "export-tiled",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "tiles": 15,
+      "tileMiB": 8.4,
+      "readbackMs": 3048,
+      "peakDecodedMiB": 123.6,
+      "blobType": "image/png",
+      "bytes": 4887521,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 15797,
+      "maxMainStallMs": 14079,
+      "memory": {
+        "baselineMiB": 1077.7,
+        "peakDeltaMiB": 109.4,
+        "peakWsDeltaMiB": 297.8,
+        "retainedAfterMiB": -3.5,
+        "perPhaseDeltaMiB": {
+          "start": 72.9,
+          "compose+encode": 109.4,
+          "verify": 24.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 127,
+            "privMiB": 439
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.3,
+            "privMiB": 243.5
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": -0.3,
+            "privMiB": 261
+          }
+        ],
+        "samples": 47,
+        "sampleEndT": 1790254945545
+      },
+      "wallMs": 15870,
+      "consoleErrors": []
+    },
+    "tiled-1440x20000-png": {
+      "group": "export-tiled",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 20000,
+      "tiles": 10,
+      "tileMiB": 11.3,
+      "readbackMs": 1204,
+      "peakDecodedMiB": 109.9,
+      "blobType": "image/png",
+      "bytes": 7072221,
+      "encW": 1440,
+      "encH": 20000,
+      "verified": true,
+      "ms": 6697,
+      "maxMainStallMs": 5251,
+      "memory": {
+        "baselineMiB": 1077,
+        "peakDeltaMiB": 182.6,
+        "peakWsDeltaMiB": 332.3,
+        "retainedAfterMiB": 29.8,
+        "perPhaseDeltaMiB": {
+          "start": 124.7,
+          "compose+encode": 182.6,
+          "verify": 119.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 182,
+            "privMiB": 494.2
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.5,
+            "privMiB": 260.4
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0.1,
+            "privMiB": 243.6
+          }
+        ],
+        "samples": 40,
+        "sampleEndT": 1790254963909
+      },
+      "wallMs": 6741,
+      "consoleErrors": []
+    },
+    "tiled-1080x30000-png-main": {
+      "group": "export-tiled",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "tiles": 15,
+      "tileMiB": 8.4,
+      "readbackMs": 1483,
+      "peakDecodedMiB": 123.6,
+      "blobType": "image/png",
+      "bytes": 4887521,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 6848,
+      "maxMainStallMs": 5525,
+      "memory": {
+        "baselineMiB": 1043.5,
+        "peakDeltaMiB": 156.3,
+        "peakWsDeltaMiB": 357.4,
+        "retainedAfterMiB": -1.9,
+        "perPhaseDeltaMiB": {
+          "start": 59.2,
+          "compose+encode": 156.3,
+          "verify": 27.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 155.3,
+            "privMiB": 433.5
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0.7,
+            "privMiB": 244
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.2,
+            "privMiB": 260.9
+          }
+        ],
+        "samples": 39,
+        "sampleEndT": 1790254982917
+      },
+      "wallMs": 6856,
+      "consoleErrors": []
+    },
+    "split-1080x30000-jpeg-4096": {
+      "group": "export-split",
+      "ctx": "main",
+      "name": "exportSplit",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 4096,
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "parts": 8,
+      "bytes": 4012934,
+      "peakDecodedMiB": 123.6,
+      "verified": true,
+      "ms": 5072,
+      "maxMainStallMs": 1932,
+      "memory": {
+        "baselineMiB": 1045.2,
+        "peakDeltaMiB": 197.3,
+        "peakWsDeltaMiB": 287.3,
+        "retainedAfterMiB": -24.2,
+        "perPhaseDeltaMiB": {
+          "start": 72.3,
+          "compose+encode": 197.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 156,
+            "privMiB": 434.6
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 41.7,
+            "privMiB": 285.9
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.3,
+            "privMiB": 260.6
+          }
+        ],
+        "samples": 26,
+        "sampleEndT": 1790254998582
+      },
+      "wallMs": 5220,
+      "consoleErrors": []
+    },
+    "split-1440x20000-webp-4096": {
+      "group": "export-split",
+      "ctx": "main",
+      "name": "exportSplit",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "tileHeight": 4096,
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 20000,
+      "parts": 5,
+      "bytes": 2699916,
+      "peakDecodedMiB": 109.9,
+      "verified": true,
+      "ms": 32054,
+      "maxMainStallMs": 12429,
+      "memory": {
+        "baselineMiB": 1077.2,
+        "peakDeltaMiB": 128.2,
+        "peakWsDeltaMiB": 288.9,
+        "retainedAfterMiB": -12.4,
+        "perPhaseDeltaMiB": {
+          "start": 98.5,
+          "compose+encode": 128.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 127.5,
+            "privMiB": 439.4
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.5,
+            "privMiB": 260.7
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0.1,
+            "privMiB": 243.9
+          }
+        ],
+        "samples": 149,
+        "sampleEndT": 1790255041690
+      },
+      "wallMs": 32147,
+      "consoleErrors": []
+    },
+    "multi-8x1080x2400-single-all": {
+      "group": "multi",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 19200,
+      "canvasMiB": 79.1,
+      "cornerAlpha": 255,
+      "encodeMs": 3673,
+      "blobType": "image/png",
+      "bytes": 3427216,
+      "encW": 1080,
+      "encH": 19200,
+      "verified": true,
+      "ms": 5896,
+      "maxMainStallMs": 4000,
+      "memory": {
+        "baselineMiB": 1045.4,
+        "peakDeltaMiB": 60.9,
+        "peakWsDeltaMiB": 257.8,
+        "retainedAfterMiB": -32.4,
+        "perPhaseDeltaMiB": {
+          "start": 15.8,
+          "decode+draw": 6.1,
+          "encode": 60.9,
+          "verify": -17.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 68,
+            "privMiB": 347.8
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": -0.1,
+            "privMiB": 261.4
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.2,
+            "privMiB": 243.4
+          }
+        ],
+        "samples": 34,
+        "sampleEndT": 1790255059465
+      },
+      "wallMs": 5995,
+      "consoleErrors": []
+    },
+    "multi-8x1080x2400-single-seq": {
+      "group": "multi",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 19200,
+      "canvasMiB": 79.1,
+      "cornerAlpha": 255,
+      "encodeMs": 3608,
+      "blobType": "image/png",
+      "bytes": 3427216,
+      "encW": 1080,
+      "encH": 19200,
+      "verified": true,
+      "ms": 5719,
+      "maxMainStallMs": 3739,
+      "memory": {
+        "baselineMiB": 1045.2,
+        "peakDeltaMiB": 71.9,
+        "peakWsDeltaMiB": 263.9,
+        "retainedAfterMiB": -31.8,
+        "perPhaseDeltaMiB": {
+          "start": 9.1,
+          "decode+draw": -6.5,
+          "encode": 71.9,
+          "verify": -14.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 76.9,
+            "privMiB": 356.5
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": -0.1,
+            "privMiB": 261.5
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.5,
+            "privMiB": 243.4
+          }
+        ],
+        "samples": 34,
+        "sampleEndT": 1790255076188
+      },
+      "wallMs": 5891,
+      "consoleErrors": []
+    },
+    "multi-8x1080x2400-tiled": {
+      "group": "multi",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 19200,
+      "tiles": 10,
+      "tileMiB": 8.4,
+      "readbackMs": 642,
+      "peakDecodedMiB": 19.8,
+      "blobType": "image/png",
+      "bytes": 3741399,
+      "encW": 1080,
+      "encH": 19200,
+      "verified": true,
+      "ms": 3814,
+      "maxMainStallMs": 629,
+      "memory": {
+        "baselineMiB": 1044.7,
+        "peakDeltaMiB": 47.9,
+        "peakWsDeltaMiB": 134.4,
+        "retainedAfterMiB": 4.4,
+        "perPhaseDeltaMiB": {
+          "start": 12.3,
+          "compose+encode": 47.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 53.4,
+            "privMiB": 332.2
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.2,
+            "privMiB": 243.4
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": -0.2,
+            "privMiB": 261.4
+          }
+        ],
+        "samples": 23,
+        "sampleEndT": 1790255088025
+      },
+      "wallMs": 3832,
+      "consoleErrors": []
+    },
+    "multi-16x1080x2400-single-seq": {
+      "group": "multi",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 38400,
+      "canvasMiB": 158.2,
+      "cornerAlpha": 255,
+      "encodeMs": 6102,
+      "blobType": "image/png",
+      "bytes": 6861863,
+      "encW": 1080,
+      "encH": 38400,
+      "verified": true,
+      "ms": 8057,
+      "maxMainStallMs": 6228,
+      "memory": {
+        "baselineMiB": 1046.7,
+        "peakDeltaMiB": 149,
+        "peakWsDeltaMiB": 514.4,
+        "retainedAfterMiB": -23.2,
+        "perPhaseDeltaMiB": {
+          "start": 15.2,
+          "decode+draw": 23.3,
+          "encode": 149
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 154.5,
+            "privMiB": 434.7
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.1,
+            "privMiB": 261.9
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.5,
+            "privMiB": 243.4
+          }
+        ],
+        "samples": 55,
+        "sampleEndT": 1790255103619
+      },
+      "wallMs": 8068,
+      "consoleErrors": []
+    },
+    "multi-16x1080x2400-tiled": {
+      "group": "multi",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 38400,
+      "tiles": 19,
+      "tileMiB": 8.4,
+      "readbackMs": 1642,
+      "peakDecodedMiB": 19.8,
+      "blobType": "image/png",
+      "bytes": 7484257,
+      "encW": 1080,
+      "encH": 38400,
+      "verified": true,
+      "ms": 13133,
+      "maxMainStallMs": 2249,
+      "memory": {
+        "baselineMiB": 1079.9,
+        "peakDeltaMiB": 52.9,
+        "peakWsDeltaMiB": 144.6,
+        "retainedAfterMiB": 28.8,
+        "perPhaseDeltaMiB": {
+          "start": 13.4,
+          "compose+encode": 52.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 59.3,
+            "privMiB": 371.9
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": -0.2,
+            "privMiB": 261.3
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.7,
+            "privMiB": 244.4
+          }
+        ],
+        "samples": 61,
+        "sampleEndT": 1790255123489
+      },
+      "wallMs": 13153,
+      "consoleErrors": []
+    },
+    "multi-12x1440x3200-single-seq": {
+      "group": "multi",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 38400,
+      "canvasMiB": 210.9,
+      "cornerAlpha": 255,
+      "encodeMs": 8004,
+      "blobType": "image/png",
+      "bytes": 15119011,
+      "encW": 1440,
+      "encH": 38400,
+      "verified": true,
+      "ms": 11575,
+      "maxMainStallMs": 8393,
+      "memory": {
+        "baselineMiB": 1079.3,
+        "peakDeltaMiB": 234.4,
+        "peakWsDeltaMiB": 718.5,
+        "retainedAfterMiB": 19.3,
+        "perPhaseDeltaMiB": {
+          "start": 67.8,
+          "decode+draw": 82.4,
+          "encode": 234.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 242.7,
+            "privMiB": 555.2
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.1,
+            "privMiB": 261.6
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.3,
+            "privMiB": 244.3
+          }
+        ],
+        "samples": 83,
+        "sampleEndT": 1790255143693
+      },
+      "wallMs": 11593,
+      "consoleErrors": []
+    },
+    "multi-12x1440x3200-tiled": {
+      "group": "multi",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 38400,
+      "tiles": 19,
+      "tileMiB": 11.3,
+      "readbackMs": 1513,
+      "peakDecodedMiB": 35.2,
+      "blobType": "image/png",
+      "bytes": 17591551,
+      "encW": 1440,
+      "encH": 38400,
+      "verified": true,
+      "ms": 8566,
+      "maxMainStallMs": 965,
+      "memory": {
+        "baselineMiB": 1080.1,
+        "peakDeltaMiB": 96.9,
+        "peakWsDeltaMiB": 227.6,
+        "retainedAfterMiB": 59.5,
+        "perPhaseDeltaMiB": {
+          "start": 63.2,
+          "compose+encode": 96.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 57,
+            "privMiB": 369.2
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 35.5,
+            "privMiB": 280.6
+          },
+          {
+            "name": "network",
+            "deltaMiB": 4.4,
+            "privMiB": 265.3
+          }
+        ],
+        "samples": 62,
+        "sampleEndT": 1790255158825
+      },
+      "wallMs": 8574,
+      "consoleErrors": []
+    },
+    "multi-25x1080x2400-single-seq": {
+      "group": "multi",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 60000,
+      "canvasMiB": 247.2,
+      "cornerAlpha": 255,
+      "encodeMs": 7002,
+      "blobType": "image/png",
+      "bytes": 11069698,
+      "encW": 1080,
+      "encH": 60000,
+      "verified": true,
+      "ms": 9102,
+      "maxMainStallMs": 7118,
+      "memory": {
+        "baselineMiB": 1047.5,
+        "peakDeltaMiB": 249.5,
+        "peakWsDeltaMiB": 800.1,
+        "retainedAfterMiB": 2.5,
+        "perPhaseDeltaMiB": {
+          "start": 27.7,
+          "decode+draw": 31.2,
+          "encode": 249.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 259.1,
+            "privMiB": 538.7
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.2,
+            "privMiB": 262
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.9,
+            "privMiB": 244.2
+          }
+        ],
+        "samples": 70,
+        "sampleEndT": 1790255175097
+      },
+      "wallMs": 9111,
+      "consoleErrors": []
+    },
+    "multi-25x1080x2400-tiled": {
+      "group": "multi",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 60000,
+      "tiles": 30,
+      "tileMiB": 8.4,
+      "readbackMs": 1026,
+      "peakDecodedMiB": 19.8,
+      "blobType": "image/png",
+      "bytes": 12046355,
+      "encW": 1080,
+      "encH": 60000,
+      "verified": true,
+      "ms": 5754,
+      "maxMainStallMs": 358,
+      "memory": {
+        "baselineMiB": 1047.1,
+        "peakDeltaMiB": 62.7,
+        "peakWsDeltaMiB": 161.9,
+        "retainedAfterMiB": 16.7,
+        "perPhaseDeltaMiB": {
+          "start": 25.7,
+          "compose+encode": 62.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 70.2,
+            "privMiB": 350
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": -0.2,
+            "privMiB": 261.7
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.4,
+            "privMiB": 244.2
+          }
+        ],
+        "samples": 47,
+        "sampleEndT": 1790255187039
+      },
+      "wallMs": 5763,
+      "consoleErrors": []
+    },
+    "multi-2x1080x30000-tiled": {
+      "group": "multi",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x30000.png",
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 60000,
+      "tiles": 30,
+      "tileMiB": 8.4,
+      "readbackMs": 1817,
+      "peakDecodedMiB": 247.2,
+      "blobType": "image/png",
+      "bytes": 9779853,
+      "encW": 1080,
+      "encH": 60000,
+      "verified": true,
+      "ms": 6621,
+      "maxMainStallMs": 3258,
+      "memory": {
+        "baselineMiB": 1047.8,
+        "peakDeltaMiB": 244.1,
+        "peakWsDeltaMiB": 495.1,
+        "retainedAfterMiB": -29.7,
+        "perPhaseDeltaMiB": {
+          "start": 74.8,
+          "compose+encode": 244.1,
+          "verify": 164.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 248.2,
+            "privMiB": 528.4
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0.1,
+            "privMiB": 244.7
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 262
+          }
+        ],
+        "samples": 53,
+        "sampleEndT": 1790255199344
+      },
+      "wallMs": 6632,
+      "consoleErrors": []
+    },
+    "dataurl-1080x20000": {
+      "group": "dataurl",
+      "ctx": "main",
+      "name": "dataUrlVsBlob",
+      "params": {
+        "file": "tall-1080x20000.png",
+        "method": "toDataURL"
+      },
+      "ok": true,
+      "method": "toDataURL",
+      "encodeMs": 2271,
+      "dataUrlMiB": 5.1,
+      "blobMiB": 0,
+      "jsHeapMiB": null,
+      "ms": 2934,
+      "maxMainStallMs": 2557,
+      "memory": {
+        "baselineMiB": 1079.9,
+        "peakDeltaMiB": 151.2,
+        "peakWsDeltaMiB": 282.7,
+        "retainedAfterMiB": -29.8,
+        "perPhaseDeltaMiB": {
+          "start": 150.6,
+          "encode": 151.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 118.8,
+            "privMiB": 431
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 32,
+            "privMiB": 276.9
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.3,
+            "privMiB": 262.4
+          }
+        ],
+        "samples": 24,
+        "sampleEndT": 1790255207930
+      },
+      "wallMs": 2950,
+      "consoleErrors": []
+    },
+    "toblob-1080x20000": {
+      "group": "dataurl",
+      "ctx": "main",
+      "name": "dataUrlVsBlob",
+      "params": {
+        "file": "tall-1080x20000.png",
+        "method": "toBlob"
+      },
+      "ok": true,
+      "method": "toBlob",
+      "encodeMs": 2201,
+      "dataUrlMiB": 0,
+      "blobMiB": 3.9,
+      "jsHeapMiB": null,
+      "ms": 2930,
+      "maxMainStallMs": 2557,
+      "memory": {
+        "baselineMiB": 1047.5,
+        "peakDeltaMiB": 150.8,
+        "peakWsDeltaMiB": 283,
+        "retainedAfterMiB": -29.3,
+        "perPhaseDeltaMiB": {
+          "start": 150.8,
+          "encode": 73.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 118.8,
+            "privMiB": 398.4
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 31.9,
+            "privMiB": 276.8
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 261
+          }
+        ],
+        "samples": 25,
+        "sampleEndT": 1790255216767
+      },
+      "wallMs": 2940,
+      "consoleErrors": []
+    }
+  }
+}

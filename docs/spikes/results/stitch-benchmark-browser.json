@@ -16,10 +16,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 262,
-      "decodeMs": 33,
-      "engineLoadMs": 1121,
-      "wallMs": 2107,
+      "analyseMs": 1775.5,
+      "decodeMs": 48,
+      "engineLoadMs": 2854,
+      "wallMs": 5658,
       "coldStart": true
     },
     {
@@ -36,10 +36,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 207.5,
-      "decodeMs": 41,
+      "analyseMs": 884.6,
+      "decodeMs": 52,
       "engineLoadMs": 0,
-      "wallMs": 538,
+      "wallMs": 2526,
       "coldStart": false
     },
     {
@@ -56,10 +56,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 175.3,
-      "decodeMs": 30,
+      "analyseMs": 304.6,
+      "decodeMs": 33,
       "engineLoadMs": 0,
-      "wallMs": 376,
+      "wallMs": 1041,
       "coldStart": false
     },
     {
@@ -76,10 +76,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 71.2,
-      "decodeMs": 15,
-      "engineLoadMs": 0,
-      "wallMs": 272,
+      "analyseMs": 111.8,
+      "decodeMs": 14,
+      "engineLoadMs": 13,
+      "wallMs": 922,
       "coldStart": false
     },
     {
@@ -96,10 +96,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 104,
-      "decodeMs": 65,
+      "analyseMs": 693.8,
+      "decodeMs": 71,
       "engineLoadMs": 0,
-      "wallMs": 497,
+      "wallMs": 1516,
       "coldStart": false
     },
     {
@@ -116,10 +116,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 67.1,
-      "decodeMs": 14,
+      "analyseMs": 74.9,
+      "decodeMs": 16,
       "engineLoadMs": 0,
-      "wallMs": 273,
+      "wallMs": 971,
       "coldStart": false
     },
     {
@@ -136,10 +136,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 67.8,
-      "decodeMs": 16,
+      "analyseMs": 57.3,
+      "decodeMs": 14,
       "engineLoadMs": 0,
-      "wallMs": 315,
+      "wallMs": 211,
       "coldStart": false
     },
     {
@@ -156,10 +156,10 @@
       "bandHypothesis": "none",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 107.8,
-      "decodeMs": 11,
+      "analyseMs": 107.9,
+      "decodeMs": 14,
       "engineLoadMs": 0,
-      "wallMs": 248,
+      "wallMs": 309,
       "coldStart": false
     },
     {
@@ -176,10 +176,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 165.2,
-      "decodeMs": 38,
+      "analyseMs": 366.6,
+      "decodeMs": 34,
       "engineLoadMs": 0,
-      "wallMs": 377,
+      "wallMs": 955,
       "coldStart": false
     },
     {
@@ -196,10 +196,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": true,
       "outcome": "wrong-flagged",
-      "analyseMs": 60.9,
-      "decodeMs": 15,
+      "analyseMs": 60.7,
+      "decodeMs": 25,
       "engineLoadMs": 0,
-      "wallMs": 278,
+      "wallMs": 1479,
       "coldStart": false
     },
     {
@@ -216,10 +216,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 184,
+      "analyseMs": 208.7,
       "decodeMs": 32,
       "engineLoadMs": 0,
-      "wallMs": 534,
+      "wallMs": 1015,
       "coldStart": false
     },
     {
@@ -236,10 +236,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 64.4,
-      "decodeMs": 11,
+      "analyseMs": 87.2,
+      "decodeMs": 18,
       "engineLoadMs": 0,
-      "wallMs": 270,
+      "wallMs": 294,
       "coldStart": false
     },
     {
@@ -256,10 +256,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 55.8,
-      "decodeMs": 17,
+      "analyseMs": 50.7,
+      "decodeMs": 15,
       "engineLoadMs": 0,
-      "wallMs": 311,
+      "wallMs": 294,
       "coldStart": false
     },
     {
@@ -276,10 +276,10 @@
       "bandHypothesis": "none",
       "manualReviewRequired": true,
       "outcome": "correct-needs-review",
-      "analyseMs": 200.2,
-      "decodeMs": 24,
+      "analyseMs": 113.9,
+      "decodeMs": 21,
       "engineLoadMs": 0,
-      "wallMs": 497,
+      "wallMs": 435,
       "coldStart": false
     },
     {
@@ -296,10 +296,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 162.5,
-      "decodeMs": 20,
+      "analyseMs": 186.2,
+      "decodeMs": 18,
       "engineLoadMs": 0,
-      "wallMs": 482,
+      "wallMs": 402,
       "coldStart": false
     },
     {
@@ -316,10 +316,10 @@
       "bandHypothesis": "tolerant",
       "manualReviewRequired": true,
       "outcome": "correct-reject",
-      "analyseMs": 368.1,
-      "decodeMs": 33,
+      "analyseMs": 396.1,
+      "decodeMs": 36,
       "engineLoadMs": 0,
-      "wallMs": 1001,
+      "wallMs": 920,
       "coldStart": false
     },
     {
@@ -336,10 +336,10 @@
       "bandHypothesis": "none",
       "manualReviewRequired": true,
       "outcome": "correct-reject",
-      "analyseMs": 118.5,
-      "decodeMs": 16,
+      "analyseMs": 120.9,
+      "decodeMs": 14,
       "engineLoadMs": 0,
-      "wallMs": 369,
+      "wallMs": 312,
       "coldStart": false
     }
   ]

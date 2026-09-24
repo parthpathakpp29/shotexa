@@ -1,0 +1,3875 @@
+{
+  "environment": {
+    "forcedCtx": null,
+    "browser": "firefox",
+    "version": "155.0",
+    "os": "win32 x64",
+    "date": "2026-09-24T13:13:20.753Z"
+  },
+  "results": {
+    "limits-main-dom": {
+      "group": "limits",
+      "ctx": "main",
+      "name": "canvasLimits",
+      "params": {
+        "api": "dom",
+        "widths": [
+          1080,
+          1440
+        ],
+        "heights": [
+          8192,
+          16383,
+          16384,
+          20000,
+          30000,
+          32767,
+          32768,
+          40000,
+          50000,
+          65535,
+          65536,
+          100000
+        ]
+      },
+      "ok": true,
+      "rows": [
+        {
+          "width": 1080,
+          "height": 8192,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 16383,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 16384,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 20000,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 30000,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 32767,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 32768,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 40000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 50000,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 65535,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 65536,
+          "ok": false,
+          "reason": "",
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 100000,
+          "ok": false,
+          "reason": "",
+          "ms": 10
+        },
+        {
+          "width": 1440,
+          "height": 8192,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 16383,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 16384,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 20000,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 30000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 32767,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1440,
+          "height": 32768,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 40000,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 50000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 65535,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 65536,
+          "ok": false,
+          "reason": "",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 100000,
+          "ok": false,
+          "reason": "",
+          "ms": 0
+        }
+      ],
+      "ms": 45,
+      "maxMainStallMs": 45,
+      "memory": {
+        "baselineMiB": 437.3,
+        "peakDeltaMiB": -0.2,
+        "peakWsDeltaMiB": 0,
+        "retainedAfterMiB": -10,
+        "perPhaseDeltaMiB": {},
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 304.2
+          },
+          {
+            "name": "content-socket",
+            "deltaMiB": 0,
+            "privMiB": 6.5
+          }
+        ],
+        "samples": 0,
+        "sampleEndT": 1790253185054
+      },
+      "wallMs": 63,
+      "consoleErrors": []
+    },
+    "limits-main-offscreen": {
+      "group": "limits",
+      "ctx": "main",
+      "name": "canvasLimits",
+      "params": {
+        "api": "offscreen",
+        "widths": [
+          1080,
+          1440
+        ],
+        "heights": [
+          8192,
+          16383,
+          16384,
+          20000,
+          30000,
+          32767,
+          32768,
+          40000,
+          50000,
+          65535,
+          65536,
+          100000
+        ]
+      },
+      "ok": true,
+      "rows": [
+        {
+          "width": 1080,
+          "height": 8192,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 16383,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 16384,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 20000,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1080,
+          "height": 30000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 32767,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 32768,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 40000,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 50000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 65535,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 65536,
+          "ok": false,
+          "reason": "",
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 100000,
+          "ok": false,
+          "reason": "",
+          "ms": 5
+        },
+        {
+          "width": 1440,
+          "height": 8192,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 16383,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 16384,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 20000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 30000,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1440,
+          "height": 32767,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 32768,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 40000,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 50000,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 65535,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 65536,
+          "ok": false,
+          "reason": "",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 100000,
+          "ok": false,
+          "reason": "",
+          "ms": 0
+        }
+      ],
+      "ms": 47,
+      "maxMainStallMs": 47,
+      "memory": {
+        "baselineMiB": 413.3,
+        "peakDeltaMiB": -0.6,
+        "peakWsDeltaMiB": 0.4,
+        "retainedAfterMiB": -10.9,
+        "perPhaseDeltaMiB": {
+          "start": -0.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 300.7
+          },
+          {
+            "name": "content-socket",
+            "deltaMiB": 0,
+            "privMiB": 6.5
+          }
+        ],
+        "samples": 1,
+        "sampleEndT": 1790253193557
+      },
+      "wallMs": 66,
+      "consoleErrors": []
+    },
+    "limits-worker-offscreen": {
+      "group": "limits",
+      "ctx": "worker",
+      "name": "canvasLimits",
+      "params": {
+        "api": "offscreen",
+        "widths": [
+          1080,
+          1440
+        ],
+        "heights": [
+          8192,
+          16383,
+          16384,
+          20000,
+          30000,
+          32767,
+          32768,
+          40000,
+          50000,
+          65535,
+          65536,
+          100000
+        ]
+      },
+      "ok": true,
+      "rows": [
+        {
+          "width": 1080,
+          "height": 8192,
+          "ok": true,
+          "ms": 40
+        },
+        {
+          "width": 1080,
+          "height": 16383,
+          "ok": true,
+          "ms": 84
+        },
+        {
+          "width": 1080,
+          "height": 16384,
+          "ok": true,
+          "ms": 98
+        },
+        {
+          "width": 1080,
+          "height": 20000,
+          "ok": true,
+          "ms": 132
+        },
+        {
+          "width": 1080,
+          "height": 30000,
+          "ok": true,
+          "ms": 158
+        },
+        {
+          "width": 1080,
+          "height": 32767,
+          "ok": true,
+          "ms": 189
+        },
+        {
+          "width": 1080,
+          "height": 32768,
+          "ok": true,
+          "ms": 191
+        },
+        {
+          "width": 1080,
+          "height": 40000,
+          "ok": true,
+          "ms": 251
+        },
+        {
+          "width": 1080,
+          "height": 50000,
+          "ok": true,
+          "ms": 353
+        },
+        {
+          "width": 1080,
+          "height": 65535,
+          "ok": true,
+          "ms": 439
+        },
+        {
+          "width": 1080,
+          "height": 65536,
+          "ok": false,
+          "reason": "",
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 100000,
+          "ok": false,
+          "reason": "",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 8192,
+          "ok": true,
+          "ms": 130
+        },
+        {
+          "width": 1440,
+          "height": 16383,
+          "ok": true,
+          "ms": 125
+        },
+        {
+          "width": 1440,
+          "height": 16384,
+          "ok": true,
+          "ms": 141
+        },
+        {
+          "width": 1440,
+          "height": 20000,
+          "ok": true,
+          "ms": 172
+        },
+        {
+          "width": 1440,
+          "height": 30000,
+          "ok": true,
+          "ms": 247
+        },
+        {
+          "width": 1440,
+          "height": 32767,
+          "ok": true,
+          "ms": 279
+        },
+        {
+          "width": 1440,
+          "height": 32768,
+          "ok": true,
+          "ms": 277
+        },
+        {
+          "width": 1440,
+          "height": 40000,
+          "ok": true,
+          "ms": 323
+        },
+        {
+          "width": 1440,
+          "height": 50000,
+          "ok": true,
+          "ms": 447
+        },
+        {
+          "width": 1440,
+          "height": 65535,
+          "ok": true,
+          "ms": 566
+        },
+        {
+          "width": 1440,
+          "height": 65536,
+          "ok": false,
+          "reason": "",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 100000,
+          "ok": false,
+          "reason": "",
+          "ms": 2
+        }
+      ],
+      "ms": 4645,
+      "maxMainStallMs": 16,
+      "memory": {
+        "baselineMiB": 430.3,
+        "peakDeltaMiB": 357.4,
+        "peakWsDeltaMiB": 549.3,
+        "retainedAfterMiB": -4.2,
+        "perPhaseDeltaMiB": {
+          "start": 357.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 361.3,
+            "privMiB": 407.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          },
+          {
+            "name": "content-socket",
+            "deltaMiB": 0,
+            "privMiB": 6.5
+          }
+        ],
+        "samples": 30,
+        "sampleEndT": 1790253205126
+      },
+      "wallMs": 4668,
+      "consoleErrors": []
+    },
+    "decode-full-1080x5000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x5000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 5000,
+      "bmW": 1080,
+      "bmH": 5000,
+      "decodeMs": 92,
+      "decodedMiB": 20.6,
+      "encodedKiB": 5582,
+      "ms": 930,
+      "maxMainStallMs": 77,
+      "memory": {
+        "baselineMiB": 435.8,
+        "peakDeltaMiB": 20.7,
+        "peakWsDeltaMiB": 41.8,
+        "retainedAfterMiB": 11.3,
+        "perPhaseDeltaMiB": {
+          "start": -8.8,
+          "decode": 20.7,
+          "hold": 15.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 23.5,
+            "privMiB": 330.9
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 6.2,
+            "privMiB": 53.8
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790253214883
+      },
+      "wallMs": 940,
+      "consoleErrors": []
+    },
+    "decode-full-1080x10000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 10000,
+      "bmW": 1080,
+      "bmH": 10000,
+      "decodeMs": 142,
+      "decodedMiB": 41.2,
+      "encodedKiB": 5362,
+      "ms": 957,
+      "maxMainStallMs": 125,
+      "memory": {
+        "baselineMiB": 443.1,
+        "peakDeltaMiB": 17.8,
+        "peakWsDeltaMiB": 55.1,
+        "retainedAfterMiB": 1.6,
+        "perPhaseDeltaMiB": {
+          "decode": 17.8,
+          "hold": 8.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 10.6,
+            "privMiB": 336.8
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 7.7,
+            "privMiB": 52.5
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 4,
+        "sampleEndT": 1790253221897
+      },
+      "wallMs": 1011,
+      "consoleErrors": []
+    },
+    "decode-full-1080x20000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x20000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 20000,
+      "bmW": 1080,
+      "bmH": 20000,
+      "decodeMs": 191,
+      "decodedMiB": 82.4,
+      "encodedKiB": 6034,
+      "ms": 1081,
+      "maxMainStallMs": 179,
+      "memory": {
+        "baselineMiB": 437.7,
+        "peakDeltaMiB": 47.3,
+        "peakWsDeltaMiB": 129.4,
+        "retainedAfterMiB": 14.2,
+        "perPhaseDeltaMiB": {
+          "start": -0.5,
+          "decode": 47.3,
+          "hold": 40.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 41.1,
+            "privMiB": 360.9
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 6.7,
+            "privMiB": 52.6
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790253229001
+      },
+      "wallMs": 1105,
+      "consoleErrors": []
+    },
+    "decode-full-1080x30000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 30000,
+      "decodeMs": 283,
+      "decodedMiB": 123.6,
+      "encodedKiB": 6512,
+      "ms": 1161,
+      "maxMainStallMs": 264,
+      "memory": {
+        "baselineMiB": 444.8,
+        "peakDeltaMiB": 46.5,
+        "peakWsDeltaMiB": 166.2,
+        "retainedAfterMiB": 42.2,
+        "perPhaseDeltaMiB": {
+          "start": -8.3,
+          "decode": 46.5,
+          "hold": 39.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 47.4,
+            "privMiB": 365.5
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 7.7,
+            "privMiB": 54
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790253236375
+      },
+      "wallMs": 1199,
+      "consoleErrors": []
+    },
+    "decode-full-1440x20000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1440x20000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1440,
+      "srcH": 20000,
+      "bmW": 1440,
+      "bmH": 20000,
+      "decodeMs": 285,
+      "decodedMiB": 109.9,
+      "encodedKiB": 9609,
+      "ms": 1238,
+      "maxMainStallMs": 258,
+      "memory": {
+        "baselineMiB": 449.6,
+        "peakDeltaMiB": 82.3,
+        "peakWsDeltaMiB": 186.6,
+        "retainedAfterMiB": 24,
+        "perPhaseDeltaMiB": {
+          "start": 48,
+          "decode": 82.3,
+          "hold": 28.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 71.6,
+            "privMiB": 403.1
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 10.7,
+            "privMiB": 56.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253244896
+      },
+      "wallMs": 1268,
+      "consoleErrors": []
+    },
+    "decode-full-1080x20000-jpeg": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x20000.jpg",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 20000,
+      "bmW": 1080,
+      "bmH": 20000,
+      "decodeMs": 241,
+      "decodedMiB": 82.4,
+      "encodedKiB": 3718,
+      "ms": 1011,
+      "maxMainStallMs": 236,
+      "memory": {
+        "baselineMiB": 470.2,
+        "peakDeltaMiB": 33.8,
+        "peakWsDeltaMiB": 110.9,
+        "retainedAfterMiB": 26.9,
+        "perPhaseDeltaMiB": {
+          "start": -0.5,
+          "decode": 33.8,
+          "hold": 30.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 28.8,
+            "privMiB": 380.7
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 5.5,
+            "privMiB": 51.2
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790253251829
+      },
+      "wallMs": 1066,
+      "consoleErrors": []
+    },
+    "decode-full-1080x30000-jpeg": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.jpg",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 30000,
+      "decodeMs": 334,
+      "decodedMiB": 123.6,
+      "encodedKiB": 5012,
+      "ms": 1100,
+      "maxMainStallMs": 323,
+      "memory": {
+        "baselineMiB": 455.3,
+        "peakDeltaMiB": 42.7,
+        "peakWsDeltaMiB": 163.3,
+        "retainedAfterMiB": 12.3,
+        "perPhaseDeltaMiB": {
+          "start": 0,
+          "decode": 42.7,
+          "hold": 37.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 36.5,
+            "privMiB": 376.3
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 6.2,
+            "privMiB": 52.4
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253258985
+      },
+      "wallMs": 1194,
+      "consoleErrors": []
+    },
+    "decode-full-1080x16383-webp": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x16383.webp",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 16383,
+      "bmW": 1080,
+      "bmH": 16383,
+      "decodeMs": 276,
+      "decodedMiB": 67.5,
+      "encodedKiB": 530,
+      "ms": 937,
+      "maxMainStallMs": 276,
+      "memory": {
+        "baselineMiB": 450.2,
+        "peakDeltaMiB": 73.9,
+        "peakWsDeltaMiB": 137.5,
+        "retainedAfterMiB": 0.9,
+        "perPhaseDeltaMiB": {
+          "start": -0.7,
+          "decode": 73.9,
+          "hold": 6.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 69.5,
+            "privMiB": 117
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 4.9,
+            "privMiB": 340.4
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253266608
+      },
+      "wallMs": 977,
+      "consoleErrors": []
+    },
+    "decode-full-1080x30000-png-main": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 30000,
+      "decodeMs": 418,
+      "decodedMiB": 123.6,
+      "encodedKiB": 6512,
+      "ms": 1420,
+      "maxMainStallMs": 411,
+      "memory": {
+        "baselineMiB": 439.2,
+        "peakDeltaMiB": 60.6,
+        "peakWsDeltaMiB": 178.6,
+        "retainedAfterMiB": 12.8,
+        "perPhaseDeltaMiB": {
+          "start": 0.1,
+          "decode": 60.6,
+          "hold": 54.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 50,
+            "privMiB": 384.6
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 10.6,
+            "privMiB": 48.2
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790253274308
+      },
+      "wallMs": 1439,
+      "consoleErrors": []
+    },
+    "decode-thumb-1080x30000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "thumb",
+        "thumbWidth": 240,
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 240,
+      "bmH": 6667,
+      "decodeMs": 500,
+      "decodedMiB": 6.1,
+      "encodedKiB": 6512,
+      "ms": 1379,
+      "maxMainStallMs": 485,
+      "memory": {
+        "baselineMiB": 451.8,
+        "peakDeltaMiB": 23.7,
+        "peakWsDeltaMiB": 148.8,
+        "retainedAfterMiB": 8.5,
+        "perPhaseDeltaMiB": {
+          "start": 19.9,
+          "decode": 23.7,
+          "hold": 16.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 17.8,
+            "privMiB": 348.6
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 14.3,
+            "privMiB": 59.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253281775
+      },
+      "wallMs": 1399,
+      "consoleErrors": []
+    },
+    "decode-thumb-1440x20000-jpeg": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1440x20000.jpg",
+        "mode": "thumb",
+        "thumbWidth": 240,
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1440,
+      "srcH": 20000,
+      "bmW": 240,
+      "bmH": 3334,
+      "decodeMs": 504,
+      "decodedMiB": 3.1,
+      "encodedKiB": 5579,
+      "ms": 1320,
+      "maxMainStallMs": 490,
+      "memory": {
+        "baselineMiB": 449.9,
+        "peakDeltaMiB": 39.8,
+        "peakWsDeltaMiB": 149.5,
+        "retainedAfterMiB": 30.4,
+        "perPhaseDeltaMiB": {
+          "start": -8.3,
+          "decode": 39.8,
+          "hold": 33.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 37.8,
+            "privMiB": 366.9
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 10.3,
+            "privMiB": 55.7
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253289192
+      },
+      "wallMs": 1336,
+      "consoleErrors": []
+    },
+    "decode-crop-1080x30000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "crop",
+        "cropY": 14000,
+        "cropH": 2048,
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 2048,
+      "decodeMs": 288,
+      "decodedMiB": 8.4,
+      "encodedKiB": 6512,
+      "ms": 1153,
+      "maxMainStallMs": 275,
+      "memory": {
+        "baselineMiB": 445.2,
+        "peakDeltaMiB": 65.2,
+        "peakWsDeltaMiB": 182.4,
+        "retainedAfterMiB": 17,
+        "perPhaseDeltaMiB": {
+          "start": 0.1,
+          "decode": 63.3,
+          "hold": 65.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 55.3,
+            "privMiB": 388
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 9.9,
+            "privMiB": 55.6
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253296248
+      },
+      "wallMs": 1171,
+      "consoleErrors": []
+    },
+    "decode-crop-1080x30000-jpeg": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.jpg",
+        "mode": "crop",
+        "cropY": 14000,
+        "cropH": 2048,
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 2048,
+      "decodeMs": 363,
+      "decodedMiB": 8.4,
+      "encodedKiB": 5012,
+      "ms": 1120,
+      "maxMainStallMs": 351,
+      "memory": {
+        "baselineMiB": 463,
+        "peakDeltaMiB": 43.4,
+        "peakWsDeltaMiB": 141.3,
+        "retainedAfterMiB": 10.2,
+        "perPhaseDeltaMiB": {
+          "start": 0.2,
+          "decode": 43.4,
+          "hold": 19.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 37.1,
+            "privMiB": 386.7
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 6.2,
+            "privMiB": 52.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790253303917
+      },
+      "wallMs": 1136,
+      "consoleErrors": []
+    },
+    "bitmaps-12x1080x10000-closed": {
+      "group": "lifecycle",
+      "ctx": "worker",
+      "name": "bitmapLifecycle",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "count": 12,
+        "close": true
+      },
+      "ok": true,
+      "decoded": 12,
+      "closed": true,
+      "gcAvailable": false,
+      "ms": 3628,
+      "maxMainStallMs": 190,
+      "memory": {
+        "baselineMiB": 445.4,
+        "peakDeltaMiB": 54.2,
+        "peakWsDeltaMiB": 66.5,
+        "retainedAfterMiB": -42.1,
+        "perPhaseDeltaMiB": {
+          "start": -0.6,
+          "decoding": 54.2,
+          "settle": -15.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 54.2,
+            "privMiB": 359.2
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 0.5,
+            "privMiB": 46.5
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.5
+          }
+        ],
+        "samples": 20,
+        "sampleEndT": 1790255612748
+      },
+      "wallMs": 3638,
+      "consoleErrors": []
+    },
+    "bitmaps-12x1080x10000-leaked": {
+      "group": "lifecycle",
+      "ctx": "worker",
+      "name": "bitmapLifecycle",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "count": 12,
+        "close": false
+      },
+      "ok": true,
+      "decoded": 12,
+      "closed": false,
+      "ms": 3251,
+      "maxMainStallMs": 164,
+      "memory": {
+        "baselineMiB": 456.5,
+        "peakDeltaMiB": 42.4,
+        "peakWsDeltaMiB": 509.3,
+        "retainedAfterMiB": -5,
+        "perPhaseDeltaMiB": {
+          "start": 0,
+          "decoding": 42.4,
+          "settle": 12.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 35.5,
+            "privMiB": 378.9
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 6.9,
+            "privMiB": 53.1
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 20,
+        "sampleEndT": 1790253322743
+      },
+      "wallMs": 3270,
+      "consoleErrors": []
+    },
+    "objecturls-20x10MiB-revoked": {
+      "group": "lifecycle",
+      "ctx": "main",
+      "name": "objectUrlLifecycle",
+      "params": {
+        "count": 20,
+        "mib": 10,
+        "revoke": true
+      },
+      "ok": true,
+      "created": 20,
+      "mibEach": 10,
+      "revoked": true,
+      "ms": 2558,
+      "maxMainStallMs": 557,
+      "memory": {
+        "baselineMiB": 449.1,
+        "peakDeltaMiB": 434.4,
+        "peakWsDeltaMiB": 433.7,
+        "retainedAfterMiB": 422.4,
+        "perPhaseDeltaMiB": {
+          "create": 257.8,
+          "settle": 434.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 232.1,
+            "privMiB": 270.2
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 202.9,
+            "privMiB": 546.3
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 12,
+        "sampleEndT": 1790253331169
+      },
+      "wallMs": 2578,
+      "consoleErrors": []
+    },
+    "objecturls-20x10MiB-kept": {
+      "group": "lifecycle",
+      "ctx": "main",
+      "name": "objectUrlLifecycle",
+      "params": {
+        "count": 20,
+        "mib": 10,
+        "revoke": false
+      },
+      "ok": true,
+      "created": 20,
+      "mibEach": 10,
+      "revoked": false,
+      "ms": 2571,
+      "maxMainStallMs": 571,
+      "memory": {
+        "baselineMiB": 652.1,
+        "peakDeltaMiB": 212.8,
+        "peakWsDeltaMiB": 212.6,
+        "retainedAfterMiB": 201.2,
+        "perPhaseDeltaMiB": {
+          "create": 47.4,
+          "settle": 212.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 213.1,
+            "privMiB": 251.2
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 173,
+            "privMiB": 546.8
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790253340308
+      },
+      "wallMs": 2596,
+      "consoleErrors": []
+    },
+    "single-1080x5000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 5000,
+      "canvasMiB": 20.6,
+      "cornerAlpha": 255,
+      "encodeMs": 254,
+      "blobType": "image/png",
+      "bytes": 3673170,
+      "encW": 1080,
+      "encH": 5000,
+      "verified": true,
+      "ms": 684,
+      "maxMainStallMs": 81,
+      "memory": {
+        "baselineMiB": 652,
+        "peakDeltaMiB": 2,
+        "peakWsDeltaMiB": 0.2,
+        "retainedAfterMiB": -113.9,
+        "perPhaseDeltaMiB": {
+          "start": 2,
+          "decode+draw": -92.4,
+          "encode": -88.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 2,
+            "privMiB": 542.2
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          },
+          {
+            "name": "content-socket",
+            "deltaMiB": 0,
+            "privMiB": 6.5
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253348360
+      },
+      "wallMs": 703,
+      "consoleErrors": []
+    },
+    "single-1080x5000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 5000,
+      "canvasMiB": 20.6,
+      "cornerAlpha": 255,
+      "encodeMs": 114,
+      "blobType": "image/jpeg",
+      "bytes": 2619932,
+      "encW": 1080,
+      "encH": 5000,
+      "verified": true,
+      "ms": 448,
+      "maxMainStallMs": 80,
+      "memory": {
+        "baselineMiB": 448.7,
+        "peakDeltaMiB": 70,
+        "peakWsDeltaMiB": 89.3,
+        "retainedAfterMiB": 17.5,
+        "perPhaseDeltaMiB": {
+          "start": 40.4,
+          "decode+draw": 66,
+          "encode": 70
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 43.7,
+            "privMiB": 379.7
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 26.2,
+            "privMiB": 72.5
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 4,
+        "sampleEndT": 1790253354937
+      },
+      "wallMs": 472,
+      "consoleErrors": []
+    },
+    "single-1080x5000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 5000,
+      "canvasMiB": 20.6,
+      "cornerAlpha": 255,
+      "encodeMs": 1232,
+      "blobType": "image/webp",
+      "bytes": 1323970,
+      "encW": 1080,
+      "encH": 5000,
+      "verified": true,
+      "ms": 1590,
+      "maxMainStallMs": 82,
+      "memory": {
+        "baselineMiB": 455.5,
+        "peakDeltaMiB": 110.3,
+        "peakWsDeltaMiB": 130.5,
+        "retainedAfterMiB": 31.2,
+        "perPhaseDeltaMiB": {
+          "start": 40,
+          "decode+draw": 44,
+          "encode": 110.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 72.9,
+            "privMiB": 118.5
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 37.4,
+            "privMiB": 380.7
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 14,
+        "sampleEndT": 1790253362399
+      },
+      "wallMs": 1606,
+      "consoleErrors": []
+    },
+    "single-1080x10000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 10000,
+      "canvasMiB": 41.2,
+      "cornerAlpha": 255,
+      "encodeMs": 278,
+      "blobType": "image/png",
+      "bytes": 3641975,
+      "encW": 1080,
+      "encH": 10000,
+      "verified": true,
+      "ms": 681,
+      "maxMainStallMs": 126,
+      "memory": {
+        "baselineMiB": 458.9,
+        "peakDeltaMiB": 83,
+        "peakWsDeltaMiB": 122.9,
+        "retainedAfterMiB": 38.9,
+        "perPhaseDeltaMiB": {
+          "start": -1.5,
+          "decode+draw": 42.6,
+          "encode": 83
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 46.6,
+            "privMiB": 93.4
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 36.9,
+            "privMiB": 381.8
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790253368950
+      },
+      "wallMs": 693,
+      "consoleErrors": []
+    },
+    "single-1080x10000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 10000,
+      "canvasMiB": 41.2,
+      "cornerAlpha": 255,
+      "encodeMs": 173,
+      "blobType": "image/jpeg",
+      "bytes": 3098459,
+      "encW": 1080,
+      "encH": 10000,
+      "verified": true,
+      "ms": 614,
+      "maxMainStallMs": 110,
+      "memory": {
+        "baselineMiB": 450.6,
+        "peakDeltaMiB": 88.1,
+        "peakWsDeltaMiB": 142.7,
+        "retainedAfterMiB": 13.3,
+        "perPhaseDeltaMiB": {
+          "start": 0.5,
+          "decode+draw": 86.3,
+          "encode": 88.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 45.7,
+            "privMiB": 91.1
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 42.1,
+            "privMiB": 380.6
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790253376168
+      },
+      "wallMs": 632,
+      "consoleErrors": []
+    },
+    "single-1080x10000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 10000,
+      "canvasMiB": 41.2,
+      "cornerAlpha": 255,
+      "encodeMs": 1888,
+      "blobType": "image/webp",
+      "bytes": 1442968,
+      "encW": 1080,
+      "encH": 10000,
+      "verified": true,
+      "ms": 2290,
+      "maxMainStallMs": 104,
+      "memory": {
+        "baselineMiB": 455.2,
+        "peakDeltaMiB": 160.7,
+        "peakWsDeltaMiB": 201,
+        "retainedAfterMiB": 2.5,
+        "perPhaseDeltaMiB": {
+          "start": 0.2,
+          "decode+draw": 43.6,
+          "encode": 160.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 130.9,
+            "privMiB": 176
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 29.8,
+            "privMiB": 372.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 20,
+        "sampleEndT": 1790253384118
+      },
+      "wallMs": 2312,
+      "consoleErrors": []
+    },
+    "single-1080x20000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 20000,
+      "canvasMiB": 82.4,
+      "cornerAlpha": 255,
+      "encodeMs": 371,
+      "blobType": "image/png",
+      "bytes": 4299061,
+      "encW": 1080,
+      "encH": 20000,
+      "verified": true,
+      "ms": 952,
+      "maxMainStallMs": 185,
+      "memory": {
+        "baselineMiB": 455.4,
+        "peakDeltaMiB": 128,
+        "peakWsDeltaMiB": 212.3,
+        "retainedAfterMiB": 40.2,
+        "perPhaseDeltaMiB": {
+          "start": 0,
+          "decode+draw": 47.2,
+          "encode": 128
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 88.1,
+            "privMiB": 133.6
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 39.9,
+            "privMiB": 382.6
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253390838
+      },
+      "wallMs": 969,
+      "consoleErrors": []
+    },
+    "single-1080x20000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 20000,
+      "canvasMiB": 82.4,
+      "cornerAlpha": 255,
+      "encodeMs": 345,
+      "blobType": "image/jpeg",
+      "bytes": 4491112,
+      "encW": 1080,
+      "encH": 20000,
+      "verified": true,
+      "ms": 977,
+      "maxMainStallMs": 192,
+      "memory": {
+        "baselineMiB": 459.3,
+        "peakDeltaMiB": 134.8,
+        "peakWsDeltaMiB": 217.4,
+        "retainedAfterMiB": 11.5,
+        "perPhaseDeltaMiB": {
+          "start": 8,
+          "decode+draw": 54.1,
+          "encode": 134.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 87.8,
+            "privMiB": 133.6
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 47,
+            "privMiB": 393.6
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 9,
+        "sampleEndT": 1790253398014
+      },
+      "wallMs": 1025,
+      "consoleErrors": []
+    },
+    "single-1080x20000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "NS_ERROR_FAILURE: ",
+      "ms": 773,
+      "maxMainStallMs": 176,
+      "memory": {
+        "baselineMiB": 456,
+        "peakDeltaMiB": 236.8,
+        "peakWsDeltaMiB": 314.7,
+        "retainedAfterMiB": 38.8,
+        "perPhaseDeltaMiB": {
+          "start": -6.9,
+          "decode+draw": 46.6,
+          "encode": 236.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 197.7,
+            "privMiB": 244.1
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 46.1,
+            "privMiB": 381.8
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253405094
+      },
+      "wallMs": 784,
+      "consoleErrors": []
+    },
+    "single-1080x30000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "canvasMiB": 123.6,
+      "cornerAlpha": 255,
+      "encodeMs": 499,
+      "blobType": "image/png",
+      "bytes": 4813277,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 1328,
+      "maxMainStallMs": 242,
+      "memory": {
+        "baselineMiB": 457.8,
+        "peakDeltaMiB": 179.3,
+        "peakWsDeltaMiB": 373,
+        "retainedAfterMiB": 38.4,
+        "perPhaseDeltaMiB": {
+          "start": -1.7,
+          "decode+draw": 163.7,
+          "encode": 179.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 141.1,
+            "privMiB": 186.4
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 39.9,
+            "privMiB": 383.7
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 12,
+        "sampleEndT": 1790253412540
+      },
+      "wallMs": 1351,
+      "consoleErrors": []
+    },
+    "single-1080x30000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "canvasMiB": 123.6,
+      "cornerAlpha": 255,
+      "encodeMs": 448,
+      "blobType": "image/jpeg",
+      "bytes": 6039690,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 1200,
+      "maxMainStallMs": 267,
+      "memory": {
+        "baselineMiB": 452.4,
+        "peakDeltaMiB": 186.2,
+        "peakWsDeltaMiB": 304.3,
+        "retainedAfterMiB": 53.1,
+        "perPhaseDeltaMiB": {
+          "start": 49.1,
+          "decode+draw": 60.7,
+          "encode": 186.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 133.4,
+            "privMiB": 180
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 52.8,
+            "privMiB": 392.1
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790253420601
+      },
+      "wallMs": 1220,
+      "consoleErrors": []
+    },
+    "single-1080x30000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "NS_ERROR_FAILURE: ",
+      "ms": 1219,
+      "maxMainStallMs": 253,
+      "memory": {
+        "baselineMiB": 454.1,
+        "peakDeltaMiB": 312.3,
+        "peakWsDeltaMiB": 413.5,
+        "retainedAfterMiB": 12.4,
+        "perPhaseDeltaMiB": {
+          "start": 51.8,
+          "decode+draw": 142.5,
+          "encode": 312.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 296.2,
+            "privMiB": 340.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 15.9,
+            "privMiB": 358.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 10,
+        "sampleEndT": 1790253427754
+      },
+      "wallMs": 1233,
+      "consoleErrors": []
+    },
+    "single-1440x20000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 20000,
+      "canvasMiB": 109.9,
+      "cornerAlpha": 255,
+      "encodeMs": 629,
+      "blobType": "image/png",
+      "bytes": 6554145,
+      "encW": 1440,
+      "encH": 20000,
+      "verified": true,
+      "ms": 1430,
+      "maxMainStallMs": 270,
+      "memory": {
+        "baselineMiB": 454.7,
+        "peakDeltaMiB": 137.6,
+        "peakWsDeltaMiB": 246.7,
+        "retainedAfterMiB": 17.5,
+        "perPhaseDeltaMiB": {
+          "start": 48.7,
+          "decode+draw": 73,
+          "encode": 137.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 120.3,
+            "privMiB": 167
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 17.8,
+            "privMiB": 358.5
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 13,
+        "sampleEndT": 1790253435113
+      },
+      "wallMs": 1459,
+      "consoleErrors": []
+    },
+    "single-1440x20000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 20000,
+      "canvasMiB": 109.9,
+      "cornerAlpha": 255,
+      "encodeMs": 470,
+      "blobType": "image/jpeg",
+      "bytes": 6802586,
+      "encW": 1440,
+      "encH": 20000,
+      "verified": true,
+      "ms": 1291,
+      "maxMainStallMs": 251,
+      "memory": {
+        "baselineMiB": 468.2,
+        "peakDeltaMiB": 181.6,
+        "peakWsDeltaMiB": 374.3,
+        "retainedAfterMiB": 59.1,
+        "perPhaseDeltaMiB": {
+          "start": 51.1,
+          "decode+draw": 174,
+          "encode": 181.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 119.6,
+            "privMiB": 165.7
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 62.7,
+            "privMiB": 417.4
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790253442144
+      },
+      "wallMs": 1306,
+      "consoleErrors": []
+    },
+    "single-1440x20000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "NS_ERROR_FAILURE: ",
+      "ms": 1156,
+      "maxMainStallMs": 247,
+      "memory": {
+        "baselineMiB": 462.4,
+        "peakDeltaMiB": 341,
+        "peakWsDeltaMiB": 427.2,
+        "retainedAfterMiB": 17.9,
+        "perPhaseDeltaMiB": {
+          "start": 43.1,
+          "decode+draw": 89,
+          "encode": 341
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 262.9,
+            "privMiB": 309.2
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 78.1,
+            "privMiB": 427.2
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 10,
+        "sampleEndT": 1790253449205
+      },
+      "wallMs": 1194,
+      "consoleErrors": []
+    },
+    "single-1080x20000-png-main": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 20000,
+      "canvasMiB": 82.4,
+      "cornerAlpha": 255,
+      "encodeMs": 371,
+      "blobType": "image/png",
+      "bytes": 4299061,
+      "encW": 1080,
+      "encH": 20000,
+      "verified": true,
+      "ms": 902,
+      "maxMainStallMs": 296,
+      "memory": {
+        "baselineMiB": 455.7,
+        "peakDeltaMiB": 96.4,
+        "peakWsDeltaMiB": 181.8,
+        "retainedAfterMiB": 8.8,
+        "perPhaseDeltaMiB": {
+          "start": 42.2,
+          "decode+draw": 16,
+          "encode": 96.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 89.8,
+            "privMiB": 128.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 6.6,
+            "privMiB": 356.3
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253456601
+      },
+      "wallMs": 919,
+      "consoleErrors": []
+    },
+    "single-1080x30000-jpeg-main": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "canvasMiB": 123.6,
+      "cornerAlpha": 255,
+      "encodeMs": 496,
+      "blobType": "image/jpeg",
+      "bytes": 6039690,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 1217,
+      "maxMainStallMs": 446,
+      "memory": {
+        "baselineMiB": 453.9,
+        "peakDeltaMiB": 143.8,
+        "peakWsDeltaMiB": 329.8,
+        "retainedAfterMiB": 14.6,
+        "perPhaseDeltaMiB": {
+          "start": 57.3,
+          "decode+draw": 18.6,
+          "encode": 143.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 135.4,
+            "privMiB": 174.1
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 8.3,
+            "privMiB": 356.4
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 10,
+        "sampleEndT": 1790253463822
+      },
+      "wallMs": 1237,
+      "consoleErrors": []
+    },
+    "tiled-1080x5000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 5000,
+      "tiles": 3,
+      "tileMiB": 8.4,
+      "readbackMs": 26,
+      "peakDecodedMiB": 20.6,
+      "blobType": "image/png",
+      "bytes": 4138940,
+      "encW": 1080,
+      "encH": 5000,
+      "verified": true,
+      "ms": 1049,
+      "maxMainStallMs": 131,
+      "memory": {
+        "baselineMiB": 462.2,
+        "peakDeltaMiB": 79.9,
+        "peakWsDeltaMiB": 106,
+        "retainedAfterMiB": -0.8,
+        "perPhaseDeltaMiB": {
+          "start": 23.4,
+          "compose+encode": 79.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 44.2,
+            "privMiB": 393
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 36.4,
+            "privMiB": 82.1
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 9,
+        "sampleEndT": 1790253470870
+      },
+      "wallMs": 1064,
+      "consoleErrors": []
+    },
+    "tiled-1080x10000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 10000,
+      "tiles": 5,
+      "tileMiB": 8.4,
+      "readbackMs": 47,
+      "peakDecodedMiB": 41.2,
+      "blobType": "image/png",
+      "bytes": 3990035,
+      "encW": 1080,
+      "encH": 10000,
+      "verified": true,
+      "ms": 1325,
+      "maxMainStallMs": 107,
+      "memory": {
+        "baselineMiB": 462.3,
+        "peakDeltaMiB": 70.6,
+        "peakWsDeltaMiB": 124.3,
+        "retainedAfterMiB": 22.2,
+        "perPhaseDeltaMiB": {
+          "start": -7.3,
+          "compose+encode": 70.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 64.9,
+            "privMiB": 110.7
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 13.9,
+            "privMiB": 354.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790253478695
+      },
+      "wallMs": 1345,
+      "consoleErrors": []
+    },
+    "tiled-1080x20000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 20000,
+      "tiles": 10,
+      "tileMiB": 8.4,
+      "readbackMs": 103,
+      "peakDecodedMiB": 82.4,
+      "blobType": "image/png",
+      "bytes": 4527157,
+      "encW": 1080,
+      "encH": 20000,
+      "verified": true,
+      "ms": 1951,
+      "maxMainStallMs": 189,
+      "memory": {
+        "baselineMiB": 470.6,
+        "peakDeltaMiB": 134.8,
+        "peakWsDeltaMiB": 230.2,
+        "retainedAfterMiB": -1.4,
+        "perPhaseDeltaMiB": {
+          "start": 16.8,
+          "compose+encode": 134.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 139.9,
+            "privMiB": 184.7
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 2.1,
+            "privMiB": 353.5
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 18,
+        "sampleEndT": 1790253486457
+      },
+      "wallMs": 1961,
+      "consoleErrors": []
+    },
+    "tiled-1080x30000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "tiles": 15,
+      "tileMiB": 8.4,
+      "readbackMs": 130,
+      "peakDecodedMiB": 123.6,
+      "blobType": "image/png",
+      "bytes": 4889315,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 2696,
+      "maxMainStallMs": 255,
+      "memory": {
+        "baselineMiB": 454.4,
+        "peakDeltaMiB": 170.9,
+        "peakWsDeltaMiB": 304.4,
+        "retainedAfterMiB": 109,
+        "perPhaseDeltaMiB": {
+          "start": 50.1,
+          "compose+encode": 170.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 155,
+            "privMiB": 200.8
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 16.4,
+            "privMiB": 358.1
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 25,
+        "sampleEndT": 1790253495926
+      },
+      "wallMs": 2710,
+      "consoleErrors": []
+    },
+    "tiled-1440x20000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 20000,
+      "tiles": 10,
+      "tileMiB": 11.3,
+      "readbackMs": 142,
+      "peakDecodedMiB": 109.9,
+      "blobType": "image/png",
+      "bytes": 7080024,
+      "encW": 1440,
+      "encH": 20000,
+      "verified": true,
+      "ms": 2807,
+      "maxMainStallMs": 261,
+      "memory": {
+        "baselineMiB": 461.3,
+        "peakDeltaMiB": 141.5,
+        "peakWsDeltaMiB": 263.9,
+        "retainedAfterMiB": 84.5,
+        "perPhaseDeltaMiB": {
+          "start": 70.1,
+          "compose+encode": 141.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 145.9,
+            "privMiB": 191.1
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          },
+          {
+            "name": "content-socket",
+            "deltaMiB": 0,
+            "privMiB": 6.5
+          }
+        ],
+        "samples": 26,
+        "sampleEndT": 1790253504431
+      },
+      "wallMs": 2827,
+      "consoleErrors": []
+    },
+    "tiled-1080x30000-png-main": {
+      "group": "export-tiled",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "tiles": 15,
+      "tileMiB": 8.4,
+      "readbackMs": 84,
+      "peakDecodedMiB": 123.6,
+      "blobType": "image/png",
+      "bytes": 4889315,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 2667,
+      "maxMainStallMs": 2384,
+      "memory": {
+        "baselineMiB": 463.6,
+        "peakDeltaMiB": 278.1,
+        "peakWsDeltaMiB": 403.4,
+        "retainedAfterMiB": 227.3,
+        "perPhaseDeltaMiB": {
+          "start": 56.4,
+          "compose+encode": 278.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 230.8,
+            "privMiB": 268.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 48,
+            "privMiB": 405
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 25,
+        "sampleEndT": 1790253512954
+      },
+      "wallMs": 2686,
+      "consoleErrors": []
+    },
+    "split-1080x30000-jpeg-4096": {
+      "group": "export-split",
+      "ctx": "worker",
+      "name": "exportSplit",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 4096,
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "parts": 8,
+      "bytes": 6044102,
+      "peakDecodedMiB": 123.6,
+      "verified": true,
+      "ms": 1080,
+      "maxMainStallMs": 269,
+      "memory": {
+        "baselineMiB": 465.8,
+        "peakDeltaMiB": 73.1,
+        "peakWsDeltaMiB": 208.1,
+        "retainedAfterMiB": 46.6,
+        "perPhaseDeltaMiB": {
+          "start": 0,
+          "compose+encode": 73.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 47.3,
+            "privMiB": 398
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 25.8,
+            "privMiB": 73
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 9,
+        "sampleEndT": 1790253520314
+      },
+      "wallMs": 1109,
+      "consoleErrors": []
+    },
+    "split-1440x20000-webp-4096": {
+      "group": "export-split",
+      "ctx": "worker",
+      "name": "exportSplit",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "tileHeight": 4096,
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 20000,
+      "parts": 5,
+      "bytes": 2700014,
+      "peakDecodedMiB": 109.9,
+      "verified": true,
+      "ms": 5423,
+      "maxMainStallMs": 257,
+      "memory": {
+        "baselineMiB": 463.5,
+        "peakDeltaMiB": 116.9,
+        "peakWsDeltaMiB": 245.7,
+        "retainedAfterMiB": -5.8,
+        "perPhaseDeltaMiB": {
+          "start": 55.5,
+          "compose+encode": 116.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 61.5,
+            "privMiB": 411.9
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 55.4,
+            "privMiB": 100.6
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 40,
+        "sampleEndT": 1790253531794
+      },
+      "wallMs": 5453,
+      "consoleErrors": []
+    },
+    "multi-8x1080x2400-single-all": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 19200,
+      "canvasMiB": 79.1,
+      "cornerAlpha": 255,
+      "encodeMs": 346,
+      "blobType": "image/png",
+      "bytes": 3622146,
+      "encW": 1080,
+      "encH": 19200,
+      "verified": true,
+      "ms": 960,
+      "maxMainStallMs": 34,
+      "memory": {
+        "baselineMiB": 471.8,
+        "peakDeltaMiB": 122.9,
+        "peakWsDeltaMiB": 271,
+        "retainedAfterMiB": 41,
+        "perPhaseDeltaMiB": {
+          "start": 1.2,
+          "decode+draw": 119.2,
+          "encode": 122.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 84.6,
+            "privMiB": 129.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 38.3,
+            "privMiB": 396.8
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253538806
+      },
+      "wallMs": 978,
+      "consoleErrors": []
+    },
+    "multi-8x1080x2400-single-seq": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 19200,
+      "canvasMiB": 79.1,
+      "cornerAlpha": 255,
+      "encodeMs": 358,
+      "blobType": "image/png",
+      "bytes": 3622146,
+      "encW": 1080,
+      "encH": 19200,
+      "verified": true,
+      "ms": 996,
+      "maxMainStallMs": 39,
+      "memory": {
+        "baselineMiB": 467.4,
+        "peakDeltaMiB": 126.2,
+        "peakWsDeltaMiB": 201.7,
+        "retainedAfterMiB": 13.4,
+        "perPhaseDeltaMiB": {
+          "start": 0,
+          "decode+draw": 122.2,
+          "encode": 126.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 85.7,
+            "privMiB": 130.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 41.1,
+            "privMiB": 394.8
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253545674
+      },
+      "wallMs": 1009,
+      "consoleErrors": []
+    },
+    "multi-8x1080x2400-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 19200,
+      "tiles": 10,
+      "tileMiB": 8.4,
+      "readbackMs": 99,
+      "peakDecodedMiB": 19.8,
+      "blobType": "image/png",
+      "bytes": 3742135,
+      "encW": 1080,
+      "encH": 19200,
+      "verified": true,
+      "ms": 2095,
+      "maxMainStallMs": 40,
+      "memory": {
+        "baselineMiB": 465.3,
+        "peakDeltaMiB": 86.3,
+        "peakWsDeltaMiB": 107.3,
+        "retainedAfterMiB": 61.8,
+        "perPhaseDeltaMiB": {
+          "start": 0.8,
+          "compose+encode": 86.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 81.4,
+            "privMiB": 127.3
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 4.6,
+            "privMiB": 356.6
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 14,
+        "sampleEndT": 1790253553834
+      },
+      "wallMs": 2106,
+      "consoleErrors": []
+    },
+    "multi-16x1080x2400-single-seq": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 38400,
+      "canvasMiB": 158.2,
+      "cornerAlpha": 255,
+      "encodeMs": 788,
+      "blobType": "image/png",
+      "bytes": 7242110,
+      "encW": 1080,
+      "encH": 38400,
+      "verified": true,
+      "ms": 1962,
+      "maxMainStallMs": 42,
+      "memory": {
+        "baselineMiB": 463.1,
+        "peakDeltaMiB": 210.8,
+        "peakWsDeltaMiB": 368,
+        "retainedAfterMiB": 22,
+        "perPhaseDeltaMiB": {
+          "start": 45,
+          "decode+draw": 46.9,
+          "encode": 210.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 169.9,
+            "privMiB": 216.1
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 49.5,
+            "privMiB": 390
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 13,
+        "sampleEndT": 1790253562085
+      },
+      "wallMs": 1975,
+      "consoleErrors": []
+    },
+    "multi-16x1080x2400-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 38400,
+      "tiles": 19,
+      "tileMiB": 8.4,
+      "readbackMs": 219,
+      "peakDecodedMiB": 19.8,
+      "blobType": "image/png",
+      "bytes": 7485302,
+      "encW": 1080,
+      "encH": 38400,
+      "verified": true,
+      "ms": 4205,
+      "maxMainStallMs": 51,
+      "memory": {
+        "baselineMiB": 463.8,
+        "peakDeltaMiB": 150.3,
+        "peakWsDeltaMiB": 183.4,
+        "retainedAfterMiB": 102.3,
+        "perPhaseDeltaMiB": {
+          "start": 13,
+          "compose+encode": 150.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 137.9,
+            "privMiB": 184.4
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 21.3,
+            "privMiB": 362
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 2
+          }
+        ],
+        "samples": 28,
+        "sampleEndT": 1790253573375
+      },
+      "wallMs": 4223,
+      "consoleErrors": []
+    },
+    "multi-12x1440x3200-single-seq": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 38400,
+      "canvasMiB": 210.9,
+      "cornerAlpha": 255,
+      "encodeMs": 1427,
+      "blobType": "image/png",
+      "bytes": 15982326,
+      "encW": 1440,
+      "encH": 38400,
+      "verified": true,
+      "ms": 3218,
+      "maxMainStallMs": 81,
+      "memory": {
+        "baselineMiB": 457.4,
+        "peakDeltaMiB": 251.1,
+        "peakWsDeltaMiB": 461.3,
+        "retainedAfterMiB": 27.3,
+        "perPhaseDeltaMiB": {
+          "start": 78.6,
+          "decode+draw": 243.1,
+          "encode": 251.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 220.6,
+            "privMiB": 266.2
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 30.5,
+            "privMiB": 375.7
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 26,
+        "sampleEndT": 1790253583791
+      },
+      "wallMs": 3230,
+      "consoleErrors": []
+    },
+    "multi-12x1440x3200-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 38400,
+      "tiles": 19,
+      "tileMiB": 11.3,
+      "readbackMs": 272,
+      "peakDecodedMiB": 35.2,
+      "blobType": "image/png",
+      "bytes": 17602166,
+      "encW": 1440,
+      "encH": 38400,
+      "verified": true,
+      "ms": 6348,
+      "maxMainStallMs": 70,
+      "memory": {
+        "baselineMiB": 485.1,
+        "peakDeltaMiB": 193.4,
+        "peakWsDeltaMiB": 226.9,
+        "retainedAfterMiB": 7.5,
+        "perPhaseDeltaMiB": {
+          "start": 79,
+          "compose+encode": 193.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 190.3,
+            "privMiB": 236.1
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 3.1,
+            "privMiB": 375.6
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 57,
+        "sampleEndT": 1790253596146
+      },
+      "wallMs": 6361,
+      "consoleErrors": []
+    },
+    "multi-25x1080x2400-single-seq": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 60000,
+      "canvasMiB": 247.2,
+      "cornerAlpha": 255,
+      "encodeMs": 1331,
+      "blobType": "image/png",
+      "bytes": 11615654,
+      "encW": 1080,
+      "encH": 60000,
+      "verified": true,
+      "ms": 3231,
+      "maxMainStallMs": 39,
+      "memory": {
+        "baselineMiB": 462.6,
+        "peakDeltaMiB": 312.5,
+        "peakWsDeltaMiB": 554.2,
+        "retainedAfterMiB": 32.4,
+        "perPhaseDeltaMiB": {
+          "start": 49.8,
+          "decode+draw": 297.3,
+          "encode": 312.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 267,
+            "privMiB": 312.5
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 46.7,
+            "privMiB": 395.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 27,
+        "sampleEndT": 1790253605610
+      },
+      "wallMs": 3252,
+      "consoleErrors": []
+    },
+    "multi-25x1080x2400-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 60000,
+      "tiles": 30,
+      "tileMiB": 8.4,
+      "readbackMs": 322,
+      "peakDecodedMiB": 19.8,
+      "blobType": "image/png",
+      "bytes": 12046271,
+      "encW": 1080,
+      "encH": 60000,
+      "verified": true,
+      "ms": 5997,
+      "maxMainStallMs": 39,
+      "memory": {
+        "baselineMiB": 480.6,
+        "peakDeltaMiB": 168.8,
+        "peakWsDeltaMiB": 197.5,
+        "retainedAfterMiB": 5.9,
+        "perPhaseDeltaMiB": {
+          "start": 54.3,
+          "compose+encode": 168.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 129.7,
+            "privMiB": 177
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 39.3,
+            "privMiB": 405.6
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 56,
+        "sampleEndT": 1790253617775
+      },
+      "wallMs": 6047,
+      "consoleErrors": []
+    },
+    "multi-2x1080x30000-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x30000.png",
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 60000,
+      "tiles": 30,
+      "tileMiB": 8.4,
+      "readbackMs": 293,
+      "peakDecodedMiB": 247.2,
+      "blobType": "image/png",
+      "bytes": 9780986,
+      "encW": 1080,
+      "encH": 60000,
+      "verified": true,
+      "ms": 5342,
+      "maxMainStallMs": 269,
+      "memory": {
+        "baselineMiB": 463.6,
+        "peakDeltaMiB": 308.9,
+        "peakWsDeltaMiB": 439.7,
+        "retainedAfterMiB": 315,
+        "perPhaseDeltaMiB": {
+          "start": 42.4,
+          "compose+encode": 308.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 296.2,
+            "privMiB": 342.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 13,
+            "privMiB": 362.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 49,
+        "sampleEndT": 1790253629248
+      },
+      "wallMs": 5356,
+      "consoleErrors": []
+    },
+    "dataurl-1080x20000": {
+      "group": "dataurl",
+      "ctx": "main",
+      "name": "dataUrlVsBlob",
+      "params": {
+        "file": "tall-1080x20000.png",
+        "method": "toDataURL"
+      },
+      "ok": true,
+      "method": "toDataURL",
+      "encodeMs": 399,
+      "dataUrlMiB": 5.5,
+      "blobMiB": 0,
+      "jsHeapMiB": null,
+      "ms": 913,
+      "maxMainStallMs": 656,
+      "memory": {
+        "baselineMiB": 467.9,
+        "peakDeltaMiB": 109.8,
+        "peakWsDeltaMiB": 271.2,
+        "retainedAfterMiB": 22.6,
+        "perPhaseDeltaMiB": {
+          "start": 19.2,
+          "encode": 109.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 101,
+            "privMiB": 138.8
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 8.7,
+            "privMiB": 372
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 9,
+        "sampleEndT": 1790253636088
+      },
+      "wallMs": 926,
+      "consoleErrors": []
+    },
+    "toblob-1080x20000": {
+      "group": "dataurl",
+      "ctx": "main",
+      "name": "dataUrlVsBlob",
+      "params": {
+        "file": "tall-1080x20000.png",
+        "method": "toBlob"
+      },
+      "ok": true,
+      "method": "toBlob",
+      "encodeMs": 467,
+      "dataUrlMiB": 0,
+      "blobMiB": 4.1,
+      "jsHeapMiB": null,
+      "ms": 1294,
+      "maxMainStallMs": 323,
+      "memory": {
+        "baselineMiB": 457.2,
+        "peakDeltaMiB": 128.8,
+        "peakWsDeltaMiB": 211.6,
+        "retainedAfterMiB": 5.3,
+        "perPhaseDeltaMiB": {
+          "start": 50.2,
+          "encode": 128.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 87.4,
+            "privMiB": 124.6
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 41.4,
+            "privMiB": 394.6
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 10,
+        "sampleEndT": 1790253643395
+      },
+      "wallMs": 1306,
+      "consoleErrors": []
+    },
+    "opencv-load": {
+      "group": "opencv",
+      "ctx": "worker",
+      "name": "stitchAnalyse",
+      "params": {
+        "a": "",
+        "b": "",
+        "loadOnly": true
+      },
+      "ok": true,
+      "loadMs": 2179,
+      "wasmAfterLoadMiB": 128,
+      "ms": 2179,
+      "maxMainStallMs": 40,
+      "memory": {
+        "baselineMiB": 454.3,
+        "peakDeltaMiB": 230.4,
+        "peakWsDeltaMiB": 129.9,
+        "retainedAfterMiB": 229.2,
+        "perPhaseDeltaMiB": {
+          "load-opencv": 230.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 220.6,
+            "privMiB": 265.5
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 9.7,
+            "privMiB": 352.3
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 19,
+        "sampleEndT": 1790253652444
+      },
+      "wallMs": 2190,
+      "consoleErrors": []
+    },
+    "opencv-analyse-2x1080x10000": {
+      "group": "opencv",
+      "ctx": "worker",
+      "name": "stitchAnalyse",
+      "params": {
+        "a": "pair-1080x10000-a.png",
+        "b": "pair-1080x10000-b.png",
+        "expectedOffset": 7000
+      },
+      "ok": true,
+      "loadMs": 2163,
+      "wasmAfterLoadMiB": 128,
+      "wasmAfterAnalyseMiB": 128,
+      "offsetY": 7000,
+      "expectedOffset": 7000,
+      "confidence": 0.99,
+      "confidenceClass": "high",
+      "timings": {
+        "proxy": 46,
+        "bands": 16,
+        "hypothesis:tolerant": 2301,
+        "total": 2363
+      },
+      "ms": 5003,
+      "maxMainStallMs": 114,
+      "memory": {
+        "baselineMiB": 454.9,
+        "peakDeltaMiB": 351.1,
+        "peakWsDeltaMiB": 304.9,
+        "retainedAfterMiB": 335.9,
+        "perPhaseDeltaMiB": {
+          "load-opencv": 326.5,
+          "decode": 337.8,
+          "analyse": 351.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 306.3,
+            "privMiB": 352.1
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 44.8,
+            "privMiB": 386.9
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 43,
+        "sampleEndT": 1790253663266
+      },
+      "wallMs": 5023,
+      "consoleErrors": []
+    },
+    "opencv-analyse-2x1080x2400": {
+      "group": "opencv",
+      "ctx": "worker",
+      "name": "stitchAnalyse",
+      "params": {
+        "a": "phone-1080x2400-0.png",
+        "b": "phone-1080x2400-1.png"
+      },
+      "ok": true,
+      "loadMs": 2122,
+      "wasmAfterLoadMiB": 128,
+      "wasmAfterAnalyseMiB": 128,
+      "offsetY": 2400,
+      "expectedOffset": null,
+      "confidence": 0.25,
+      "confidenceClass": "low",
+      "timings": {
+        "proxy": 19,
+        "bands": 6,
+        "hypothesis:tolerant": 297,
+        "hypothesis:none": 265,
+        "total": 587
+      },
+      "ms": 2866,
+      "maxMainStallMs": 46,
+      "memory": {
+        "baselineMiB": 473.6,
+        "peakDeltaMiB": 327.3,
+        "peakWsDeltaMiB": 199.4,
+        "retainedAfterMiB": 323.9,
+        "perPhaseDeltaMiB": {
+          "load-opencv": 299.9,
+          "decode": 319.2,
+          "analyse": 325.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 296.1,
+            "privMiB": 341.7
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 31.2,
+            "privMiB": 392.3
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.9
+          }
+        ],
+        "samples": 26,
+        "sampleEndT": 1790253672103
+      },
+      "wallMs": 2881,
+      "consoleErrors": []
+    },
+    "bitmaps-12x1080x10000-closed-recycle": {
+      "group": "lifecycle",
+      "ctx": "worker",
+      "name": "bitmapLifecycle",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "count": 12,
+        "close": true
+      },
+      "ok": true,
+      "decoded": 12,
+      "closed": true,
+      "gcAvailable": false,
+      "ms": 4334,
+      "maxMainStallMs": 252,
+      "memory": {
+        "baselineMiB": 435,
+        "peakDeltaMiB": 31.3,
+        "peakWsDeltaMiB": 61,
+        "retainedAfterMiB": -23.1,
+        "perPhaseDeltaMiB": {
+          "start": 0,
+          "decoding": 31.3,
+          "settle": 11.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "firefox",
+            "deltaMiB": 24.1,
+            "privMiB": 342.9
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 7.3,
+            "privMiB": 52.5
+          },
+          {
+            "name": "firefox",
+            "deltaMiB": 0,
+            "privMiB": 1.5
+          }
+        ],
+        "samples": 21,
+        "sampleEndT": 1790255624741
+      },
+      "wallMs": 4351,
+      "consoleErrors": []
+    }
+  }
+}

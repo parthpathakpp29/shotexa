@@ -1,7 +1,7 @@
 {
   "environment": "node v22.12.0",
   "matcher": "opencv:TM_CCOEFF_NORMED",
-  "cvInitMs": 1002,
+  "cvInitMs": 2114,
   "tolerancePx": 1,
   "config": {
     "proxyMaxWidth": 360,
@@ -77,7 +77,7 @@
       "status": "matched",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 331.8
+      "analyseMs": 959.2
     },
     {
       "id": "chat-dark",
@@ -92,7 +92,7 @@
       "status": "matched",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 219.7
+      "analyseMs": 564.9
     },
     {
       "id": "chat-light-jpeg",
@@ -107,7 +107,7 @@
       "status": "matched",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 228.5
+      "analyseMs": 422.5
     },
     {
       "id": "webpage-article",
@@ -122,7 +122,7 @@
       "status": "matched",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 68.3
+      "analyseMs": 210.2
     },
     {
       "id": "webpage-dark",
@@ -137,7 +137,7 @@
       "status": "matched",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 67.2
+      "analyseMs": 349.9
     },
     {
       "id": "repeated-header-webpage",
@@ -152,7 +152,7 @@
       "status": "matched",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 54.3
+      "analyseMs": 105.3
     },
     {
       "id": "small-overlap-webpage",
@@ -167,7 +167,7 @@
       "status": "matched",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 61.5
+      "analyseMs": 79.2
     },
     {
       "id": "small-overlap-chat",
@@ -182,7 +182,7 @@
       "status": "matched",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 216.4
+      "analyseMs": 302.5
     },
     {
       "id": "tiny-overlap-webpage",
@@ -197,7 +197,7 @@
       "status": "no-match",
       "manualReviewRequired": true,
       "outcome": "wrong-flagged",
-      "analyseMs": 75.3
+      "analyseMs": 147.7
     },
     {
       "id": "large-overlap-chat",
@@ -212,7 +212,7 @@
       "status": "matched",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 192
+      "analyseMs": 527.5
     },
     {
       "id": "large-overlap-webpage",
@@ -227,7 +227,7 @@
       "status": "matched",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 67.5
+      "analyseMs": 170
     },
     {
       "id": "code-editor",
@@ -242,7 +242,7 @@
       "status": "matched",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 111
+      "analyseMs": 372.2
     },
     {
       "id": "table-rows",
@@ -257,7 +257,7 @@
       "status": "matched",
       "manualReviewRequired": true,
       "outcome": "correct-needs-review",
-      "analyseMs": 103.9
+      "analyseMs": 512.6
     },
     {
       "id": "repetitive-chat",
@@ -272,7 +272,7 @@
       "status": "matched",
       "manualReviewRequired": false,
       "outcome": "correct-auto",
-      "analyseMs": 159.4
+      "analyseMs": 1013.9
     },
     {
       "id": "non-overlap-chat",
@@ -287,7 +287,7 @@
       "status": "no-match",
       "manualReviewRequired": true,
       "outcome": "correct-reject",
-      "analyseMs": 573.7
+      "analyseMs": 3678.1
     },
     {
       "id": "non-overlap-unrelated",
@@ -302,7 +302,7 @@
       "status": "no-match",
       "manualReviewRequired": true,
       "outcome": "correct-reject",
-      "analyseMs": 128.3
+      "analyseMs": 665.9
     }
   ]
 }

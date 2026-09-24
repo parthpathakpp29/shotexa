@@ -1,0 +1,4004 @@
+{
+  "environment": {
+    "forcedCtx": null,
+    "browser": "chromium",
+    "version": "153.0.8010.12",
+    "os": "win32 x64",
+    "date": "2026-09-24T13:12:44.853Z"
+  },
+  "results": {
+    "limits-main-dom": {
+      "group": "limits",
+      "ctx": "main",
+      "name": "canvasLimits",
+      "params": {
+        "api": "dom",
+        "widths": [
+          1080,
+          1440
+        ],
+        "heights": [
+          8192,
+          16383,
+          16384,
+          20000,
+          30000,
+          32767,
+          32768,
+          40000,
+          50000,
+          65535,
+          65536,
+          100000
+        ]
+      },
+      "ok": true,
+      "rows": [
+        {
+          "width": 1080,
+          "height": 8192,
+          "ok": true,
+          "ms": 78
+        },
+        {
+          "width": 1080,
+          "height": 16383,
+          "ok": true,
+          "ms": 30
+        },
+        {
+          "width": 1080,
+          "height": 16384,
+          "ok": true,
+          "ms": 35
+        },
+        {
+          "width": 1080,
+          "height": 20000,
+          "ok": true,
+          "ms": 76
+        },
+        {
+          "width": 1080,
+          "height": 30000,
+          "ok": true,
+          "ms": 98
+        },
+        {
+          "width": 1080,
+          "height": 32767,
+          "ok": true,
+          "ms": 142
+        },
+        {
+          "width": 1080,
+          "height": 32768,
+          "ok": true,
+          "ms": 123
+        },
+        {
+          "width": 1080,
+          "height": 40000,
+          "ok": true,
+          "ms": 160
+        },
+        {
+          "width": 1080,
+          "height": 50000,
+          "ok": true,
+          "ms": 195
+        },
+        {
+          "width": 1080,
+          "height": 65535,
+          "ok": true,
+          "ms": 275
+        },
+        {
+          "width": 1080,
+          "height": 65536,
+          "ok": false,
+          "reason": "readback 0,0,0,0",
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 100000,
+          "ok": false,
+          "reason": "readback 0,0,0,0",
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 8192,
+          "ok": true,
+          "ms": 13
+        },
+        {
+          "width": 1440,
+          "height": 16383,
+          "ok": true,
+          "ms": 41
+        },
+        {
+          "width": 1440,
+          "height": 16384,
+          "ok": true,
+          "ms": 33
+        },
+        {
+          "width": 1440,
+          "height": 20000,
+          "ok": true,
+          "ms": 103
+        },
+        {
+          "width": 1440,
+          "height": 30000,
+          "ok": true,
+          "ms": 152
+        },
+        {
+          "width": 1440,
+          "height": 32767,
+          "ok": true,
+          "ms": 166
+        },
+        {
+          "width": 1440,
+          "height": 32768,
+          "ok": true,
+          "ms": 173
+        },
+        {
+          "width": 1440,
+          "height": 40000,
+          "ok": true,
+          "ms": 221
+        },
+        {
+          "width": 1440,
+          "height": 50000,
+          "ok": true,
+          "ms": 239
+        },
+        {
+          "width": 1440,
+          "height": 65535,
+          "ok": true,
+          "ms": 368
+        },
+        {
+          "width": 1440,
+          "height": 65536,
+          "ok": false,
+          "reason": "readback 0,0,0,0",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 100000,
+          "ok": false,
+          "reason": "readback 0,0,0,0",
+          "ms": 0
+        }
+      ],
+      "ms": 3302,
+      "maxMainStallMs": 3302,
+      "memory": {
+        "baselineMiB": 238.7,
+        "peakDeltaMiB": 751.6,
+        "peakWsDeltaMiB": 632.6,
+        "retainedAfterMiB": 391.1,
+        "perPhaseDeltaMiB": {
+          "start": 751.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "gpu",
+            "deltaMiB": 387.8,
+            "privMiB": 454.6
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 361.6,
+            "privMiB": 398.5
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 1.3,
+            "privMiB": 42
+          }
+        ],
+        "samples": 9,
+        "sampleEndT": 1790252680917
+      },
+      "wallMs": 3330,
+      "consoleErrors": []
+    },
+    "limits-main-offscreen": {
+      "group": "limits",
+      "ctx": "main",
+      "name": "canvasLimits",
+      "params": {
+        "api": "offscreen",
+        "widths": [
+          1080,
+          1440
+        ],
+        "heights": [
+          8192,
+          16383,
+          16384,
+          20000,
+          30000,
+          32767,
+          32768,
+          40000,
+          50000,
+          65535,
+          65536,
+          100000
+        ]
+      },
+      "ok": true,
+      "rows": [
+        {
+          "width": 1080,
+          "height": 8192,
+          "ok": true,
+          "ms": 27
+        },
+        {
+          "width": 1080,
+          "height": 16383,
+          "ok": true,
+          "ms": 32
+        },
+        {
+          "width": 1080,
+          "height": 16384,
+          "ok": true,
+          "ms": 36
+        },
+        {
+          "width": 1080,
+          "height": 20000,
+          "ok": true,
+          "ms": 112
+        },
+        {
+          "width": 1080,
+          "height": 30000,
+          "ok": true,
+          "ms": 103
+        },
+        {
+          "width": 1080,
+          "height": 32767,
+          "ok": true,
+          "ms": 104
+        },
+        {
+          "width": 1080,
+          "height": 32768,
+          "ok": true,
+          "ms": 102
+        },
+        {
+          "width": 1080,
+          "height": 40000,
+          "ok": true,
+          "ms": 116
+        },
+        {
+          "width": 1080,
+          "height": 50000,
+          "ok": true,
+          "ms": 146
+        },
+        {
+          "width": 1080,
+          "height": 65535,
+          "ok": true,
+          "ms": 195
+        },
+        {
+          "width": 1080,
+          "height": 65536,
+          "ok": false,
+          "reason": "readback 0,0,0,0",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 100000,
+          "ok": false,
+          "reason": "readback 0,0,0,0",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 8192,
+          "ok": true,
+          "ms": 12
+        },
+        {
+          "width": 1440,
+          "height": 16383,
+          "ok": true,
+          "ms": 34
+        },
+        {
+          "width": 1440,
+          "height": 16384,
+          "ok": true,
+          "ms": 30
+        },
+        {
+          "width": 1440,
+          "height": 20000,
+          "ok": true,
+          "ms": 82
+        },
+        {
+          "width": 1440,
+          "height": 30000,
+          "ok": true,
+          "ms": 121
+        },
+        {
+          "width": 1440,
+          "height": 32767,
+          "ok": true,
+          "ms": 156
+        },
+        {
+          "width": 1440,
+          "height": 32768,
+          "ok": true,
+          "ms": 149
+        },
+        {
+          "width": 1440,
+          "height": 40000,
+          "ok": true,
+          "ms": 161
+        },
+        {
+          "width": 1440,
+          "height": 50000,
+          "ok": true,
+          "ms": 194
+        },
+        {
+          "width": 1440,
+          "height": 65535,
+          "ok": true,
+          "ms": 274
+        },
+        {
+          "width": 1440,
+          "height": 65536,
+          "ok": false,
+          "reason": "readback 0,0,0,0",
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 100000,
+          "ok": false,
+          "reason": "readback 0,0,0,0",
+          "ms": 0
+        }
+      ],
+      "ms": 2523,
+      "maxMainStallMs": 2523,
+      "memory": {
+        "baselineMiB": 427.5,
+        "peakDeltaMiB": 620.9,
+        "peakWsDeltaMiB": 492.7,
+        "retainedAfterMiB": 242.6,
+        "perPhaseDeltaMiB": {
+          "start": 620.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 361.4,
+            "privMiB": 392
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 259.4,
+            "privMiB": 514.4
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 0,
+            "privMiB": 44
+          }
+        ],
+        "samples": 15,
+        "sampleEndT": 1790252690077
+      },
+      "wallMs": 2541,
+      "consoleErrors": []
+    },
+    "limits-worker-offscreen": {
+      "group": "limits",
+      "ctx": "worker",
+      "name": "canvasLimits",
+      "params": {
+        "api": "offscreen",
+        "widths": [
+          1080,
+          1440
+        ],
+        "heights": [
+          8192,
+          16383,
+          16384,
+          20000,
+          30000,
+          32767,
+          32768,
+          40000,
+          50000,
+          65535,
+          65536,
+          100000
+        ]
+      },
+      "ok": true,
+      "rows": [
+        {
+          "width": 1080,
+          "height": 8192,
+          "ok": true,
+          "ms": 35
+        },
+        {
+          "width": 1080,
+          "height": 16383,
+          "ok": true,
+          "ms": 30
+        },
+        {
+          "width": 1080,
+          "height": 16384,
+          "ok": true,
+          "ms": 32
+        },
+        {
+          "width": 1080,
+          "height": 20000,
+          "ok": true,
+          "ms": 60
+        },
+        {
+          "width": 1080,
+          "height": 30000,
+          "ok": true,
+          "ms": 91
+        },
+        {
+          "width": 1080,
+          "height": 32767,
+          "ok": true,
+          "ms": 93
+        },
+        {
+          "width": 1080,
+          "height": 32768,
+          "ok": true,
+          "ms": 98
+        },
+        {
+          "width": 1080,
+          "height": 40000,
+          "ok": true,
+          "ms": 127
+        },
+        {
+          "width": 1080,
+          "height": 50000,
+          "ok": true,
+          "ms": 149
+        },
+        {
+          "width": 1080,
+          "height": 65535,
+          "ok": true,
+          "ms": 196
+        },
+        {
+          "width": 1080,
+          "height": 65536,
+          "ok": false,
+          "reason": "readback 0,0,0,0",
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 100000,
+          "ok": false,
+          "reason": "readback 0,0,0,0",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 8192,
+          "ok": true,
+          "ms": 14
+        },
+        {
+          "width": 1440,
+          "height": 16383,
+          "ok": true,
+          "ms": 34
+        },
+        {
+          "width": 1440,
+          "height": 16384,
+          "ok": true,
+          "ms": 28
+        },
+        {
+          "width": 1440,
+          "height": 20000,
+          "ok": true,
+          "ms": 82
+        },
+        {
+          "width": 1440,
+          "height": 30000,
+          "ok": true,
+          "ms": 125
+        },
+        {
+          "width": 1440,
+          "height": 32767,
+          "ok": true,
+          "ms": 146
+        },
+        {
+          "width": 1440,
+          "height": 32768,
+          "ok": true,
+          "ms": 145
+        },
+        {
+          "width": 1440,
+          "height": 40000,
+          "ok": true,
+          "ms": 166
+        },
+        {
+          "width": 1440,
+          "height": 50000,
+          "ok": true,
+          "ms": 211
+        },
+        {
+          "width": 1440,
+          "height": 65535,
+          "ok": true,
+          "ms": 267
+        },
+        {
+          "width": 1440,
+          "height": 65536,
+          "ok": false,
+          "reason": "readback 0,0,0,0",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 100000,
+          "ok": false,
+          "reason": "readback 0,0,0,0",
+          "ms": 0
+        }
+      ],
+      "ms": 2458,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 413.3,
+        "peakDeltaMiB": 537.2,
+        "peakWsDeltaMiB": 495.3,
+        "retainedAfterMiB": 154.6,
+        "perPhaseDeltaMiB": {
+          "start": 537.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 362.2,
+            "privMiB": 397.5
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 175,
+            "privMiB": 420.6
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 0,
+            "privMiB": 45
+          }
+        ],
+        "samples": 15,
+        "sampleEndT": 1790252699896
+      },
+      "wallMs": 2468,
+      "consoleErrors": []
+    },
+    "decode-full-1080x5000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x5000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 5000,
+      "bmW": 1080,
+      "bmH": 5000,
+      "decodeMs": 89,
+      "decodedMiB": 20.6,
+      "encodedKiB": 5582,
+      "ms": 956,
+      "maxMainStallMs": 14,
+      "memory": {
+        "baselineMiB": 422.7,
+        "peakDeltaMiB": 33.3,
+        "peakWsDeltaMiB": 33.6,
+        "retainedAfterMiB": 28,
+        "perPhaseDeltaMiB": {
+          "start": -5.1,
+          "decode": 33.3,
+          "hold": 27.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 26.2,
+            "privMiB": 61.2
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 14.2,
+            "privMiB": 59.4
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790252706642
+      },
+      "wallMs": 972,
+      "consoleErrors": []
+    },
+    "decode-full-1080x10000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 10000,
+      "bmW": 1080,
+      "bmH": 10000,
+      "decodeMs": 123,
+      "decodedMiB": 41.2,
+      "encodedKiB": 5362,
+      "ms": 971,
+      "maxMainStallMs": 11,
+      "memory": {
+        "baselineMiB": 267,
+        "peakDeltaMiB": 39.6,
+        "peakWsDeltaMiB": 38.8,
+        "retainedAfterMiB": 39.6,
+        "perPhaseDeltaMiB": {
+          "start": -9.7,
+          "decode": 16.7,
+          "hold": 39.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 41.8,
+            "privMiB": 84.3
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.5,
+            "privMiB": 60.4
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 1,
+            "privMiB": 70.6
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790252713440
+      },
+      "wallMs": 987,
+      "consoleErrors": []
+    },
+    "decode-full-1080x20000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x20000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 20000,
+      "bmW": 1080,
+      "bmH": 20000,
+      "decodeMs": 208,
+      "decodedMiB": 82.4,
+      "encodedKiB": 6034,
+      "ms": 1089,
+      "maxMainStallMs": 15,
+      "memory": {
+        "baselineMiB": 254.4,
+        "peakDeltaMiB": 126,
+        "peakWsDeltaMiB": 110.7,
+        "retainedAfterMiB": 90.5,
+        "perPhaseDeltaMiB": {
+          "start": 0,
+          "decode": 126,
+          "hold": 90.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 88.6,
+            "privMiB": 129.7
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 37.5,
+            "privMiB": 90.2
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790252720587
+      },
+      "wallMs": 1105,
+      "consoleErrors": []
+    },
+    "decode-full-1080x30000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 30000,
+      "decodeMs": 284,
+      "decodedMiB": 123.6,
+      "encodedKiB": 6512,
+      "ms": 1204,
+      "maxMainStallMs": 13,
+      "memory": {
+        "baselineMiB": 259.4,
+        "peakDeltaMiB": 146.4,
+        "peakWsDeltaMiB": 145.8,
+        "retainedAfterMiB": 141.5,
+        "perPhaseDeltaMiB": {
+          "start": 33.5,
+          "decode": 146.4,
+          "hold": 141.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 130.7,
+            "privMiB": 170.8
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 15.8,
+            "privMiB": 70
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790252727697
+      },
+      "wallMs": 1221,
+      "consoleErrors": []
+    },
+    "decode-full-1440x20000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1440x20000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1440,
+      "srcH": 20000,
+      "bmW": 1440,
+      "bmH": 20000,
+      "decodeMs": 302,
+      "decodedMiB": 109.9,
+      "encodedKiB": 9609,
+      "ms": 1335,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 255.6,
+        "peakDeltaMiB": 166.4,
+        "peakWsDeltaMiB": 130.1,
+        "retainedAfterMiB": 122.1,
+        "perPhaseDeltaMiB": {
+          "start": -0.2,
+          "decode": 166.4,
+          "hold": 123.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 119.6,
+            "privMiB": 159.5
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 47.1,
+            "privMiB": 105.7
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790252735190
+      },
+      "wallMs": 1352,
+      "consoleErrors": []
+    },
+    "decode-full-1080x20000-jpeg": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x20000.jpg",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 20000,
+      "bmW": 1080,
+      "bmH": 20000,
+      "decodeMs": 213,
+      "decodedMiB": 82.4,
+      "encodedKiB": 3718,
+      "ms": 1004,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 266.5,
+        "peakDeltaMiB": 94.7,
+        "peakWsDeltaMiB": 86.6,
+        "retainedAfterMiB": 82.8,
+        "perPhaseDeltaMiB": {
+          "start": -5.7,
+          "decode": 94.7,
+          "hold": 81.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 86.3,
+            "privMiB": 126.2
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 14.6,
+            "privMiB": 73
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790252741898
+      },
+      "wallMs": 1018,
+      "consoleErrors": []
+    },
+    "decode-full-1080x30000-jpeg": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.jpg",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 30000,
+      "decodeMs": 295,
+      "decodedMiB": 123.6,
+      "encodedKiB": 5012,
+      "ms": 1122,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 265.6,
+        "peakDeltaMiB": 134.6,
+        "peakWsDeltaMiB": 134.7,
+        "retainedAfterMiB": 125.8,
+        "perPhaseDeltaMiB": {
+          "start": 19.3,
+          "decode": 134.6,
+          "hold": 126.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 128.9,
+            "privMiB": 163.7
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.1,
+            "privMiB": 69
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790252749154
+      },
+      "wallMs": 1136,
+      "consoleErrors": []
+    },
+    "decode-full-1080x16383-webp": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x16383.webp",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 16383,
+      "bmW": 1080,
+      "bmH": 16383,
+      "decodeMs": 262,
+      "decodedMiB": 67.5,
+      "encodedKiB": 530,
+      "ms": 944,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 250.8,
+        "peakDeltaMiB": 70.9,
+        "peakWsDeltaMiB": 72.8,
+        "retainedAfterMiB": 68.1,
+        "perPhaseDeltaMiB": {
+          "decode": 70.9,
+          "hold": 70.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 68.4,
+            "privMiB": 103.1
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 2.7,
+            "privMiB": 61.3
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790252755820
+      },
+      "wallMs": 964,
+      "consoleErrors": []
+    },
+    "decode-full-1080x30000-png-main": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 30000,
+      "decodeMs": 306,
+      "decodedMiB": 123.6,
+      "encodedKiB": 6512,
+      "ms": 1232,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 258.7,
+        "peakDeltaMiB": 137.8,
+        "peakWsDeltaMiB": 137.3,
+        "retainedAfterMiB": 129,
+        "perPhaseDeltaMiB": {
+          "start": 25,
+          "decode": 137.8,
+          "hold": 133.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 130.3,
+            "privMiB": 167.6
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 7.9,
+            "privMiB": 66
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.1,
+            "privMiB": 71
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790252763160
+      },
+      "wallMs": 1244,
+      "consoleErrors": []
+    },
+    "decode-thumb-1080x30000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "thumb",
+        "thumbWidth": 240,
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 240,
+      "bmH": 6667,
+      "decodeMs": 800,
+      "decodedMiB": 6.1,
+      "encodedKiB": 6512,
+      "ms": 1718,
+      "maxMainStallMs": 13,
+      "memory": {
+        "baselineMiB": 254.4,
+        "peakDeltaMiB": 155.2,
+        "peakWsDeltaMiB": 174,
+        "retainedAfterMiB": 12.6,
+        "perPhaseDeltaMiB": {
+          "start": -0.7,
+          "decode": 155.2,
+          "hold": 13.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 130.3,
+            "privMiB": 170.7
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 25.5,
+            "privMiB": 81.8
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 10,
+        "sampleEndT": 1790252770911
+      },
+      "wallMs": 1729,
+      "consoleErrors": []
+    },
+    "decode-thumb-1440x20000-jpeg": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1440x20000.jpg",
+        "mode": "thumb",
+        "thumbWidth": 240,
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1440,
+      "srcH": 20000,
+      "bmW": 240,
+      "bmH": 3334,
+      "decodeMs": 387,
+      "decodedMiB": 3.1,
+      "encodedKiB": 5579,
+      "ms": 1240,
+      "maxMainStallMs": 11,
+      "memory": {
+        "baselineMiB": 261.4,
+        "peakDeltaMiB": 123.6,
+        "peakWsDeltaMiB": 122.4,
+        "retainedAfterMiB": 9.1,
+        "perPhaseDeltaMiB": {
+          "start": 23.1,
+          "decode": 123.6,
+          "hold": 11.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 115.7,
+            "privMiB": 153.1
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.7,
+            "privMiB": 62.9
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790252779575
+      },
+      "wallMs": 1245,
+      "consoleErrors": []
+    },
+    "decode-crop-1080x30000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "crop",
+        "cropY": 14000,
+        "cropH": 2048,
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 2048,
+      "decodeMs": 345,
+      "decodedMiB": 8.4,
+      "encodedKiB": 6512,
+      "ms": 1235,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 259.2,
+        "peakDeltaMiB": 141.7,
+        "peakWsDeltaMiB": 137.8,
+        "retainedAfterMiB": 17,
+        "perPhaseDeltaMiB": {
+          "start": 0,
+          "decode": 141.7,
+          "hold": 18
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 132.8,
+            "privMiB": 169.8
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 7.9,
+            "privMiB": 64.1
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 1.1,
+            "privMiB": 69.6
+          }
+        ],
+        "samples": 9,
+        "sampleEndT": 1790252786947
+      },
+      "wallMs": 1250,
+      "consoleErrors": []
+    },
+    "decode-crop-1080x30000-jpeg": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.jpg",
+        "mode": "crop",
+        "cropY": 14000,
+        "cropH": 2048,
+        "holdMs": 600
+      },
+      "ok": true,
+      "srcW": 1080,
+      "srcH": 30000,
+      "bmW": 1080,
+      "bmH": 2048,
+      "decodeMs": 327,
+      "decodedMiB": 8.4,
+      "encodedKiB": 5012,
+      "ms": 1136,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 268.4,
+        "peakDeltaMiB": 136.6,
+        "peakWsDeltaMiB": 130.5,
+        "retainedAfterMiB": 8.9,
+        "perPhaseDeltaMiB": {
+          "start": -5.4,
+          "decode": 136.6,
+          "hold": 8.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 128.9,
+            "privMiB": 169.6
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 13.1,
+            "privMiB": 69.2
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790252793770
+      },
+      "wallMs": 1149,
+      "consoleErrors": []
+    },
+    "bitmaps-12x1080x10000-closed": {
+      "group": "lifecycle",
+      "ctx": "worker",
+      "name": "bitmapLifecycle",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "count": 12,
+        "close": true
+      },
+      "ok": true,
+      "decoded": 12,
+      "closed": true,
+      "gcAvailable": false,
+      "ms": 3370,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 219.7,
+        "peakDeltaMiB": 87.8,
+        "peakWsDeltaMiB": 80.9,
+        "retainedAfterMiB": 15.4,
+        "perPhaseDeltaMiB": {
+          "start": 0.1,
+          "decoding": 87.8,
+          "settle": 15.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 46.6,
+            "privMiB": 87.1
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 41.3,
+            "privMiB": 81.9
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.1,
+            "privMiB": 41.9
+          }
+        ],
+        "samples": 16,
+        "sampleEndT": 1790255573424
+      },
+      "wallMs": 3378,
+      "consoleErrors": []
+    },
+    "bitmaps-12x1080x10000-leaked": {
+      "group": "lifecycle",
+      "ctx": "worker",
+      "name": "bitmapLifecycle",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "count": 12,
+        "close": false
+      },
+      "ok": true,
+      "decoded": 12,
+      "closed": false,
+      "ms": 3216,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 254.1,
+        "peakDeltaMiB": 505.7,
+        "peakWsDeltaMiB": 508,
+        "retainedAfterMiB": 475.3,
+        "perPhaseDeltaMiB": {
+          "start": 17.8,
+          "decoding": 505.7,
+          "settle": 500.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 502.7,
+            "privMiB": 540.4
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 3.3,
+            "privMiB": 62.8
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 25,
+        "sampleEndT": 1790252811807
+      },
+      "wallMs": 3232,
+      "consoleErrors": []
+    },
+    "objecturls-20x10MiB-revoked": {
+      "group": "lifecycle",
+      "ctx": "main",
+      "name": "objectUrlLifecycle",
+      "params": {
+        "count": 20,
+        "mib": 10,
+        "revoke": true
+      },
+      "ok": true,
+      "created": 20,
+      "mibEach": 10,
+      "revoked": true,
+      "ms": 2650,
+      "maxMainStallMs": 645,
+      "memory": {
+        "baselineMiB": 251.2,
+        "peakDeltaMiB": 271.4,
+        "peakWsDeltaMiB": 277.3,
+        "retainedAfterMiB": 59.4,
+        "perPhaseDeltaMiB": {
+          "create": 271.4,
+          "settle": 211.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "chrome",
+            "deltaMiB": 140.6,
+            "privMiB": 196.7
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 131.5,
+            "privMiB": 162.5
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 18,
+        "sampleEndT": 1790252820204
+      },
+      "wallMs": 2661,
+      "consoleErrors": []
+    },
+    "objecturls-20x10MiB-kept": {
+      "group": "lifecycle",
+      "ctx": "main",
+      "name": "objectUrlLifecycle",
+      "params": {
+        "count": 20,
+        "mib": 10,
+        "revoke": false
+      },
+      "ok": true,
+      "created": 20,
+      "mibEach": 10,
+      "revoked": false,
+      "ms": 2593,
+      "maxMainStallMs": 592,
+      "memory": {
+        "baselineMiB": 248,
+        "peakDeltaMiB": 312.5,
+        "peakWsDeltaMiB": 320.5,
+        "retainedAfterMiB": 230.8,
+        "perPhaseDeltaMiB": {
+          "create": 312.5,
+          "settle": 233.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "chrome",
+            "deltaMiB": 160.7,
+            "privMiB": 216.8
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 152,
+            "privMiB": 182.6
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 17,
+        "sampleEndT": 1790252828685
+      },
+      "wallMs": 2603,
+      "consoleErrors": []
+    },
+    "single-1080x5000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 5000,
+      "canvasMiB": 20.6,
+      "cornerAlpha": 255,
+      "encodeMs": 190,
+      "blobType": "image/png",
+      "bytes": 3423783,
+      "encW": 1080,
+      "encH": 5000,
+      "verified": true,
+      "ms": 677,
+      "maxMainStallMs": 13,
+      "memory": {
+        "baselineMiB": 257.5,
+        "peakDeltaMiB": 99.3,
+        "peakWsDeltaMiB": 141,
+        "retainedAfterMiB": 79.4,
+        "perPhaseDeltaMiB": {
+          "start": 21.8,
+          "decode+draw": 27.4,
+          "encode": 99.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "gpu",
+            "deltaMiB": 65.9,
+            "privMiB": 137.1
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 26.8,
+            "privMiB": 67
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.8,
+            "privMiB": 63.1
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790252835356
+      },
+      "wallMs": 687,
+      "consoleErrors": []
+    },
+    "single-1080x5000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 5000,
+      "canvasMiB": 20.6,
+      "cornerAlpha": 255,
+      "encodeMs": 136,
+      "blobType": "image/jpeg",
+      "bytes": 1548421,
+      "encW": 1080,
+      "encH": 5000,
+      "verified": true,
+      "ms": 549,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 288,
+        "peakDeltaMiB": 67.1,
+        "peakWsDeltaMiB": 108,
+        "retainedAfterMiB": 35.5,
+        "perPhaseDeltaMiB": {
+          "start": 21.3,
+          "decode+draw": 27.3,
+          "encode": 67.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 36.9,
+            "privMiB": 76.8
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 24.1,
+            "privMiB": 132.2
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.7,
+            "privMiB": 63
+          }
+        ],
+        "samples": 4,
+        "sampleEndT": 1790252841958
+      },
+      "wallMs": 559,
+      "consoleErrors": []
+    },
+    "single-1080x5000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 5000,
+      "canvasMiB": 20.6,
+      "cornerAlpha": 255,
+      "encodeMs": 1283,
+      "blobType": "image/webp",
+      "bytes": 1323094,
+      "encW": 1080,
+      "encH": 5000,
+      "verified": true,
+      "ms": 1650,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 289.2,
+        "peakDeltaMiB": 85.7,
+        "peakWsDeltaMiB": 125.4,
+        "retainedAfterMiB": 27.6,
+        "perPhaseDeltaMiB": {
+          "start": 0,
+          "decode+draw": 30.2,
+          "encode": 85.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 56.7,
+            "privMiB": 91.6
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 23.4,
+            "privMiB": 131.4
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 5.5,
+            "privMiB": 62.3
+          }
+        ],
+        "samples": 15,
+        "sampleEndT": 1790252849500
+      },
+      "wallMs": 1656,
+      "consoleErrors": []
+    },
+    "single-1080x10000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 10000,
+      "canvasMiB": 41.2,
+      "cornerAlpha": 255,
+      "encodeMs": 279,
+      "blobType": "image/png",
+      "bytes": 3463471,
+      "encW": 1080,
+      "encH": 10000,
+      "verified": true,
+      "ms": 753,
+      "maxMainStallMs": 11,
+      "memory": {
+        "baselineMiB": 298.9,
+        "peakDeltaMiB": 187.3,
+        "peakWsDeltaMiB": 267.7,
+        "retainedAfterMiB": 143.5,
+        "perPhaseDeltaMiB": {
+          "start": 0,
+          "decode+draw": 80,
+          "encode": 187.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "gpu",
+            "deltaMiB": 129.6,
+            "privMiB": 239
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 51.2,
+            "privMiB": 89.2
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.5,
+            "privMiB": 63
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790252855936
+      },
+      "wallMs": 761,
+      "consoleErrors": []
+    },
+    "single-1080x10000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 10000,
+      "canvasMiB": 41.2,
+      "cornerAlpha": 255,
+      "encodeMs": 224,
+      "blobType": "image/jpeg",
+      "bytes": 1935372,
+      "encW": 1080,
+      "encH": 10000,
+      "verified": true,
+      "ms": 858,
+      "maxMainStallMs": 13,
+      "memory": {
+        "baselineMiB": 367.6,
+        "peakDeltaMiB": 127.8,
+        "peakWsDeltaMiB": 207.5,
+        "retainedAfterMiB": 55.2,
+        "perPhaseDeltaMiB": {
+          "start": 21.2,
+          "decode+draw": 53.4,
+          "encode": 127.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 73.1,
+            "privMiB": 116.6
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 48.1,
+            "privMiB": 220.8
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.6,
+            "privMiB": 63
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790252862978
+      },
+      "wallMs": 870,
+      "consoleErrors": []
+    },
+    "single-1080x10000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 10000,
+      "canvasMiB": 41.2,
+      "cornerAlpha": 255,
+      "encodeMs": 1945,
+      "blobType": "image/webp",
+      "bytes": 1442326,
+      "encW": 1080,
+      "encH": 10000,
+      "verified": true,
+      "ms": 2443,
+      "maxMainStallMs": 13,
+      "memory": {
+        "baselineMiB": 355.8,
+        "peakDeltaMiB": 139.7,
+        "peakWsDeltaMiB": 221.9,
+        "retainedAfterMiB": 23.3,
+        "perPhaseDeltaMiB": {
+          "start": 24.5,
+          "decode+draw": 51,
+          "encode": 139.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 89.3,
+            "privMiB": 124.7
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 47.8,
+            "privMiB": 223.7
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 3.1,
+            "privMiB": 62.9
+          }
+        ],
+        "samples": 21,
+        "sampleEndT": 1790252871072
+      },
+      "wallMs": 2450,
+      "consoleErrors": []
+    },
+    "single-1080x20000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 20000,
+      "canvasMiB": 82.4,
+      "cornerAlpha": 255,
+      "encodeMs": 303,
+      "blobType": "image/png",
+      "bytes": 4204385,
+      "encW": 1080,
+      "encH": 20000,
+      "verified": true,
+      "ms": 899,
+      "maxMainStallMs": 11,
+      "memory": {
+        "baselineMiB": 327.7,
+        "peakDeltaMiB": 169,
+        "peakWsDeltaMiB": 139.2,
+        "retainedAfterMiB": 8.6,
+        "perPhaseDeltaMiB": {
+          "start": -3.3,
+          "decode+draw": 169,
+          "encode": 91.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 165.8,
+            "privMiB": 206.3
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 3.9,
+            "privMiB": 63.7
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790252877727
+      },
+      "wallMs": 913,
+      "consoleErrors": []
+    },
+    "single-1080x20000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 20000,
+      "canvasMiB": 82.4,
+      "cornerAlpha": 255,
+      "encodeMs": 266,
+      "blobType": "image/jpeg",
+      "bytes": 3012412,
+      "encW": 1080,
+      "encH": 20000,
+      "verified": true,
+      "ms": 889,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 276.2,
+        "peakDeltaMiB": 150.2,
+        "peakWsDeltaMiB": 132.7,
+        "retainedAfterMiB": -12.6,
+        "perPhaseDeltaMiB": {
+          "start": 0.6,
+          "decode+draw": 150.2,
+          "encode": 132.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 166.3,
+            "privMiB": 206.3
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 7.4,
+            "privMiB": 64
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790252884600
+      },
+      "wallMs": 895,
+      "consoleErrors": []
+    },
+    "single-1080x20000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "outW": 1080,
+      "outH": 20000,
+      "canvasMiB": 82.4,
+      "cornerAlpha": 255,
+      "encodeMs": 2746,
+      "blobType": "image/webp",
+      "bytes": 1770954,
+      "encW": 1080,
+      "encH": 16383,
+      "verified": false,
+      "ms": 3316,
+      "maxMainStallMs": 13,
+      "memory": {
+        "baselineMiB": 253.8,
+        "peakDeltaMiB": 184.5,
+        "peakWsDeltaMiB": 174,
+        "retainedAfterMiB": -16.9,
+        "perPhaseDeltaMiB": {
+          "start": 7.8,
+          "decode+draw": 173.3,
+          "encode": 184.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 176.7,
+            "privMiB": 211.2
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 7.3,
+            "privMiB": 63.7
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.6,
+            "privMiB": 71.2
+          }
+        ],
+        "samples": 30,
+        "sampleEndT": 1790252893880
+      },
+      "wallMs": 3327,
+      "consoleErrors": []
+    },
+    "single-1080x30000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "canvasMiB": 123.6,
+      "cornerAlpha": 255,
+      "encodeMs": 898,
+      "blobType": "image/png",
+      "bytes": 4807359,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 2064,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 258.7,
+        "peakDeltaMiB": 256.5,
+        "peakWsDeltaMiB": 248.1,
+        "retainedAfterMiB": 10,
+        "perPhaseDeltaMiB": {
+          "start": -0.1,
+          "decode+draw": 256.5,
+          "encode": 137
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 248.4,
+            "privMiB": 286
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 7.8,
+            "privMiB": 64.5
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.5,
+            "privMiB": 72.8
+          }
+        ],
+        "samples": 10,
+        "sampleEndT": 1790252902013
+      },
+      "wallMs": 2088,
+      "consoleErrors": []
+    },
+    "single-1080x30000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "canvasMiB": 123.6,
+      "cornerAlpha": 255,
+      "encodeMs": 388,
+      "blobType": "image/jpeg",
+      "bytes": 4026637,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 1197,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 263.4,
+        "peakDeltaMiB": 256.3,
+        "peakWsDeltaMiB": 229.1,
+        "retainedAfterMiB": 10.5,
+        "perPhaseDeltaMiB": {
+          "start": 34.1,
+          "decode+draw": 256.3,
+          "encode": 228.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 248.4,
+            "privMiB": 292.5
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 7.8,
+            "privMiB": 64.7
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.1,
+            "privMiB": 71.3
+          }
+        ],
+        "samples": 10,
+        "sampleEndT": 1790252909226
+      },
+      "wallMs": 1204,
+      "consoleErrors": []
+    },
+    "single-1080x30000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "outW": 1080,
+      "outH": 30000,
+      "canvasMiB": 123.6,
+      "cornerAlpha": 255,
+      "encodeMs": 2677,
+      "blobType": "image/webp",
+      "bytes": 1443848,
+      "encW": 1080,
+      "encH": 16383,
+      "verified": false,
+      "ms": 3426,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 262.9,
+        "peakDeltaMiB": 254.6,
+        "peakWsDeltaMiB": 209.3,
+        "retainedAfterMiB": -18.5,
+        "perPhaseDeltaMiB": {
+          "start": -2.3,
+          "decode+draw": 254.6,
+          "encode": 223.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 248.5,
+            "privMiB": 291.6
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 7.9,
+            "privMiB": 64.3
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.6,
+            "privMiB": 70.8
+          }
+        ],
+        "samples": 31,
+        "sampleEndT": 1790252918657
+      },
+      "wallMs": 3434,
+      "consoleErrors": []
+    },
+    "single-1440x20000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 20000,
+      "canvasMiB": 109.9,
+      "cornerAlpha": 255,
+      "encodeMs": 437,
+      "blobType": "image/png",
+      "bytes": 6278670,
+      "encW": 1440,
+      "encH": 20000,
+      "verified": true,
+      "ms": 1355,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 273.3,
+        "peakDeltaMiB": 228.1,
+        "peakWsDeltaMiB": 210.7,
+        "retainedAfterMiB": 10.7,
+        "perPhaseDeltaMiB": {
+          "start": 46.9,
+          "decode+draw": 228.1,
+          "encode": 123.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 221,
+            "privMiB": 262.2
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.5,
+            "privMiB": 67.5
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.8,
+            "privMiB": 74
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790252925852
+      },
+      "wallMs": 1362,
+      "consoleErrors": []
+    },
+    "single-1440x20000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 20000,
+      "canvasMiB": 109.9,
+      "cornerAlpha": 255,
+      "encodeMs": 335,
+      "blobType": "image/jpeg",
+      "bytes": 3992260,
+      "encW": 1440,
+      "encH": 20000,
+      "verified": true,
+      "ms": 1236,
+      "maxMainStallMs": 14,
+      "memory": {
+        "baselineMiB": 257.1,
+        "peakDeltaMiB": 227.7,
+        "peakWsDeltaMiB": 229.4,
+        "retainedAfterMiB": 9.9,
+        "perPhaseDeltaMiB": {
+          "start": 33.4,
+          "decode+draw": 227.7,
+          "encode": 204.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 221.1,
+            "privMiB": 259.6
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 11.3,
+            "privMiB": 67.9
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790252932852
+      },
+      "wallMs": 1248,
+      "consoleErrors": []
+    },
+    "single-1440x20000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "outW": 1440,
+      "outH": 20000,
+      "canvasMiB": 109.9,
+      "cornerAlpha": 255,
+      "encodeMs": 3622,
+      "blobType": "image/webp",
+      "bytes": 2266600,
+      "encW": 1440,
+      "encH": 16383,
+      "verified": false,
+      "ms": 4486,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 266.5,
+        "peakDeltaMiB": 244.1,
+        "peakWsDeltaMiB": 242.7,
+        "retainedAfterMiB": -14.2,
+        "perPhaseDeltaMiB": {
+          "start": 34.5,
+          "decode+draw": 228.9,
+          "encode": 244.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 235,
+            "privMiB": 277.9
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 11.3,
+            "privMiB": 67.6
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 1.1,
+            "privMiB": 70.3
+          }
+        ],
+        "samples": 39,
+        "sampleEndT": 1790252942976
+      },
+      "wallMs": 4509,
+      "consoleErrors": []
+    },
+    "single-1080x20000-png-main": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 20000,
+      "canvasMiB": 82.4,
+      "cornerAlpha": 255,
+      "encodeMs": 338,
+      "blobType": "image/png",
+      "bytes": 4204385,
+      "encW": 1080,
+      "encH": 20000,
+      "verified": true,
+      "ms": 960,
+      "maxMainStallMs": 110,
+      "memory": {
+        "baselineMiB": 251.8,
+        "peakDeltaMiB": 171,
+        "peakWsDeltaMiB": 172.4,
+        "retainedAfterMiB": 10.9,
+        "perPhaseDeltaMiB": {
+          "start": 23.7,
+          "decode+draw": 171,
+          "encode": 93.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 166.3,
+            "privMiB": 197.1
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 4.7,
+            "privMiB": 63.3
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790252949685
+      },
+      "wallMs": 972,
+      "consoleErrors": []
+    },
+    "single-1080x30000-jpeg-main": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "canvasMiB": 123.6,
+      "cornerAlpha": 255,
+      "encodeMs": 469,
+      "blobType": "image/jpeg",
+      "bytes": 4026637,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 1235,
+      "maxMainStallMs": 162,
+      "memory": {
+        "baselineMiB": 258.3,
+        "peakDeltaMiB": 256.2,
+        "peakWsDeltaMiB": 225.5,
+        "retainedAfterMiB": 9.9,
+        "perPhaseDeltaMiB": {
+          "start": 1.1,
+          "decode+draw": 256.2,
+          "encode": 226.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 248.7,
+            "privMiB": 284.1
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 7.2,
+            "privMiB": 63.9
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 11,
+        "sampleEndT": 1790252958115
+      },
+      "wallMs": 1243,
+      "consoleErrors": []
+    },
+    "tiled-1080x5000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 5000,
+      "tiles": 3,
+      "tileMiB": 8.4,
+      "readbackMs": 36,
+      "peakDecodedMiB": 20.6,
+      "blobType": "image/png",
+      "bytes": 4118870,
+      "encW": 1080,
+      "encH": 5000,
+      "verified": true,
+      "ms": 1034,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 261,
+        "peakDeltaMiB": 70.2,
+        "peakWsDeltaMiB": 74.5,
+        "retainedAfterMiB": 21.3,
+        "perPhaseDeltaMiB": {
+          "start": 20.7,
+          "compose+encode": 70.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 64.4,
+            "privMiB": 106
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.9,
+            "privMiB": 63.5
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 9,
+        "sampleEndT": 1790252964836
+      },
+      "wallMs": 1045,
+      "consoleErrors": []
+    },
+    "tiled-1080x10000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 10000,
+      "tiles": 5,
+      "tileMiB": 8.4,
+      "readbackMs": 75,
+      "peakDecodedMiB": 41.2,
+      "blobType": "image/png",
+      "bytes": 3975802,
+      "encW": 1080,
+      "encH": 10000,
+      "verified": true,
+      "ms": 1383,
+      "maxMainStallMs": 11,
+      "memory": {
+        "baselineMiB": 253.7,
+        "peakDeltaMiB": 108.4,
+        "peakWsDeltaMiB": 112.3,
+        "retainedAfterMiB": 45,
+        "perPhaseDeltaMiB": {
+          "start": 6.4,
+          "compose+encode": 108.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 101.3,
+            "privMiB": 138.9
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.6,
+            "privMiB": 63
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 1.1,
+            "privMiB": 70.5
+          }
+        ],
+        "samples": 13,
+        "sampleEndT": 1790252972331
+      },
+      "wallMs": 1395,
+      "consoleErrors": []
+    },
+    "tiled-1080x20000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 20000,
+      "tiles": 10,
+      "tileMiB": 8.4,
+      "readbackMs": 143,
+      "peakDecodedMiB": 82.4,
+      "blobType": "image/png",
+      "bytes": 4512218,
+      "encW": 1080,
+      "encH": 20000,
+      "verified": true,
+      "ms": 2330,
+      "maxMainStallMs": 11,
+      "memory": {
+        "baselineMiB": 255,
+        "peakDeltaMiB": 165.2,
+        "peakWsDeltaMiB": 169.9,
+        "retainedAfterMiB": 73.5,
+        "perPhaseDeltaMiB": {
+          "start": 23.5,
+          "compose+encode": 165.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 157.9,
+            "privMiB": 192.4
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 7.3,
+            "privMiB": 63.8
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.1,
+            "privMiB": 68.5
+          }
+        ],
+        "samples": 20,
+        "sampleEndT": 1790252980581
+      },
+      "wallMs": 2340,
+      "consoleErrors": []
+    },
+    "tiled-1080x30000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "tiles": 15,
+      "tileMiB": 8.4,
+      "readbackMs": 228,
+      "peakDecodedMiB": 123.6,
+      "blobType": "image/png",
+      "bytes": 4881991,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 3277,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 252.3,
+        "peakDeltaMiB": 237.2,
+        "peakWsDeltaMiB": 239.9,
+        "retainedAfterMiB": 72.8,
+        "perPhaseDeltaMiB": {
+          "start": 33.4,
+          "compose+encode": 237.2,
+          "verify": 70.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 228.9,
+            "privMiB": 269.2
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 7.9,
+            "privMiB": 64.4
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 1.1,
+            "privMiB": 71.4
+          }
+        ],
+        "samples": 29,
+        "sampleEndT": 1790252989465
+      },
+      "wallMs": 3287,
+      "consoleErrors": []
+    },
+    "tiled-1440x20000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 20000,
+      "tiles": 10,
+      "tileMiB": 11.3,
+      "readbackMs": 191,
+      "peakDecodedMiB": 109.9,
+      "blobType": "image/png",
+      "bytes": 7043594,
+      "encW": 1440,
+      "encH": 20000,
+      "verified": true,
+      "ms": 3273,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 255.2,
+        "peakDeltaMiB": 219.9,
+        "peakWsDeltaMiB": 224.1,
+        "retainedAfterMiB": 100.5,
+        "perPhaseDeltaMiB": {
+          "start": 37.7,
+          "compose+encode": 219.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 210.2,
+            "privMiB": 245
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 10.3,
+            "privMiB": 66.9
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 29,
+        "sampleEndT": 1790252998405
+      },
+      "wallMs": 3282,
+      "consoleErrors": []
+    },
+    "tiled-1080x30000-png-main": {
+      "group": "export-tiled",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "tiles": 15,
+      "tileMiB": 8.4,
+      "readbackMs": 215,
+      "peakDecodedMiB": 123.6,
+      "blobType": "image/png",
+      "bytes": 4881991,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 3123,
+      "maxMainStallMs": 2500,
+      "memory": {
+        "baselineMiB": 259.9,
+        "peakDeltaMiB": 329.8,
+        "peakWsDeltaMiB": 335.6,
+        "retainedAfterMiB": 47.4,
+        "perPhaseDeltaMiB": {
+          "start": -0.1,
+          "compose+encode": 329.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 324.6,
+            "privMiB": 360.8
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.3,
+            "privMiB": 63.5
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 27,
+        "sampleEndT": 1790253007540
+      },
+      "wallMs": 3130,
+      "consoleErrors": []
+    },
+    "split-1080x30000-jpeg-4096": {
+      "group": "export-split",
+      "ctx": "worker",
+      "name": "exportSplit",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 4096,
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "parts": 8,
+      "bytes": 4012934,
+      "peakDecodedMiB": 123.6,
+      "verified": true,
+      "ms": 1084,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 257.8,
+        "peakDeltaMiB": 160.9,
+        "peakWsDeltaMiB": 160.6,
+        "retainedAfterMiB": 11.1,
+        "perPhaseDeltaMiB": {
+          "start": -0.7,
+          "compose+encode": 160.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 156,
+            "privMiB": 193.3
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.4,
+            "privMiB": 66.3
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 10,
+        "sampleEndT": 1790253014281
+      },
+      "wallMs": 1099,
+      "consoleErrors": []
+    },
+    "split-1440x20000-webp-4096": {
+      "group": "export-split",
+      "ctx": "worker",
+      "name": "exportSplit",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "tileHeight": 4096,
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 20000,
+      "parts": 5,
+      "bytes": 2699916,
+      "peakDecodedMiB": 109.9,
+      "verified": true,
+      "ms": 5248,
+      "maxMainStallMs": 13,
+      "memory": {
+        "baselineMiB": 254.4,
+        "peakDeltaMiB": 179.7,
+        "peakWsDeltaMiB": 174.6,
+        "retainedAfterMiB": 2.8,
+        "perPhaseDeltaMiB": {
+          "start": 50,
+          "compose+encode": 179.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 169.7,
+            "privMiB": 205.5
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 12.7,
+            "privMiB": 69.6
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 47,
+        "sampleEndT": 1790253025371
+      },
+      "wallMs": 5261,
+      "consoleErrors": []
+    },
+    "multi-8x1080x2400-single-all": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 19200,
+      "canvasMiB": 79.1,
+      "cornerAlpha": 255,
+      "encodeMs": 251,
+      "blobType": "image/png",
+      "bytes": 3570998,
+      "encW": 1080,
+      "encH": 19200,
+      "verified": true,
+      "ms": 816,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 256.8,
+        "peakDeltaMiB": 168,
+        "peakWsDeltaMiB": 160.3,
+        "retainedAfterMiB": 13.4,
+        "perPhaseDeltaMiB": {
+          "start": 2.7,
+          "decode+draw": 168,
+          "encode": 92.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 160.9,
+            "privMiB": 201.2
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 7.2,
+            "privMiB": 63.7
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790253031859
+      },
+      "wallMs": 829,
+      "consoleErrors": []
+    },
+    "multi-8x1080x2400-single-seq": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 19200,
+      "canvasMiB": 79.1,
+      "cornerAlpha": 255,
+      "encodeMs": 269,
+      "blobType": "image/png",
+      "bytes": 3570998,
+      "encW": 1080,
+      "encH": 19200,
+      "verified": true,
+      "ms": 849,
+      "maxMainStallMs": 11,
+      "memory": {
+        "baselineMiB": 259.8,
+        "peakDeltaMiB": 135,
+        "peakWsDeltaMiB": 135.7,
+        "retainedAfterMiB": 10.9,
+        "perPhaseDeltaMiB": {
+          "start": 1.8,
+          "decode+draw": 135,
+          "encode": 90.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 131.2,
+            "privMiB": 171.7
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 7.1,
+            "privMiB": 63.7
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790253038621
+      },
+      "wallMs": 855,
+      "consoleErrors": []
+    },
+    "multi-8x1080x2400-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 19200,
+      "tiles": 10,
+      "tileMiB": 8.4,
+      "readbackMs": 135,
+      "peakDecodedMiB": 19.8,
+      "blobType": "image/png",
+      "bytes": 3731991,
+      "encW": 1080,
+      "encH": 19200,
+      "verified": true,
+      "ms": 2172,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 258.7,
+        "peakDeltaMiB": 103.3,
+        "peakWsDeltaMiB": 110,
+        "retainedAfterMiB": 78.8,
+        "perPhaseDeltaMiB": {
+          "start": 12.8,
+          "compose+encode": 103.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 99.2,
+            "privMiB": 134
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 4.9,
+            "privMiB": 62
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 18,
+        "sampleEndT": 1790253046464
+      },
+      "wallMs": 2179,
+      "consoleErrors": []
+    },
+    "multi-16x1080x2400-single-seq": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 38400,
+      "canvasMiB": 158.2,
+      "cornerAlpha": 255,
+      "encodeMs": 513,
+      "blobType": "image/png",
+      "bytes": 7137863,
+      "encW": 1080,
+      "encH": 38400,
+      "verified": true,
+      "ms": 1592,
+      "maxMainStallMs": 11,
+      "memory": {
+        "baselineMiB": 256.7,
+        "peakDeltaMiB": 223.2,
+        "peakWsDeltaMiB": 223.1,
+        "retainedAfterMiB": 17.8,
+        "perPhaseDeltaMiB": {
+          "start": 4.2,
+          "decode+draw": 223.2,
+          "encode": 176.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 211.1,
+            "privMiB": 251.4
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 13.1,
+            "privMiB": 70.2
+          },
+          {
+            "name": "utility",
+            "deltaMiB": 0.1,
+            "privMiB": 13.9
+          }
+        ],
+        "samples": 13,
+        "sampleEndT": 1790253053820
+      },
+      "wallMs": 1600,
+      "consoleErrors": []
+    },
+    "multi-16x1080x2400-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 38400,
+      "tiles": 19,
+      "tileMiB": 8.4,
+      "readbackMs": 285,
+      "peakDecodedMiB": 19.8,
+      "blobType": "image/png",
+      "bytes": 7465760,
+      "encW": 1080,
+      "encH": 38400,
+      "verified": true,
+      "ms": 4278,
+      "maxMainStallMs": 13,
+      "memory": {
+        "baselineMiB": 260.9,
+        "peakDeltaMiB": 139.2,
+        "peakWsDeltaMiB": 145.1,
+        "retainedAfterMiB": 30.3,
+        "perPhaseDeltaMiB": {
+          "start": 14.8,
+          "compose+encode": 139.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 130.6,
+            "privMiB": 165.4
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 11.3,
+            "privMiB": 67.9
+          },
+          {
+            "name": "utility",
+            "deltaMiB": 0.1,
+            "privMiB": 13.9
+          }
+        ],
+        "samples": 37,
+        "sampleEndT": 1790253063796
+      },
+      "wallMs": 4286,
+      "consoleErrors": []
+    },
+    "multi-12x1440x3200-single-seq": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 38400,
+      "canvasMiB": 210.9,
+      "cornerAlpha": 255,
+      "encodeMs": 848,
+      "blobType": "image/png",
+      "bytes": 15218314,
+      "encW": 1440,
+      "encH": 38400,
+      "verified": true,
+      "ms": 2618,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 256,
+        "peakDeltaMiB": 293.4,
+        "peakWsDeltaMiB": 291.2,
+        "retainedAfterMiB": 39.8,
+        "perPhaseDeltaMiB": {
+          "start": 35.1,
+          "decode+draw": 293.4,
+          "encode": 254.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 268.7,
+            "privMiB": 303.6
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 25.1,
+            "privMiB": 84.1
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 21,
+        "sampleEndT": 1790253072045
+      },
+      "wallMs": 2630,
+      "consoleErrors": []
+    },
+    "multi-12x1440x3200-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1440,
+      "outH": 38400,
+      "tiles": 19,
+      "tileMiB": 11.3,
+      "readbackMs": 371,
+      "peakDecodedMiB": 35.2,
+      "blobType": "image/png",
+      "bytes": 17516089,
+      "encW": 1440,
+      "encH": 38400,
+      "verified": true,
+      "ms": 6284,
+      "maxMainStallMs": 127,
+      "memory": {
+        "baselineMiB": 257.2,
+        "peakDeltaMiB": 182.5,
+        "peakWsDeltaMiB": 183,
+        "retainedAfterMiB": 108.6,
+        "perPhaseDeltaMiB": {
+          "start": 31.2,
+          "compose+encode": 182.5,
+          "verify": 93.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 164.2,
+            "privMiB": 198
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 25.5,
+            "privMiB": 82.4
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 56,
+        "sampleEndT": 1790253084332
+      },
+      "wallMs": 6289,
+      "consoleErrors": []
+    },
+    "multi-25x1080x2400-single-seq": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 60000,
+      "canvasMiB": 247.2,
+      "cornerAlpha": 255,
+      "encodeMs": 835,
+      "blobType": "image/png",
+      "bytes": 11428900,
+      "encW": 1080,
+      "encH": 60000,
+      "verified": true,
+      "ms": 2558,
+      "maxMainStallMs": 11,
+      "memory": {
+        "baselineMiB": 256.6,
+        "peakDeltaMiB": 309.5,
+        "peakWsDeltaMiB": 308.7,
+        "retainedAfterMiB": 28.8,
+        "perPhaseDeltaMiB": {
+          "start": 26.9,
+          "decode+draw": 309.5,
+          "encode": 280.8
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 289.4,
+            "privMiB": 332.2
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 20.5,
+            "privMiB": 77.4
+          },
+          {
+            "name": "utility",
+            "deltaMiB": 0.3,
+            "privMiB": 14.2
+          }
+        ],
+        "samples": 21,
+        "sampleEndT": 1790253092606
+      },
+      "wallMs": 2565,
+      "consoleErrors": []
+    },
+    "multi-25x1080x2400-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 60000,
+      "tiles": 30,
+      "tileMiB": 8.4,
+      "readbackMs": 435,
+      "peakDecodedMiB": 19.8,
+      "blobType": "image/png",
+      "bytes": 12016601,
+      "encW": 1080,
+      "encH": 60000,
+      "verified": true,
+      "ms": 6510,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 255.5,
+        "peakDeltaMiB": 117.1,
+        "peakWsDeltaMiB": 121.7,
+        "retainedAfterMiB": 67.6,
+        "perPhaseDeltaMiB": {
+          "start": 25.4,
+          "compose+encode": 117.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 96.8,
+            "privMiB": 134.5
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 20.4,
+            "privMiB": 77.4
+          },
+          {
+            "name": "utility",
+            "deltaMiB": 0.3,
+            "privMiB": 14.2
+          }
+        ],
+        "samples": 58,
+        "sampleEndT": 1790253104870
+      },
+      "wallMs": 6523,
+      "consoleErrors": []
+    },
+    "multi-2x1080x30000-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x30000.png",
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 60000,
+      "tiles": 30,
+      "tileMiB": 8.4,
+      "readbackMs": 431,
+      "peakDecodedMiB": 247.2,
+      "blobType": "image/png",
+      "bytes": 9758042,
+      "encW": 1080,
+      "encH": 60000,
+      "verified": true,
+      "ms": 6062,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 251.5,
+        "peakDeltaMiB": 367.2,
+        "peakWsDeltaMiB": 370.5,
+        "retainedAfterMiB": 89.8,
+        "perPhaseDeltaMiB": {
+          "start": 42.5,
+          "compose+encode": 367.2,
+          "verify": 81.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 353.8,
+            "privMiB": 388.6
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 14.2,
+            "privMiB": 70.9
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 55,
+        "sampleEndT": 1790253116757
+      },
+      "wallMs": 6072,
+      "consoleErrors": []
+    },
+    "dataurl-1080x20000": {
+      "group": "dataurl",
+      "ctx": "main",
+      "name": "dataUrlVsBlob",
+      "params": {
+        "file": "tall-1080x20000.png",
+        "method": "toDataURL"
+      },
+      "ok": true,
+      "method": "toDataURL",
+      "encodeMs": 400,
+      "dataUrlMiB": 5.3,
+      "blobMiB": 0,
+      "jsHeapMiB": 8.6,
+      "ms": 1001,
+      "maxMainStallMs": 481,
+      "memory": {
+        "baselineMiB": 247.2,
+        "peakDeltaMiB": 178.2,
+        "peakWsDeltaMiB": 178.9,
+        "retainedAfterMiB": 13.5,
+        "perPhaseDeltaMiB": {
+          "start": 172.6,
+          "encode": 178.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 170.6,
+            "privMiB": 204.8
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 7.2,
+            "privMiB": 64.1
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.8,
+            "privMiB": 71.7
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253123609
+      },
+      "wallMs": 1009,
+      "consoleErrors": []
+    },
+    "toblob-1080x20000": {
+      "group": "dataurl",
+      "ctx": "main",
+      "name": "dataUrlVsBlob",
+      "params": {
+        "file": "tall-1080x20000.png",
+        "method": "toBlob"
+      },
+      "ok": true,
+      "method": "toBlob",
+      "encodeMs": 366,
+      "dataUrlMiB": 0,
+      "blobMiB": 4,
+      "jsHeapMiB": 3.3,
+      "ms": 942,
+      "maxMainStallMs": 96,
+      "memory": {
+        "baselineMiB": 254.6,
+        "peakDeltaMiB": 167.4,
+        "peakWsDeltaMiB": 161.8,
+        "retainedAfterMiB": 6.6,
+        "perPhaseDeltaMiB": {
+          "start": 167.4,
+          "encode": 89.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 165.8,
+            "privMiB": 202.1
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 4.3,
+            "privMiB": 63.8
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253130316
+      },
+      "wallMs": 957,
+      "consoleErrors": []
+    },
+    "opencv-load": {
+      "group": "opencv",
+      "ctx": "worker",
+      "name": "stitchAnalyse",
+      "params": {
+        "a": "",
+        "b": "",
+        "loadOnly": true
+      },
+      "ok": true,
+      "loadMs": 1386,
+      "wasmAfterLoadMiB": 128,
+      "ms": 1388,
+      "maxMainStallMs": 15,
+      "memory": {
+        "baselineMiB": 247.7,
+        "peakDeltaMiB": 189.1,
+        "peakWsDeltaMiB": 68,
+        "retainedAfterMiB": 191,
+        "perPhaseDeltaMiB": {
+          "load-opencv": 189.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 185.5,
+            "privMiB": 220.9
+          },
+          {
+            "name": "utility",
+            "deltaMiB": 3.7,
+            "privMiB": 17.7
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 0.1,
+            "privMiB": 57
+          }
+        ],
+        "samples": 12,
+        "sampleEndT": 1790253137312
+      },
+      "wallMs": 1399,
+      "consoleErrors": []
+    },
+    "opencv-analyse-2x1080x10000": {
+      "group": "opencv",
+      "ctx": "worker",
+      "name": "stitchAnalyse",
+      "params": {
+        "a": "pair-1080x10000-a.png",
+        "b": "pair-1080x10000-b.png",
+        "expectedOffset": 7000
+      },
+      "ok": true,
+      "loadMs": 1412,
+      "wasmAfterLoadMiB": 128,
+      "wasmAfterAnalyseMiB": 128,
+      "offsetY": 7000,
+      "expectedOffset": 7000,
+      "confidence": 0.996,
+      "confidenceClass": "high",
+      "timings": {
+        "proxy": 221,
+        "bands": 13.7,
+        "hypothesis:tolerant": 2011.1,
+        "total": 2245.8
+      },
+      "ms": 4121,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 252.5,
+        "peakDeltaMiB": 331,
+        "peakWsDeltaMiB": 253.1,
+        "retainedAfterMiB": 207.9,
+        "perPhaseDeltaMiB": {
+          "load-opencv": 219.3,
+          "decode": 295,
+          "analyse": 331
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 316.8,
+            "privMiB": 351.3
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 10,
+            "privMiB": 66.9
+          },
+          {
+            "name": "utility",
+            "deltaMiB": 3.7,
+            "privMiB": 17.7
+          }
+        ],
+        "samples": 35,
+        "sampleEndT": 1790253147341
+      },
+      "wallMs": 4129,
+      "consoleErrors": []
+    },
+    "opencv-analyse-2x1080x2400": {
+      "group": "opencv",
+      "ctx": "worker",
+      "name": "stitchAnalyse",
+      "params": {
+        "a": "phone-1080x2400-0.png",
+        "b": "phone-1080x2400-1.png"
+      },
+      "ok": true,
+      "loadMs": 1360,
+      "wasmAfterLoadMiB": 128,
+      "wasmAfterAnalyseMiB": 128,
+      "offsetY": 2400,
+      "expectedOffset": null,
+      "confidence": 0.25,
+      "confidenceClass": "low",
+      "timings": {
+        "proxy": 98.5,
+        "bands": 6.8,
+        "hypothesis:tolerant": 301.1,
+        "hypothesis:none": 229.6,
+        "total": 636
+      },
+      "ms": 2174,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 257.1,
+        "peakDeltaMiB": 231.6,
+        "peakWsDeltaMiB": 123.6,
+        "retainedAfterMiB": 208.8,
+        "perPhaseDeltaMiB": {
+          "load-opencv": 183.2,
+          "decode": 211.7,
+          "analyse": 231.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 231.4,
+            "privMiB": 271.7
+          },
+          {
+            "name": "utility",
+            "deltaMiB": 3.6,
+            "privMiB": 17.6
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 17,
+        "sampleEndT": 1790253155138
+      },
+      "wallMs": 2182,
+      "consoleErrors": []
+    },
+    "bitmaps-12x1080x10000-closed-gc": {
+      "group": "lifecycle",
+      "ctx": "worker",
+      "name": "bitmapLifecycle",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "count": 12,
+        "close": true,
+        "gc": true
+      },
+      "ok": true,
+      "decoded": 12,
+      "closed": true,
+      "gcAvailable": true,
+      "ms": 3427,
+      "maxMainStallMs": 11,
+      "memory": {
+        "baselineMiB": 199.5,
+        "peakDeltaMiB": 55,
+        "peakWsDeltaMiB": 55.1,
+        "retainedAfterMiB": 10.2,
+        "perPhaseDeltaMiB": {
+          "start": 7,
+          "decoding": 55,
+          "settle": 8.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 48.3,
+            "privMiB": 83.2
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.5,
+            "privMiB": 56.3
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.2,
+            "privMiB": 44.2
+          }
+        ],
+        "samples": 19,
+        "sampleEndT": 1790255583895
+      },
+      "wallMs": 3440,
+      "consoleErrors": []
+    },
+    "bitmaps-12x1080x10000-leaked-gc": {
+      "group": "lifecycle",
+      "ctx": "worker",
+      "name": "bitmapLifecycle",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "count": 12,
+        "close": false,
+        "gc": true
+      },
+      "ok": true,
+      "decoded": 12,
+      "closed": false,
+      "gcAvailable": true,
+      "ms": 6411,
+      "maxMainStallMs": 14,
+      "memory": {
+        "baselineMiB": 267.7,
+        "peakDeltaMiB": 484.7,
+        "peakWsDeltaMiB": 487.4,
+        "retainedAfterMiB": 428.2,
+        "perPhaseDeltaMiB": {
+          "decoding": 447.5,
+          "settle": 484.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 497.3,
+            "privMiB": 541
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 6.5,
+            "privMiB": 58.4
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 1.5,
+            "privMiB": 8.2
+          }
+        ],
+        "samples": 16,
+        "sampleEndT": 1790254312321
+      },
+      "wallMs": 6420,
+      "consoleErrors": []
+    },
+    "bitmaps-12x1080x10000-closed-recycle": {
+      "group": "lifecycle",
+      "ctx": "worker",
+      "name": "bitmapLifecycle",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "count": 12,
+        "close": true
+      },
+      "ok": true,
+      "decoded": 12,
+      "closed": true,
+      "gcAvailable": false,
+      "ms": 3210,
+      "maxMainStallMs": 12,
+      "memory": {
+        "baselineMiB": 204.1,
+        "peakDeltaMiB": 67.6,
+        "peakWsDeltaMiB": 53.7,
+        "retainedAfterMiB": -0.4,
+        "perPhaseDeltaMiB": {
+          "start": 0,
+          "decoding": 67.6,
+          "settle": 8.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 46.6,
+            "privMiB": 81.9
+          },
+          {
+            "name": "chrome",
+            "deltaMiB": 21,
+            "privMiB": 71.4
+          },
+          {
+            "name": "crashpad-handler",
+            "deltaMiB": 0,
+            "privMiB": 2.2
+          }
+        ],
+        "samples": 19,
+        "sampleEndT": 1790255594812
+      },
+      "wallMs": 3234,
+      "consoleErrors": []
+    }
+  }
+}

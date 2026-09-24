@@ -12,7 +12,10 @@
     "test": "vitest run src/tests/unit",
     "bench:stitch": "vitest run src/tests/benchmark",
     "test:e2e": "playwright test",
-    "fixtures:stitch": "tsx scripts/spikes/stitch-fixtures/generate.ts"
+    "fixtures:stitch": "tsx scripts/spikes/stitch-fixtures/generate.ts",
+    "fixtures:large": "tsx scripts/spikes/memory/generate-large-fixtures.ts",
+    "bench:memory": "tsx scripts/spikes/memory/run.ts",
+    "bench:memory:summary": "tsx scripts/spikes/memory/summarise.ts"
   },
   "dependencies": {
     "@techstark/opencv-js": "^5.0.0-release.1",

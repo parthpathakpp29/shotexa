@@ -1,0 +1,3438 @@
+{
+  "environment": {
+    "browser": "webkit",
+    "version": "26.6",
+    "os": "win32 x64",
+    "date": "2026-09-24T12:41:16.040Z"
+  },
+  "results": {
+    "limits-main-dom": {
+      "group": "limits",
+      "ctx": "main",
+      "name": "canvasLimits",
+      "params": {
+        "api": "dom",
+        "widths": [
+          1080,
+          1440
+        ],
+        "heights": [
+          8192,
+          16383,
+          16384,
+          20000,
+          30000,
+          32767,
+          32768,
+          40000,
+          50000,
+          65535,
+          65536,
+          100000
+        ]
+      },
+      "ok": true,
+      "rows": [
+        {
+          "width": 1080,
+          "height": 8192,
+          "ok": true,
+          "ms": 22
+        },
+        {
+          "width": 1080,
+          "height": 16383,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1080,
+          "height": 16384,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 20000,
+          "ok": true,
+          "ms": 8
+        },
+        {
+          "width": 1080,
+          "height": 30000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 32767,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 32768,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 40000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 50000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 65535,
+          "ok": true,
+          "ms": 9
+        },
+        {
+          "width": 1080,
+          "height": 65536,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 100000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 8192,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1440,
+          "height": 16383,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 16384,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 20000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 30000,
+          "ok": true,
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 32767,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1440,
+          "height": 32768,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1440,
+          "height": 40000,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1440,
+          "height": 50000,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 65535,
+          "ok": true,
+          "ms": 1
+        },
+        {
+          "width": 1440,
+          "height": 65536,
+          "ok": true,
+          "ms": 2
+        },
+        {
+          "width": 1440,
+          "height": 100000,
+          "ok": true,
+          "ms": 1
+        }
+      ],
+      "ms": 70,
+      "maxMainStallMs": 70,
+      "memory": {
+        "baselineMiB": 1055,
+        "peakDeltaMiB": 0.7,
+        "peakWsDeltaMiB": 0.7,
+        "retainedAfterMiB": -2.4,
+        "perPhaseDeltaMiB": {
+          "start": 0.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 0.7,
+            "privMiB": 313.2
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0,
+            "privMiB": 253.4
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0,
+            "privMiB": 227.7
+          }
+        ],
+        "samples": 1,
+        "sampleEndT": 1790253681825
+      },
+      "wallMs": 105,
+      "consoleErrors": []
+    },
+    "limits-main-offscreen": {
+      "group": "limits",
+      "ctx": "main",
+      "name": "canvasLimits",
+      "params": {
+        "api": "offscreen",
+        "widths": [
+          1080,
+          1440
+        ],
+        "heights": [
+          8192,
+          16383,
+          16384,
+          20000,
+          30000,
+          32767,
+          32768,
+          40000,
+          50000,
+          65535,
+          65536,
+          100000
+        ]
+      },
+      "ok": true,
+      "rows": [
+        {
+          "width": 1080,
+          "height": 8192,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 16383,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 16384,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 20000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 30000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 32767,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 32768,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 40000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 50000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 65535,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 65536,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 100000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 8192,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 16383,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 16384,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 20000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 30000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 32767,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 32768,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 40000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 50000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 65535,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 65536,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 100000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        }
+      ],
+      "ms": 2,
+      "maxMainStallMs": 2,
+      "memory": {
+        "baselineMiB": 1055,
+        "peakDeltaMiB": 0,
+        "peakWsDeltaMiB": 0,
+        "retainedAfterMiB": -1.8,
+        "perPhaseDeltaMiB": {},
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 0,
+            "privMiB": 253.2
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 261.3
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0,
+            "privMiB": 260.6
+          }
+        ],
+        "samples": 0,
+        "sampleEndT": 1790253688430
+      },
+      "wallMs": 18,
+      "consoleErrors": []
+    },
+    "limits-worker-offscreen": {
+      "group": "limits",
+      "ctx": "worker",
+      "name": "canvasLimits",
+      "params": {
+        "api": "offscreen",
+        "widths": [
+          1080,
+          1440
+        ],
+        "heights": [
+          8192,
+          16383,
+          16384,
+          20000,
+          30000,
+          32767,
+          32768,
+          40000,
+          50000,
+          65535,
+          65536,
+          100000
+        ]
+      },
+      "ok": true,
+      "rows": [
+        {
+          "width": 1080,
+          "height": 8192,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 1
+        },
+        {
+          "width": 1080,
+          "height": 16383,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 16384,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 20000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 30000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 32767,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 32768,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 40000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 50000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 65535,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 65536,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1080,
+          "height": 100000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 8192,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 16383,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 16384,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 20000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 30000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 32767,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 32768,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 40000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 50000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 65535,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 65536,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        },
+        {
+          "width": 1440,
+          "height": 100000,
+          "ok": false,
+          "reason": "Can't find variable: OffscreenCanvas",
+          "ms": 0
+        }
+      ],
+      "ms": 7,
+      "maxMainStallMs": 10,
+      "memory": {
+        "baselineMiB": 1097,
+        "peakDeltaMiB": 0,
+        "peakWsDeltaMiB": 0,
+        "retainedAfterMiB": -3.7,
+        "perPhaseDeltaMiB": {},
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 0,
+            "privMiB": 254.4
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 261.6
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0,
+            "privMiB": 259.6
+          }
+        ],
+        "samples": 0,
+        "sampleEndT": 1790253694247
+      },
+      "wallMs": 40,
+      "consoleErrors": []
+    },
+    "decode-full-1080x5000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x5000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 489,
+      "maxMainStallMs": 78,
+      "memory": {
+        "baselineMiB": 1064.8,
+        "peakDeltaMiB": 73.1,
+        "peakWsDeltaMiB": 152.7,
+        "retainedAfterMiB": -40.2,
+        "perPhaseDeltaMiB": {
+          "start": 20.7,
+          "decode": 73.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 52.1,
+            "privMiB": 341.3
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 21.1,
+            "privMiB": 275.1
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 261.7
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253701161
+      },
+      "wallMs": 509,
+      "consoleErrors": []
+    },
+    "decode-full-1080x10000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 553,
+      "maxMainStallMs": 70,
+      "memory": {
+        "baselineMiB": 1050.8,
+        "peakDeltaMiB": 102.3,
+        "peakWsDeltaMiB": 165.8,
+        "retainedAfterMiB": -23.2,
+        "perPhaseDeltaMiB": {
+          "start": 41.5,
+          "decode": 102.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 74.1,
+            "privMiB": 363.1
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 27.7,
+            "privMiB": 268
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.3,
+            "privMiB": 262
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253707479
+      },
+      "wallMs": 572,
+      "consoleErrors": []
+    },
+    "decode-full-1080x20000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x20000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 655,
+      "maxMainStallMs": 91,
+      "memory": {
+        "baselineMiB": 1050.9,
+        "peakDeltaMiB": 149.3,
+        "peakWsDeltaMiB": 232.1,
+        "retainedAfterMiB": -25.8,
+        "perPhaseDeltaMiB": {
+          "start": 45.4,
+          "decode": 149.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 117.7,
+            "privMiB": 407
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 31.5,
+            "privMiB": 271.8
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.6
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253714133
+      },
+      "wallMs": 666,
+      "consoleErrors": []
+    },
+    "decode-full-1080x30000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 871,
+      "maxMainStallMs": 89,
+      "memory": {
+        "baselineMiB": 1050.6,
+        "peakDeltaMiB": 203.1,
+        "peakWsDeltaMiB": 290.1,
+        "retainedAfterMiB": -18.1,
+        "perPhaseDeltaMiB": {
+          "start": 55.3,
+          "decode": 203.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 162.4,
+            "privMiB": 451.3
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 40.7,
+            "privMiB": 280.9
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.7
+          }
+        ],
+        "samples": 9,
+        "sampleEndT": 1790253721212
+      },
+      "wallMs": 889,
+      "consoleErrors": []
+    },
+    "decode-full-1440x20000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1440x20000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 1120,
+      "maxMainStallMs": 173,
+      "memory": {
+        "baselineMiB": 1051.4,
+        "peakDeltaMiB": 224.6,
+        "peakWsDeltaMiB": 274.1,
+        "retainedAfterMiB": -0.6,
+        "perPhaseDeltaMiB": {
+          "start": 124.2,
+          "decode": 224.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 167.5,
+            "privMiB": 456.8
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 57.1,
+            "privMiB": 297.7
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 262
+          }
+        ],
+        "samples": 9,
+        "sampleEndT": 1790253728714
+      },
+      "wallMs": 1132,
+      "consoleErrors": []
+    },
+    "decode-full-1080x20000-jpeg": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x20000.jpg",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 507,
+      "maxMainStallMs": 61,
+      "memory": {
+        "baselineMiB": 1055.2,
+        "peakDeltaMiB": 115.9,
+        "peakWsDeltaMiB": 202,
+        "retainedAfterMiB": -25.1,
+        "perPhaseDeltaMiB": {
+          "start": 8.3,
+          "decode": 115.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 93.4,
+            "privMiB": 381.7
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 22.5,
+            "privMiB": 267.6
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.7
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790253735363
+      },
+      "wallMs": 520,
+      "consoleErrors": []
+    },
+    "decode-full-1080x30000-jpeg": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.jpg",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 894,
+      "maxMainStallMs": 109,
+      "memory": {
+        "baselineMiB": 1056.1,
+        "peakDeltaMiB": 179.6,
+        "peakWsDeltaMiB": 218.2,
+        "retainedAfterMiB": -24.6,
+        "perPhaseDeltaMiB": {
+          "start": 31.6,
+          "decode": 179.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 153,
+            "privMiB": 442.1
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 26.5,
+            "privMiB": 271.8
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.8
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253742819
+      },
+      "wallMs": 909,
+      "consoleErrors": []
+    },
+    "decode-full-1080x16383-webp": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x16383.webp",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 791,
+      "maxMainStallMs": 25,
+      "memory": {
+        "baselineMiB": 1087.9,
+        "peakDeltaMiB": 138.7,
+        "peakWsDeltaMiB": 145.6,
+        "retainedAfterMiB": -12.6,
+        "perPhaseDeltaMiB": {
+          "decode": 138.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 135.5,
+            "privMiB": 456.3
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 3.1,
+            "privMiB": 248.3
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.8
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253750058
+      },
+      "wallMs": 801,
+      "consoleErrors": []
+    },
+    "decode-full-1080x30000-png-main": {
+      "group": "decode",
+      "ctx": "main",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "full",
+        "holdMs": 600
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 1043,
+      "maxMainStallMs": 535,
+      "memory": {
+        "baselineMiB": 1079.2,
+        "peakDeltaMiB": 198.5,
+        "peakWsDeltaMiB": 283.3,
+        "retainedAfterMiB": -32.4,
+        "perPhaseDeltaMiB": {
+          "start": 58.6,
+          "decode": 198.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 156.9,
+            "privMiB": 469.5
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 41.6,
+            "privMiB": 284.9
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 261
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253757220
+      },
+      "wallMs": 1055,
+      "consoleErrors": []
+    },
+    "decode-thumb-1080x30000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "thumb",
+        "thumbWidth": 240,
+        "holdMs": 600
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 1136,
+      "maxMainStallMs": 103,
+      "memory": {
+        "baselineMiB": 1056.9,
+        "peakDeltaMiB": 200.6,
+        "peakWsDeltaMiB": 248.3,
+        "retainedAfterMiB": -21.3,
+        "perPhaseDeltaMiB": {
+          "start": 55.1,
+          "decode": 200.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 160.2,
+            "privMiB": 449.7
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 40.4,
+            "privMiB": 285.5
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 260
+          }
+        ],
+        "samples": 9,
+        "sampleEndT": 1790253765656
+      },
+      "wallMs": 1174,
+      "consoleErrors": []
+    },
+    "decode-thumb-1440x20000-jpeg": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1440x20000.jpg",
+        "mode": "thumb",
+        "thumbWidth": 240,
+        "holdMs": 600
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 1233,
+      "maxMainStallMs": 143,
+      "memory": {
+        "baselineMiB": 1056.7,
+        "peakDeltaMiB": 177.7,
+        "peakWsDeltaMiB": 253.6,
+        "retainedAfterMiB": -19.6,
+        "perPhaseDeltaMiB": {
+          "start": 67.5,
+          "decode": 177.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 148.9,
+            "privMiB": 438.5
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 28.7,
+            "privMiB": 273.7
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.7
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253773584
+      },
+      "wallMs": 1261,
+      "consoleErrors": []
+    },
+    "decode-crop-1080x30000-png": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.png",
+        "mode": "crop",
+        "cropY": 14000,
+        "cropH": 2048,
+        "holdMs": 600
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 937,
+      "maxMainStallMs": 123,
+      "memory": {
+        "baselineMiB": 1088.5,
+        "peakDeltaMiB": 200.9,
+        "peakWsDeltaMiB": 284.2,
+        "retainedAfterMiB": -21.1,
+        "perPhaseDeltaMiB": {
+          "start": 54.8,
+          "decode": 200.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 160.4,
+            "privMiB": 481.3
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 40.3,
+            "privMiB": 285.7
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.7
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253780893
+      },
+      "wallMs": 947,
+      "consoleErrors": []
+    },
+    "decode-crop-1080x30000-jpeg": {
+      "group": "decode",
+      "ctx": "worker",
+      "name": "decode",
+      "params": {
+        "file": "tall-1080x30000.jpg",
+        "mode": "crop",
+        "cropY": 14000,
+        "cropH": 2048,
+        "holdMs": 600
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 933,
+      "maxMainStallMs": 123,
+      "memory": {
+        "baselineMiB": 1056.8,
+        "peakDeltaMiB": 178.9,
+        "peakWsDeltaMiB": 218.1,
+        "retainedAfterMiB": -24.4,
+        "perPhaseDeltaMiB": {
+          "start": 55.4,
+          "decode": 178.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 152.6,
+            "privMiB": 441.5
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 26.2,
+            "privMiB": 271.7
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 262.7
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790253787923
+      },
+      "wallMs": 967,
+      "consoleErrors": []
+    },
+    "bitmaps-12x1080x10000-closed": {
+      "group": "lifecycle",
+      "ctx": "worker",
+      "name": "bitmapLifecycle",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "count": 12,
+        "close": true
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 630,
+      "maxMainStallMs": 71,
+      "memory": {
+        "baselineMiB": 1056.1,
+        "peakDeltaMiB": 99.6,
+        "peakWsDeltaMiB": 142,
+        "retainedAfterMiB": -21.1,
+        "perPhaseDeltaMiB": {
+          "start": 32.7,
+          "decoding": 99.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 71.5,
+            "privMiB": 360.2
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 28,
+            "privMiB": 273.1
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.6
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790253794428
+      },
+      "wallMs": 642,
+      "consoleErrors": []
+    },
+    "bitmaps-12x1080x10000-leaked": {
+      "group": "lifecycle",
+      "ctx": "worker",
+      "name": "bitmapLifecycle",
+      "params": {
+        "file": "tall-1080x10000.png",
+        "count": 12,
+        "close": false
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 507,
+      "maxMainStallMs": 78,
+      "memory": {
+        "baselineMiB": 1088.6,
+        "peakDeltaMiB": 93,
+        "peakWsDeltaMiB": 142,
+        "retainedAfterMiB": -19.3,
+        "perPhaseDeltaMiB": {
+          "start": 40.9,
+          "decoding": 93
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 65,
+            "privMiB": 385.8
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 28,
+            "privMiB": 273.3
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.8
+          }
+        ],
+        "samples": 4,
+        "sampleEndT": 1790253800759
+      },
+      "wallMs": 515,
+      "consoleErrors": []
+    },
+    "objecturls-20x10MiB-revoked": {
+      "group": "lifecycle",
+      "ctx": "main",
+      "name": "objectUrlLifecycle",
+      "params": {
+        "count": 20,
+        "mib": 10,
+        "revoke": true
+      },
+      "ok": true,
+      "created": 20,
+      "mibEach": 10,
+      "revoked": true,
+      "ms": 2328,
+      "maxMainStallMs": 327,
+      "memory": {
+        "baselineMiB": 1047.2,
+        "peakDeltaMiB": 250.9,
+        "peakWsDeltaMiB": 280.1,
+        "retainedAfterMiB": -14.8,
+        "perPhaseDeltaMiB": {
+          "create": 101.5,
+          "settle": 250.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "network",
+            "deltaMiB": 200.3,
+            "privMiB": 460.7
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 50.6,
+            "privMiB": 331.2
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0,
+            "privMiB": 243.3
+          }
+        ],
+        "samples": 16,
+        "sampleEndT": 1790253808835
+      },
+      "wallMs": 2341,
+      "consoleErrors": []
+    },
+    "objecturls-20x10MiB-kept": {
+      "group": "lifecycle",
+      "ctx": "main",
+      "name": "objectUrlLifecycle",
+      "params": {
+        "count": 20,
+        "mib": 10,
+        "revoke": false
+      },
+      "ok": true,
+      "created": 20,
+      "mibEach": 10,
+      "revoked": false,
+      "ms": 2313,
+      "maxMainStallMs": 312,
+      "memory": {
+        "baselineMiB": 1014,
+        "peakDeltaMiB": 263,
+        "peakWsDeltaMiB": 300.9,
+        "retainedAfterMiB": 176.3,
+        "perPhaseDeltaMiB": {
+          "create": 212.8,
+          "settle": 263
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "network",
+            "deltaMiB": 190.5,
+            "privMiB": 419
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 72.5,
+            "privMiB": 351.6
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 0,
+            "privMiB": 243.4
+          }
+        ],
+        "samples": 18,
+        "sampleEndT": 1790253817087
+      },
+      "wallMs": 2330,
+      "consoleErrors": []
+    },
+    "single-1080x5000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 491,
+      "maxMainStallMs": 82,
+      "memory": {
+        "baselineMiB": 1056.4,
+        "peakDeltaMiB": 84.1,
+        "peakWsDeltaMiB": 126.2,
+        "retainedAfterMiB": -23.3,
+        "perPhaseDeltaMiB": {
+          "start": 35,
+          "decode+draw": 84.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 54.2,
+            "privMiB": 342.6
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 29.8,
+            "privMiB": 274.9
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 263
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790253823270
+      },
+      "wallMs": 503,
+      "consoleErrors": []
+    },
+    "single-1080x5000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 432,
+      "maxMainStallMs": 83,
+      "memory": {
+        "baselineMiB": 1057.1,
+        "peakDeltaMiB": 82.2,
+        "peakWsDeltaMiB": 126.4,
+        "retainedAfterMiB": -25.6,
+        "perPhaseDeltaMiB": {
+          "start": 61.3,
+          "decode+draw": 82.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 52.4,
+            "privMiB": 341.2
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 29.7,
+            "privMiB": 274.9
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.9
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790253829385
+      },
+      "wallMs": 443,
+      "consoleErrors": []
+    },
+    "single-1080x5000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 479,
+      "maxMainStallMs": 79,
+      "memory": {
+        "baselineMiB": 1056.5,
+        "peakDeltaMiB": 83.3,
+        "peakWsDeltaMiB": 126.2,
+        "retainedAfterMiB": -23.3,
+        "perPhaseDeltaMiB": {
+          "start": 35.8,
+          "decode+draw": 83.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 54.4,
+            "privMiB": 342.9
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 28.8,
+            "privMiB": 273.9
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.7
+          }
+        ],
+        "samples": 4,
+        "sampleEndT": 1790253835690
+      },
+      "wallMs": 495,
+      "consoleErrors": []
+    },
+    "single-1080x10000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 475,
+      "maxMainStallMs": 87,
+      "memory": {
+        "baselineMiB": 1089.4,
+        "peakDeltaMiB": 101.2,
+        "peakWsDeltaMiB": 142.2,
+        "retainedAfterMiB": -23.6,
+        "perPhaseDeltaMiB": {
+          "start": 19.4,
+          "decode+draw": 101.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 73.2,
+            "privMiB": 394.6
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 27.9,
+            "privMiB": 272.9
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.7
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790253842216
+      },
+      "wallMs": 490,
+      "consoleErrors": []
+    },
+    "single-1080x10000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 560,
+      "maxMainStallMs": 76,
+      "memory": {
+        "baselineMiB": 1058.5,
+        "peakDeltaMiB": 99.3,
+        "peakWsDeltaMiB": 165.8,
+        "retainedAfterMiB": -26.2,
+        "perPhaseDeltaMiB": {
+          "start": 32.2,
+          "decode+draw": 99.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 71.4,
+            "privMiB": 361.5
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 27.6,
+            "privMiB": 272.8
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.3,
+            "privMiB": 263.9
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253848698
+      },
+      "wallMs": 569,
+      "consoleErrors": []
+    },
+    "single-1080x10000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 598,
+      "maxMainStallMs": 119,
+      "memory": {
+        "baselineMiB": 1088.7,
+        "peakDeltaMiB": 101.1,
+        "peakWsDeltaMiB": 143.1,
+        "retainedAfterMiB": -25.2,
+        "perPhaseDeltaMiB": {
+          "start": 32.8,
+          "decode+draw": 100
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 72.8,
+            "privMiB": 393.1
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 27.9,
+            "privMiB": 273.1
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.3,
+            "privMiB": 264
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253855056
+      },
+      "wallMs": 609,
+      "consoleErrors": []
+    },
+    "single-1080x20000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 598,
+      "maxMainStallMs": 82,
+      "memory": {
+        "baselineMiB": 1057.3,
+        "peakDeltaMiB": 155.2,
+        "peakWsDeltaMiB": 226.8,
+        "retainedAfterMiB": -19.6,
+        "perPhaseDeltaMiB": {
+          "start": 22.1,
+          "decode+draw": 155.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 124.3,
+            "privMiB": 413.3
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 30.4,
+            "privMiB": 275.2
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.4,
+            "privMiB": 264.2
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790253861316
+      },
+      "wallMs": 610,
+      "consoleErrors": []
+    },
+    "single-1080x20000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 664,
+      "maxMainStallMs": 81,
+      "memory": {
+        "baselineMiB": 1090.2,
+        "peakDeltaMiB": 148.5,
+        "peakWsDeltaMiB": 241.6,
+        "retainedAfterMiB": -25.2,
+        "perPhaseDeltaMiB": {
+          "start": 36.9,
+          "decode+draw": 148.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 117.9,
+            "privMiB": 439.5
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 30.5,
+            "privMiB": 275.7
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.7
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790253867787
+      },
+      "wallMs": 672,
+      "consoleErrors": []
+    },
+    "single-1080x20000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 671,
+      "maxMainStallMs": 95,
+      "memory": {
+        "baselineMiB": 1057.6,
+        "peakDeltaMiB": 154.6,
+        "peakWsDeltaMiB": 234,
+        "retainedAfterMiB": -20.7,
+        "perPhaseDeltaMiB": {
+          "start": 37.7,
+          "decode+draw": 154.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 123.8,
+            "privMiB": 412.7
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 30.3,
+            "privMiB": 275.6
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.4,
+            "privMiB": 264.3
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253874190
+      },
+      "wallMs": 682,
+      "consoleErrors": []
+    },
+    "single-1080x30000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 1070,
+      "maxMainStallMs": 143,
+      "memory": {
+        "baselineMiB": 1090.1,
+        "peakDeltaMiB": 199.6,
+        "peakWsDeltaMiB": 297.5,
+        "retainedAfterMiB": -20.8,
+        "perPhaseDeltaMiB": {
+          "start": 47.3,
+          "decode+draw": 199.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 159.7,
+            "privMiB": 480.9
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 39.9,
+            "privMiB": 285.2
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.7
+          }
+        ],
+        "samples": 10,
+        "sampleEndT": 1790253880951
+      },
+      "wallMs": 1092,
+      "consoleErrors": []
+    },
+    "single-1080x30000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 831,
+      "maxMainStallMs": 90,
+      "memory": {
+        "baselineMiB": 1025.8,
+        "peakDeltaMiB": 201.5,
+        "peakWsDeltaMiB": 276.7,
+        "retainedAfterMiB": -20.2,
+        "perPhaseDeltaMiB": {
+          "start": 48.2,
+          "decode+draw": 201.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 160,
+            "privMiB": 448.9
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 41.5,
+            "privMiB": 286.6
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 227.7
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253888013
+      },
+      "wallMs": 849,
+      "consoleErrors": []
+    },
+    "single-1080x30000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 846,
+      "maxMainStallMs": 82,
+      "memory": {
+        "baselineMiB": 1090.9,
+        "peakDeltaMiB": 200.9,
+        "peakWsDeltaMiB": 310.6,
+        "retainedAfterMiB": -20.9,
+        "perPhaseDeltaMiB": {
+          "start": 47.3,
+          "decode+draw": 200.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 160.5,
+            "privMiB": 482.4
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 40.4,
+            "privMiB": 285.6
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.7
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253895061
+      },
+      "wallMs": 864,
+      "consoleErrors": []
+    },
+    "single-1440x20000-png": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 1012,
+      "maxMainStallMs": 135,
+      "memory": {
+        "baselineMiB": 1059.2,
+        "peakDeltaMiB": 220.3,
+        "peakWsDeltaMiB": 254.8,
+        "retainedAfterMiB": -5.9,
+        "perPhaseDeltaMiB": {
+          "start": 87.7,
+          "decode+draw": 220.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 167.8,
+            "privMiB": 457.1
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 52.4,
+            "privMiB": 297.8
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 260.2
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253902344
+      },
+      "wallMs": 1025,
+      "consoleErrors": []
+    },
+    "single-1440x20000-jpeg": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 945,
+      "maxMainStallMs": 149,
+      "memory": {
+        "baselineMiB": 1057.9,
+        "peakDeltaMiB": 223.2,
+        "peakWsDeltaMiB": 263,
+        "retainedAfterMiB": -1.8,
+        "perPhaseDeltaMiB": {
+          "start": 112.6,
+          "decode+draw": 223.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 170.8,
+            "privMiB": 459.3
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 52.3,
+            "privMiB": 297.6
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.9
+          }
+        ],
+        "samples": 9,
+        "sampleEndT": 1790253909041
+      },
+      "wallMs": 954,
+      "consoleErrors": []
+    },
+    "single-1440x20000-webp": {
+      "group": "export-single",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 912,
+      "maxMainStallMs": 122,
+      "memory": {
+        "baselineMiB": 1057.8,
+        "peakDeltaMiB": 219.7,
+        "peakWsDeltaMiB": 281.3,
+        "retainedAfterMiB": -5.1,
+        "perPhaseDeltaMiB": {
+          "start": 75.3,
+          "decode+draw": 219.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 167.4,
+            "privMiB": 455.8
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 52.3,
+            "privMiB": 297.5
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 264.5
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790253915724
+      },
+      "wallMs": 924,
+      "consoleErrors": []
+    },
+    "single-1080x20000-png-main": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 20000,
+      "canvasMiB": 82.4,
+      "cornerAlpha": 255,
+      "encodeMs": 1807,
+      "blobType": "image/png",
+      "bytes": 4048449,
+      "encW": 1080,
+      "encH": 20000,
+      "verified": true,
+      "ms": 2820,
+      "maxMainStallMs": 2403,
+      "memory": {
+        "baselineMiB": 1080.9,
+        "peakDeltaMiB": 151,
+        "peakWsDeltaMiB": 283.3,
+        "retainedAfterMiB": -23.6,
+        "perPhaseDeltaMiB": {
+          "start": 67.9,
+          "decode+draw": 151,
+          "encode": 66.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 119.1,
+            "privMiB": 431.3
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 31.7,
+            "privMiB": 275.1
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.2,
+            "privMiB": 260.9
+          }
+        ],
+        "samples": 27,
+        "sampleEndT": 1790253924414
+      },
+      "wallMs": 2833,
+      "consoleErrors": []
+    },
+    "single-1080x30000-jpeg-main": {
+      "group": "export-single",
+      "ctx": "main",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "canvasMiB": 123.6,
+      "cornerAlpha": 255,
+      "encodeMs": 726,
+      "blobType": "image/jpeg",
+      "bytes": 4026637,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 2181,
+      "maxMainStallMs": 1763,
+      "memory": {
+        "baselineMiB": 1049.8,
+        "peakDeltaMiB": 319.9,
+        "peakWsDeltaMiB": 623.8,
+        "retainedAfterMiB": -26,
+        "perPhaseDeltaMiB": {
+          "start": 71.8,
+          "decode+draw": 196.1,
+          "encode": 319.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 337.3,
+            "privMiB": 618.4
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 264.6
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.2,
+            "privMiB": 243
+          }
+        ],
+        "samples": 19,
+        "sampleEndT": 1790253932280
+      },
+      "wallMs": 2194,
+      "consoleErrors": []
+    },
+    "tiled-1080x5000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x5000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 361,
+      "maxMainStallMs": 83,
+      "memory": {
+        "baselineMiB": 1058.5,
+        "peakDeltaMiB": 35.5,
+        "peakWsDeltaMiB": 65.1,
+        "retainedAfterMiB": -27.4,
+        "perPhaseDeltaMiB": {
+          "start": 35.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 29.9,
+            "privMiB": 274.8
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 5.6,
+            "privMiB": 294.8
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 264.7
+          }
+        ],
+        "samples": 3,
+        "sampleEndT": 1790253938491
+      },
+      "wallMs": 376,
+      "consoleErrors": []
+    },
+    "tiled-1080x10000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x10000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 327,
+      "maxMainStallMs": 67,
+      "memory": {
+        "baselineMiB": 1058.2,
+        "peakDeltaMiB": 60.6,
+        "peakWsDeltaMiB": 101.8,
+        "retainedAfterMiB": -26.7,
+        "perPhaseDeltaMiB": {
+          "start": 19.5
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 31.4,
+            "privMiB": 320
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 29.1,
+            "privMiB": 274.2
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 259.6
+          }
+        ],
+        "samples": 4,
+        "sampleEndT": 1790253944611
+      },
+      "wallMs": 340,
+      "consoleErrors": []
+    },
+    "tiled-1080x20000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x20000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 343,
+      "maxMainStallMs": 71,
+      "memory": {
+        "baselineMiB": 1090.4,
+        "peakDeltaMiB": 46,
+        "peakWsDeltaMiB": 63.8,
+        "retainedAfterMiB": -26.6,
+        "perPhaseDeltaMiB": {
+          "start": 46
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 31.6,
+            "privMiB": 276.7
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 14.4,
+            "privMiB": 334.8
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 265
+          }
+        ],
+        "samples": 4,
+        "sampleEndT": 1790253950725
+      },
+      "wallMs": 360,
+      "consoleErrors": []
+    },
+    "tiled-1080x30000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 516,
+      "maxMainStallMs": 81,
+      "memory": {
+        "baselineMiB": 1059.1,
+        "peakDeltaMiB": 76.6,
+        "peakWsDeltaMiB": 99.7,
+        "retainedAfterMiB": -22.6,
+        "perPhaseDeltaMiB": {
+          "start": 76.6
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 40.1,
+            "privMiB": 285.2
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 36.5,
+            "privMiB": 325.7
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 265
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253957004
+      },
+      "wallMs": 529,
+      "consoleErrors": []
+    },
+    "tiled-1440x20000-png": {
+      "group": "export-tiled",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 646,
+      "maxMainStallMs": 128,
+      "memory": {
+        "baselineMiB": 1059.9,
+        "peakDeltaMiB": 99.9,
+        "peakWsDeltaMiB": 111.2,
+        "retainedAfterMiB": -5.8,
+        "perPhaseDeltaMiB": {
+          "start": 99.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 52.2,
+            "privMiB": 297.4
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 47.7,
+            "privMiB": 337.7
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 265.1
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253963265
+      },
+      "wallMs": 661,
+      "consoleErrors": []
+    },
+    "tiled-1080x30000-png-main": {
+      "group": "export-tiled",
+      "ctx": "main",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": true,
+      "outW": 1080,
+      "outH": 30000,
+      "tiles": 15,
+      "tileMiB": 8.4,
+      "readbackMs": 730,
+      "peakDecodedMiB": 123.6,
+      "blobType": "image/png",
+      "bytes": 4887521,
+      "encW": 1080,
+      "encH": 30000,
+      "verified": true,
+      "ms": 2870,
+      "maxMainStallMs": 2390,
+      "memory": {
+        "baselineMiB": 1049,
+        "peakDeltaMiB": 199.4,
+        "peakWsDeltaMiB": 416.4,
+        "retainedAfterMiB": -9.9,
+        "perPhaseDeltaMiB": {
+          "start": 66.7,
+          "compose+encode": 199.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 157.6,
+            "privMiB": 437.1
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 41.5,
+            "privMiB": 285
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.2,
+            "privMiB": 261
+          }
+        ],
+        "samples": 31,
+        "sampleEndT": 1790253971717
+      },
+      "wallMs": 2880,
+      "consoleErrors": []
+    },
+    "split-1080x30000-jpeg-4096": {
+      "group": "export-split",
+      "ctx": "worker",
+      "name": "exportSplit",
+      "params": {
+        "files": [
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 4096,
+        "format": "image/jpeg",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 451,
+      "maxMainStallMs": 85,
+      "memory": {
+        "baselineMiB": 1059.6,
+        "peakDeltaMiB": 47.1,
+        "peakWsDeltaMiB": 61.3,
+        "retainedAfterMiB": -22.1,
+        "perPhaseDeltaMiB": {
+          "start": 47.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 40.1,
+            "privMiB": 285.3
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 7,
+            "privMiB": 295.7
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 266.1
+          }
+        ],
+        "samples": 4,
+        "sampleEndT": 1790253977820
+      },
+      "wallMs": 475,
+      "consoleErrors": []
+    },
+    "split-1440x20000-webp-4096": {
+      "group": "export-split",
+      "ctx": "worker",
+      "name": "exportSplit",
+      "params": {
+        "files": [
+          "tall-1440x20000.png"
+        ],
+        "tileHeight": 4096,
+        "format": "image/webp",
+        "quality": 0.9
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 574,
+      "maxMainStallMs": 119,
+      "memory": {
+        "baselineMiB": 1059.9,
+        "peakDeltaMiB": 110.2,
+        "peakWsDeltaMiB": 140.2,
+        "retainedAfterMiB": -8.8,
+        "perPhaseDeltaMiB": {
+          "start": 110.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 57.9,
+            "privMiB": 346.9
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 52.4,
+            "privMiB": 297.5
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 266
+          }
+        ],
+        "samples": 6,
+        "sampleEndT": 1790253984033
+      },
+      "wallMs": 587,
+      "consoleErrors": []
+    },
+    "multi-8x1080x2400-single-all": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "format": "image/png"
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 587,
+      "maxMainStallMs": 42,
+      "memory": {
+        "baselineMiB": 1059.6,
+        "peakDeltaMiB": 16.9,
+        "peakWsDeltaMiB": 107.1,
+        "retainedAfterMiB": -22.2,
+        "perPhaseDeltaMiB": {
+          "start": 13.9,
+          "decode+draw": 16.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 10.8,
+            "privMiB": 255.9
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 9.3,
+            "privMiB": 298.2
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0.4,
+            "privMiB": 265.9
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790253990341
+      },
+      "wallMs": 601,
+      "consoleErrors": []
+    },
+    "multi-8x1080x2400-single-seq": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 320,
+      "maxMainStallMs": 81,
+      "memory": {
+        "baselineMiB": 1091.3,
+        "peakDeltaMiB": 10.2,
+        "peakWsDeltaMiB": 28.7,
+        "retainedAfterMiB": -21.2,
+        "perPhaseDeltaMiB": {
+          "start": 10.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 11.3,
+            "privMiB": 256.3
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 265.8
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0,
+            "privMiB": 259.7
+          }
+        ],
+        "samples": 2,
+        "sampleEndT": 1790253996320
+      },
+      "wallMs": 333,
+      "consoleErrors": []
+    },
+    "multi-8x1080x2400-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 349,
+      "maxMainStallMs": 51,
+      "memory": {
+        "baselineMiB": 1058.7,
+        "peakDeltaMiB": 13.2,
+        "peakWsDeltaMiB": 40.7,
+        "retainedAfterMiB": -23.1,
+        "perPhaseDeltaMiB": {
+          "start": 13.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 14.6,
+            "privMiB": 259.5
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 266.4
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0,
+            "privMiB": 259.6
+          }
+        ],
+        "samples": 4,
+        "sampleEndT": 1790254002507
+      },
+      "wallMs": 359,
+      "consoleErrors": []
+    },
+    "multi-16x1080x2400-single-seq": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 534,
+      "maxMainStallMs": 71,
+      "memory": {
+        "baselineMiB": 1059.6,
+        "peakDeltaMiB": 15.1,
+        "peakWsDeltaMiB": 49.9,
+        "retainedAfterMiB": -19.7,
+        "perPhaseDeltaMiB": {
+          "start": 15.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 15.5,
+            "privMiB": 260.6
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 267.4
+          },
+          {
+            "name": "network",
+            "deltaMiB": -0.1,
+            "privMiB": 259.5
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790254008788
+      },
+      "wallMs": 550,
+      "consoleErrors": []
+    },
+    "multi-16x1080x2400-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 555,
+      "maxMainStallMs": 72,
+      "memory": {
+        "baselineMiB": 1058.8,
+        "peakDeltaMiB": 17.7,
+        "peakWsDeltaMiB": 57,
+        "retainedAfterMiB": -20.3,
+        "perPhaseDeltaMiB": {
+          "start": 17.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 20.9,
+            "privMiB": 266.1
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 0.7,
+            "privMiB": 287.8
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 266.8
+          }
+        ],
+        "samples": 5,
+        "sampleEndT": 1790254015409
+      },
+      "wallMs": 571,
+      "consoleErrors": []
+    },
+    "multi-12x1440x3200-single-seq": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 998,
+      "maxMainStallMs": 93,
+      "memory": {
+        "baselineMiB": 1059.2,
+        "peakDeltaMiB": 77.7,
+        "peakWsDeltaMiB": 135.2,
+        "retainedAfterMiB": -3.1,
+        "perPhaseDeltaMiB": {
+          "start": 77.7
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 45,
+            "privMiB": 333.1
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 28.2,
+            "privMiB": 273.3
+          },
+          {
+            "name": "network",
+            "deltaMiB": 4.5,
+            "privMiB": 264.2
+          }
+        ],
+        "samples": 10,
+        "sampleEndT": 1790254022159
+      },
+      "wallMs": 1006,
+      "consoleErrors": []
+    },
+    "multi-12x1440x3200-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png",
+          "phone-1440x3200-0.png",
+          "phone-1440x3200-1.png",
+          "phone-1440x3200-2.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 1509,
+      "maxMainStallMs": 352,
+      "memory": {
+        "baselineMiB": 1060.5,
+        "peakDeltaMiB": 75.9,
+        "peakWsDeltaMiB": 134.2,
+        "retainedAfterMiB": -2.5,
+        "perPhaseDeltaMiB": {
+          "start": 56.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 42.2,
+            "privMiB": 329.8
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 28.7,
+            "privMiB": 273.7
+          },
+          {
+            "name": "network",
+            "deltaMiB": 5,
+            "privMiB": 264.7
+          }
+        ],
+        "samples": 12,
+        "sampleEndT": 1790254030158
+      },
+      "wallMs": 1525,
+      "consoleErrors": []
+    },
+    "multi-25x1080x2400-single-seq": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportSingle",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png"
+        ],
+        "format": "image/png",
+        "sequential": true
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 925,
+      "maxMainStallMs": 72,
+      "memory": {
+        "baselineMiB": 1060.3,
+        "peakDeltaMiB": 17,
+        "peakWsDeltaMiB": 65,
+        "retainedAfterMiB": -12.2,
+        "perPhaseDeltaMiB": {
+          "start": 17
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 18.1,
+            "privMiB": 263.4
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 2.8,
+            "privMiB": 291.9
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 266.4
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790254037263
+      },
+      "wallMs": 942,
+      "consoleErrors": []
+    },
+    "multi-25x1080x2400-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png",
+          "phone-1080x2400-1.png",
+          "phone-1080x2400-2.png",
+          "phone-1080x2400-3.png",
+          "phone-1080x2400-0.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 831,
+      "maxMainStallMs": 148,
+      "memory": {
+        "baselineMiB": 1060.5,
+        "peakDeltaMiB": 30.2,
+        "peakWsDeltaMiB": 86.3,
+        "retainedAfterMiB": -12.7,
+        "perPhaseDeltaMiB": {
+          "start": 24.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 17.5,
+            "privMiB": 262.5
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 15.9,
+            "privMiB": 305.2
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 266.5
+          }
+        ],
+        "samples": 8,
+        "sampleEndT": 1790254044115
+      },
+      "wallMs": 858,
+      "consoleErrors": []
+    },
+    "multi-2x1080x30000-tiled": {
+      "group": "multi",
+      "ctx": "worker",
+      "name": "exportTiledPng",
+      "params": {
+        "files": [
+          "tall-1080x30000.png",
+          "tall-1080x30000.png"
+        ],
+        "tileHeight": 2048
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 734,
+      "maxMainStallMs": 109,
+      "memory": {
+        "baselineMiB": 1059.9,
+        "peakDeltaMiB": 93.2,
+        "peakWsDeltaMiB": 113.9,
+        "retainedAfterMiB": -13.7,
+        "perPhaseDeltaMiB": {
+          "start": 93.2
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "playwright",
+            "deltaMiB": 48.9,
+            "privMiB": 293.8
+          },
+          {
+            "name": "content/renderer",
+            "deltaMiB": 44.3,
+            "privMiB": 333.2
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 266.5
+          }
+        ],
+        "samples": 7,
+        "sampleEndT": 1790254050593
+      },
+      "wallMs": 748,
+      "consoleErrors": []
+    },
+    "dataurl-1080x20000": {
+      "group": "dataurl",
+      "ctx": "main",
+      "name": "dataUrlVsBlob",
+      "params": {
+        "file": "tall-1080x20000.png",
+        "method": "toDataURL"
+      },
+      "ok": true,
+      "method": "toDataURL",
+      "encodeMs": 2151,
+      "dataUrlMiB": 5.1,
+      "blobMiB": 0,
+      "jsHeapMiB": null,
+      "ms": 2833,
+      "maxMainStallMs": 2423,
+      "memory": {
+        "baselineMiB": 1049.2,
+        "peakDeltaMiB": 150.4,
+        "peakWsDeltaMiB": 283.4,
+        "retainedAfterMiB": -34.3,
+        "perPhaseDeltaMiB": {
+          "start": 145.7,
+          "encode": 150.4
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 162.8,
+            "privMiB": 441.3
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": -0.1,
+            "privMiB": 266.6
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": -0.4,
+            "privMiB": 242.8
+          }
+        ],
+        "samples": 30,
+        "sampleEndT": 1790254059029
+      },
+      "wallMs": 2850,
+      "consoleErrors": []
+    },
+    "toblob-1080x20000": {
+      "group": "dataurl",
+      "ctx": "main",
+      "name": "dataUrlVsBlob",
+      "params": {
+        "file": "tall-1080x20000.png",
+        "method": "toBlob"
+      },
+      "ok": true,
+      "method": "toBlob",
+      "encodeMs": 2115,
+      "dataUrlMiB": 0,
+      "blobMiB": 3.9,
+      "jsHeapMiB": null,
+      "ms": 2732,
+      "maxMainStallMs": 2398,
+      "memory": {
+        "baselineMiB": 1050.5,
+        "peakDeltaMiB": 150.5,
+        "peakWsDeltaMiB": 282.6,
+        "retainedAfterMiB": -29.2,
+        "perPhaseDeltaMiB": {
+          "start": 150.5,
+          "encode": 114.9
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 118.7,
+            "privMiB": 398.1
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 31.7,
+            "privMiB": 275
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.1,
+            "privMiB": 260.9
+          }
+        ],
+        "samples": 30,
+        "sampleEndT": 1790254067378
+      },
+      "wallMs": 2740,
+      "consoleErrors": []
+    },
+    "opencv-load": {
+      "group": "opencv",
+      "ctx": "worker",
+      "name": "stitchAnalyse",
+      "params": {
+        "a": "",
+        "b": "",
+        "loadOnly": true
+      },
+      "ok": true,
+      "loadMs": 1846,
+      "wasmAfterLoadMiB": 128,
+      "ms": 1852,
+      "maxMainStallMs": 64,
+      "memory": {
+        "baselineMiB": 1060.6,
+        "peakDeltaMiB": 330.3,
+        "peakWsDeltaMiB": 216.7,
+        "retainedAfterMiB": 298.8,
+        "perPhaseDeltaMiB": {
+          "load-opencv": 330.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 332.4,
+            "privMiB": 621.5
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.3,
+            "privMiB": 260
+          },
+          {
+            "name": "gpu",
+            "deltaMiB": 0,
+            "privMiB": 266.8
+          }
+        ],
+        "samples": 17,
+        "sampleEndT": 1790254075246
+      },
+      "wallMs": 1868,
+      "consoleErrors": []
+    },
+    "opencv-analyse-2x1080x10000": {
+      "group": "opencv",
+      "ctx": "worker",
+      "name": "stitchAnalyse",
+      "params": {
+        "a": "pair-1080x10000-a.png",
+        "b": "pair-1080x10000-b.png",
+        "expectedOffset": 7000
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 2572,
+      "maxMainStallMs": 79,
+      "memory": {
+        "baselineMiB": 1090.8,
+        "peakDeltaMiB": 402.1,
+        "peakWsDeltaMiB": 374.1,
+        "retainedAfterMiB": 285.1,
+        "perPhaseDeltaMiB": {
+          "load-opencv": 350,
+          "decode": 402.1
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 371.4,
+            "privMiB": 690.8
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 29.3,
+            "privMiB": 274.3
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.9,
+            "privMiB": 260.5
+          }
+        ],
+        "samples": 26,
+        "sampleEndT": 1790254083517
+      },
+      "wallMs": 2595,
+      "consoleErrors": []
+    },
+    "opencv-analyse-2x1080x2400": {
+      "group": "opencv",
+      "ctx": "worker",
+      "name": "stitchAnalyse",
+      "params": {
+        "a": "phone-1080x2400-0.png",
+        "b": "phone-1080x2400-1.png"
+      },
+      "ok": false,
+      "error": "ReferenceError: Can't find variable: OffscreenCanvas",
+      "ms": 2136,
+      "maxMainStallMs": 80,
+      "memory": {
+        "baselineMiB": 1060,
+        "peakDeltaMiB": 342.3,
+        "peakWsDeltaMiB": 229.4,
+        "retainedAfterMiB": 298.8,
+        "perPhaseDeltaMiB": {
+          "load-opencv": 331,
+          "decode": 342.3
+        },
+        "topProcessesAtPeak": [
+          {
+            "name": "content/renderer",
+            "deltaMiB": 332.6,
+            "privMiB": 620.6
+          },
+          {
+            "name": "playwright",
+            "deltaMiB": 8.6,
+            "privMiB": 253.6
+          },
+          {
+            "name": "network",
+            "deltaMiB": 0.8,
+            "privMiB": 260.8
+          }
+        ],
+        "samples": 20,
+        "sampleEndT": 1790254091395
+      },
+      "wallMs": 2153,
+      "consoleErrors": []
+    }
+  }
+}
