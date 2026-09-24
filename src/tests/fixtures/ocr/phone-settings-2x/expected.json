@@ -1,0 +1,1206 @@
+{
+ "id": "phone-settings-2x",
+ "lang": "eng",
+ "boxesFrame": "image",
+ "lines": [
+  {
+   "text": "Settings",
+   "box": [
+    32,
+    28,
+    214.375,
+    74
+   ],
+   "words": [
+    {
+     "text": "Settings",
+     "box": [
+      32,
+      28,
+      214.375,
+      74
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Airplane Mode",
+   "box": [
+    52,
+    140,
+    182.90625,
+    38
+   ],
+   "words": [
+    {
+     "text": "Airplane",
+     "box": [
+      52,
+      140,
+      102.5625,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Mode",
+     "box": [
+      162.21875,
+      140,
+      72.6875,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Off",
+   "box": [
+    689.34375,
+    140,
+    38.65625,
+    38
+   ],
+   "words": [
+    {
+     "text": "Off",
+     "box": [
+      689.34375,
+      140,
+      38.65625,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Wi-Fi",
+   "box": [
+    52,
+    224,
+    64.59375,
+    38
+   ],
+   "words": [
+    {
+     "text": "Wi-Fi",
+     "box": [
+      52,
+      224,
+      64.59375,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "HomeNet-5G",
+   "box": [
+    562.375,
+    224,
+    165.625,
+    38
+   ],
+   "words": [
+    {
+     "text": "HomeNet-5G",
+     "box": [
+      562.375,
+      224,
+      165.625,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Bluetooth",
+   "box": [
+    52,
+    308,
+    120.96875,
+    38
+   ],
+   "words": [
+    {
+     "text": "Bluetooth",
+     "box": [
+      52,
+      308,
+      120.96875,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "On",
+   "box": [
+    691.03125,
+    308,
+    36.96875,
+    38
+   ],
+   "words": [
+    {
+     "text": "On",
+     "box": [
+      691.03125,
+      308,
+      36.96875,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Mobile Data",
+   "box": [
+    52,
+    392,
+    151.5,
+    38
+   ],
+   "words": [
+    {
+     "text": "Mobile",
+     "box": [
+      52,
+      392,
+      86.21875,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Data",
+     "box": [
+      145.875,
+      392,
+      57.625,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "4G",
+   "box": [
+    693.6875,
+    392,
+    34.3125,
+    38
+   ],
+   "words": [
+    {
+     "text": "4G",
+     "box": [
+      693.6875,
+      392,
+      34.3125,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Personal Hotspot",
+   "box": [
+    52,
+    476,
+    211.875,
+    38
+   ],
+   "words": [
+    {
+     "text": "Personal",
+     "box": [
+      52,
+      476,
+      104.1875,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Hotspot",
+     "box": [
+      163.84375,
+      476,
+      100.03125,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Off",
+   "box": [
+    689.34375,
+    476,
+    38.65625,
+    38
+   ],
+   "words": [
+    {
+     "text": "Off",
+     "box": [
+      689.34375,
+      476,
+      38.65625,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Notifications",
+   "box": [
+    52,
+    560,
+    156.75,
+    38
+   ],
+   "words": [
+    {
+     "text": "Notifications",
+     "box": [
+      52,
+      560,
+      156.75,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Sounds & Haptics",
+   "box": [
+    52,
+    644,
+    220.78125,
+    38
+   ],
+   "words": [
+    {
+     "text": "Sounds",
+     "box": [
+      52,
+      644,
+      91.34375,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "&",
+     "box": [
+      151,
+      644,
+      22.4375,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Haptics",
+     "box": [
+      181.0625,
+      644,
+      91.71875,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Focus",
+   "box": [
+    52,
+    728,
+    70.75,
+    38
+   ],
+   "words": [
+    {
+     "text": "Focus",
+     "box": [
+      52,
+      728,
+      70.75,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Work",
+   "box": [
+    662.875,
+    728,
+    65.125,
+    38
+   ],
+   "words": [
+    {
+     "text": "Work",
+     "box": [
+      662.875,
+      728,
+      65.125,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Screen Time",
+   "box": [
+    52,
+    812,
+    150.5625,
+    38
+   ],
+   "words": [
+    {
+     "text": "Screen",
+     "box": [
+      52,
+      812,
+      82.6875,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Time",
+     "box": [
+      142.34375,
+      812,
+      60.21875,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "2h 14m",
+   "box": [
+    635.0625,
+    812,
+    92.9375,
+    38
+   ],
+   "words": [
+    {
+     "text": "2h",
+     "box": [
+      635.0625,
+      812,
+      30.96875,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "14m",
+     "box": [
+      673.65625,
+      812,
+      54.34375,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "General",
+   "box": [
+    52,
+    896,
+    95.125,
+    38
+   ],
+   "words": [
+    {
+     "text": "General",
+     "box": [
+      52,
+      896,
+      95.125,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Display & Brightness",
+   "box": [
+    52,
+    980,
+    255.71875,
+    38
+   ],
+   "words": [
+    {
+     "text": "Display",
+     "box": [
+      52,
+      980,
+      89.34375,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "&",
+     "box": [
+      149,
+      980,
+      22.4375,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Brightness",
+     "box": [
+      179.0625,
+      980,
+      128.65625,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Auto",
+   "box": [
+    668.1875,
+    980,
+    59.8125,
+    38
+   ],
+   "words": [
+    {
+     "text": "Auto",
+     "box": [
+      668.1875,
+      980,
+      59.8125,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Wallpaper",
+   "box": [
+    52,
+    1064,
+    124.4375,
+    38
+   ],
+   "words": [
+    {
+     "text": "Wallpaper",
+     "box": [
+      52,
+      1064,
+      124.4375,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Battery",
+   "box": [
+    52,
+    1148,
+    87.21875,
+    38
+   ],
+   "words": [
+    {
+     "text": "Battery",
+     "box": [
+      52,
+      1148,
+      87.21875,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "82%",
+   "box": [
+    674.875,
+    1148,
+    53.125,
+    38
+   ],
+   "words": [
+    {
+     "text": "82%",
+     "box": [
+      674.875,
+      1148,
+      53.125,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Privacy & Security",
+   "box": [
+    52,
+    1232,
+    221.9375,
+    38
+   ],
+   "words": [
+    {
+     "text": "Privacy",
+     "box": [
+      52,
+      1232,
+      86.34375,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "&",
+     "box": [
+      146,
+      1232,
+      22.4375,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Security",
+     "box": [
+      176.0625,
+      1232,
+      97.875,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Passwords",
+   "box": [
+    52,
+    1316,
+    127.5,
+    38
+   ],
+   "words": [
+    {
+     "text": "Passwords",
+     "box": [
+      52,
+      1316,
+      127.5,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Storage",
+   "box": [
+    52,
+    1400,
+    95,
+    38
+   ],
+   "words": [
+    {
+     "text": "Storage",
+     "box": [
+      52,
+      1400,
+      95,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "41.3 GB used",
+   "box": [
+    567.1875,
+    1400,
+    160.8125,
+    38
+   ],
+   "words": [
+    {
+     "text": "41.3",
+     "box": [
+      567.1875,
+      1400,
+      51.375,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "GB",
+     "box": [
+      626.1875,
+      1400,
+      35.28125,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "used",
+     "box": [
+      669.125,
+      1400,
+      58.875,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Software Update",
+   "box": [
+    52,
+    1484,
+    206.625,
+    38
+   ],
+   "words": [
+    {
+     "text": "Software",
+     "box": [
+      52,
+      1484,
+      108.40625,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Update",
+     "box": [
+      168.03125,
+      1484,
+      90.59375,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "v18.2.1",
+   "box": [
+    642.0625,
+    1484,
+    85.9375,
+    38
+   ],
+   "words": [
+    {
+     "text": "v18.2.1",
+     "box": [
+      642.0625,
+      1484,
+      85.9375,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Keyboard",
+   "box": [
+    52,
+    1568,
+    117.40625,
+    38
+   ],
+   "words": [
+    {
+     "text": "Keyboard",
+     "box": [
+      52,
+      1568,
+      117.40625,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "English (US)",
+   "box": [
+    581.53125,
+    1568,
+    146.46875,
+    38
+   ],
+   "words": [
+    {
+     "text": "English",
+     "box": [
+      581.53125,
+      1568,
+      87.8125,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "(US)",
+     "box": [
+      676.96875,
+      1568,
+      51.03125,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Date & Time",
+   "box": [
+    52,
+    1652,
+    155.96875,
+    38
+   ],
+   "words": [
+    {
+     "text": "Date",
+     "box": [
+      52,
+      1652,
+      58.03125,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "&",
+     "box": [
+      117.65625,
+      1652,
+      22.4375,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Time",
+     "box": [
+      147.75,
+      1652,
+      60.21875,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "24-hour",
+   "box": [
+    628.78125,
+    1652,
+    99.21875,
+    38
+   ],
+   "words": [
+    {
+     "text": "24-hour",
+     "box": [
+      628.78125,
+      1652,
+      99.21875,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "VPN",
+   "box": [
+    52,
+    1736,
+    54.03125,
+    38
+   ],
+   "words": [
+    {
+     "text": "VPN",
+     "box": [
+      52,
+      1736,
+      54.03125,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Not Connected",
+   "box": [
+    539.84375,
+    1736,
+    188.15625,
+    38
+   ],
+   "words": [
+    {
+     "text": "Not",
+     "box": [
+      539.84375,
+      1736,
+      46.84375,
+      38
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Connected",
+     "box": [
+      594.34375,
+      1736,
+      133.65625,
+      38
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Screenshots stay on your device and are never uploaded to a",
+   "box": [
+    52,
+    1814,
+    644.34375,
+    32
+   ],
+   "words": [
+    {
+     "text": "Screenshots",
+     "box": [
+      52,
+      1814,
+      127.03125,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "stay",
+     "box": [
+      185.5625,
+      1814,
+      42.1875,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "on",
+     "box": [
+      234.28125,
+      1814,
+      27.6875,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "your",
+     "box": [
+      268.5,
+      1814,
+      47.625,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "device",
+     "box": [
+      322.6875,
+      1814,
+      67.65625,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      396.875,
+      1814,
+      39.96875,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "are",
+     "box": [
+      443.375,
+      1814,
+      33.125,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "never",
+     "box": [
+      483.0625,
+      1814,
+      58.5625,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "uploaded",
+     "box": [
+      548.15625,
+      1814,
+      100.625,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "to",
+     "box": [
+      655.3125,
+      1814,
+      22.25,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "a",
+     "box": [
+      684.09375,
+      1814,
+      12.25,
+      32
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "server. If the upload fails, check your connection and try again",
+   "box": [
+    52,
+    1846.375,
+    654.5625,
+    32
+   ],
+   "words": [
+    {
+     "text": "server.",
+     "box": [
+      52,
+      1846.375,
+      68.6875,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "If",
+     "box": [
+      127.21875,
+      1846.375,
+      13.9375,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      147.71875,
+      1846.375,
+      34.28125,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "upload",
+     "box": [
+      188.53125,
+      1846.375,
+      73.9375,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "fails,",
+     "box": [
+      269.03125,
+      1846.375,
+      46.75,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "check",
+     "box": [
+      322.34375,
+      1846.375,
+      60.25,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "your",
+     "box": [
+      389.15625,
+      1846.375,
+      47.625,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "connection",
+     "box": [
+      443.3125,
+      1846.375,
+      117.5625,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      567.4375,
+      1846.375,
+      39.9375,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "try",
+     "box": [
+      613.9375,
+      1846.375,
+      28.125,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "again",
+     "box": [
+      648.59375,
+      1846.375,
+      57.96875,
+      32
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "in a minute.",
+   "box": [
+    52,
+    1878.75,
+    124.3125,
+    32
+   ],
+   "words": [
+    {
+     "text": "in",
+     "box": [
+      52,
+      1878.75,
+      19.40625,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "a",
+     "box": [
+      77.96875,
+      1878.75,
+      12.21875,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "minute.",
+     "box": [
+      96.75,
+      1878.75,
+      79.5625,
+      32
+     ],
+     "emoji": false
+    }
+   ]
+  }
+ ],
+ "sourceLines": null
+}

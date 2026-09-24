@@ -2,5 +2,16 @@
   "opencv": {
     "url": "/vendor/opencv/opencv-5.0.0-release.1.js",
     "version": "5.0.0-release.1"
+  },
+  "tesseract": {
+    "version": "7.0.0",
+    "coreVersion": "7.0.0",
+    "workerPath": "/vendor/tesseract/7.0.0/worker.min.js",
+    "corePath": "/vendor/tesseract-core/7.0.0",
+    "langPath": "/vendor/tessdata/4.0.0_best_int",
+    "languages": [
+      "eng",
+      "hin"
+    ]
   }
 }

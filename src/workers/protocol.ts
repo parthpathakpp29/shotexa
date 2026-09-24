@@ -3,6 +3,8 @@
  * Requests: RUN | CANCEL. Responses: PROGRESS | SUCCESS | ERROR | CANCELLED.
  * Errors carry controlled codes only — never raw third-party messages.
  */
+import type { PreparedImage } from "@/core/ocr/prepare-image";
+import type { PreprocessStep } from "@/core/ocr/preprocess";
 import type { StitchConfigOverrides } from "@/core/stitch/config";
 import type { StitchAnalysis, StitchErrorCode, StitchPlan } from "@/core/stitch/types";
 
@@ -17,6 +19,14 @@ export interface WorkerOps {
     input: { a: Blob; b: Blob; plan: StitchPlan; type: "image/png" | "image/jpeg" | "image/webp"; quality?: number };
     output: { blob: Blob; ms: number };
   };
+  /**
+   * OCR-only preprocessing of a COPY of the screenshot (never modifies the original).
+   * Optional strips (long screenshots) are cut from ONE decode. `steps: "auto"` = default policy.
+   */
+  "ocr.prepare": {
+    input: { image: Blob; steps: PreprocessStep[] | "auto"; strips?: { y: number; height: number }[] };
+    output: PreparedImage;
+  };
 }
 export type OpName = keyof WorkerOps;
 
@@ -29,7 +39,7 @@ export type WorkerRequest =
   | ({ [K in OpName]: Envelope & { type: "RUN"; op: K; input: WorkerOps[K]["input"] } }[OpName])
   | (Envelope & { type: "CANCEL" });
 
-export type WorkerErrorCode = StitchErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE";
+export type WorkerErrorCode = StitchErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY";
 
 export type WorkerResponse =
   | (Envelope & { type: "PROGRESS"; progress: number; stage?: string })

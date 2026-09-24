@@ -1,0 +1,1013 @@
+{
+ "id": "web-clean",
+ "lang": "eng",
+ "boxesFrame": "image",
+ "lines": [
+  {
+   "text": "Brightpath Product Pricing Docs Blog Sign in",
+   "box": [
+    48,
+    18,
+    470.0625,
+    27
+   ],
+   "words": [
+    {
+     "text": "Brightpath",
+     "box": [
+      48,
+      18,
+      101.546875,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Product",
+     "box": [
+      201.546875,
+      21.5,
+      51.75,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Pricing",
+     "box": [
+      281.296875,
+      21.5,
+      45.140625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Docs",
+     "box": [
+      354.4375,
+      21.5,
+      32.609375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Blog",
+     "box": [
+      415.046875,
+      21.5,
+      29.859375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Sign",
+     "box": [
+      472.90625,
+      21.5,
+      28.9375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "in",
+     "box": [
+      505.9375,
+      21.5,
+      12.125,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Plan your week in minutes",
+   "box": [
+    48,
+    112,
+    545.015625,
+    58
+   ],
+   "words": [
+    {
+     "text": "Plan",
+     "box": [
+      48,
+      112,
+      89.828125,
+      58
+     ],
+     "emoji": false
+    },
+    {
+     "text": "your",
+     "box": [
+      149.953125,
+      112,
+      94.296875,
+      58
+     ],
+     "emoji": false
+    },
+    {
+     "text": "week",
+     "box": [
+      256.375,
+      112,
+      107.09375,
+      58
+     ],
+     "emoji": false
+    },
+    {
+     "text": "in",
+     "box": [
+      375.59375,
+      112,
+      39.125,
+      58
+     ],
+     "emoji": false
+    },
+    {
+     "text": "minutes",
+     "box": [
+      426.84375,
+      112,
+      166.171875,
+      58
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "The new dashboard shows daily totals, weekly trends and monthly goals. Most people read",
+   "box": [
+    48,
+    185,
+    801.15625,
+    27
+   ],
+   "words": [
+    {
+     "text": "The",
+     "box": [
+      48,
+      185,
+      32.265625,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "new",
+     "box": [
+      85.734375,
+      185,
+      36.234375,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "dashboard",
+     "box": [
+      127.4375,
+      185,
+      94.15625,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "shows",
+     "box": [
+      227.0625,
+      185,
+      54.46875,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "daily",
+     "box": [
+      287,
+      185,
+      41.328125,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "totals,",
+     "box": [
+      333.796875,
+      185,
+      53.125,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "weekly",
+     "box": [
+      392.390625,
+      185,
+      59.84375,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "trends",
+     "box": [
+      457.703125,
+      185,
+      55.78125,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      518.953125,
+      185,
+      33.28125,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "monthly",
+     "box": [
+      557.703125,
+      185,
+      72.890625,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "goals.",
+     "box": [
+      636.0625,
+      185,
+      51.34375,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Most",
+     "box": [
+      692.875,
+      185,
+      44.953125,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "people",
+     "box": [
+      743.296875,
+      185,
+      61.015625,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "read",
+     "box": [
+      809.765625,
+      185,
+      39.390625,
+      27
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "the first two lines and skim the rest of the page.",
+   "box": [
+    48,
+    215,
+    419.609375,
+    27
+   ],
+   "words": [
+    {
+     "text": "the",
+     "box": [
+      48,
+      215,
+      28.5625,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "first",
+     "box": [
+      82.03125,
+      215,
+      33.328125,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "two",
+     "box": [
+      120.828125,
+      215,
+      32.953125,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "lines",
+     "box": [
+      159.25,
+      215,
+      39.96875,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      204.6875,
+      215,
+      33.28125,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "skim",
+     "box": [
+      243.4375,
+      215,
+      40.5,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      289.40625,
+      215,
+      28.578125,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "rest",
+     "box": [
+      323.4375,
+      215,
+      32.6875,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "of",
+     "box": [
+      361.59375,
+      215,
+      18,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      385.046875,
+      215,
+      28.578125,
+      27
+     ],
+     "emoji": false
+    },
+    {
+     "text": "page.",
+     "box": [
+      419.09375,
+      215,
+      48.515625,
+      27
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Start free trial",
+   "box": [
+    70,
+    280,
+    100.0625,
+    21
+   ],
+   "words": [
+    {
+     "text": "Start",
+     "box": [
+      70,
+      280,
+      34.546875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "free",
+     "box": [
+      108.9375,
+      280,
+      28.3125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "trial",
+     "box": [
+      141.640625,
+      280,
+      28.421875,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Book a demo",
+   "box": [
+    229.0625,
+    281,
+    96.1875,
+    21
+   ],
+   "words": [
+    {
+     "text": "Book",
+     "box": [
+      229.0625,
+      281,
+      37.171875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "a",
+     "box": [
+      270.625,
+      281,
+      8.359375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "demo",
+     "box": [
+      283.375,
+      281,
+      41.875,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Shared calendars",
+   "box": [
+    48,
+    375,
+    143.640625,
+    24
+   ],
+   "words": [
+    {
+     "text": "Shared",
+     "box": [
+      48,
+      375,
+      58.59375,
+      24
+     ],
+     "emoji": false
+    },
+    {
+     "text": "calendars",
+     "box": [
+      111.546875,
+      375,
+      80.09375,
+      24
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "We moved the weekly planning call to Thursday at half",
+   "box": [
+    48,
+    406,
+    361.140625,
+    20
+   ],
+   "words": [
+    {
+     "text": "We",
+     "box": [
+      48,
+      406,
+      21.28125,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "moved",
+     "box": [
+      73.375,
+      406,
+      45.578125,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      123.046875,
+      406,
+      21.4375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "weekly",
+     "box": [
+      148.578125,
+      406,
+      44.890625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "planning",
+     "box": [
+      197.5625,
+      406,
+      58.03125,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "call",
+     "box": [
+      259.6875,
+      406,
+      21.84375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "to",
+     "box": [
+      285.625,
+      406,
+      13.875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Thursday",
+     "box": [
+      303.59375,
+      406,
+      60.15625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "at",
+     "box": [
+      367.84375,
+      406,
+      12.734375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "half",
+     "box": [
+      384.671875,
+      406,
+      24.46875,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "past ten.",
+   "box": [
+    48,
+    428.5,
+    56.6875,
+    20
+   ],
+   "words": [
+    {
+     "text": "past",
+     "box": [
+      48,
+      428.5,
+      27.90625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "ten.",
+     "box": [
+      80,
+      428.5,
+      24.6875,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Smart reminders",
+   "box": [
+    450.65625,
+    375,
+    141.3125,
+    24
+   ],
+   "words": [
+    {
+     "text": "Smart",
+     "box": [
+      450.65625,
+      375,
+      50.953125,
+      24
+     ],
+     "emoji": false
+    },
+    {
+     "text": "reminders",
+     "box": [
+      506.5625,
+      375,
+      85.40625,
+      24
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Please review the attached notes before the meeting",
+   "box": [
+    450.65625,
+    406,
+    347.828125,
+    20
+   ],
+   "words": [
+    {
+     "text": "Please",
+     "box": [
+      450.65625,
+      406,
+      41.71875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "review",
+     "box": [
+      496.46875,
+      406,
+      42.578125,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      543.140625,
+      406,
+      21.4375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "attached",
+     "box": [
+      568.671875,
+      406,
+      57.53125,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "notes",
+     "box": [
+      630.296875,
+      406,
+      36.59375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "before",
+     "box": [
+      670.984375,
+      406,
+      43.21875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      718.296875,
+      406,
+      21.4375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "meeting",
+     "box": [
+      743.828125,
+      406,
+      54.65625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "tomorrow morning.",
+   "box": [
+    450.65625,
+    428.5,
+    129.375,
+    20
+   ],
+   "words": [
+    {
+     "text": "tomorrow",
+     "box": [
+      450.65625,
+      428.5,
+      65.640625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "morning.",
+     "box": [
+      520.390625,
+      428.5,
+      59.640625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Private by default",
+   "box": [
+    853.328125,
+    375,
+    150.515625,
+    24
+   ],
+   "words": [
+    {
+     "text": "Private",
+     "box": [
+      853.328125,
+      375,
+      59.25,
+      24
+     ],
+     "emoji": false
+    },
+    {
+     "text": "by",
+     "box": [
+      917.53125,
+      375,
+      20.859375,
+      24
+     ],
+     "emoji": false
+    },
+    {
+     "text": "default",
+     "box": [
+      943.34375,
+      375,
+      60.5,
+      24
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Screenshots stay on your device and are never uploaded",
+   "box": [
+    853.328125,
+    406,
+    372.984375,
+    20
+   ],
+   "words": [
+    {
+     "text": "Screenshots",
+     "box": [
+      853.328125,
+      406,
+      79.390625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "stay",
+     "box": [
+      936.8125,
+      406,
+      26.34375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "on",
+     "box": [
+      967.25,
+      406,
+      17.296875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "your",
+     "box": [
+      988.640625,
+      406,
+      29.765625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "device",
+     "box": [
+      1022.5,
+      406,
+      42.28125,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      1068.875,
+      406,
+      24.96875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "are",
+     "box": [
+      1097.9375,
+      406,
+      20.703125,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "never",
+     "box": [
+      1122.734375,
+      406,
+      36.59375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "uploaded",
+     "box": [
+      1163.421875,
+      406,
+      62.890625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "to a server.",
+   "box": [
+    853.328125,
+    428.5,
+    72.65625,
+    20
+   ],
+   "words": [
+    {
+     "text": "to",
+     "box": [
+      853.328125,
+      428.5,
+      13.875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "a",
+     "box": [
+      871.296875,
+      428.5,
+      7.65625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "server.",
+     "box": [
+      883.046875,
+      428.5,
+      42.9375,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  }
+ ],
+ "sourceLines": null
+}

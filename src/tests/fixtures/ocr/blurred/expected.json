@@ -1,0 +1,1420 @@
+{
+ "id": "blurred",
+ "lang": "eng",
+ "boxesFrame": "image",
+ "lines": [
+  {
+   "text": "How small teams stay organised",
+   "box": [
+    48,
+    40,
+    544.265625,
+    48
+   ],
+   "words": [
+    {
+     "text": "How",
+     "box": [
+      48,
+      40,
+      78.296875,
+      48
+     ],
+     "emoji": false
+    },
+    {
+     "text": "small",
+     "box": [
+      136.21875,
+      40,
+      88.65625,
+      48
+     ],
+     "emoji": false
+    },
+    {
+     "text": "teams",
+     "box": [
+      234.796875,
+      40,
+      101.546875,
+      48
+     ],
+     "emoji": false
+    },
+    {
+     "text": "stay",
+     "box": [
+      346.265625,
+      40,
+      68.59375,
+      48
+     ],
+     "emoji": false
+    },
+    {
+     "text": "organised",
+     "box": [
+      424.78125,
+      40,
+      167.484375,
+      48
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "By the editorial team · 6 min read · March 14, 2026",
+   "box": [
+    48,
+    96,
+    310.71875,
+    19
+   ],
+   "words": [
+    {
+     "text": "By",
+     "box": [
+      48,
+      96,
+      14.8125,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      66.625,
+      96,
+      20,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "editorial",
+     "box": [
+      90.453125,
+      96,
+      50.6875,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "team",
+     "box": [
+      144.953125,
+      96,
+      31.265625,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "·",
+     "box": [
+      180.046875,
+      96,
+      3.046875,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "6",
+     "box": [
+      186.90625,
+      96,
+      7.5625,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "min",
+     "box": [
+      198.296875,
+      96,
+      23.390625,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "read",
+     "box": [
+      225.5,
+      96,
+      27.578125,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "·",
+     "box": [
+      256.890625,
+      96,
+      3.046875,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "March",
+     "box": [
+      263.765625,
+      96,
+      38.96875,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "14,",
+     "box": [
+      306.546875,
+      96,
+      18.140625,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "2026",
+     "box": [
+      328.515625,
+      96,
+      30.203125,
+      19
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Coffee with the design team is booked for eleven in the small room. Most people",
+   "box": [
+    48,
+    136,
+    633.5,
+    21
+   ],
+   "words": [
+    {
+     "text": "Coffee",
+     "box": [
+      48,
+      136,
+      50.375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "with",
+     "box": [
+      102.703125,
+      136,
+      35.25,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      142.28125,
+      136,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "design",
+     "box": [
+      172.015625,
+      136,
+      51.90625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "team",
+     "box": [
+      228.25,
+      136,
+      39.859375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "is",
+     "box": [
+      272.4375,
+      136,
+      13.0625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "booked",
+     "box": [
+      289.828125,
+      136,
+      58.171875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "for",
+     "box": [
+      352.328125,
+      136,
+      22.953125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "eleven",
+     "box": [
+      379.609375,
+      136,
+      50.84375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "in",
+     "box": [
+      434.765625,
+      136,
+      15.9375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      455.015625,
+      136,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "small",
+     "box": [
+      484.75,
+      136,
+      43.03125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "room.",
+     "box": [
+      532.109375,
+      136,
+      47.5,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Most",
+     "box": [
+      583.9375,
+      136,
+      40.390625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "people",
+     "box": [
+      628.65625,
+      136,
+      52.84375,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "read the first two lines and skim the rest of the page. The quick brown fox jumps",
+   "box": [
+    48,
+    164.796875,
+    635.703125,
+    21
+   ],
+   "words": [
+    {
+     "text": "read",
+     "box": [
+      48,
+      164.796875,
+      35.484375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      87.8125,
+      164.796875,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "first",
+     "box": [
+      117.546875,
+      164.796875,
+      32.515625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "two",
+     "box": [
+      154.390625,
+      164.796875,
+      29.203125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "lines",
+     "box": [
+      187.921875,
+      164.796875,
+      37.546875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      229.796875,
+      164.796875,
+      30.046875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "skim",
+     "box": [
+      264.171875,
+      164.796875,
+      38.5625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      307.0625,
+      164.796875,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "rest",
+     "box": [
+      336.796875,
+      164.796875,
+      30.09375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "of",
+     "box": [
+      371.203125,
+      164.796875,
+      15.578125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      391.109375,
+      164.796875,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "page.",
+     "box": [
+      420.84375,
+      164.796875,
+      42.09375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "The",
+     "box": [
+      467.25,
+      164.796875,
+      30.328125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "quick",
+     "box": [
+      501.90625,
+      164.796875,
+      43.53125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "brown",
+     "box": [
+      549.765625,
+      164.796875,
+      51.078125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "fox",
+     "box": [
+      605.171875,
+      164.796875,
+      24.65625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "jumps",
+     "box": [
+      634.15625,
+      164.796875,
+      49.546875,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "over the lazy dog near the quiet river.",
+   "box": [
+    48,
+    193.59375,
+    295.078125,
+    21
+   ],
+   "words": [
+    {
+     "text": "over",
+     "box": [
+      48,
+      193.59375,
+      34.71875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      87.046875,
+      193.59375,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "lazy",
+     "box": [
+      116.78125,
+      193.59375,
+      31.09375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "dog",
+     "box": [
+      152.203125,
+      193.59375,
+      29.21875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "near",
+     "box": [
+      185.75,
+      193.59375,
+      35.78125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      225.859375,
+      193.59375,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "quiet",
+     "box": [
+      255.59375,
+      193.59375,
+      40.640625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "river.",
+     "box": [
+      300.5625,
+      193.59375,
+      42.515625,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Keep the original file safe and work on a copy whenever possible. Travel costs are",
+   "box": [
+    48,
+    238.390625,
+    642.421875,
+    21
+   ],
+   "words": [
+    {
+     "text": "Keep",
+     "box": [
+      48,
+      238.390625,
+      40.1875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      92.515625,
+      238.390625,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "original",
+     "box": [
+      122.25,
+      238.390625,
+      61.65625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "file",
+     "box": [
+      188.234375,
+      238.390625,
+      25,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "safe",
+     "box": [
+      217.5625,
+      238.390625,
+      31.421875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      253.3125,
+      238.390625,
+      30.046875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "work",
+     "box": [
+      287.6875,
+      238.390625,
+      40,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "on",
+     "box": [
+      332.015625,
+      238.390625,
+      20.359375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "a",
+     "box": [
+      356.703125,
+      238.390625,
+      9.078125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "copy",
+     "box": [
+      370.109375,
+      238.390625,
+      37.03125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "whenever",
+     "box": [
+      411.46875,
+      238.390625,
+      76.8125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "possible.",
+     "box": [
+      492.609375,
+      238.390625,
+      69.625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Travel",
+     "box": [
+      566.5625,
+      238.390625,
+      50.375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "costs",
+     "box": [
+      621.265625,
+      238.390625,
+      39.671875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "are",
+     "box": [
+      665.25,
+      238.390625,
+      25.171875,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "reimbursed within five working days of approval. The library opens at nine and",
+   "box": [
+    48,
+    267.1875,
+    626.40625,
+    21
+   ],
+   "words": [
+    {
+     "text": "reimbursed",
+     "box": [
+      48,
+      267.1875,
+      91.828125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "within",
+     "box": [
+      144.15625,
+      267.1875,
+      51.171875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "five",
+     "box": [
+      199.640625,
+      267.1875,
+      28.78125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "working",
+     "box": [
+      232.75,
+      267.1875,
+      65.09375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "days",
+     "box": [
+      302.15625,
+      267.1875,
+      36.0625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "of",
+     "box": [
+      342.546875,
+      267.1875,
+      15.578125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "approval.",
+     "box": [
+      362.453125,
+      267.1875,
+      74.734375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "The",
+     "box": [
+      441.515625,
+      267.1875,
+      30.328125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "library",
+     "box": [
+      476.171875,
+      267.1875,
+      53.1875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "opens",
+     "box": [
+      533.6875,
+      267.1875,
+      47.125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "at",
+     "box": [
+      585.140625,
+      267.1875,
+      15.296875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "nine",
+     "box": [
+      604.765625,
+      267.1875,
+      35.25,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      644.34375,
+      267.1875,
+      30.0625,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "closes at six on weekdays.",
+   "box": [
+    48,
+    295.984375,
+    203.625,
+    21
+   ],
+   "words": [
+    {
+     "text": "closes",
+     "box": [
+      48,
+      295.984375,
+      47.296875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "at",
+     "box": [
+      99.625,
+      295.984375,
+      15.296875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "six",
+     "box": [
+      119.25,
+      295.984375,
+      22.15625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "on",
+     "box": [
+      145.734375,
+      295.984375,
+      20.34375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "weekdays.",
+     "box": [
+      170.40625,
+      295.984375,
+      81.21875,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Start with one shared list",
+   "box": [
+    48,
+    349.78125,
+    281.859375,
+    32
+   ],
+   "words": [
+    {
+     "text": "Start",
+     "box": [
+      48,
+      349.78125,
+      54.703125,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "with",
+     "box": [
+      109.3125,
+      349.78125,
+      49.75,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "one",
+     "box": [
+      165.671875,
+      349.78125,
+      42.1875,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "shared",
+     "box": [
+      214.46875,
+      349.78125,
+      75.234375,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "list",
+     "box": [
+      296.3125,
+      349.78125,
+      33.546875,
+      32
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "A clear heading and short paragraphs make instructions easier to follow. Tickets for",
+   "box": [
+    48,
+    388.78125,
+    662.875,
+    21
+   ],
+   "words": [
+    {
+     "text": "A",
+     "box": [
+      48,
+      388.78125,
+      12.078125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "clear",
+     "box": [
+      64.40625,
+      388.78125,
+      38.484375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "heading",
+     "box": [
+      107.21875,
+      388.78125,
+      63.671875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      175.21875,
+      388.78125,
+      30.0625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "short",
+     "box": [
+      209.609375,
+      388.78125,
+      41.5625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "paragraphs",
+     "box": [
+      255.5,
+      388.78125,
+      89.953125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "make",
+     "box": [
+      349.78125,
+      388.78125,
+      43.28125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "instructions",
+     "box": [
+      397.390625,
+      388.78125,
+      95.421875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "easier",
+     "box": [
+      497.140625,
+      388.78125,
+      46.90625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "to",
+     "box": [
+      548.375,
+      388.78125,
+      15.9375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "follow.",
+     "box": [
+      568.640625,
+      388.78125,
+      53.703125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Tickets",
+     "box": [
+      626.671875,
+      388.78125,
+      56.921875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "for",
+     "box": [
+      687.921875,
+      388.78125,
+      22.953125,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "the conference go on sale next Monday at noon. The printer on the second floor is",
+   "box": [
+    48,
+    417.578125,
+    645.890625,
+    21
+   ],
+   "words": [
+    {
+     "text": "the",
+     "box": [
+      48,
+      417.578125,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "conference",
+     "box": [
+      77.71875,
+      417.578125,
+      86.671875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "go",
+     "box": [
+      168.71875,
+      417.578125,
+      18.890625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "on",
+     "box": [
+      191.9375,
+      417.578125,
+      20.34375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "sale",
+     "box": [
+      216.609375,
+      417.578125,
+      30.71875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "next",
+     "box": [
+      251.65625,
+      417.578125,
+      34.65625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Monday",
+     "box": [
+      290.625,
+      417.578125,
+      65.3125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "at",
+     "box": [
+      360.265625,
+      417.578125,
+      15.296875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "noon.",
+     "box": [
+      379.890625,
+      417.578125,
+      45.546875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "The",
+     "box": [
+      429.765625,
+      417.578125,
+      30.328125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "printer",
+     "box": [
+      464.421875,
+      417.578125,
+      55.859375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "on",
+     "box": [
+      524.609375,
+      417.578125,
+      20.359375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      549.296875,
+      417.578125,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "second",
+     "box": [
+      579.03125,
+      417.578125,
+      55.34375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "floor",
+     "box": [
+      638.703125,
+      417.578125,
+      37.796875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "is",
+     "box": [
+      680.828125,
+      417.578125,
+      13.0625,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "out of paper again.",
+   "box": [
+    48,
+    446.375,
+    148.640625,
+    21
+   ],
+   "words": [
+    {
+     "text": "out",
+     "box": [
+      48,
+      446.375,
+      26.28125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "of",
+     "box": [
+      78.609375,
+      446.375,
+      15.5625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "paper",
+     "box": [
+      98.5,
+      446.375,
+      45.734375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "again.",
+     "box": [
+      148.5625,
+      446.375,
+      48.078125,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  }
+ ],
+ "sourceLines": null
+}

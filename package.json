@@ -15,17 +15,22 @@
     "fixtures:stitch": "tsx scripts/spikes/stitch-fixtures/generate.ts",
     "fixtures:large": "tsx scripts/spikes/memory/generate-large-fixtures.ts",
     "bench:memory": "tsx scripts/spikes/memory/run.ts",
-    "bench:memory:summary": "tsx scripts/spikes/memory/summarise.ts"
+    "bench:memory:summary": "tsx scripts/spikes/memory/summarise.ts",
+    "fixtures:ocr": "tsx scripts/spikes/ocr-fixtures/generate.ts",
+    "bench:ocr:summary": "tsx scripts/spikes/ocr/summarise-node.ts"
   },
   "dependencies": {
     "@techstark/opencv-js": "^5.0.0-release.1",
     "next": "16.3.6",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
+    "@tesseract.js-data/eng": "^1.0.0",
+    "@tesseract.js-data/hin": "^1.0.0",
     "@types/node": "^22.20.4",
     "@types/pngjs": "^6.0.5",
     "@types/react": "^19",

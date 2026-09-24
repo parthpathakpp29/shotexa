@@ -1,0 +1,1277 @@
+{
+ "id": "code-light",
+ "lang": "eng",
+ "boxesFrame": "image",
+ "lines": [
+  {
+   "text": "transform.ts index.ts",
+   "box": [
+    16,
+    8,
+    144.234375,
+    17
+   ],
+   "words": [
+    {
+     "text": "transform.ts",
+     "box": [
+      16,
+      8,
+      68.5625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "index.ts",
+     "box": [
+      116.5625,
+      8,
+      43.671875,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "export function mapBox(box: Box, t: Transform): Box {",
+   "box": [
+    0,
+    47,
+    407.96875,
+    17
+   ],
+   "words": [
+    {
+     "text": "export",
+     "box": [
+      0,
+      47,
+      46.1875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "function",
+     "box": [
+      53.875,
+      47,
+      61.59375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "mapBox(box:",
+     "box": [
+      123.15625,
+      47,
+      84.671875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Box,",
+     "box": [
+      215.515625,
+      47,
+      30.796875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "t:",
+     "box": [
+      254,
+      47,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Transform):",
+     "box": [
+      277.09375,
+      47,
+      84.6875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Box",
+     "box": [
+      369.46875,
+      47,
+      23.09375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "{",
+     "box": [
+      400.25,
+      47,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "const x = (box.x - t.offsetX) / t.scale;",
+   "box": [
+    15.390625,
+    68,
+    307.90625,
+    17
+   ],
+   "words": [
+    {
+     "text": "const",
+     "box": [
+      15.390625,
+      68,
+      38.5,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "x",
+     "box": [
+      61.578125,
+      68,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "=",
+     "box": [
+      76.96875,
+      68,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "(box.x",
+     "box": [
+      92.359375,
+      68,
+      46.203125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "-",
+     "box": [
+      146.234375,
+      68,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "t.offsetX)",
+     "box": [
+      161.640625,
+      68,
+      76.984375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "/",
+     "box": [
+      246.3125,
+      68,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "t.scale;",
+     "box": [
+      261.703125,
+      68,
+      61.59375,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "const y = (box.y - t.offsetY) / t.scale;",
+   "box": [
+    15.390625,
+    89,
+    307.90625,
+    17
+   ],
+   "words": [
+    {
+     "text": "const",
+     "box": [
+      15.390625,
+      89,
+      38.5,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "y",
+     "box": [
+      61.578125,
+      89,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "=",
+     "box": [
+      76.96875,
+      89,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "(box.y",
+     "box": [
+      92.359375,
+      89,
+      46.203125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "-",
+     "box": [
+      146.234375,
+      89,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "t.offsetY)",
+     "box": [
+      161.640625,
+      89,
+      76.984375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "/",
+     "box": [
+      246.3125,
+      89,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "t.scale;",
+     "box": [
+      261.703125,
+      89,
+      61.59375,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "return { x, y, w: box.w / t.scale, h: box.h / t.scale };",
+   "box": [
+    15.390625,
+    110,
+    431.0625,
+    17
+   ],
+   "words": [
+    {
+     "text": "return",
+     "box": [
+      15.390625,
+      110,
+      46.1875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "{",
+     "box": [
+      69.265625,
+      110,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "x,",
+     "box": [
+      84.65625,
+      110,
+      15.421875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "y,",
+     "box": [
+      107.75,
+      110,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "w:",
+     "box": [
+      130.84375,
+      110,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "box.w",
+     "box": [
+      153.9375,
+      110,
+      38.5,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "/",
+     "box": [
+      200.125,
+      110,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "t.scale,",
+     "box": [
+      215.515625,
+      110,
+      61.59375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "h:",
+     "box": [
+      284.796875,
+      110,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "box.h",
+     "box": [
+      307.890625,
+      110,
+      38.5,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "/",
+     "box": [
+      354.0625,
+      110,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "t.scale",
+     "box": [
+      369.46875,
+      110,
+      53.890625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "};",
+     "box": [
+      431.046875,
+      110,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "}",
+   "box": [
+    0,
+    131,
+    7.703125,
+    17
+   ],
+   "words": [
+    {
+     "text": "}",
+     "box": [
+      0,
+      131,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "const isReady = (state) => state.status === \"ready\" && !state.error;",
+   "box": [
+    0,
+    173,
+    523.421875,
+    17
+   ],
+   "words": [
+    {
+     "text": "const",
+     "box": [
+      0,
+      173,
+      38.5,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "isReady",
+     "box": [
+      46.171875,
+      173,
+      53.90625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "=",
+     "box": [
+      107.75,
+      173,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "(state)",
+     "box": [
+      123.15625,
+      173,
+      53.890625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "=>",
+     "box": [
+      184.734375,
+      173,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "state.status",
+     "box": [
+      207.8125,
+      173,
+      92.390625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "===",
+     "box": [
+      307.890625,
+      173,
+      23.09375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "\"ready\"",
+     "box": [
+      338.671875,
+      173,
+      53.890625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "&&",
+     "box": [
+      400.25,
+      173,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "!state.error;",
+     "box": [
+      423.34375,
+      173,
+      100.078125,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "const paths = [\"C:\\\\tmp\\\\shots\", \"/var/data/ocr_out\"];",
+   "box": [
+    0,
+    194,
+    415.65625,
+    17
+   ],
+   "words": [
+    {
+     "text": "const",
+     "box": [
+      0,
+      194,
+      38.5,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "paths",
+     "box": [
+      46.171875,
+      194,
+      38.5,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "=",
+     "box": [
+      92.359375,
+      194,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "[\"C:\\\\tmp\\\\shots\",",
+     "box": [
+      107.75,
+      194,
+      138.5625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "\"/var/data/ocr_out\"];",
+     "box": [
+      254,
+      194,
+      161.65625,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "for (let i = 0; i < items.length; i++) {",
+   "box": [
+    0,
+    215,
+    307.890625,
+    17
+   ],
+   "words": [
+    {
+     "text": "for",
+     "box": [
+      0,
+      215,
+      23.09375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "(let",
+     "box": [
+      30.78125,
+      215,
+      30.796875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "i",
+     "box": [
+      69.265625,
+      215,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "=",
+     "box": [
+      84.65625,
+      215,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "0;",
+     "box": [
+      100.0625,
+      215,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "i",
+     "box": [
+      123.15625,
+      215,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "<",
+     "box": [
+      138.546875,
+      215,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "items.length;",
+     "box": [
+      153.9375,
+      215,
+      100.078125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "i++)",
+     "box": [
+      261.703125,
+      215,
+      30.796875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "{",
+     "box": [
+      300.1875,
+      215,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "if (items[i]?.id !== undefined) total += items[i].size ?? 0;",
+   "box": [
+    15.390625,
+    236,
+    461.84375,
+    17
+   ],
+   "words": [
+    {
+     "text": "if",
+     "box": [
+      15.390625,
+      236,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "(items[i]?.id",
+     "box": [
+      38.484375,
+      236,
+      100.078125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "!==",
+     "box": [
+      146.234375,
+      236,
+      23.109375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "undefined)",
+     "box": [
+      177.03125,
+      236,
+      76.984375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "total",
+     "box": [
+      261.703125,
+      236,
+      38.5,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "+=",
+     "box": [
+      307.890625,
+      236,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "items[i].size",
+     "box": [
+      330.96875,
+      236,
+      100.078125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "??",
+     "box": [
+      438.734375,
+      236,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "0;",
+     "box": [
+      461.828125,
+      236,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "}",
+   "box": [
+    0,
+    257,
+    7.703125,
+    17
+   ],
+   "words": [
+    {
+     "text": "}",
+     "box": [
+      0,
+      257,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "// TODO: handle [0] and {} edge-cases -> fallback",
+   "box": [
+    0,
+    278,
+    377.171875,
+    17
+   ],
+   "words": [
+    {
+     "text": "//",
+     "box": [
+      0,
+      278,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "TODO:",
+     "box": [
+      23.078125,
+      278,
+      38.5,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "handle",
+     "box": [
+      69.265625,
+      278,
+      46.203125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "[0]",
+     "box": [
+      123.15625,
+      278,
+      23.09375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      153.9375,
+      278,
+      23.109375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "{}",
+     "box": [
+      184.734375,
+      278,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "edge-cases",
+     "box": [
+      207.8125,
+      278,
+      77,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "->",
+     "box": [
+      292.484375,
+      278,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "fallback",
+     "box": [
+      315.578125,
+      278,
+      61.59375,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "type Result = { ok: true; value: number[] } | { ok: false; error: string };",
+   "box": [
+    0,
+    299,
+    577.296875,
+    17
+   ],
+   "words": [
+    {
+     "text": "type",
+     "box": [
+      0,
+      299,
+      30.796875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Result",
+     "box": [
+      38.484375,
+      299,
+      46.1875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "=",
+     "box": [
+      92.359375,
+      299,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "{",
+     "box": [
+      107.75,
+      299,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "ok:",
+     "box": [
+      123.15625,
+      299,
+      23.09375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "true;",
+     "box": [
+      153.9375,
+      299,
+      38.5,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "value:",
+     "box": [
+      200.125,
+      299,
+      46.1875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "number[]",
+     "box": [
+      254,
+      299,
+      61.59375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "}",
+     "box": [
+      323.28125,
+      299,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "|",
+     "box": [
+      338.671875,
+      299,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "{",
+     "box": [
+      354.0625,
+      299,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "ok:",
+     "box": [
+      369.46875,
+      299,
+      23.09375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "false;",
+     "box": [
+      400.25,
+      299,
+      46.203125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "error:",
+     "box": [
+      454.125,
+      299,
+      46.203125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "string",
+     "box": [
+      508.015625,
+      299,
+      46.1875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "};",
+     "box": [
+      561.890625,
+      299,
+      15.40625,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "const pct = Math.round((done / total) * 100) + '%';",
+   "box": [
+    0,
+    320,
+    392.5625,
+    17
+   ],
+   "words": [
+    {
+     "text": "const",
+     "box": [
+      0,
+      320,
+      38.5,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "pct",
+     "box": [
+      46.171875,
+      320,
+      23.109375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "=",
+     "box": [
+      76.96875,
+      320,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Math.round((done",
+     "box": [
+      92.359375,
+      320,
+      123.171875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "/",
+     "box": [
+      223.21875,
+      320,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "total)",
+     "box": [
+      238.609375,
+      320,
+      46.203125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "*",
+     "box": [
+      292.484375,
+      320,
+      7.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "100)",
+     "box": [
+      307.890625,
+      320,
+      30.796875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "+",
+     "box": [
+      346.375,
+      320,
+      7.703125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "'%';",
+     "box": [
+      361.765625,
+      320,
+      30.796875,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  }
+ ],
+ "sourceLines": [
+  "export function mapBox(box: Box, t: Transform): Box {",
+  "  const x = (box.x - t.offsetX) / t.scale;",
+  "  const y = (box.y - t.offsetY) / t.scale;",
+  "  return { x, y, w: box.w / t.scale, h: box.h / t.scale };",
+  "}",
+  "",
+  "const isReady = (state) => state.status === \"ready\" && !state.error;",
+  "const paths = [\"C:\\\\tmp\\\\shots\", \"/var/data/ocr_out\"];",
+  "for (let i = 0; i < items.length; i++) {",
+  "  if (items[i]?.id !== undefined) total += items[i].size ?? 0;",
+  "}",
+  "// TODO: handle [0] and {} edge-cases -> fallback",
+  "type Result = { ok: true; value: number[] } | { ok: false; error: string };",
+  "const pct = Math.round((done / total) * 100) + '%';"
+ ]
+}

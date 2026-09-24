@@ -9,7 +9,9 @@ export default defineConfig({
   use: { baseURL: "http://localhost:3000" },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    // Firefox/WebKit are required before production (architecture §54); not installed for the spike.
+    // Spike C: the OCR flow must work cross-browser (Playwright WebKit ≠ Safari; see report).
+    { name: "firefox", use: { ...devices["Desktop Firefox"] }, testMatch: /ocr-spike/ },
+    { name: "webkit", use: { ...devices["Desktop Safari"] }, testMatch: /ocr-spike/ },
   ],
   webServer: {
     command: "npm run dev",

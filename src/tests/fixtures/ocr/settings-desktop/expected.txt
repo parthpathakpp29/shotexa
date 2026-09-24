@@ -1,0 +1,29 @@
+General
+Account
+Notifications
+Privacy
+Storage
+Language
+About
+General settings
+Display name
+Shown to people you share with
+Alex Morgan
+Email address
+Used for sign-in and receipts
+alex@example.com
+Time zone
+Affects reminders and due dates
+UTC+05:30
+Start of week
+First day shown in calendars
+Monday
+Auto-save drafts
+Save changes every 30 seconds
+On
+Download quality
+Higher quality uses more data
+High
+Storage used
+Across all devices
+3.2 GB of 15 GB
