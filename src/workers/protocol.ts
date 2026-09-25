@@ -3,7 +3,9 @@
  * Requests: RUN | CANCEL. Responses: PROGRESS | SUCCESS | ERROR | CANCELLED.
  * Errors carry controlled codes only — never raw third-party messages.
  */
+import type { ComposePlan } from "@/core/image/tiled-compose";
 import type { MetadataErrorCode } from "@/core/metadata/errors";
+import type { ComposeChainResult } from "@/core/stitch/compose-chain";
 import type { MetadataCleanRun, MetadataInspectRun } from "@/core/metadata/run";
 import type { MetadataPolicy } from "@/core/metadata/types";
 import type { PreparedImage } from "@/core/ocr/prepare-image";
@@ -14,11 +16,21 @@ import type { RowSignals } from "@/core/pdf/signals";
 import type { PageSetup, PageSlice } from "@/core/pdf/types";
 import type { PreprocessStep } from "@/core/ocr/preprocess";
 import type { StitchConfigOverrides } from "@/core/stitch/config";
-import type { StitchAnalysis, StitchErrorCode, StitchPlan } from "@/core/stitch/types";
+import type { GrayImage, StitchAnalysis, StitchErrorCode, StitchPlan } from "@/core/stitch/types";
 
 export const PROTOCOL_VERSION = 1 as const;
 
 export interface WorkerOps {
+  /** Downscaled preview (full decode happens here, off the main thread); bitmap is transferred. */
+  "image.preview": {
+    input: { image: Blob; maxWidth: number; maxPixels: number };
+    output: { bitmap: ImageBitmap; width: number; height: number };
+  };
+  /** Full-resolution N-screenshot stitch export (single canvas or tiled/streamed PNG). */
+  "stitch.composeChain": {
+    input: { images: Blob[]; plan: ComposePlan; sources: { width: number; height: number }[]; format: "png" | "jpeg" | "webp"; quality?: number };
+    output: ComposeChainResult;
+  };
   /** Container-level metadata inspection (no pixel decode). */
   "metadata.inspect": {
     input: { image: Blob; name?: string; type?: string };
@@ -31,6 +43,11 @@ export interface WorkerOps {
   };
   "stitch.analyse": {
     input: { a: Blob; b: Blob; config?: StitchConfigOverrides };
+    output: StitchAnalysis & { engineLoadMs: number; decodeMs: number };
+  };
+  /** Same analysis from page-decoded greyscale images (browsers without worker OffscreenCanvas). */
+  "stitch.analyseGray": {
+    input: { a: GrayImage; b: GrayImage; config?: StitchConfigOverrides };
     output: StitchAnalysis & { engineLoadMs: number; decodeMs: number };
   };
   "stitch.compose": {

@@ -42,6 +42,8 @@ export type StitchErrorCode =
   | "DECODE_FAILED"
   | "UNSUPPORTED_FORMAT"
   | "CANCELLED"
+  | "EXPORT_TOO_LARGE"
+  | "EXPORT_VERIFY_FAILED"
   | "INTERNAL";
 
 export class StitchError extends Error {

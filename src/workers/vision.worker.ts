@@ -5,7 +5,7 @@
 import { analyseStitch } from "@/core/stitch/analyse";
 import { loadOpenCv } from "@/core/stitch/opencv-loader";
 import { createOpenCvMatcher } from "@/core/stitch/opencv-matcher";
-import { createBitmapSource } from "@/core/stitch/sources";
+import { createBitmapSource, createGraySource } from "@/core/stitch/sources";
 import { StitchError } from "@/core/stitch/types";
 import { serveWorker, type WorkerErrorCode } from "./protocol";
 
@@ -19,13 +19,17 @@ async function decode(blob: Blob): Promise<ImageBitmap> {
   }
 }
 
+async function engine() {
+  const t = performance.now();
+  const matcher = createOpenCvMatcher(await loadOpenCv(self.location.origin));
+  return { matcher, engineLoadMs: Math.round(performance.now() - t) };
+}
+
 serveWorker(
   self,
   {
     "stitch.analyse": async ({ a, b, config }, ctx) => {
-      const tLoad = performance.now();
-      const matcher = createOpenCvMatcher(await loadOpenCv(self.location.origin));
-      const engineLoadMs = performance.now() - tLoad;
+      const { matcher, engineLoadMs } = await engine();
       ctx.progress(0.1, "engine");
 
       const tDecode = performance.now();
@@ -37,11 +41,21 @@ serveWorker(
           signal: ctx.signal,
           onProgress: (p, stage) => ctx.progress(0.1 + p * 0.9, stage),
         });
-        return { ...result, engineLoadMs: Math.round(engineLoadMs), decodeMs: Math.round(decodeMs) };
+        return { ...result, engineLoadMs, decodeMs: Math.round(decodeMs) };
       } finally {
         bmA.close();
         bmB.close();
       }
+    },
+    "stitch.analyseGray": async ({ a, b, config }, ctx) => {
+      const { matcher, engineLoadMs } = await engine();
+      ctx.progress(0.1, "engine");
+      const result = await analyseStitch(createGraySource(a), createGraySource(b), matcher, {
+        config,
+        signal: ctx.signal,
+        onProgress: (p, stage) => ctx.progress(0.1 + p * 0.9, stage),
+      });
+      return { ...result, engineLoadMs, decodeMs: 0 };
     },
   },
   toCode,

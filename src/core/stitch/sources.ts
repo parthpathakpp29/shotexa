@@ -17,6 +17,23 @@ export function createRgbaSource(rgba: Uint8Array | Uint8ClampedArray, width: nu
   };
 }
 
+/**
+ * Source backed by a full-resolution greyscale image decoded on the page — used where
+ * workers have no OffscreenCanvas (WebKit/WinCairo, Spike B), so only OpenCV runs in the worker.
+ */
+export function createGraySource(gray: GrayImage): StitchImageSource {
+  return {
+    width: gray.width,
+    height: gray.height,
+    async getProxy(w, h) {
+      return w === gray.width && h === gray.height ? gray : downscaleGray(gray, w, h);
+    },
+    async getRows(y, h, w) {
+      return cropGray(gray, 0, y, Math.min(w, gray.width), h);
+    },
+  };
+}
+
 type Ctx2D = OffscreenCanvasRenderingContext2D;
 
 /**
