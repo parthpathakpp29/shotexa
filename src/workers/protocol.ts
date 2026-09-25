@@ -3,6 +3,9 @@
  * Requests: RUN | CANCEL. Responses: PROGRESS | SUCCESS | ERROR | CANCELLED.
  * Errors carry controlled codes only — never raw third-party messages.
  */
+import type { MetadataErrorCode } from "@/core/metadata/errors";
+import type { MetadataCleanRun, MetadataInspectRun } from "@/core/metadata/run";
+import type { MetadataPolicy } from "@/core/metadata/types";
 import type { PreparedImage } from "@/core/ocr/prepare-image";
 import type { PaginationConfigOverrides } from "@/core/pdf/config";
 import type { PdfErrorCode } from "@/core/pdf/errors";
@@ -16,6 +19,16 @@ import type { StitchAnalysis, StitchErrorCode, StitchPlan } from "@/core/stitch/
 export const PROTOCOL_VERSION = 1 as const;
 
 export interface WorkerOps {
+  /** Container-level metadata inspection (no pixel decode). */
+  "metadata.inspect": {
+    input: { image: Blob; name?: string; type?: string };
+    output: MetadataInspectRun;
+  };
+  /** Inspect → clean → verify in one round trip; `output` is null when nothing needed removing. */
+  "metadata.clean": {
+    input: { image: Blob; name?: string; type?: string; policy?: Partial<MetadataPolicy> };
+    output: MetadataCleanRun;
+  };
   "stitch.analyse": {
     input: { a: Blob; b: Blob; config?: StitchConfigOverrides };
     output: StitchAnalysis & { engineLoadMs: number; decodeMs: number };
@@ -59,7 +72,7 @@ export type WorkerRequest =
   | ({ [K in OpName]: Envelope & { type: "RUN"; op: K; input: WorkerOps[K]["input"] } }[OpName])
   | (Envelope & { type: "CANCEL" });
 
-export type WorkerErrorCode = StitchErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode;
+export type WorkerErrorCode = StitchErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode | MetadataErrorCode;
 
 export type WorkerResponse =
   | (Envelope & { type: "PROGRESS"; progress: number; stage?: string })

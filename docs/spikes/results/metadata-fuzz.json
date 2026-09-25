@@ -1,0 +1,31 @@
+{
+ "date": "2026-09-24T20:30:19.647Z",
+ "node": "v22.12.0",
+ "seed": "0x5eede",
+ "totalMs": 107148,
+ "cases": 202192,
+ "rejected": {
+  "METADATA_MALFORMED_CONTAINER": 110951,
+  "METADATA_UNSUPPORTED_FORMAT": 2212,
+  "METADATA_INVALID_FILE": 10
+ },
+ "cleaned": 80555,
+ "unchanged": 8464,
+ "maxMs": 218.4,
+ "maxCase": "#92295 lengthField webp/exif-lossy",
+ "byMutator": {
+  "bitflip": 25027,
+  "pngDataWithValidCrc": 24822,
+  "randomWithMagic": 25069,
+  "insert": 24979,
+  "lengthField": 25086,
+  "headerBytes": 25143,
+  "truncate": 24918,
+  "duplicateElement": 24956
+ },
+ "uncontrolled": [],
+ "invalidOutputs": [],
+ "privacyLeftInOutput": [],
+ "grewOutput": [],
+ "slow": []
+}

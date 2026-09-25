@@ -1,0 +1,5422 @@
+{
+ "environment": {
+  "browser": "chromium",
+  "version": "153.0.8010.12",
+  "date": "2026-09-24T20:53:27.724Z"
+ },
+ "results": {
+  "fixtures": {
+   "fixtures": [
+    {
+     "id": "jpeg/clean",
+     "ok": true,
+     "changed": false,
+     "inputBytes": 48037,
+     "outputBytes": 48037,
+     "verified": true,
+     "msTotal": 28.899999991059303,
+     "maxStallMs": 14.900000005960464,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/exif-gps",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 48999,
+     "outputBytes": 48037,
+     "verified": true,
+     "msTotal": 9.5,
+     "maxStallMs": 10.099999994039536,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/exif-gps-be",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 48999,
+     "outputBytes": 48037,
+     "verified": true,
+     "msTotal": 8.600000008940697,
+     "maxStallMs": 10.199999988079071,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/exif-thumbnail",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 50747,
+     "outputBytes": 48037,
+     "verified": true,
+     "msTotal": 19.599999994039536,
+     "maxStallMs": 10.399999991059303,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/xmp",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 49071,
+     "outputBytes": 48037,
+     "verified": true,
+     "msTotal": 9,
+     "maxStallMs": 10.400000005960464,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/xmp-extended",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 49205,
+     "outputBytes": 48037,
+     "verified": true,
+     "msTotal": 5.799999997019768,
+     "maxStallMs": 10.5,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/icc",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 49525,
+     "outputBytes": 48563,
+     "verified": true,
+     "msTotal": 2.8999999910593033,
+     "maxStallMs": 4.200000002980232,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/comments",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 48136,
+     "outputBytes": 48037,
+     "verified": true,
+     "msTotal": 7.9000000059604645,
+     "maxStallMs": 9.299999997019768,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/iptc",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 48207,
+     "outputBytes": 48037,
+     "verified": true,
+     "msTotal": 8.299999997019768,
+     "maxStallMs": 11.599999994039536,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/jfif-thumbnail",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 49945,
+     "outputBytes": 48037,
+     "verified": true,
+     "msTotal": 4,
+     "maxStallMs": 5,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/mpf-appended",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 49763,
+     "outputBytes": 48037,
+     "verified": true,
+     "msTotal": 3.8999999910593033,
+     "maxStallMs": 6.100000008940697,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/trailing",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 48080,
+     "outputBytes": 48037,
+     "verified": true,
+     "msTotal": 2.5999999940395355,
+     "maxStallMs": 3.6000000089406967,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/kitchen-sink",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 52615,
+     "outputBytes": 48579,
+     "verified": true,
+     "msTotal": 3.3999999910593033,
+     "maxStallMs": 6.799999997019768,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/orientation-1",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 12719,
+     "outputBytes": 12653,
+     "verified": true,
+     "msTotal": 1.8999999910593033,
+     "maxStallMs": 2.9000000059604645,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       240,
+       160
+      ],
+      "cleaned": [
+       240,
+       160
+      ],
+      "stripped": [
+       240,
+       160
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/orientation-2",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 12719,
+     "outputBytes": 12689,
+     "verified": true,
+     "msTotal": 5.4000000059604645,
+     "maxStallMs": 6.600000008940697,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       240,
+       160
+      ],
+      "cleaned": [
+       240,
+       160
+      ],
+      "stripped": [
+       240,
+       160
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        0,
+        255,
+        1,
+        255
+       ],
+       "tr": [
+        254,
+        0,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        0,
+        255,
+        1,
+        255
+       ],
+       "tr": [
+        254,
+        0,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        0,
+        255,
+        1,
+        255
+       ],
+       "tr": [
+        254,
+        0,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/orientation-3",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 12719,
+     "outputBytes": 12689,
+     "verified": true,
+     "msTotal": 1.8999999910593033,
+     "maxStallMs": 3.1000000089406967,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       240,
+       160
+      ],
+      "cleaned": [
+       240,
+       160
+      ],
+      "stripped": [
+       240,
+       160
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        241,
+        241,
+        155,
+        255
+       ],
+       "tr": [
+        0,
+        0,
+        254,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        241,
+        241,
+        155,
+        255
+       ],
+       "tr": [
+        0,
+        0,
+        254,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        241,
+        241,
+        155,
+        255
+       ],
+       "tr": [
+        0,
+        0,
+        254,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/orientation-5",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 12719,
+     "outputBytes": 12689,
+     "verified": true,
+     "msTotal": 2.6000000089406967,
+     "maxStallMs": 3.8999999910593033,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       160,
+       240
+      ],
+      "cleaned": [
+       160,
+       240
+      ],
+      "stripped": [
+       240,
+       160
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        0,
+        254,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        0,
+        254,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        0,
+        254,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/orientation-6",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 12719,
+     "outputBytes": 12689,
+     "verified": true,
+     "msTotal": 1.7000000029802322,
+     "maxStallMs": 4.5,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       160,
+       240
+      ],
+      "cleaned": [
+       160,
+       240
+      ],
+      "stripped": [
+       240,
+       160
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        0,
+        0,
+        254,
+        255
+       ],
+       "tr": [
+        254,
+        0,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        0,
+        0,
+        254,
+        255
+       ],
+       "tr": [
+        254,
+        0,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        0,
+        0,
+        254,
+        255
+       ],
+       "tr": [
+        254,
+        0,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/orientation-7",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 12719,
+     "outputBytes": 12689,
+     "verified": true,
+     "msTotal": 1.7999999970197678,
+     "maxStallMs": 2.5999999940395355,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       160,
+       240
+      ],
+      "cleaned": [
+       160,
+       240
+      ],
+      "stripped": [
+       240,
+       160
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        241,
+        241,
+        155,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        241,
+        241,
+        155,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        241,
+        241,
+        155,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/orientation-8",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 12719,
+     "outputBytes": 12689,
+     "verified": true,
+     "msTotal": 1.7000000029802322,
+     "maxStallMs": 5.0999999940395355,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       160,
+       240
+      ],
+      "cleaned": [
+       160,
+       240
+      ],
+      "stripped": [
+       240,
+       160
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        0,
+        255,
+        1,
+        255
+       ],
+       "tr": [
+        241,
+        242,
+        162,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        0,
+        255,
+        1,
+        255
+       ],
+       "tr": [
+        241,
+        242,
+        162,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        0,
+        255,
+        1,
+        255
+       ],
+       "tr": [
+        241,
+        242,
+        162,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/orientation-minimal-6",
+     "ok": true,
+     "changed": false,
+     "inputBytes": 12689,
+     "outputBytes": 12689,
+     "verified": true,
+     "msTotal": 1.7000000029802322,
+     "maxStallMs": 2.0999999940395355,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       160,
+       240
+      ],
+      "cleaned": [
+       160,
+       240
+      ],
+      "stripped": [
+       240,
+       160
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        0,
+        0,
+        254,
+        255
+       ],
+       "tr": [
+        254,
+        0,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        0,
+        0,
+        254,
+        255
+       ],
+       "tr": [
+        254,
+        0,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        0,
+        0,
+        254,
+        255
+       ],
+       "tr": [
+        254,
+        0,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/duplicate-exif",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 49961,
+     "outputBytes": 48037,
+     "verified": true,
+     "msTotal": 3.2000000029802322,
+     "maxStallMs": 4.299999997019768,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "jpeg/malformed-exif",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 48072,
+     "outputBytes": 48037,
+     "verified": true,
+     "msTotal": 11.700000002980232,
+     "maxStallMs": 10.5,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        254,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/clean",
+     "ok": true,
+     "changed": false,
+     "inputBytes": 74445,
+     "outputBytes": 74445,
+     "verified": true,
+     "msTotal": 14.600000008940697,
+     "maxStallMs": 11.299999997019768,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/text",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 75796,
+     "outputBytes": 74445,
+     "verified": true,
+     "msTotal": 4.5999999940395355,
+     "maxStallMs": 6.700000002980232,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/exif",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 75409,
+     "outputBytes": 74445,
+     "verified": true,
+     "msTotal": 7,
+     "maxStallMs": 9.599999994039536,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/exif-orientation-6",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 19729,
+     "outputBytes": 19699,
+     "verified": true,
+     "msTotal": 2.2999999970197678,
+     "maxStallMs": 5.800000011920929,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       160,
+       240
+      ],
+      "cleaned": [
+       160,
+       240
+      ],
+      "stripped": [
+       240,
+       160
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        0,
+        0,
+        255,
+        255
+       ],
+       "tr": [
+        255,
+        0,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        0,
+        0,
+        255,
+        255
+       ],
+       "tr": [
+        255,
+        0,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        0,
+        0,
+        255,
+        255
+       ],
+       "tr": [
+        255,
+        0,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/time",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 74464,
+     "outputBytes": 74445,
+     "verified": true,
+     "msTotal": 3.2999999970197678,
+     "maxStallMs": 4.799999997019768,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/icc",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 74798,
+     "outputBytes": 74747,
+     "verified": true,
+     "msTotal": 6.5,
+     "maxStallMs": 7.899999991059303,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/gamma",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 74551,
+     "outputBytes": 74505,
+     "verified": true,
+     "msTotal": 3.0999999940395355,
+     "maxStallMs": 4.5999999940395355,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/srgb",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 74525,
+     "outputBytes": 74474,
+     "verified": true,
+     "msTotal": 2.9000000059604645,
+     "maxStallMs": 4.0999999940395355,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/phys",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 74517,
+     "outputBytes": 74466,
+     "verified": true,
+     "msTotal": 4.200000002980232,
+     "maxStallMs": 5.4000000059604645,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/alpha",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 76111,
+     "outputBytes": 76041,
+     "verified": true,
+     "msTotal": 3.0999999940395355,
+     "maxStallMs": 3.7999999970197678,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      0,
+      0
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        89
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        246
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        89
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        246
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        89
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        246
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        89
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        246
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/apng",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 149023,
+     "outputBytes": 148977,
+     "verified": true,
+     "msTotal": 5.9000000059604645,
+     "maxStallMs": 8.599999994039536,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/idot",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 74531,
+     "outputBytes": 74445,
+     "verified": true,
+     "msTotal": 3.2999999970197678,
+     "maxStallMs": 4.799999997019768,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/unknown-trailing",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 74515,
+     "outputBytes": 74445,
+     "verified": true,
+     "msTotal": 3,
+     "maxStallMs": 4.300000011920929,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "png/kitchen-sink",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 78540,
+     "outputBytes": 76364,
+     "verified": true,
+     "msTotal": 3.9000000059604645,
+     "maxStallMs": 5.600000008940697,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      0,
+      0
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        89
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        246
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        89
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        246
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        89
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        246
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        89
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        246
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "webp/clean-lossy",
+     "ok": true,
+     "changed": false,
+     "inputBytes": 14208,
+     "outputBytes": 14208,
+     "verified": true,
+     "msTotal": 5.600000008940697,
+     "maxStallMs": 5.899999991059303,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "webp/clean-lossless",
+     "ok": true,
+     "changed": false,
+     "inputBytes": 5826,
+     "outputBytes": 5826,
+     "verified": true,
+     "msTotal": 1.5999999940395355,
+     "maxStallMs": 2.1000000089406967,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "webp/exif-lossy",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 15186,
+     "outputBytes": 14226,
+     "verified": true,
+     "msTotal": 2.7000000029802322,
+     "maxStallMs": 3.7999999970197678,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "webp/exif-lossless",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 7814,
+     "outputBytes": 5844,
+     "verified": true,
+     "msTotal": 2.4000000059604645,
+     "maxStallMs": 3.2999999970197678,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "webp/xmp",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 15236,
+     "outputBytes": 14226,
+     "verified": true,
+     "msTotal": 4.299999997019768,
+     "maxStallMs": 5.9000000059604645,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "webp/icc",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 15702,
+     "outputBytes": 14742,
+     "verified": true,
+     "msTotal": 3.5,
+     "maxStallMs": 4.9000000059604645,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": true,
+      "bitmap": true
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "webp/alpha",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 15318,
+     "outputBytes": 13348,
+     "verified": true,
+     "msTotal": 3.0999999940395355,
+     "maxStallMs": 4.399999991059303,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      0,
+      0
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        0,
+        89
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        246
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        0,
+        89
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        246
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        0,
+        89
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        246
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        0,
+        89
+       ],
+       "tr": [
+        0,
+        255,
+        0,
+        246
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "webp/animated",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 6354,
+     "outputBytes": 4384,
+     "verified": true,
+     "msTotal": 2.1000000089406967,
+     "maxStallMs": 3.1000000089406967,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       160,
+       100
+      ],
+      "cleaned": [
+       160,
+       100
+      ],
+      "stripped": [
+       160,
+       100
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        0,
+        2,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        0,
+        2,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        0,
+        2,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        0,
+        2,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "webp/exif-orientation-6",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 4230,
+     "outputBytes": 4200,
+     "verified": true,
+     "msTotal": 1.5999999940395355,
+     "maxStallMs": 2.4000000059604645,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       240,
+       160
+      ],
+      "cleaned": [
+       240,
+       160
+      ],
+      "stripped": [
+       240,
+       160
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "webp/exif-prefixed",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 15192,
+     "outputBytes": 14226,
+     "verified": true,
+     "msTotal": 3.800000011920929,
+     "maxStallMs": 5.299999997019768,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    },
+    {
+     "id": "webp/unknown-trailing",
+     "ok": true,
+     "changed": true,
+     "inputBytes": 14292,
+     "outputBytes": 14226,
+     "verified": true,
+     "msTotal": 2.6000000089406967,
+     "maxStallMs": 3.5,
+     "deterministic": true,
+     "pixelsEqual": {
+      "img": true,
+      "bitmap": true,
+      "raw": true
+     },
+     "dims": {
+      "original": [
+       480,
+       320
+      ],
+      "cleaned": [
+       480,
+       320
+      ],
+      "stripped": [
+       480,
+       320
+      ]
+     },
+     "orientationKept": true,
+     "strippedDiffers": {
+      "img": false,
+      "bitmap": false
+     },
+     "alphaMin": [
+      255,
+      255
+     ],
+     "colour": {
+      "original": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "cleaned": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "stripped": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      },
+      "raw": {
+       "tl": [
+        255,
+        1,
+        0,
+        255
+       ],
+       "tr": [
+        0,
+        255,
+        1,
+        255
+       ]
+      }
+     },
+     "rawOptionsHonoured": true
+    }
+   ],
+   "uploads": []
+  },
+  "canvas": {
+   "image/png qundefined": {
+    "bytes": 6540,
+    "hasPrivacyMetadata": false,
+    "privacy": [],
+    "preserved": [],
+    "removable": [],
+    "colorProfile": "none"
+   },
+   "image/jpeg q0.9": {
+    "bytes": 5350,
+    "hasPrivacyMetadata": false,
+    "privacy": [],
+    "preserved": [
+     "APP0 JFIF",
+     "APP2 ICC"
+    ],
+    "removable": [],
+    "colorProfile": "icc"
+   },
+   "image/webp q0.9": {
+    "bytes": 3438,
+    "hasPrivacyMetadata": false,
+    "privacy": [],
+    "preserved": [
+     "WebP ICCP"
+    ],
+    "removable": [],
+    "colorProfile": "icc"
+   },
+   "image/webp q1": {
+    "bytes": 6156,
+    "hasPrivacyMetadata": false,
+    "privacy": [],
+    "preserved": [
+     "WebP ICCP"
+    ],
+    "removable": [],
+    "colorProfile": "icc"
+   }
+  },
+  "mismatch": {
+   ".jpg containing PNG": "METADATA_INVALID_FILE",
+   ".png containing JPEG": "METADATA_INVALID_FILE",
+   "image/jpeg MIME with WebP bytes": "METADATA_INVALID_FILE",
+   "SVG": "METADATA_UNSUPPORTED_FORMAT",
+   "empty": "METADATA_INVALID_FILE",
+   "correct PNG (control)": "OK"
+  },
+  "large": [
+   {
+    "file": "phone-1080x2400.png",
+    "variant": "worker",
+    "inputBytes": 1192964,
+    "outputBytes": 1192000,
+    "wallMs": 229.20000000298023,
+    "ms": {
+     "read": 9.300000011920929,
+     "clean": 36.599999994039536,
+     "verify": 28.900000005960464,
+     "total": 74.80000001192093
+    },
+    "maxStallMs": 15.600000008940697,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 16.2,
+    "afterDeltaMiB": 13.6
+   },
+   {
+    "file": "phone-1080x2400.png",
+    "variant": "main",
+    "inputBytes": 1192964,
+    "outputBytes": 1192000,
+    "wallMs": 134.29999999701977,
+    "ms": {
+     "read": 5.799999997019768,
+     "clean": 59.5,
+     "verify": 20.599999994039536,
+     "total": 85.8999999910593
+    },
+    "maxStallMs": 94.5,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 13,
+    "afterDeltaMiB": 13
+   },
+   {
+    "file": "phone-1080x2400.png",
+    "variant": "naive-reencode",
+    "inputBytes": 1192964,
+    "outputBytes": 723242,
+    "wallMs": 402.90000000596046,
+    "maxStallMs": 124.8999999910593,
+    "ok": true,
+    "peakDeltaMiB": 31.1,
+    "afterDeltaMiB": 33.7
+   },
+   {
+    "file": "tall-1080x10000.jpg",
+    "variant": "worker",
+    "inputBytes": 2586301,
+    "outputBytes": 2585339,
+    "wallMs": 410.5,
+    "ms": {
+     "read": 7.5,
+     "clean": 26.900000005960464,
+     "verify": 42.3999999910593,
+     "total": 76.79999999701977
+    },
+    "maxStallMs": 25.900000005960464,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 20,
+    "afterDeltaMiB": -17.2
+   },
+   {
+    "file": "tall-1080x10000.jpg",
+    "variant": "main",
+    "inputBytes": 2586301,
+    "outputBytes": 2585339,
+    "wallMs": 226.40000000596046,
+    "ms": {
+     "read": 10.600000008940697,
+     "clean": 152.59999999403954,
+     "verify": 32,
+     "total": 195.20000000298023
+    },
+    "maxStallMs": 195.59999999403954,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 24.9,
+    "afterDeltaMiB": 26.9
+   },
+   {
+    "file": "tall-1080x10000.jpg",
+    "variant": "naive-reencode",
+    "inputBytes": 2586301,
+    "outputBytes": 1942089,
+    "wallMs": 980.9000000059605,
+    "maxStallMs": 355.20000000298023,
+    "ok": true,
+    "peakDeltaMiB": 182,
+    "afterDeltaMiB": 179.2
+   },
+   {
+    "file": "tall-1080x20000.jpg",
+    "variant": "worker",
+    "inputBytes": 3808201,
+    "outputBytes": 3807239,
+    "wallMs": 1405.199999988079,
+    "ms": {
+     "read": 9.900000005960464,
+     "clean": 75.59999999403954,
+     "verify": 126.90000000596046,
+     "total": 212.40000000596046
+    },
+    "maxStallMs": 66.59999999403954,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 2.2,
+    "afterDeltaMiB": 5.1
+   },
+   {
+    "file": "tall-1080x20000.jpg",
+    "variant": "main",
+    "inputBytes": 3808201,
+    "outputBytes": 3807239,
+    "wallMs": 112.90000000596046,
+    "ms": {
+     "read": 11.799999997019768,
+     "clean": 26.200000002980232,
+     "verify": 43.3999999910593,
+     "total": 81.3999999910593
+    },
+    "maxStallMs": 82.6000000089407,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 19.2,
+    "afterDeltaMiB": 24.5
+   },
+   {
+    "file": "tall-1080x20000.jpg",
+    "variant": "naive-reencode",
+    "inputBytes": 3808201,
+    "outputBytes": 3017741,
+    "wallMs": 1037.6000000089407,
+    "maxStallMs": 160.19999998807907,
+    "ok": true,
+    "peakDeltaMiB": 171,
+    "afterDeltaMiB": 6.1
+   },
+   {
+    "file": "tall-1080x10000.png",
+    "variant": "worker",
+    "inputBytes": 5491424,
+    "outputBytes": 5490460,
+    "wallMs": 401.79999999701977,
+    "ms": {
+     "read": 11.100000008940697,
+     "clean": 145,
+     "verify": 156.5,
+     "total": 312.6000000089407
+    },
+    "maxStallMs": 12.299999997019768,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 29.3,
+    "afterDeltaMiB": 33.1
+   },
+   {
+    "file": "tall-1080x10000.png",
+    "variant": "main",
+    "inputBytes": 5491424,
+    "outputBytes": 5490460,
+    "wallMs": 153.1000000089407,
+    "ms": {
+     "read": 11,
+     "clean": 42.30000001192093,
+     "verify": 74.5,
+     "total": 127.80000001192093
+    },
+    "maxStallMs": 132.19999998807907,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 29.1,
+    "afterDeltaMiB": 29.9
+   },
+   {
+    "file": "tall-1080x10000.png",
+    "variant": "naive-reencode",
+    "inputBytes": 5491424,
+    "outputBytes": 3463471,
+    "wallMs": 817.7999999970198,
+    "maxStallMs": 332.69999998807907,
+    "ok": true,
+    "peakDeltaMiB": 223.5,
+    "afterDeltaMiB": 182.5
+   },
+   {
+    "file": "tall-1080x20000.png",
+    "variant": "worker",
+    "inputBytes": 6180031,
+    "outputBytes": 6179067,
+    "wallMs": 256.70000000298023,
+    "ms": {
+     "read": 13.900000005960464,
+     "clean": 54.599999994039536,
+     "verify": 86.29999999701977,
+     "total": 154.79999999701977
+    },
+    "maxStallMs": 13.100000008940697,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 37.6,
+    "afterDeltaMiB": -5.5
+   },
+   {
+    "file": "tall-1080x20000.png",
+    "variant": "main",
+    "inputBytes": 6180031,
+    "outputBytes": 6179067,
+    "wallMs": 137.6000000089407,
+    "ms": {
+     "read": 10.700000002980232,
+     "clean": 35.29999999701977,
+     "verify": 69.70000000298023,
+     "total": 115.70000000298023
+    },
+    "maxStallMs": 127,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 0,
+    "afterDeltaMiB": -23.1
+   },
+   {
+    "file": "tall-1080x20000.png",
+    "variant": "naive-reencode",
+    "inputBytes": 6180031,
+    "outputBytes": 4204385,
+    "wallMs": 864.5,
+    "maxStallMs": 126.29999999701977,
+    "ok": true,
+    "peakDeltaMiB": 95.7,
+    "afterDeltaMiB": 10.2
+   },
+   {
+    "file": "tall-1080x10000.webp",
+    "variant": "worker",
+    "inputBytes": 348102,
+    "outputBytes": 347142,
+    "wallMs": 147.29999999701977,
+    "ms": {
+     "read": 2.800000011920929,
+     "clean": 33.099999994039536,
+     "verify": 8.400000005960464,
+     "total": 44.30000001192093
+    },
+    "maxStallMs": 12.899999991059303,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 8.5,
+    "afterDeltaMiB": 8.1
+   },
+   {
+    "file": "tall-1080x10000.webp",
+    "variant": "main",
+    "inputBytes": 348102,
+    "outputBytes": 347142,
+    "wallMs": 30.700000002980232,
+    "ms": {
+     "read": 2.2999999970197678,
+     "clean": 3.5999999940395355,
+     "verify": 6.5,
+     "total": 12.399999991059303
+    },
+    "maxStallMs": 20.19999998807907,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 5.5,
+    "afterDeltaMiB": 5.6
+   },
+   {
+    "file": "tall-1080x10000.webp",
+    "variant": "naive-reencode",
+    "inputBytes": 348102,
+    "outputBytes": 440550,
+    "wallMs": 3012.1000000089407,
+    "maxStallMs": 312.59999999403954,
+    "ok": true,
+    "peakDeltaMiB": 268.4,
+    "afterDeltaMiB": 146.2
+   },
+   {
+    "file": "tall-1080x16383.webp",
+    "variant": "worker",
+    "inputBytes": 544170,
+    "outputBytes": 543210,
+    "wallMs": 155.59999999403954,
+    "ms": {
+     "read": 3.5,
+     "clean": 9,
+     "verify": 8.200000002980232,
+     "total": 20.700000002980232
+    },
+    "maxStallMs": 16.700000002980232,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 11.2,
+    "afterDeltaMiB": -21.9
+   },
+   {
+    "file": "tall-1080x16383.webp",
+    "variant": "main",
+    "inputBytes": 544170,
+    "outputBytes": 543210,
+    "wallMs": 83.90000000596046,
+    "ms": {
+     "read": 3.7999999970197678,
+     "clean": 8.900000005960464,
+     "verify": 7.5,
+     "total": 20.200000002980232
+    },
+    "maxStallMs": 20.299999997019768,
+    "ok": true,
+    "verified": true,
+    "peakDeltaMiB": 0,
+    "afterDeltaMiB": -84.7
+   },
+   {
+    "file": "tall-1080x16383.webp",
+    "variant": "naive-reencode",
+    "inputBytes": 544170,
+    "outputBytes": 693200,
+    "wallMs": 4922.5999999940395,
+    "maxStallMs": 616.2000000029802,
+    "ok": true,
+    "peakDeltaMiB": 422.1,
+    "afterDeltaMiB": 80.9
+   }
+  ],
+  "batch": {
+   "files": 25,
+   "wallMs": 8060,
+   "steps": [
+    {
+     "i": 1,
+     "id": "jpeg/exif-gps",
+     "ok": true,
+     "ms": 9.799999997019768,
+     "memDeltaMiB": 7.8
+    },
+    {
+     "i": 2,
+     "id": "jpeg/exif-gps-be",
+     "ok": true,
+     "ms": 4,
+     "memDeltaMiB": 8.4
+    },
+    {
+     "i": 3,
+     "id": "jpeg/exif-thumbnail",
+     "ok": true,
+     "ms": 5.799999997019768,
+     "memDeltaMiB": 9.2
+    },
+    {
+     "i": 4,
+     "id": "jpeg/xmp",
+     "ok": true,
+     "ms": 6.200000002980232,
+     "memDeltaMiB": 11
+    },
+    {
+     "i": 5,
+     "id": "jpeg/xmp-extended",
+     "ok": true,
+     "ms": 4.200000002980232,
+     "memDeltaMiB": 11.8
+    },
+    {
+     "i": 6,
+     "id": "jpeg/icc",
+     "ok": true,
+     "ms": 3.1000000089406967,
+     "memDeltaMiB": 14.3
+    },
+    {
+     "i": 7,
+     "id": "jpeg/comments",
+     "ok": true,
+     "ms": 2.5,
+     "memDeltaMiB": 16.7
+    },
+    {
+     "i": 8,
+     "id": "jpeg/iptc",
+     "ok": true,
+     "ms": 2.2999999970197678,
+     "memDeltaMiB": 17.6
+    },
+    {
+     "i": 9,
+     "id": "jpeg/jfif-thumbnail",
+     "ok": true,
+     "ms": 2.7999999970197678,
+     "memDeltaMiB": 17.9
+    },
+    {
+     "i": 10,
+     "id": "jpeg/mpf-appended",
+     "ok": true,
+     "ms": 1.9000000059604645,
+     "memDeltaMiB": 18.2
+    },
+    {
+     "i": 11,
+     "id": "jpeg/trailing",
+     "ok": true,
+     "ms": 3.2000000029802322,
+     "memDeltaMiB": 18.5
+    },
+    {
+     "i": 12,
+     "id": "jpeg/kitchen-sink",
+     "ok": true,
+     "ms": 5.899999991059303,
+     "memDeltaMiB": 19.1
+    },
+    {
+     "i": 13,
+     "id": "jpeg/orientation-1",
+     "ok": true,
+     "ms": 2,
+     "memDeltaMiB": 19.6
+    },
+    {
+     "i": 14,
+     "id": "jpeg/orientation-2",
+     "ok": true,
+     "ms": 1.7000000029802322,
+     "memDeltaMiB": -3.6
+    },
+    {
+     "i": 15,
+     "id": "jpeg/orientation-3",
+     "ok": true,
+     "ms": 2.8999999910593033,
+     "memDeltaMiB": -3.4
+    },
+    {
+     "i": 16,
+     "id": "jpeg/orientation-5",
+     "ok": true,
+     "ms": 8.699999988079071,
+     "memDeltaMiB": -3.3
+    },
+    {
+     "i": 17,
+     "id": "jpeg/orientation-6",
+     "ok": true,
+     "ms": 4.299999997019768,
+     "memDeltaMiB": -3.2
+    },
+    {
+     "i": 18,
+     "id": "jpeg/orientation-7",
+     "ok": true,
+     "ms": 1.5,
+     "memDeltaMiB": -2.9
+    },
+    {
+     "i": 19,
+     "id": "jpeg/orientation-8",
+     "ok": true,
+     "ms": 1.4000000059604645,
+     "memDeltaMiB": -2.8
+    },
+    {
+     "i": 20,
+     "id": "jpeg/duplicate-exif",
+     "ok": true,
+     "ms": 4.200000002980232,
+     "memDeltaMiB": -2
+    },
+    {
+     "i": 21,
+     "id": "jpeg/malformed-exif",
+     "ok": true,
+     "ms": 12.299999997019768,
+     "memDeltaMiB": -1.6
+    },
+    {
+     "i": 22,
+     "id": "png/text",
+     "ok": true,
+     "ms": 9.099999994039536,
+     "memDeltaMiB": -1.2
+    },
+    {
+     "i": 23,
+     "id": "png/exif",
+     "ok": true,
+     "ms": 7.5999999940395355,
+     "memDeltaMiB": -0.7
+    },
+    {
+     "i": 24,
+     "id": "png/exif-orientation-6",
+     "ok": true,
+     "ms": 6.5,
+     "memDeltaMiB": -0.3
+    },
+    {
+     "i": 25,
+     "id": "png/time",
+     "ok": true,
+     "ms": 5.4000000059604645,
+     "memDeltaMiB": 0.1
+    }
+   ],
+   "afterDisposeDeltaMiB": -7.5,
+   "large": [
+    {
+     "i": 1,
+     "file": "tall-1080x20000.jpg",
+     "ok": true,
+     "ms": 61.5,
+     "memDeltaMiB": 22.7
+    },
+    {
+     "i": 2,
+     "file": "tall-1080x20000.png",
+     "ok": true,
+     "ms": 121.09999999403954,
+     "memDeltaMiB": 53.6
+    },
+    {
+     "i": 3,
+     "file": "tall-1080x20000.jpg",
+     "ok": true,
+     "ms": 40,
+     "memDeltaMiB": 72.5
+    },
+    {
+     "i": 4,
+     "file": "tall-1080x20000.png",
+     "ok": true,
+     "ms": 115,
+     "memDeltaMiB": 102.9
+    },
+    {
+     "i": 5,
+     "file": "tall-1080x20000.jpg",
+     "ok": true,
+     "ms": 39.5,
+     "memDeltaMiB": 121.7
+    },
+    {
+     "i": 6,
+     "file": "tall-1080x20000.png",
+     "ok": true,
+     "ms": 117.29999999701977,
+     "memDeltaMiB": 152
+    },
+    {
+     "i": 7,
+     "file": "tall-1080x20000.jpg",
+     "ok": true,
+     "ms": 37.099999994039536,
+     "memDeltaMiB": 112.6
+    },
+    {
+     "i": 8,
+     "file": "tall-1080x20000.png",
+     "ok": true,
+     "ms": 110.79999999701977,
+     "memDeltaMiB": 142.9
+    },
+    {
+     "i": 9,
+     "file": "tall-1080x20000.jpg",
+     "ok": true,
+     "ms": 38,
+     "memDeltaMiB": 161.8
+    },
+    {
+     "i": 10,
+     "file": "tall-1080x20000.png",
+     "ok": true,
+     "ms": 115.40000000596046,
+     "memDeltaMiB": 192.1
+    },
+    {
+     "i": 11,
+     "file": "tall-1080x20000.jpg",
+     "ok": true,
+     "ms": 40.400000005960464,
+     "memDeltaMiB": 210.9
+    },
+    {
+     "i": 12,
+     "file": "tall-1080x20000.png",
+     "ok": true,
+     "ms": 130.6000000089407,
+     "memDeltaMiB": 136.2
+    },
+    {
+     "i": 13,
+     "file": "tall-1080x20000.jpg",
+     "ok": true,
+     "ms": 35.900000005960464,
+     "memDeltaMiB": 151.1
+    },
+    {
+     "i": 14,
+     "file": "tall-1080x20000.png",
+     "ok": true,
+     "ms": 110,
+     "memDeltaMiB": 67.9
+    },
+    {
+     "i": 15,
+     "file": "tall-1080x20000.jpg",
+     "ok": true,
+     "ms": 42.599999994039536,
+     "memDeltaMiB": 83.1
+    },
+    {
+     "i": 16,
+     "file": "tall-1080x20000.png",
+     "ok": true,
+     "ms": 109.29999999701977,
+     "memDeltaMiB": 113.3
+    },
+    {
+     "i": 17,
+     "file": "tall-1080x20000.jpg",
+     "ok": true,
+     "ms": 43.400000005960464,
+     "memDeltaMiB": 132
+    },
+    {
+     "i": 18,
+     "file": "tall-1080x20000.png",
+     "ok": true,
+     "ms": 130.79999999701977,
+     "memDeltaMiB": 162.3
+    },
+    {
+     "i": 19,
+     "file": "tall-1080x20000.jpg",
+     "ok": true,
+     "ms": 48.29999999701977,
+     "memDeltaMiB": 181
+    },
+    {
+     "i": 20,
+     "file": "tall-1080x20000.png",
+     "ok": true,
+     "ms": 120.20000000298023,
+     "memDeltaMiB": 211.3
+    }
+   ]
+  }
+ }
+}
