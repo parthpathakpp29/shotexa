@@ -4,6 +4,8 @@
  */
 import { createStore } from "zustand/vanilla";
 import type { ToolId } from "@/config/tools";
+import { clampRect } from "@/core/redaction/geometry";
+import type { ImageRect, Redaction, RedactionMode, RedactionSession } from "@/core/redaction/types";
 import type { ExportSettings, FileId, Job, Operation, OverlapHint, StitchPair, StitchSession, StitchViewMode, WorkspaceFile } from "./types";
 
 /** Consecutive offset edits on the same join within this window merge into one undo step (slider drags). */
@@ -22,6 +24,7 @@ export interface WorkspaceState {
   exportSettings: ExportSettings;
   overlapHint: OverlapHint;
   stitch: StitchSession;
+  redaction: RedactionSession;
   /** Most recent tool output (e.g. the stitched image) for "Continue with…". */
   lastArtifactId: FileId | null;
 }
@@ -45,6 +48,13 @@ export interface WorkspaceActions {
   setViewMode(mode: StitchViewMode): void;
   setActiveJoin(i: number): void;
   setManualMode(on: boolean): void;
+  setRedactionMode(mode: RedactionMode): void;
+  setRedactionIntensity(kind: "blur" | "pixelate", value: number): void;
+  selectRedaction(id: string | null): void;
+  addRedaction(assetId: FileId, rect: ImageRect, mode?: RedactionMode): string;
+  updateRedaction(assetId: FileId, id: string, patch: Partial<Pick<Redaction, "rect" | "mode" | "intensity">>, opts?: { coalesce?: boolean; now?: number }): void;
+  deleteRedaction(assetId: FileId, id: string): void;
+  clearRedactions(assetId: FileId): void;
   addArtifact(file: WorkspaceFile): void;
 }
 
@@ -60,6 +70,7 @@ const initial = (): WorkspaceState => ({
   exportSettings: { format: "png", quality: 0.92 },
   overlapHint: { status: "idle", pairs: [], dismissed: false },
   stitch: { pairs: {}, viewMode: "normal", activeJoin: 0, manualMode: false },
+  redaction: { byAsset: {}, selectedId: null, mode: "blackout", blurIntensity: 18, pixelateIntensity: 16 },
   lastArtifactId: null,
 });
 
@@ -80,12 +91,25 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
       if (op.type === "REORDER") {
         const [from, to] = dir === 1 ? [op.from, op.to] : [op.to, op.from];
         set((s) => (from < s.order.length && to < s.order.length ? { order: move(s.order, from, to) } : {}));
-      } else {
+      } else if (op.type === "STITCH_SET_OFFSET") {
         const value = dir === 1 ? op.to : op.from;
         set((s) => {
           const p = s.stitch.pairs[op.pair];
           return p ? { stitch: { ...s.stitch, pairs: { ...s.stitch.pairs, [op.pair]: { ...p, offset: value } } } } : {};
         });
+      } else if (op.type === "ADD_REDACTION" || op.type === "DELETE_REDACTION") {
+        const add = (op.type === "ADD_REDACTION") === (dir === 1);
+        const r = op.redaction;
+        set((s) => {
+          const list = s.redaction.byAsset[r.assetId] ?? [];
+          const next = add ? [...list.filter((x) => x.id !== r.id), r] : list.filter((x) => x.id !== r.id);
+          return { redaction: { ...s.redaction, byAsset: { ...s.redaction.byAsset, [r.assetId]: next }, selectedId: add ? r.id : s.redaction.selectedId === r.id ? null : s.redaction.selectedId } };
+        });
+      } else if (op.type === "UPDATE_REDACTION") {
+        const value = dir === 1 ? op.after : op.before;
+        set((s) => ({ redaction: { ...s.redaction, byAsset: { ...s.redaction.byAsset, [value.assetId]: (s.redaction.byAsset[value.assetId] ?? []).map((r) => (r.id === value.id ? value : r)) } } }));
+      } else {
+        set((s) => ({ redaction: { ...s.redaction, byAsset: { ...s.redaction.byAsset, [op.assetId]: dir === 1 ? [] : op.redactions }, selectedId: null } }));
       }
     };
 
@@ -110,6 +134,8 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           delete files[id];
           const order = s.order.filter((x) => x !== id);
           const pairs = Object.fromEntries(Object.entries(s.stitch.pairs).filter(([, p]) => p.a !== id && p.b !== id));
+          const byAsset = { ...s.redaction.byAsset };
+          delete byAsset[id];
           return {
             files,
             order,
@@ -118,6 +144,7 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
             // Undo entries may reference removed files/pairs: drop history rather than replay invalid steps.
             history: { past: [], future: [] },
             stitch: { ...s.stitch, pairs, activeJoin: 0 },
+            redaction: { ...s.redaction, byAsset, selectedId: null },
             overlapHint: { ...s.overlapHint, status: "idle", pairs: s.overlapHint.pairs.filter((k) => !k.includes(id)) },
           };
         });
@@ -178,6 +205,59 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
       setViewMode: (mode) => set((s) => ({ stitch: { ...s.stitch, viewMode: mode } })),
       setActiveJoin: (i) => set((s) => ({ stitch: { ...s.stitch, activeJoin: i } })),
       setManualMode: (on) => set((s) => ({ stitch: { ...s.stitch, manualMode: on } })),
+      setRedactionMode: (mode) => set((s) => ({ redaction: { ...s.redaction, mode } })),
+      setRedactionIntensity(kind, value) {
+        const key = kind === "blur" ? "blurIntensity" : "pixelateIntensity";
+        set((s) => ({ redaction: { ...s.redaction, [key]: Math.max(2, Math.round(value)) } }));
+      },
+      selectRedaction: (id) => set((s) => ({ redaction: { ...s.redaction, selectedId: id } })),
+      addRedaction(assetId, rect, mode) {
+        const s = get();
+        const file = s.files[assetId];
+        if (!file) return "";
+        const selectedMode = mode ?? s.redaction.mode;
+        const redaction: Redaction = {
+          id: `r${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`,
+          assetId,
+          mode: selectedMode,
+          rect: clampRect(rect, file.width, file.height, 2),
+          intensity: selectedMode === "blur" ? s.redaction.blurIntensity : selectedMode === "pixelate" ? s.redaction.pixelateIntensity : 1,
+        };
+        applyOp({ type: "ADD_REDACTION", redaction }, 1);
+        record({ type: "ADD_REDACTION", redaction });
+        return redaction.id;
+      },
+      updateRedaction(assetId, id, patch, opts = {}) {
+        const s = get();
+        const file = s.files[assetId];
+        const before = s.redaction.byAsset[assetId]?.find((r) => r.id === id);
+        if (!file || !before) return;
+        const after: Redaction = {
+          ...before,
+          ...patch,
+          rect: clampRect(patch.rect ?? before.rect, file.width, file.height, 2),
+          intensity: Math.max(1, patch.intensity ?? before.intensity),
+        };
+        if (JSON.stringify(before) === JSON.stringify(after)) return;
+        const now = opts.now ?? Date.now();
+        const last = s.history.past.at(-1);
+        if (opts.coalesce && last?.type === "UPDATE_REDACTION" && last.after.id === id && now - last.at < COALESCE_MS) {
+          set((state) => ({ history: { past: [...state.history.past.slice(0, -1), { ...last, after, at: now }], future: [] } }));
+        } else record({ type: "UPDATE_REDACTION", before, after, at: now });
+        applyOp({ type: "UPDATE_REDACTION", before, after, at: now }, 1);
+      },
+      deleteRedaction(assetId, id) {
+        const redaction = get().redaction.byAsset[assetId]?.find((r) => r.id === id);
+        if (!redaction) return;
+        applyOp({ type: "DELETE_REDACTION", redaction }, 1);
+        record({ type: "DELETE_REDACTION", redaction });
+      },
+      clearRedactions(assetId) {
+        const redactions = get().redaction.byAsset[assetId] ?? [];
+        if (!redactions.length) return;
+        applyOp({ type: "CLEAR_REDACTIONS", assetId, redactions }, 1);
+        record({ type: "CLEAR_REDACTIONS", assetId, redactions });
+      },
       addArtifact(file) {
         set((s) => ({ files: { ...s.files, [file.id]: file }, order: [...s.order, file.id], selectedId: file.id, lastArtifactId: file.id }));
       },

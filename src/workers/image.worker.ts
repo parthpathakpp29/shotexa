@@ -6,6 +6,8 @@
 import { MetadataError } from "@/core/metadata/errors";
 import { runMetadataClean, runMetadataInspect } from "@/core/metadata/run";
 import { PrepareError, prepareForOcr } from "@/core/ocr/prepare-image";
+import { renderSafeShare } from "@/core/redaction/render";
+import { RedactionError } from "@/core/redaction/types";
 import { composeChain } from "@/core/stitch/compose-chain";
 import { composeStitch } from "@/core/stitch/compose";
 import { StitchError } from "@/core/stitch/types";
@@ -38,11 +40,14 @@ serveWorker(
       composeChain(images, plan, { format, quality, sources, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
     "metadata.inspect": async ({ image, name, type }) => runMetadataInspect(image, name, type),
     "metadata.clean": async ({ image, name, type, policy }) => runMetadataClean(image, name, type, policy),
+    "redaction.export": async ({ image, operations, format, quality }, ctx) =>
+      renderSafeShare(image, operations, { format, quality, signal: ctx.signal, onProgress: (progress, stage) => ctx.progress(progress, stage) }),
     "ocr.prepare": async ({ image, steps, strips }, ctx) => prepareForOcr(image, steps, strips, ctx.signal),
   },
   (err): WorkerErrorCode => {
     if (err instanceof StitchError) return err.code;
     if (err instanceof MetadataError) return err.code;
+    if (err instanceof RedactionError) return err.code;
     if (err instanceof PrepareError) return err.code === "CANCELLED" ? "CANCELLED" : err.code;
     if (err instanceof RangeError) return "MEMORY_PRESSURE";
     return "COMPOSE_FAILED";

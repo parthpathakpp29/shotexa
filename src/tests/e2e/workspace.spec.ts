@@ -152,14 +152,15 @@ test.describe("Phase 1 workspace", () => {
 
     await page.getByTestId("stitch-result").getByRole("link", { name: /Safe Share/ }).click();
     await expect(page).toHaveURL(/\/redact-screenshot$/, NAV);
-    await expect(page.getByTestId("preview-tool")).toBeVisible();
-    await expect(page.getByTestId("active-file")).toContainText("stitched-screenshot.png");
-    await expect(page.getByTestId("active-file")).toContainText(`1170 × ${AUTO_OFFSET + HEIGHT} px`);
+    await expect(page.getByTestId("redaction-editor")).toBeVisible();
+    await expect(page.getByTestId("file-item").last()).toContainText("stitched-screenshot.png");
+    await expect(page.getByTestId("file-item").last()).toContainText(`1170 × ${AUTO_OFFSET + HEIGHT}`);
     await expect(page.getByTestId("file-item")).toHaveCount(3);
     await shot(page, "05-safe-share-shell");
 
     // Back to Smart Stitch: alignment and result are still there (no re-analysis needed).
-    await page.getByRole("link", { name: "Back to Smart Stitch" }).click();
+    await page.getByRole("button", { name: /Safe Share/ }).first().click();
+    await page.getByRole("menuitem", { name: "Smart Stitch" }).click();
     await expect(page).toHaveURL(/\/stitch-screenshots$/, NAV);
     await expect(page.getByTestId("stitch-confidence")).toContainText("High confidence");
     await expect(page.getByTestId("stitch-result")).toBeVisible();

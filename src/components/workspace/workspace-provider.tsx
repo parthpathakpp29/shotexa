@@ -10,6 +10,8 @@
  */
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { useStore } from "zustand";
+import { usePathname } from "next/navigation";
+import { acceptsScreenshotInput } from "@/config/routes";
 import { createWorkspaceRuntime, type WorkspaceRuntime } from "@/core/runtime/runtime";
 import { messageFor } from "@/core/runtime/messages";
 import type { WorkspaceActions, WorkspaceState } from "@/core/runtime/store";
@@ -29,6 +31,8 @@ const ACCEPT = "image/png,image/jpeg,image/webp,.png,.jpg,.jpeg,.webp";
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [runtime] = useState(() => createWorkspaceRuntime());
+  const pathname = usePathname();
+  const inputEnabled = acceptsScreenshotInput(pathname);
   const [notices, setNotices] = useState<{ id: number; text: string }[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const pendingDispose = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -71,6 +75,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   // Page-level paste: Ctrl/⌘+V anywhere (architecture §14 — listen for normal paste events).
   useEffect(() => {
+    if (!inputEnabled) return;
     const onPaste = (e: ClipboardEvent) => {
       const files = Array.from(e.clipboardData?.files ?? []).filter((f) => f.type.startsWith("image/"));
       if (!files.length) return;
@@ -97,10 +102,11 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       window.removeEventListener("dragover", guard);
       window.removeEventListener("drop", guard);
     };
-  }, [addFiles, openPicker]);
+  }, [addFiles, openPicker, inputEnabled]);
 
   return (
     <WorkspaceContext.Provider value={{ runtime, openPicker, addFiles, loadSample }}>
+      <span className="sr-only" data-testid="workspace-input-state" data-enabled={inputEnabled} />
       {children}
       <input
         ref={inputRef}

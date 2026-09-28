@@ -1,10 +1,9 @@
-import { PreviewTool } from "@/components/tools/preview-tool";
-import { ToolLanding } from "@/components/workspace/tool-landing";
+import { MetadataLanding } from "@/components/tools/metadata/metadata-landing";
+import { MetadataTool } from "@/components/tools/metadata/metadata-tool";
 import { toolMetadata } from "@/config/routes";
 
-// Not built yet (Phase 2+): workspace shell only, noindex, not in the sitemap.
 export const metadata = toolMetadata("metadata");
 
 export default function RemoveImageMetadataPage() {
-  return <PreviewTool tool="metadata" landing={<ToolLanding tool="metadata" />} />;
+  return <MetadataTool landing={<MetadataLanding />} />;
 }

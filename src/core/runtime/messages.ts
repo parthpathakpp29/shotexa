@@ -14,6 +14,13 @@ const MESSAGES: Record<string, string> = {
   EXPORT_VERIFY_FAILED: "The browser produced an incomplete image, so it wasn't saved. Try PNG.",
   WORKER_CRASHED: "Processing stopped unexpectedly. Please try again.",
   CANCELLED: "Cancelled.",
+  REDACTION_DECODE_FAILED: "This screenshot couldn't be decoded for redaction.",
+  REDACTION_RENDER_FAILED: "The redactions couldn't be rendered on this device.",
+  REDACTION_EXPORT_FAILED: "The safe copy couldn't be exported.",
+  REDACTION_MEMORY_PRESSURE: "This image is too large to redact safely on this device.",
+  REDACTION_CANCELLED: "Safe Share export was cancelled.",
+  REDACTION_INVALID_RECT: "Add a valid redaction region before exporting.",
+  REDACTION_VERIFY_FAILED: "The exported safe copy couldn't be verified.",
 };
 
 export function messageFor(code: string | undefined): string {

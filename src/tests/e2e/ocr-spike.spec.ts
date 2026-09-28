@@ -40,8 +40,8 @@ test("upload → extract text locally with progress, word boxes and copy", async
   const text = await page.getByTestId("result-text").inputValue();
   expect(text).toContain("Corner Cafe");
   expect(text).toContain("$24.95");
-  // Screenshot never leaves the page: only GETs for app code/workers/models.
-  expect(requests.filter((r) => r.method !== "GET" || r.body > 0)).toEqual([]);
+  // Screenshot never leaves the page: app code/workers/models use bodyless GET/HEAD requests.
+  expect(requests.filter((r) => !["GET", "HEAD"].includes(r.method) || r.body > 0)).toEqual([]);
 });
 
 test("pasted images use the same OCR pipeline as files", async ({ page, browserName }) => {

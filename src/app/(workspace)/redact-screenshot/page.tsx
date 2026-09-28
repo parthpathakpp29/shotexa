@@ -1,10 +1,9 @@
-import { PreviewTool } from "@/components/tools/preview-tool";
-import { ToolLanding } from "@/components/workspace/tool-landing";
+import { PrivacyLanding } from "@/components/tools/redaction/privacy-landing";
+import { RedactionTool } from "@/components/tools/redaction/redaction-tool";
 import { toolMetadata } from "@/config/routes";
 
-// Not built yet (Phase 2+): workspace shell only, noindex, not in the sitemap.
 export const metadata = toolMetadata("safe-share");
 
 export default function RedactScreenshotPage() {
-  return <PreviewTool tool="safe-share" landing={<ToolLanding tool="safe-share" />} />;
+  return <RedactionTool tool="safe-share" defaultMode="blackout" landing={<PrivacyLanding tool="safe-share" />} />;
 }

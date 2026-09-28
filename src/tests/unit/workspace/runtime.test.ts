@@ -98,6 +98,74 @@ describe("WorkspaceRuntime", () => {
     await expect(rt.exportStitch()).rejects.toMatchObject({ code: "STITCH_NOT_READY" });
   });
 
+  it("exports Blur, Pixelate and Blackout operations as one verified Safe Share artifact", async () => {
+    let exportInput: unknown;
+    const safeBlob = new Blob([new Uint8Array(96)], { type: "image/png" });
+    const { broker, calls } = fakeBroker({
+      "redaction.export": (input) => {
+        exportInput = input;
+        return {
+          blob: safeBlob,
+          width: 1170,
+          height: 2532,
+          verification: {
+            redactionsFlattened: true,
+            privacyMetadataRemoved: true,
+            outputVerified: true,
+            dimensionsMatch: true,
+            formatMatch: true,
+          },
+          removedCategories: ["exif", "xmp"],
+          ms: { render: 4, clean: 1, verifyDecode: 1, total: 6 },
+        };
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const { added } = await rt.ingest([png("chat-light/a.png")], "picker");
+    const s = rt.store.getState();
+    s.setActiveTool("safe-share");
+    s.addRedaction(added[0], { x: 10, y: 20, width: 100, height: 80 }, "blur");
+    s.addRedaction(added[0], { x: 150, y: 200, width: 120, height: 90 }, "pixelate");
+    s.addRedaction(added[0], { x: 300, y: 400, width: 140, height: 100 }, "blackout");
+
+    const out = await rt.exportSafeShare();
+    expect(calls).toContain("image:redaction.export");
+    expect((exportInput as { operations: { mode: string }[] }).operations.map((op) => op.mode)).toEqual(["blur", "pixelate", "blackout"]);
+    expect(out.verification).toMatchObject({ redactionsFlattened: true, privacyMetadataRemoved: true, outputVerified: true });
+    expect(rt.store.getState().files[out.id]).toMatchObject({
+      kind: "artifact",
+      producedBy: "safe-share",
+      derivedFrom: [added[0]],
+      name: "safe-copy.png",
+      width: 1170,
+      height: 2532,
+    });
+    expect(rt.store.getState().selectedId).toBe(out.id);
+    expect(rt.registry.blob(out.id)).toBe(safeBlob);
+  });
+
+  it("keeps metadata inspection and container cleaning behind the image worker", async () => {
+    const output = new Blob([new Uint8Array(48)], { type: "image/png" });
+    const { broker, calls } = fakeBroker({
+      "metadata.inspect": () => ({ inspection: { format: "png", width: 1170, height: 2532, bytes: 100, categories: [], privacyFindings: [], hasPrivacyMetadata: false, preservedMetadata: [], warnings: [] } }),
+      "metadata.clean": () => ({
+        changed: true,
+        output,
+        before: { width: 1170, height: 2532 },
+        verification: { passed: true, dimensionsMatch: true, outputValid: true, unexpectedRemainingPrivacyMetadata: [] },
+      }),
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const { added } = await rt.ingest([png("chat-light/a.png")], "picker");
+    await rt.inspectMetadata(added[0]);
+    const cleaned = await rt.cleanMetadata(added[0]);
+    expect(calls).toContain("image:metadata.inspect");
+    expect(calls).toContain("image:metadata.clean");
+    expect(cleaned.artifactId).toBeTruthy();
+    expect(rt.store.getState().files[cleaned.artifactId!]).toMatchObject({ kind: "artifact", producedBy: "metadata", derivedFrom: [added[0]] });
+    expect(rt.registry.blob(cleaned.artifactId!)).toBe(output);
+  });
+
   it("removing a file releases its assets; dispose releases everything", async () => {
     const { broker } = fakeBroker({});
     const rt = createWorkspaceRuntime({ broker, caps: CAPS });

@@ -5,7 +5,7 @@
  */
 import type { Metadata } from "next";
 import { isIndexable } from "./site";
-import { TOOL_LIST, TOOLS, type ToolId } from "./tools";
+import { TOOL_LIST, TOOLS, toolByRoute, type ToolId } from "./tools";
 
 export interface StaticRoute {
   path: `/${string}`;
@@ -47,4 +47,10 @@ export function toolMetadata(id: ToolId): Metadata {
     openGraph: { title: t.seo.title, description: t.seo.description, url: t.route },
     robots: robotsFor(t.status === "live"),
   };
+}
+
+/** Input capture is intentional only on the homepage and tool routes, never information pages. */
+export function acceptsScreenshotInput(pathname: string): boolean {
+  const path = pathname.length > 1 ? pathname.replace(/\/$/, "") : pathname;
+  return path === "/" || !!toolByRoute(path);
 }

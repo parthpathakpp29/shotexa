@@ -183,7 +183,7 @@ export function WorkspaceShell({
           {below}
         </main>
         <aside aria-label={inspectorTitle} className="hidden md:col-span-2 md:block lg:col-span-1">
-          <div className="rounded-lg border border-line bg-surface p-5 shadow-xs lg:sticky lg:top-22">{inspector}</div>
+          <div className="rounded-lg border border-line bg-surface p-5 shadow-xs lg:sticky lg:top-22 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto">{inspector}</div>
         </aside>
       </div>
 

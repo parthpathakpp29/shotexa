@@ -1,10 +1,9 @@
-import { PreviewTool } from "@/components/tools/preview-tool";
-import { ToolLanding } from "@/components/workspace/tool-landing";
+import { PrivacyLanding } from "@/components/tools/redaction/privacy-landing";
+import { RedactionTool } from "@/components/tools/redaction/redaction-tool";
 import { toolMetadata } from "@/config/routes";
 
-// Not built yet (Phase 2+): workspace shell only, noindex, not in the sitemap.
 export const metadata = toolMetadata("blur");
 
 export default function BlurScreenshotPage() {
-  return <PreviewTool tool="blur" landing={<ToolLanding tool="blur" />} />;
+  return <RedactionTool tool="blur" defaultMode="blur" landing={<PrivacyLanding tool="blur" />} />;
 }

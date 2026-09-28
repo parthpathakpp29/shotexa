@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { SiteFooter } from "@/components/site/site-footer";
 import { WorkspaceSiteHeader } from "@/components/site/workspace-site-header";
 import { Badge } from "@/components/ui/primitives";
@@ -16,6 +17,9 @@ export function ToolLanding({ tool, dropHint, children }: { tool: ToolId; dropHi
       <WorkspaceSiteHeader />
       <main>
         <section className="mx-auto max-w-[880px] px-4 pb-16 pt-12 text-center sm:px-6 sm:pt-16">
+          <nav aria-label="Breadcrumb" className="t-micro mb-5 flex items-center justify-center gap-2 text-ink-3">
+            <Link href="/" className="hover:text-accent-ink">Home</Link><span aria-hidden>/</span><Link href="/tools" className="hover:text-accent-ink">Tools</Link><span aria-hidden>/</span><span className="text-ink">{t.name}</span>
+          </nav>
           <div className="mb-5 flex flex-wrap items-center justify-center gap-2">
             <Badge tone="accent" dot>
               {t.name}

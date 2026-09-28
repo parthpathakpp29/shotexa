@@ -15,6 +15,7 @@ import type { EncodedPage } from "@/core/pdf/render-pdf";
 import type { RowSignals } from "@/core/pdf/signals";
 import type { PageSetup, PageSlice } from "@/core/pdf/types";
 import type { PreprocessStep } from "@/core/ocr/preprocess";
+import type { Redaction, RedactionErrorCode, SafeShareExportResult } from "@/core/redaction/types";
 import type { StitchConfigOverrides } from "@/core/stitch/config";
 import type { GrayImage, StitchAnalysis, StitchErrorCode, StitchPlan } from "@/core/stitch/types";
 
@@ -40,6 +41,11 @@ export interface WorkerOps {
   "metadata.clean": {
     input: { image: Blob; name?: string; type?: string; policy?: Partial<MetadataPolicy> };
     output: MetadataCleanRun;
+  };
+  /** Full-resolution redaction render followed by encode → Privacy Clean → verification. */
+  "redaction.export": {
+    input: { image: Blob; operations: Redaction[]; format: "png" | "jpeg" | "webp"; quality?: number };
+    output: SafeShareExportResult;
   };
   "stitch.analyse": {
     input: { a: Blob; b: Blob; config?: StitchConfigOverrides };
@@ -89,7 +95,7 @@ export type WorkerRequest =
   | ({ [K in OpName]: Envelope & { type: "RUN"; op: K; input: WorkerOps[K]["input"] } }[OpName])
   | (Envelope & { type: "CANCEL" });
 
-export type WorkerErrorCode = StitchErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode | MetadataErrorCode;
+export type WorkerErrorCode = StitchErrorCode | RedactionErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode | MetadataErrorCode;
 
 export type WorkerResponse =
   | (Envelope & { type: "PROGRESS"; progress: number; stage?: string })

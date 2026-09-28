@@ -6,6 +6,8 @@
  */
 import { readImageSize } from "@/core/image/image-size";
 import { validateImageHeader } from "@/core/image/validate";
+import type { MetadataCleanRun, MetadataInspectRun } from "@/core/metadata/run";
+import type { SafeShareExportResult } from "@/core/redaction/types";
 import { planStitchChain, type ChainPlan } from "@/core/stitch/chain";
 import { rgbaToGray } from "@/core/stitch/gray";
 import { HINT, likelyOverlap } from "@/core/stitch/overlap-hint";
@@ -31,6 +33,15 @@ export interface StitchExportResult {
   bytes: number;
 }
 
+export interface WorkspaceSafeShareResult extends Omit<SafeShareExportResult, "blob"> {
+  id: FileId;
+  bytes: number;
+}
+
+export interface WorkspaceMetadataCleanResult extends MetadataCleanRun {
+  artifactId: FileId | null;
+}
+
 const EXT: Record<ImageMime, string> = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp" };
 const codeOf = (e: unknown) => (e instanceof WorkerJobError ? e.code : ((e as { code?: string })?.code ?? "INTERNAL"));
 const newId = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `f${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`);
@@ -46,6 +57,9 @@ export interface WorkspaceRuntime {
   analyseStitch(): Promise<void>;
   stitchPlan(): ChainPlan | null;
   exportStitch(): Promise<StitchExportResult>;
+  exportSafeShare(assetId?: FileId): Promise<WorkspaceSafeShareResult>;
+  inspectMetadata(assetId?: FileId): Promise<MetadataInspectRun>;
+  cleanMetadata(assetId?: FileId): Promise<WorkspaceMetadataCleanResult>;
   dispose(): void;
 }
 
@@ -278,6 +292,99 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     }
   }
 
+  function selected(assetId?: FileId) {
+    const id = assetId ?? store.getState().selectedId;
+    const file = id ? store.getState().files[id] : undefined;
+    const blob = id ? registry.blob(id) : undefined;
+    if (!id || !file || !blob) throw Object.assign(new Error("No image selected"), { code: "DECODE_FAILED" });
+    return { id, file, blob };
+  }
+
+  function registerArtifact(blob: Blob, baseName: string, sourceId: FileId, producedBy: "safe-share" | "blur" | "metadata", width: number, height: number): FileId {
+    const id = newId();
+    const mime = blob.type as ImageMime;
+    registry.put(id, blob);
+    store.getState().addArtifact({
+      id,
+      name: baseName,
+      type: mime,
+      bytes: blob.size,
+      width,
+      height,
+      source: "artifact",
+      kind: "artifact",
+      derivedFrom: [sourceId],
+      producedBy,
+      addedAt: Date.now(),
+      previewVersion: 0,
+    });
+    previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
+    return id;
+  }
+
+  async function exportSafeShare(assetId?: FileId): Promise<WorkspaceSafeShareResult> {
+    const { id: sourceId, blob } = selected(assetId);
+    const s = store.getState();
+    const operations = s.redaction.byAsset[sourceId] ?? [];
+    if (!operations.length) throw Object.assign(new Error("Add a redaction first"), { code: "REDACTION_INVALID_RECT" });
+    const { format, quality } = s.exportSettings;
+    const jobId = `redaction:${Date.now()}`;
+    job(jobId, "redaction-export", "running", 0);
+    try {
+      const result = caps.offscreenCanvas
+        ? await broker.run("image", "redaction.export", { image: blob, operations, format, quality }, { onProgress: (p) => job(jobId, "redaction-export", "running", p) })
+        : await (await import("@/core/redaction/render")).renderSafeShare(blob, operations, {
+            format,
+            quality,
+            createCanvas: (w, h) => Object.assign(document.createElement("canvas"), { width: w, height: h }),
+            onProgress: (p) => job(jobId, "redaction-export", "running", p),
+          });
+      if (result.width * result.height > 16_000_000) broker.release("image");
+      const mime: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
+      const producedBy = s.activeTool === "blur" ? "blur" : "safe-share";
+      const { blob: outputBlob, ...rest } = result;
+      const artifactId = registerArtifact(outputBlob, `safe-copy.${EXT[mime]}`, sourceId, producedBy, result.width, result.height);
+      job(jobId, "redaction-export", "done", 1);
+      return { ...rest, id: artifactId, bytes: outputBlob.size };
+    } catch (e) {
+      const code = codeOf(e);
+      job(jobId, "redaction-export", "failed", null, code);
+      throw Object.assign(new Error(code), { code });
+    }
+  }
+
+  async function inspectMetadata(assetId?: FileId): Promise<MetadataInspectRun> {
+    const { id, file, blob } = selected(assetId);
+    job(`metadata:${id}`, "metadata-inspect", "running", 0);
+    try {
+      const result = await broker.run("image", "metadata.inspect", { image: blob, name: file.name, type: file.type });
+      job(`metadata:${id}`, "metadata-inspect", "done", 1);
+      return result;
+    } catch (e) {
+      job(`metadata:${id}`, "metadata-inspect", "failed", null, codeOf(e));
+      throw e;
+    }
+  }
+
+  async function cleanMetadata(assetId?: FileId): Promise<WorkspaceMetadataCleanResult> {
+    const { id: sourceId, file, blob } = selected(assetId);
+    const jobId = `metadata-clean:${sourceId}`;
+    job(jobId, "metadata-clean", "running", 0);
+    try {
+      const result = await broker.run("image", "metadata.clean", { image: blob, name: file.name, type: file.type });
+      let artifactId: FileId | null = null;
+      if (result.changed && result.output) {
+        const cleanName = `privacy-clean-${file.name.replace(/^privacy-clean-/, "")}`;
+        artifactId = registerArtifact(result.output, cleanName, sourceId, "metadata", result.before.width, result.before.height);
+      }
+      job(jobId, "metadata-clean", "done", 1);
+      return { ...result, artifactId };
+    } catch (e) {
+      job(jobId, "metadata-clean", "failed", null, codeOf(e));
+      throw e;
+    }
+  }
+
   // Reordering changes which screenshots are adjacent: re-run the (cheap) overlap hint.
   const unsubscribe = store.subscribe((next, prev) => {
     if (next.order !== prev.order && next.overlapHint.status === "idle") void checkOverlap();
@@ -301,6 +408,9 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     analyseStitch,
     stitchPlan,
     exportStitch,
+    exportSafeShare,
+    inspectMetadata,
+    cleanMetadata,
     dispose() {
       disposed = true;
       unsubscribe();
