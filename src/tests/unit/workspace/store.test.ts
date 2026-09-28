@@ -198,3 +198,30 @@ describe("workspace store — artifacts", () => {
     expect(selectJoinKeys(s())).toEqual(["c|a", "a|b"]);
   });
 });
+
+describe("workspace store — OCR state", () => {
+  it("tracks language, progress and editable text without structured OCR boxes", () => {
+    const { s } = setup(["a"]);
+    s().setOcrLanguage("eng+hin");
+    s().beginOcr("a");
+    s().setOcrProgress("a", 0.42, "recognizing text");
+    expect(s().ocr.byAsset.a).toMatchObject({ status: "running", language: "eng+hin", progress: 0.42 });
+    s().completeOcr("a", { resultId: "result-1", editedText: "Hello नमस्ते", confidence: 0.9, durationMs: 1200 });
+    s().setOcrEditedText("a", "Hello, corrected");
+    expect(s().ocr.byAsset.a).toEqual(expect.objectContaining({ status: "done", resultId: "result-1", editedText: "Hello, corrected" }));
+    expect(s().ocr.byAsset.a).not.toHaveProperty("blocks");
+    expect(s().ocr.byAsset.a).not.toHaveProperty("words");
+  });
+
+  it("records controlled cancellation/failure and removes state with the asset", () => {
+    const { s } = setup(["a"]);
+    s().beginOcr("a", "eng");
+    s().cancelOcr("a");
+    expect(s().ocr.byAsset.a).toMatchObject({ status: "cancelled", error: "OCR_CANCELLED" });
+    s().beginOcr("a", "eng");
+    s().failOcr("a", "OCR_ENGINE_LOAD_FAILED");
+    expect(s().ocr.byAsset.a).toMatchObject({ status: "failed", error: "OCR_ENGINE_LOAD_FAILED" });
+    s().removeFile("a");
+    expect(s().ocr.byAsset.a).toBeUndefined();
+  });
+});

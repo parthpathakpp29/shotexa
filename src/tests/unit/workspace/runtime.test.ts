@@ -8,6 +8,8 @@ import { describe, expect, it, vi } from "vitest";
 import { createWorkspaceRuntime } from "@/core/runtime/runtime";
 import { pairKey } from "@/core/runtime/store";
 import type { WorkerBroker } from "@/core/runtime/worker-broker";
+import type { OcrService } from "@/core/ocr/ocr-service";
+import type { OcrResult } from "@/core/ocr/types";
 import { FIXTURE_DIR } from "../../helpers/stitch-fixtures";
 
 const png = (rel: string) => new File([readFileSync(join(FIXTURE_DIR, rel))], rel.split("/").pop()!, { type: "image/png" });
@@ -164,6 +166,83 @@ describe("WorkspaceRuntime", () => {
     expect(cleaned.artifactId).toBeTruthy();
     expect(rt.store.getState().files[cleaned.artifactId!]).toMatchObject({ kind: "artifact", producedBy: "metadata", derivedFrom: [added[0]] });
     expect(rt.registry.blob(cleaned.artifactId!)).toBe(output);
+  });
+
+  it("lazy-creates OCR, stores structured output outside Zustand and preserves edited text", async () => {
+    const { broker, released } = fakeBroker({});
+    const create = vi.fn(async () => ({
+      extract: vi.fn(async (_blob: Blob, options: Parameters<OcrService["extract"]>[1]) => {
+        options?.onProgress?.(0.5, "recognizing text");
+        return {
+          rawText: "Hello नमस्ते",
+          editedText: "Hello नमस्ते",
+          language: options?.languages?.join("+") ?? "eng",
+          confidence: 0.93,
+          blocks: [{ bbox: { x: 0, y: 0, w: 10, h: 10 }, confidence: 0.93, paragraphs: [] }],
+          durationMs: 900,
+          image: { width: 1170, height: 2532 },
+          readingOrder: "auto" as const,
+          preprocessing: [],
+          engine: { name: "fake", version: "1" },
+          timings: { validateMs: 1, prepareMs: 2, initMs: 3, recogniseMs: 894, totalMs: 900 },
+          parts: 1,
+          fallbacks: [],
+        };
+      }),
+      cancel: vi.fn(),
+      dispose: vi.fn(),
+      warmup: vi.fn(),
+      engineLoaded: false,
+    } as unknown as OcrService));
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS, createOcrService: create });
+    const { added } = await rt.ingest([png("chat-light/a.png")], "picker");
+    expect(create).not.toHaveBeenCalled();
+    const output = await rt.extractText(added[0], "eng+hin");
+    expect(create).toHaveBeenCalledTimes(1);
+    expect(released).toEqual(expect.arrayContaining(["vision", "document"]));
+    expect(rt.ocrResults.get(output.resultId)?.blocks).toHaveLength(1);
+    const state = rt.store.getState().ocr.byAsset[added[0]];
+    expect(state).toMatchObject({ status: "done", language: "eng+hin", editedText: "Hello नमस्ते", progress: 1 });
+    expect(state).not.toHaveProperty("blocks");
+    rt.store.getState().setOcrEditedText(added[0], "Corrected text");
+    expect(rt.store.getState().ocr.byAsset[added[0]].editedText).toBe("Corrected text");
+    rt.removeFile(added[0]);
+    expect(rt.ocrResults.stats().results).toBe(0);
+  });
+
+  it("cancels an active OCR job and leaves a controlled state", async () => {
+    let rejectExtract: ((reason: unknown) => void) | undefined;
+    const cancel = vi.fn(async () => rejectExtract?.(Object.assign(new Error("cancelled"), { code: "OCR_CANCELLED" })));
+    const service = {
+      extract: vi.fn(() => new Promise<OcrResult>((_resolve, reject) => { rejectExtract = reject; })) as unknown as OcrService["extract"],
+      cancel,
+      dispose: vi.fn(),
+      warmup: vi.fn(),
+      engineLoaded: false,
+    } as unknown as OcrService;
+    const { broker } = fakeBroker({});
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS, createOcrService: async () => service });
+    const { added } = await rt.ingest([png("chat-light/a.png")], "picker");
+    const pending = rt.extractText(added[0]);
+    await vi.waitFor(() => expect(service.extract).toHaveBeenCalled());
+    await rt.cancelOcr(added[0]);
+    await expect(pending).rejects.toMatchObject({ code: "OCR_CANCELLED" });
+    expect(cancel).toHaveBeenCalled();
+    expect(rt.store.getState().ocr.byAsset[added[0]]).toMatchObject({ status: "cancelled", error: "OCR_CANCELLED" });
+  });
+
+  it("stops a stalled OCR job with the production timeout code", async () => {
+    let rejectExtract: ((reason: unknown) => void) | undefined;
+    const service = {
+      extract: vi.fn(() => new Promise<OcrResult>((_resolve, reject) => { rejectExtract = reject; })) as unknown as OcrService["extract"],
+      cancel: vi.fn(async () => rejectExtract?.(Object.assign(new Error("cancelled"), { code: "OCR_CANCELLED" }))),
+      dispose: vi.fn(), warmup: vi.fn(), engineLoaded: false,
+    } as unknown as OcrService;
+    const { broker } = fakeBroker({});
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS, createOcrService: async () => service, ocrTimeoutMs: 10 });
+    const { added } = await rt.ingest([png("chat-light/a.png")], "picker");
+    await expect(rt.extractText(added[0])).rejects.toMatchObject({ code: "OCR_TIMEOUT" });
+    expect(rt.store.getState().ocr.byAsset[added[0]]).toMatchObject({ status: "failed", error: "OCR_TIMEOUT" });
   });
 
   it("removing a file releases its assets; dispose releases everything", async () => {

@@ -21,6 +21,13 @@ const MESSAGES: Record<string, string> = {
   REDACTION_CANCELLED: "Safe Share export was cancelled.",
   REDACTION_INVALID_RECT: "Add a valid redaction region before exporting.",
   REDACTION_VERIFY_FAILED: "The exported safe copy couldn't be verified.",
+  OCR_ENGINE_LOAD_FAILED: "The local OCR engine couldn't load. Check your connection and try again.",
+  OCR_MODEL_LOAD_FAILED: "The selected OCR language couldn't load. Check your connection and try again.",
+  OCR_DECODE_FAILED: "This screenshot couldn't be decoded for text extraction.",
+  OCR_CANCELLED: "Text extraction was cancelled.",
+  OCR_TIMEOUT: "OCR took too long on this image. Try a smaller screenshot.",
+  OCR_OUT_OF_MEMORY: "This screenshot is too large for OCR on this device.",
+  OCR_RECOGNITION_FAILED: "Text extraction stopped unexpectedly. Please try again.",
 };
 
 export function messageFor(code: string | undefined): string {

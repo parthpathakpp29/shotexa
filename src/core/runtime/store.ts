@@ -6,7 +6,7 @@ import { createStore } from "zustand/vanilla";
 import type { ToolId } from "@/config/tools";
 import { clampRect } from "@/core/redaction/geometry";
 import type { ImageRect, Redaction, RedactionMode, RedactionSession } from "@/core/redaction/types";
-import type { ExportSettings, FileId, Job, Operation, OverlapHint, StitchPair, StitchSession, StitchViewMode, WorkspaceFile } from "./types";
+import type { ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, StitchPair, StitchSession, StitchViewMode, WorkspaceFile } from "./types";
 
 /** Consecutive offset edits on the same join within this window merge into one undo step (slider drags). */
 export const COALESCE_MS = 600;
@@ -25,6 +25,7 @@ export interface WorkspaceState {
   overlapHint: OverlapHint;
   stitch: StitchSession;
   redaction: RedactionSession;
+  ocr: OcrSession;
   /** Most recent tool output (e.g. the stitched image) for "Continue with…". */
   lastArtifactId: FileId | null;
 }
@@ -55,6 +56,13 @@ export interface WorkspaceActions {
   updateRedaction(assetId: FileId, id: string, patch: Partial<Pick<Redaction, "rect" | "mode" | "intensity">>, opts?: { coalesce?: boolean; now?: number }): void;
   deleteRedaction(assetId: FileId, id: string): void;
   clearRedactions(assetId: FileId): void;
+  setOcrLanguage(language: OcrLanguageChoice): void;
+  beginOcr(assetId: FileId, language?: OcrLanguageChoice): void;
+  setOcrProgress(assetId: FileId, progress: number, stage: string): void;
+  completeOcr(assetId: FileId, result: { resultId: string; editedText: string; confidence?: number; durationMs: number }): void;
+  failOcr(assetId: FileId, error: string): void;
+  cancelOcr(assetId: FileId): void;
+  setOcrEditedText(assetId: FileId, text: string): void;
   addArtifact(file: WorkspaceFile): void;
 }
 
@@ -71,6 +79,7 @@ const initial = (): WorkspaceState => ({
   overlapHint: { status: "idle", pairs: [], dismissed: false },
   stitch: { pairs: {}, viewMode: "normal", activeJoin: 0, manualMode: false },
   redaction: { byAsset: {}, selectedId: null, mode: "blackout", blurIntensity: 18, pixelateIntensity: 16 },
+  ocr: { language: "eng", byAsset: {} },
   lastArtifactId: null,
 });
 
@@ -136,6 +145,8 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           const pairs = Object.fromEntries(Object.entries(s.stitch.pairs).filter(([, p]) => p.a !== id && p.b !== id));
           const byAsset = { ...s.redaction.byAsset };
           delete byAsset[id];
+          const ocrByAsset = { ...s.ocr.byAsset };
+          delete ocrByAsset[id];
           return {
             files,
             order,
@@ -145,6 +156,7 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
             history: { past: [], future: [] },
             stitch: { ...s.stitch, pairs, activeJoin: 0 },
             redaction: { ...s.redaction, byAsset, selectedId: null },
+            ocr: { ...s.ocr, byAsset: ocrByAsset },
             overlapHint: { ...s.overlapHint, status: "idle", pairs: s.overlapHint.pairs.filter((k) => !k.includes(id)) },
           };
         });
@@ -257,6 +269,60 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
         if (!redactions.length) return;
         applyOp({ type: "CLEAR_REDACTIONS", assetId, redactions }, 1);
         record({ type: "CLEAR_REDACTIONS", assetId, redactions });
+      },
+      setOcrLanguage: (language) => set((s) => ({ ocr: { ...s.ocr, language } })),
+      beginOcr(assetId, language) {
+        set((s) => ({
+          ocr: {
+            ...s.ocr,
+            language: language ?? s.ocr.language,
+            byAsset: {
+              ...s.ocr.byAsset,
+              [assetId]: {
+                status: "running",
+                language: language ?? s.ocr.language,
+                resultId: s.ocr.byAsset[assetId]?.resultId ?? null,
+                editedText: s.ocr.byAsset[assetId]?.editedText ?? "",
+                progress: 0,
+                stage: "Preparing screenshot",
+              },
+            },
+          },
+        }));
+      },
+      setOcrProgress(assetId, progress, stage) {
+        set((s) => {
+          const current = s.ocr.byAsset[assetId];
+          if (!current || current.status !== "running") return {};
+          return { ocr: { ...s.ocr, byAsset: { ...s.ocr.byAsset, [assetId]: { ...current, progress: Math.max(0, Math.min(1, progress)), stage } } } };
+        });
+      },
+      completeOcr(assetId, result) {
+        set((s) => {
+          const current = s.ocr.byAsset[assetId];
+          if (!current) return {};
+          return { ocr: { ...s.ocr, byAsset: { ...s.ocr.byAsset, [assetId]: { ...current, ...result, status: "done", progress: 1, stage: "Text ready", error: undefined } } } };
+        });
+      },
+      failOcr(assetId, error) {
+        set((s) => {
+          const current = s.ocr.byAsset[assetId];
+          if (!current) return {};
+          return { ocr: { ...s.ocr, byAsset: { ...s.ocr.byAsset, [assetId]: { ...current, status: "failed", progress: null, stage: undefined, error } } } };
+        });
+      },
+      cancelOcr(assetId) {
+        set((s) => {
+          const current = s.ocr.byAsset[assetId];
+          if (!current) return {};
+          return { ocr: { ...s.ocr, byAsset: { ...s.ocr.byAsset, [assetId]: { ...current, status: "cancelled", progress: null, stage: undefined, error: "OCR_CANCELLED" } } } };
+        });
+      },
+      setOcrEditedText(assetId, text) {
+        set((s) => {
+          const current = s.ocr.byAsset[assetId];
+          return current ? { ocr: { ...s.ocr, byAsset: { ...s.ocr.byAsset, [assetId]: { ...current, editedText: text } } } } : {};
+        });
       },
       addArtifact(file) {
         set((s) => ({ files: { ...s.files, [file.id]: file }, order: [...s.order, file.id], selectedId: file.id, lastArtifactId: file.id }));

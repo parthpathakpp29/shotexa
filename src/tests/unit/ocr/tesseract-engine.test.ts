@@ -72,7 +72,7 @@ describe("TesseractEngine (adapter contract)", () => {
     expect(t.calls.recognizeOutput).toEqual([{ text: true, blocks: true }, { text: true, blocks: true }]);
     expect(r1.rawText).toBe("Hello world");
     expect(r2.engine).toEqual({ name: "tesseract.js", version: "test" });
-    expect(t.calls.params).toEqual([{ tessedit_pageseg_mode: "3" }]); // set once, cached
+    expect(t.calls.params).toEqual([{ tessedit_pageseg_mode: "3", user_defined_dpi: "300" }]); // set once, cached
   });
 
   it("maps boxes back to original coordinates via the transform and keeps layout separate from edited text", async () => {
@@ -144,7 +144,10 @@ describe("TesseractEngine (adapter contract)", () => {
     const engine = new TesseractEngine({ createWorker: t.createWorker, langPath: "/lang", version: "t" });
     await engine.recognise(input, { segmentation: "sparse" });
     await engine.recognise(input, { segmentation: "single-column" });
-    expect(t.calls.params).toEqual([{ tessedit_pageseg_mode: "11" }, { tessedit_pageseg_mode: "4" }]);
+    expect(t.calls.params).toEqual([
+      { tessedit_pageseg_mode: "11", user_defined_dpi: "300" },
+      { tessedit_pageseg_mode: "4", user_defined_dpi: "300" },
+    ]);
   });
 });
 

@@ -20,8 +20,8 @@ describe("tool registry", () => {
     for (const id of WORKSPACE_TABS) expect(TOOLS[id]).toBeDefined();
   });
 
-  it("lists the production tools completed through Phase 2A", () => {
-    expect(TOOL_LIST.filter((t) => t.status === "live").map((t) => t.id)).toEqual(["stitch", "safe-share", "blur", "metadata"]);
+  it("lists the production tools completed through Phase 2B", () => {
+    expect(TOOL_LIST.filter((t) => t.status === "live").map((t) => t.id)).toEqual(["stitch", "safe-share", "blur", "extract-text", "metadata"]);
     expect(TOOLS.stitch.route).toBe("/stitch-screenshots");
     expect(TOOLS.stitch.continueWith).toEqual(["safe-share", "extract-text", "pdf", "annotate", "compress"]);
   });
@@ -45,23 +45,28 @@ describe("tool registry", () => {
 
 describe("SEO config", () => {
   it("sitemap lists indexable static pages and live tools only", () => {
-    expect(sitemapPaths()).toEqual(["/", "/tools", "/privacy", "/stitch-screenshots", "/redact-screenshot", "/blur-screenshot", "/remove-image-metadata"]);
+    expect(sitemapPaths()).toEqual(["/", "/tools", "/privacy", "/stitch-screenshots", "/redact-screenshot", "/blur-screenshot", "/screenshot-to-text", "/remove-image-metadata"]);
     expect(sitemapPaths().some((p) => p.startsWith("/spikes"))).toBe(false);
   });
 
   it("sitemap.xml uses absolute URLs on the site origin", () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
     const entries = sitemap();
-    expect(entries.length).toBe(7);
+    expect(entries.length).toBe(8);
     for (const e of entries) expect(e.url).toMatch(/^https:\/\/[^/]+(\/|$)/);
   });
 
-  it("canonical URLs are the route itself; live Phase 2A tools are indexable", () => {
+  it("canonical URLs are the route itself; live Phase 2B tools are indexable", () => {
     vi.stubEnv("SHOTEXA_NOINDEX", "");
     vi.stubEnv("VERCEL_ENV", "production");
     expect(toolMetadata("stitch")).toMatchObject({ alternates: { canonical: "/stitch-screenshots" }, robots: { index: true } });
     expect(toolMetadata("safe-share")).toMatchObject({ alternates: { canonical: "/redact-screenshot" }, robots: { index: true } });
     expect(toolMetadata("metadata")).toMatchObject({ alternates: { canonical: "/remove-image-metadata" }, robots: { index: true } });
+    expect(toolMetadata("extract-text")).toMatchObject({
+      title: "Screenshot to Text – Free Private OCR | Shotexa",
+      alternates: { canonical: "/screenshot-to-text" },
+      robots: { index: true },
+    });
     for (const r of STATIC_ROUTES) expect(staticMetadata(r.path)).toMatchObject({ alternates: { canonical: r.path } });
   });
 

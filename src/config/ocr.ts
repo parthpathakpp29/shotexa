@@ -21,6 +21,8 @@ export interface OcrRuntimeConfig {
   recycleAfterPixels: number;
   /** Give up initialising the engine after this long (slow networks download ~4.3 MB). */
   initTimeoutMs: number;
+  /** End one recognition job rather than leaving a stalled OCR worker alive indefinitely. */
+  recognitionTimeoutMs: number;
 }
 
 export const DEFAULT_OCR_CONFIG: OcrRuntimeConfig = {
@@ -30,4 +32,5 @@ export const DEFAULT_OCR_CONFIG: OcrRuntimeConfig = {
   idleTerminateMs: 60_000,
   recycleAfterPixels: 4_000_000,
   initTimeoutMs: 120_000,
+  recognitionTimeoutMs: 180_000,
 };

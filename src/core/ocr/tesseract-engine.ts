@@ -50,6 +50,10 @@ export interface TesseractEngineConfig {
 
 const PSM: Record<PageSegmentation, string> = { auto: "3", "single-column": "4", "single-block": "6", sparse: "11" };
 const OEM_LSTM_ONLY = 1;
+// Screenshot files commonly omit physical DPI. Giving Tesseract a stable value prevents
+// Leptonica from writing "Estimating resolution" to stderr while keeping recognition
+// deterministic across browser engines.
+const SCREENSHOT_DPI = "300";
 
 export class TesseractEngine implements OcrEngine {
   readonly name = "tesseract.js";
@@ -129,7 +133,7 @@ export class TesseractEngine implements OcrEngine {
     try {
       const psm = PSM[options.segmentation ?? "auto"];
       if (psm !== this.currentPsm) {
-        await worker.setParameters({ tessedit_pageseg_mode: psm });
+        await worker.setParameters({ tessedit_pageseg_mode: psm, user_defined_dpi: SCREENSHOT_DPI });
         this.currentPsm = psm;
       }
       // A terminated Tesseract worker may never settle its pending promise: race the abort.

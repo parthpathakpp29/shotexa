@@ -7,6 +7,9 @@
 import { readImageSize } from "@/core/image/image-size";
 import { validateImageHeader } from "@/core/image/validate";
 import type { MetadataCleanRun, MetadataInspectRun } from "@/core/metadata/run";
+import { DEFAULT_OCR_CONFIG } from "@/config/ocr";
+import type { OcrService } from "@/core/ocr/ocr-service";
+import type { OcrResult } from "@/core/ocr/types";
 import type { SafeShareExportResult } from "@/core/redaction/types";
 import { planStitchChain, type ChainPlan } from "@/core/stitch/chain";
 import { rgbaToGray } from "@/core/stitch/gray";
@@ -14,9 +17,10 @@ import { HINT, likelyOverlap } from "@/core/stitch/overlap-hint";
 import type { GrayImage } from "@/core/stitch/types";
 import { WorkerJobError } from "@/workers/broker/worker-client";
 import { AssetRegistry } from "./asset-registry";
+import { OcrResultRegistry } from "./ocr-result-registry";
 import { detectCapabilities, timeSlicer, type Capabilities } from "./capabilities";
 import { createWorkspaceStore, pairKey, selectJoinKeys, selectOriginals, type WorkspaceStore } from "./store";
-import type { FileId, FileSource, ImageMime, Job, StitchPair, WorkspaceFile } from "./types";
+import { ocrLanguages, type FileId, type FileSource, type ImageMime, type Job, type OcrLanguageChoice, type StitchPair, type WorkspaceFile } from "./types";
 import { browserWorkerFactories, WorkerBroker } from "./worker-broker";
 
 export const PREVIEW = { maxWidth: 1024, maxPixels: 4_000_000 };
@@ -42,6 +46,11 @@ export interface WorkspaceMetadataCleanResult extends MetadataCleanRun {
   artifactId: FileId | null;
 }
 
+export interface WorkspaceOcrResult {
+  resultId: string;
+  result: OcrResult;
+}
+
 const EXT: Record<ImageMime, string> = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp" };
 const codeOf = (e: unknown) => (e instanceof WorkerJobError ? e.code : ((e as { code?: string })?.code ?? "INTERNAL"));
 const newId = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `f${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`);
@@ -49,6 +58,7 @@ const newId = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? c
 export interface WorkspaceRuntime {
   store: WorkspaceStore;
   registry: AssetRegistry;
+  ocrResults: OcrResultRegistry;
   broker: WorkerBroker;
   caps: Capabilities;
   ingest(files: File[], source: FileSource): Promise<IngestResult>;
@@ -60,18 +70,35 @@ export interface WorkspaceRuntime {
   exportSafeShare(assetId?: FileId): Promise<WorkspaceSafeShareResult>;
   inspectMetadata(assetId?: FileId): Promise<MetadataInspectRun>;
   cleanMetadata(assetId?: FileId): Promise<WorkspaceMetadataCleanResult>;
+  extractText(assetId?: FileId, language?: OcrLanguageChoice): Promise<WorkspaceOcrResult>;
+  cancelOcr(assetId?: FileId): Promise<void>;
   dispose(): void;
 }
 
-export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Capabilities } = {}): WorkspaceRuntime {
+export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Capabilities; createOcrService?: () => Promise<OcrService>; ocrTimeoutMs?: number } = {}): WorkspaceRuntime {
   const registry = new AssetRegistry();
-  const store = createWorkspaceStore((id) => registry.remove(id));
+  const ocrResults = new OcrResultRegistry();
+  const store = createWorkspaceStore((id) => {
+    registry.remove(id);
+    ocrResults.removeAsset(id);
+  });
   const broker = opts.broker ?? new WorkerBroker(browserWorkerFactories());
   const caps = opts.caps ?? detectCapabilities();
   const proxies = new Map<FileId, GrayImage>();
   let pasteCount = 0;
   let previewChain: Promise<void> = Promise.resolve();
   let disposed = false;
+  let ocrService: OcrService | null = null;
+  let activeOcrAsset: FileId | null = null;
+  let activeOcrAbort: AbortController | null = null;
+
+  const getOcrService = async () => {
+    if (ocrService) return ocrService;
+    ocrService = opts.createOcrService
+      ? await opts.createOcrService()
+      : (await import("@/core/ocr/ocr-service")).createOcrService();
+    return ocrService;
+  };
 
   const job = (id: string, kind: Job["kind"], status: Job["status"], progress: number | null = null, error?: string) =>
     store.getState().upsertJob({ id, kind, status, progress, error });
@@ -385,6 +412,83 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     }
   }
 
+  async function extractText(assetId?: FileId, language?: OcrLanguageChoice): Promise<WorkspaceOcrResult> {
+    const { id, blob } = selected(assetId);
+    const choice = language ?? store.getState().ocr.language;
+    if (activeOcrAsset) await cancelOcr(activeOcrAsset);
+    activeOcrAsset = id;
+    const abort = new AbortController();
+    activeOcrAbort = abort;
+    store.getState().beginOcr(id, choice);
+    const jobId = `ocr:${id}`;
+    job(jobId, "ocr", "running", 0);
+    // Avoid retaining another large WASM heap while Tesseract is active.
+    broker.release("vision");
+    broker.release("document");
+    let service: OcrService | null = null;
+    let timedOut = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    try {
+      service = await getOcrService();
+      timer = setTimeout(() => {
+        timedOut = true;
+        abort.abort();
+        void service?.cancel();
+    }, opts.ocrTimeoutMs ?? DEFAULT_OCR_CONFIG.recognitionTimeoutMs);
+      const result = await service.extract(blob, {
+        languages: ocrLanguages(choice),
+        preprocessing: "auto",
+        readingOrder: "auto",
+        strips: "auto",
+        signal: abort.signal,
+        onProgress: (progress, stage) => {
+          if (activeOcrAsset !== id) return;
+          store.getState().setOcrProgress(id, progress, stage);
+          job(jobId, "ocr", "running", progress);
+        },
+      });
+      if (timedOut) throw Object.assign(new Error("OCR_TIMEOUT"), { code: "OCR_TIMEOUT" });
+      const resultId = ocrResults.put(id, result);
+      store.getState().completeOcr(id, {
+        resultId,
+        editedText: result.editedText,
+        confidence: result.confidence,
+        durationMs: result.timings.totalMs,
+      });
+      job(jobId, "ocr", "done", 1);
+      return { resultId, result };
+    } catch (error) {
+      const code = timedOut ? "OCR_TIMEOUT" : codeOf(error);
+      if (code === "OCR_CANCELLED") {
+        store.getState().cancelOcr(id);
+        job(jobId, "ocr", "cancelled", null, code);
+      } else {
+        store.getState().failOcr(id, code);
+        job(jobId, "ocr", "failed", null, code);
+      }
+      throw Object.assign(new Error(code), { code });
+    } finally {
+      if (timer) clearTimeout(timer);
+      if (activeOcrAsset === id) {
+        activeOcrAsset = null;
+        activeOcrAbort = null;
+      }
+    }
+  }
+
+  async function cancelOcr(assetId?: FileId): Promise<void> {
+    const id = assetId ?? activeOcrAsset;
+    if (!id) return;
+    store.getState().cancelOcr(id);
+    job(`ocr:${id}`, "ocr", "cancelled", null, "OCR_CANCELLED");
+    if (activeOcrAsset === id) {
+      activeOcrAbort?.abort();
+      activeOcrAbort = null;
+      activeOcrAsset = null;
+    }
+    await ocrService?.cancel();
+  }
+
   // Reordering changes which screenshots are adjacent: re-run the (cheap) overlap hint.
   const unsubscribe = store.subscribe((next, prev) => {
     if (next.order !== prev.order && next.overlapHint.status === "idle") void checkOverlap();
@@ -393,6 +497,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
   return {
     store,
     registry,
+    ocrResults,
     broker,
     caps,
     ingest,
@@ -411,11 +516,16 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     exportSafeShare,
     inspectMetadata,
     cleanMetadata,
+    extractText,
+    cancelOcr,
     dispose() {
       disposed = true;
       unsubscribe();
       store.getState().clear();
       registry.clear();
+      ocrResults.clear();
+      void ocrService?.dispose();
+      ocrService = null;
       broker.dispose();
     },
   };

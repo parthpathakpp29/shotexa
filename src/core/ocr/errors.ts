@@ -4,6 +4,7 @@ export type OcrErrorCode =
   | "OCR_MODEL_LOAD_FAILED"
   | "OCR_DECODE_FAILED"
   | "OCR_CANCELLED"
+  | "OCR_TIMEOUT"
   | "OCR_OUT_OF_MEMORY"
   | "OCR_RECOGNITION_FAILED";
 

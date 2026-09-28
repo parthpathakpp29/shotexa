@@ -4,6 +4,7 @@
  */
 import type { ToolId } from "@/config/tools";
 import type { Redaction } from "@/core/redaction/types";
+import type { OcrLanguage } from "@/core/ocr/types";
 
 export type FileId = string;
 export type ImageMime = "image/png" | "image/jpeg" | "image/webp";
@@ -29,12 +30,34 @@ export interface WorkspaceFile {
 export type JobStatus = "running" | "done" | "failed" | "cancelled";
 export interface Job {
   id: string;
-  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "redaction-export" | "metadata-inspect" | "metadata-clean";
+  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr";
   status: JobStatus;
   progress: number | null;
   /** Controlled error code only (never raw messages). */
   error?: string;
 }
+
+export type OcrLanguageChoice = "eng" | "eng+hin";
+
+/** Small, serialisable OCR UI state. Structured blocks/boxes live in OcrResultRegistry. */
+export interface OcrAssetState {
+  status: "idle" | "running" | "done" | "failed" | "cancelled";
+  language: OcrLanguageChoice;
+  resultId: string | null;
+  editedText: string;
+  progress: number | null;
+  stage?: string;
+  error?: string;
+  confidence?: number;
+  durationMs?: number;
+}
+
+export interface OcrSession {
+  language: OcrLanguageChoice;
+  byAsset: Record<FileId, OcrAssetState>;
+}
+
+export const ocrLanguages = (choice: OcrLanguageChoice): OcrLanguage[] => choice.split("+") as OcrLanguage[];
 
 export type ConfidenceClass = "high" | "medium" | "low";
 

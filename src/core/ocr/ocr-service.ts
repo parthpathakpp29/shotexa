@@ -125,12 +125,14 @@ export function createOcrService(opts: { config?: OcrRuntimeConfig; assets?: Tes
       current?.abort();
       const ac = new AbortController();
       current = ac;
-      o.signal?.addEventListener("abort", () => ac.abort(), { once: true });
+      if (o.signal?.aborted) ac.abort();
+      else o.signal?.addEventListener("abort", () => ac.abort(), { once: true });
       if (idleTimer) clearTimeout(idleTimer);
       const fallbacks: string[] = [];
       const head = new Uint8Array(await blob.slice(0, 16).arrayBuffer());
       const size = sniffImageType(head) ? await readImageSize(blob) : null;
       if (!size) throw new OcrError("OCR_DECODE_FAILED", "unsupported or corrupt image header");
+      if (ac.signal.aborted) throw new OcrError("OCR_CANCELLED");
       const validateMs = performance.now() - t0;
 
       const t1 = performance.now();
