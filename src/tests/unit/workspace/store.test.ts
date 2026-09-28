@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { COALESCE_MS, createWorkspaceStore, HISTORY_LIMIT, pairKey, selectJoinKeys, selectOriginals } from "@/core/runtime/store";
-import type { StitchPair, WorkspaceFile } from "@/core/runtime/types";
+import type { StitchPair, WorkspaceDocument, WorkspaceFile } from "@/core/runtime/types";
 
 const file = (id: string, extra: Partial<WorkspaceFile> = {}): WorkspaceFile => ({
   id,
@@ -175,6 +175,42 @@ describe("workspace store — stitch offsets", () => {
     expect(s().stitch.pairs[pairKey("b", "c")].offset).toBe(900);
     s().undo();
     expect(s().stitch.pairs[pairKey("b", "c")].offset).toBe(950);
+  });
+});
+
+describe("workspace store — production PDF", () => {
+  it("stores page settings and input order as lightweight state", () => {
+    const { s } = setup(["a", "b"]);
+    s().setPdfInputs(["b", "a"]);
+    s().setPdfSettings({ paper: "letter", marginPt: 36, smart: false, imageFormat: "png" });
+    expect(s().pdf).toMatchObject({ inputIds: ["b", "a"], paper: "letter", marginPt: 36, smart: false, imageFormat: "png" });
+    expect(s().pdf).not.toHaveProperty("signals");
+  });
+
+  it("records page-break changes for undo/redo and coalesces a drag", () => {
+    const { s } = setup(["a"]);
+    s().setPdfBreakEdit("a", { manual: [1500] }, { coalesce: true, now: 1000 });
+    s().setPdfBreakEdit("a", { manual: [1510] }, { coalesce: true, now: 1000 + COALESCE_MS - 1 });
+    expect(s().history.past).toHaveLength(1);
+    expect(s().pdf.edits.a.manual).toEqual([1510]);
+    s().undo();
+    expect(s().pdf.edits.a.manual).toEqual([]);
+    s().redo();
+    expect(s().pdf.edits.a.manual).toEqual([1510]);
+    s().resetPdfBreaks("a");
+    expect(s().pdf.edits.a).toEqual({ manual: [] });
+  });
+
+  it("keeps PDF outputs outside the image order and releases them", () => {
+    const { s, onRemove } = setup(["a"]);
+    const document: WorkspaceDocument = { id: "pdf-1", name: "shotexa-screenshots.pdf", type: "application/pdf", bytes: 1234, pageCount: 3, sourceIds: ["a"], producedBy: "pdf", addedAt: 1 };
+    s().addDocument(document);
+    expect(s().order).toEqual(["a"]);
+    expect(s().documentOrder).toEqual(["pdf-1"]);
+    expect(s().pdf.lastDocumentId).toBe("pdf-1");
+    s().removeDocument("pdf-1");
+    expect(s().documents["pdf-1"]).toBeUndefined();
+    expect(onRemove).toHaveBeenCalledWith("pdf-1");
   });
 });
 

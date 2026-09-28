@@ -18,7 +18,7 @@ import type { RowSignals } from "./signals";
 import type { OcrLineBox, PageSetup, PaginationMode, PaginationPlan, PdfCreateInput } from "./types";
 
 export interface AnalysedSet {
-  images: { width: number; height: number; signals: RowSignals; safeYs: number[] }[];
+  images: { width: number; height: number; signals?: RowSignals; safeYs: number[] }[];
   decodeMs: number;
   signalMs: number;
   wallMs: number;

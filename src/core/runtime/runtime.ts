@@ -10,6 +10,8 @@ import type { MetadataCleanRun, MetadataInspectRun } from "@/core/metadata/run";
 import { DEFAULT_OCR_CONFIG } from "@/config/ocr";
 import type { OcrService } from "@/core/ocr/ocr-service";
 import type { OcrResult } from "@/core/ocr/types";
+import type { AnalysedSet, ShotexaPdfEngine } from "@/core/pdf/pdf-engine";
+import type { PageSetup, PaginationPlan } from "@/core/pdf/types";
 import type { SafeShareExportResult } from "@/core/redaction/types";
 import { planStitchChain, type ChainPlan } from "@/core/stitch/chain";
 import { rgbaToGray } from "@/core/stitch/gray";
@@ -18,9 +20,10 @@ import type { GrayImage } from "@/core/stitch/types";
 import { WorkerJobError } from "@/workers/broker/worker-client";
 import { AssetRegistry } from "./asset-registry";
 import { OcrResultRegistry } from "./ocr-result-registry";
+import { PdfAnalysisRegistry } from "./pdf-analysis-registry";
 import { detectCapabilities, timeSlicer, type Capabilities } from "./capabilities";
 import { createWorkspaceStore, pairKey, selectJoinKeys, selectOriginals, type WorkspaceStore } from "./store";
-import { ocrLanguages, type FileId, type FileSource, type ImageMime, type Job, type OcrLanguageChoice, type StitchPair, type WorkspaceFile } from "./types";
+import { ocrLanguages, type FileId, type FileSource, type ImageMime, type Job, type OcrLanguageChoice, type PdfBreakEdit, type StitchPair, type WorkspaceDocument, type WorkspaceFile } from "./types";
 import { browserWorkerFactories, WorkerBroker } from "./worker-broker";
 
 export const PREVIEW = { maxWidth: 1024, maxPixels: 4_000_000 };
@@ -51,6 +54,15 @@ export interface WorkspaceOcrResult {
   result: OcrResult;
 }
 
+export interface WorkspacePdfResult {
+  id: string;
+  blob: Blob;
+  bytes: number;
+  pages: number;
+  ms: number;
+  path: "worker" | "main-thread";
+}
+
 const EXT: Record<ImageMime, string> = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp" };
 const codeOf = (e: unknown) => (e instanceof WorkerJobError ? e.code : ((e as { code?: string })?.code ?? "INTERNAL"));
 const newId = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `f${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`);
@@ -59,6 +71,7 @@ export interface WorkspaceRuntime {
   store: WorkspaceStore;
   registry: AssetRegistry;
   ocrResults: OcrResultRegistry;
+  pdfAnalyses: PdfAnalysisRegistry;
   broker: WorkerBroker;
   caps: Capabilities;
   ingest(files: File[], source: FileSource): Promise<IngestResult>;
@@ -72,15 +85,21 @@ export interface WorkspaceRuntime {
   cleanMetadata(assetId?: FileId): Promise<WorkspaceMetadataCleanResult>;
   extractText(assetId?: FileId, language?: OcrLanguageChoice): Promise<WorkspaceOcrResult>;
   cancelOcr(assetId?: FileId): Promise<void>;
+  planPdf(inputIds: FileId[], setup: PageSetup, smart: boolean, edits?: Record<FileId, PdfBreakEdit>): Promise<PaginationPlan>;
+  pdfSafeYs(assetId: FileId): number[];
+  exportPdf(inputIds: FileId[], plan: PaginationPlan): Promise<WorkspacePdfResult>;
+  cancelPdf(): void;
   dispose(): void;
 }
 
 export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Capabilities; createOcrService?: () => Promise<OcrService>; ocrTimeoutMs?: number } = {}): WorkspaceRuntime {
   const registry = new AssetRegistry();
   const ocrResults = new OcrResultRegistry();
+  const pdfAnalyses = new PdfAnalysisRegistry();
   const store = createWorkspaceStore((id) => {
     registry.remove(id);
     ocrResults.removeAsset(id);
+    pdfAnalyses.remove(id);
   });
   const broker = opts.broker ?? new WorkerBroker(browserWorkerFactories());
   const caps = opts.caps ?? detectCapabilities();
@@ -91,6 +110,8 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
   let ocrService: OcrService | null = null;
   let activeOcrAsset: FileId | null = null;
   let activeOcrAbort: AbortController | null = null;
+  let pdfEngine: ShotexaPdfEngine | null = null;
+  let activePdfAbort: AbortController | null = null;
 
   const getOcrService = async () => {
     if (ocrService) return ocrService;
@@ -98,6 +119,14 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
       ? await opts.createOcrService()
       : (await import("@/core/ocr/ocr-service")).createOcrService();
     return ocrService;
+  };
+
+  const getPdfEngine = async () => {
+    if (pdfEngine) return pdfEngine;
+    const { createPdfEngine } = await import("@/core/pdf/pdf-engine");
+    // Spike D: 10% upward search plus at most 5% page shrink had the best equal-page-count result.
+    pdfEngine = createPdfEngine({ windowUp: 0.1, windowDown: 0.05 });
+    return pdfEngine;
   };
 
   const job = (id: string, kind: Job["kind"], status: Job["status"], progress: number | null = null, error?: string) =>
@@ -489,6 +518,141 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     await ocrService?.cancel();
   }
 
+  async function planPdf(inputIds: FileId[], setup: PageSetup, smart: boolean, edits: Record<FileId, PdfBreakEdit> = {}): Promise<PaginationPlan> {
+    if (!inputIds.length) throw Object.assign(new Error("No screenshots selected"), { code: "PDF_INVALID_BREAKS" });
+    const engine = await getPdfEngine();
+    const s = store.getState();
+    const files = inputIds.map((id) => s.files[id]).filter((f): f is WorkspaceFile => !!f);
+    if (files.length !== inputIds.length) throw Object.assign(new Error("Missing screenshot"), { code: "PDF_DECODE_FAILED" });
+    const missing = smart ? files.filter((f) => !pdfAnalyses.hasSignals(f.id)) : [];
+    if (missing.length) {
+      const abort = new AbortController();
+      activePdfAbort?.abort();
+      activePdfAbort = abort;
+      store.getState().setPdfStatus("analysing", 0, "Finding better page breaks");
+      job("pdf:analyse", "pdf-analyse", "running", 0);
+      try {
+        const analysed = await engine.analyse(
+          missing.map((f) => registry.blob(f.id)!),
+          {
+            signal: abort.signal,
+            onProgress: (progress, stage) => {
+              if (activePdfAbort !== abort) return;
+              store.getState().setPdfStatus("analysing", progress, stage ?? "Finding better page breaks");
+              job("pdf:analyse", "pdf-analyse", "running", progress);
+            },
+          },
+        );
+        if (abort.signal.aborted || activePdfAbort !== abort) {
+          throw Object.assign(new Error("PDF_CANCELLED"), { code: "PDF_CANCELLED" });
+        }
+        missing.forEach((file, index) => pdfAnalyses.put(file.id, analysed.images[index]));
+        job("pdf:analyse", "pdf-analyse", "done", 1);
+      } catch (error) {
+        const code = codeOf(error);
+        const cancelled = code === "PDF_CANCELLED" || code === "CANCELLED";
+        if (activePdfAbort === abort) {
+          store.getState().setPdfStatus(cancelled ? "cancelled" : "failed", null, undefined, cancelled ? "PDF_CANCELLED" : code);
+          job("pdf:analyse", "pdf-analyse", cancelled ? "cancelled" : "failed", null, code);
+        }
+        throw Object.assign(new Error(code), { code });
+      } finally {
+        if (activePdfAbort === abort) activePdfAbort = null;
+      }
+    }
+
+    const analysedSet: AnalysedSet = {
+      images: files.map((file) => {
+        const cached = pdfAnalyses.get(file.id);
+        return cached ?? { width: file.width, height: file.height, safeYs: [] };
+      }),
+      decodeMs: 0,
+      signalMs: 0,
+      wallMs: 0,
+      path: "worker",
+      decoders: [],
+    };
+    return engine.plan(analysedSet, setup, smart ? "visual" : "fixed", {
+      manual: files.map((file) => edits[file.id]?.manual),
+      frozen: files.map((file) => edits[file.id]?.frozen),
+    });
+  }
+
+  function pdfSafeYs(assetId: FileId): number[] {
+    return pdfAnalyses.get(assetId)?.safeYs ?? [];
+  }
+
+  async function exportPdf(inputIds: FileId[], plan: PaginationPlan): Promise<WorkspacePdfResult> {
+    if (!inputIds.length || !plan.pages.length) throw Object.assign(new Error("No PDF pages"), { code: "PDF_INVALID_BREAKS" });
+    const engine = await getPdfEngine();
+    const s = store.getState();
+    const blobs = inputIds.map((id) => registry.blob(id));
+    if (blobs.some((blob) => !blob)) throw Object.assign(new Error("Missing screenshot"), { code: "PDF_DECODE_FAILED" });
+    const abort = new AbortController();
+    activePdfAbort?.abort();
+    activePdfAbort = abort;
+    store.getState().setPdfStatus("exporting", 0, "Preparing pages");
+    job("pdf:export", "pdf-export", "running", 0);
+    broker.release("vision");
+    try {
+      const result = await engine.createPdf(
+        {
+          images: blobs as Blob[],
+          plan,
+          imageFormat: s.pdf.imageFormat,
+          jpegQuality: s.pdf.jpegQuality,
+          title: "Shotexa screenshots",
+        },
+        {
+          signal: abort.signal,
+          onProgress: (progress, stage) => {
+            if (activePdfAbort !== abort) return;
+            store.getState().setPdfStatus("exporting", progress, stage ?? "Creating PDF");
+            job("pdf:export", "pdf-export", "running", progress);
+          },
+        },
+      );
+      if (abort.signal.aborted || activePdfAbort !== abort) {
+        throw Object.assign(new Error("PDF_CANCELLED"), { code: "PDF_CANCELLED" });
+      }
+      const id = newId();
+      const document: WorkspaceDocument = {
+        id,
+        name: "shotexa-screenshots.pdf",
+        type: "application/pdf",
+        bytes: result.blob.size,
+        pageCount: result.pages,
+        sourceIds: [...inputIds],
+        producedBy: "pdf",
+        addedAt: Date.now(),
+      };
+      registry.put(id, result.blob);
+      store.getState().addDocument(document);
+      store.getState().setPdfStatus("ready", 1, "PDF ready");
+      job("pdf:export", "pdf-export", "done", 1);
+      return { id, blob: result.blob, bytes: result.blob.size, pages: result.pages, ms: result.ms, path: result.path };
+    } catch (error) {
+      const code = codeOf(error);
+      const cancelled = code === "PDF_CANCELLED" || code === "CANCELLED";
+      if (activePdfAbort === abort) {
+        store.getState().setPdfStatus(cancelled ? "cancelled" : "failed", null, undefined, cancelled ? "PDF_CANCELLED" : code);
+        job("pdf:export", "pdf-export", cancelled ? "cancelled" : "failed", null, code);
+      }
+      throw Object.assign(new Error(code), { code });
+    } finally {
+      if (activePdfAbort === abort) activePdfAbort = null;
+    }
+  }
+
+  function cancelPdf(): void {
+    activePdfAbort?.abort();
+    activePdfAbort = null;
+    // A hard stop bounds cancellation latency during an uninterruptible image decode.
+    pdfEngine?.dispose();
+    pdfEngine = null;
+    store.getState().setPdfStatus("cancelled", null, undefined, "PDF_CANCELLED");
+  }
+
   // Reordering changes which screenshots are adjacent: re-run the (cheap) overlap hint.
   const unsubscribe = store.subscribe((next, prev) => {
     if (next.order !== prev.order && next.overlapHint.status === "idle") void checkOverlap();
@@ -498,6 +662,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     store,
     registry,
     ocrResults,
+    pdfAnalyses,
     broker,
     caps,
     ingest,
@@ -518,14 +683,21 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     cleanMetadata,
     extractText,
     cancelOcr,
+    planPdf,
+    pdfSafeYs,
+    exportPdf,
+    cancelPdf,
     dispose() {
       disposed = true;
       unsubscribe();
       store.getState().clear();
       registry.clear();
       ocrResults.clear();
+      pdfAnalyses.clear();
       void ocrService?.dispose();
       ocrService = null;
+      pdfEngine?.dispose();
+      pdfEngine = null;
       broker.dispose();
     },
   };
@@ -533,7 +705,8 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
 
 /** Save a registry asset through a temporary link; the object URL is owned by the registry. */
 export function downloadAsset(runtime: WorkspaceRuntime, id: FileId): void {
-  const f = runtime.store.getState().files[id];
+  const state = runtime.store.getState();
+  const f = state.files[id] ?? state.documents[id];
   const url = runtime.registry.objectUrl(id);
   if (!f || !url) return;
   const a = document.createElement("a");

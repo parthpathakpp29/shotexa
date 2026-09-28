@@ -5,6 +5,7 @@
 import type { ToolId } from "@/config/tools";
 import type { Redaction } from "@/core/redaction/types";
 import type { OcrLanguage } from "@/core/ocr/types";
+import type { PageBreak, PaginationPlan, PaperSize } from "@/core/pdf/types";
 
 export type FileId = string;
 export type ImageMime = "image/png" | "image/jpeg" | "image/webp";
@@ -30,7 +31,7 @@ export interface WorkspaceFile {
 export type JobStatus = "running" | "done" | "failed" | "cancelled";
 export interface Job {
   id: string;
-  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr";
+  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
   status: JobStatus;
   progress: number | null;
   /** Controlled error code only (never raw messages). */
@@ -55,6 +56,42 @@ export interface OcrAssetState {
 export interface OcrSession {
   language: OcrLanguageChoice;
   byAsset: Record<FileId, OcrAssetState>;
+}
+
+/** A non-image output kept in the workspace without putting its Blob in Zustand. */
+export interface WorkspaceDocument {
+  id: string;
+  name: string;
+  type: "application/pdf";
+  bytes: number;
+  pageCount: number;
+  sourceIds: FileId[];
+  producedBy: "pdf";
+  addedAt: number;
+}
+
+/** Lightweight manual pagination state. Row signals stay in PdfAnalysisRegistry. */
+export interface PdfBreakEdit {
+  manual: number[];
+  /** Deleting a break freezes the remaining layout so it is not immediately recreated. */
+  frozen?: number[];
+}
+
+export interface PdfSession {
+  paper: PaperSize;
+  marginPt: number;
+  smart: boolean;
+  imageFormat: "jpeg" | "png";
+  jpegQuality: number;
+  inputIds: FileId[];
+  status: "idle" | "analysing" | "ready" | "exporting" | "failed" | "cancelled";
+  progress: number | null;
+  stage?: string;
+  error?: string;
+  plan: PaginationPlan | null;
+  selectedBreak: { assetId: FileId; y: number } | null;
+  edits: Record<FileId, PdfBreakEdit>;
+  lastDocumentId: string | null;
 }
 
 export const ocrLanguages = (choice: OcrLanguageChoice): OcrLanguage[] => choice.split("+") as OcrLanguage[];
@@ -108,4 +145,8 @@ export type Operation =
   | { type: "ADD_REDACTION"; redaction: Redaction }
   | { type: "DELETE_REDACTION"; redaction: Redaction }
   | { type: "UPDATE_REDACTION"; before: Redaction; after: Redaction; at: number }
-  | { type: "CLEAR_REDACTIONS"; assetId: FileId; redactions: Redaction[] };
+  | { type: "CLEAR_REDACTIONS"; assetId: FileId; redactions: Redaction[] }
+  | { type: "PDF_SET_BREAKS"; assetId: FileId; before: PdfBreakEdit; after: PdfBreakEdit; at: number };
+
+/** Breaks are serialisable and small enough for the command model. */
+export type { PageBreak };

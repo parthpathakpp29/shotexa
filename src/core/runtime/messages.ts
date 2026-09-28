@@ -28,6 +28,13 @@ const MESSAGES: Record<string, string> = {
   OCR_TIMEOUT: "OCR took too long on this image. Try a smaller screenshot.",
   OCR_OUT_OF_MEMORY: "This screenshot is too large for OCR on this device.",
   OCR_RECOGNITION_FAILED: "Text extraction stopped unexpectedly. Please try again.",
+  PDF_DECODE_FAILED: "One of the screenshots couldn't be decoded for PDF creation.",
+  PDF_ANALYSIS_FAILED: "Smart Pagination couldn't analyse this screenshot. Turn it off or try again.",
+  PDF_EXPORT_FAILED: "The PDF couldn't be created on this device. Please try again.",
+  PDF_MEMORY_PRESSURE: "This PDF needs more memory than the browser can safely use. Try fewer or smaller screenshots.",
+  PDF_CANCELLED: "PDF creation was cancelled.",
+  PDF_UNSUPPORTED_SIZE: "One of the screenshots is too large for a reliable PDF on this browser.",
+  PDF_INVALID_BREAKS: "One or more page breaks are invalid. Reset the breaks and try again.",
 };
 
 export function messageFor(code: string | undefined): string {

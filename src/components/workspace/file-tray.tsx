@@ -1,8 +1,9 @@
 "use client";
 
-import { ArrowDown, ArrowUp, GripVertical, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, Download, FileText, GripVertical, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
+import { downloadAsset } from "@/core/runtime/runtime";
 import { BitmapCanvas } from "./bitmap-canvas";
 import { useDropTarget, useWorkspace, useWorkspaceContext } from "./workspace-provider";
 
@@ -15,6 +16,8 @@ export function FileTray({ hint, className, onAfterSelect }: { hint?: string; cl
   const order = useWorkspace((s) => s.order);
   const files = useWorkspace((s) => s.files);
   const selectedId = useWorkspace((s) => s.selectedId);
+  const documentOrder = useWorkspace((s) => s.documentOrder);
+  const documents = useWorkspace((s) => s.documents);
   const reorder = useWorkspace((s) => s.reorder);
   const select = useWorkspace((s) => s.select);
   const [dragFrom, setDragFrom] = useState<number | null>(null);
@@ -108,6 +111,25 @@ export function FileTray({ hint, className, onAfterSelect }: { hint?: string; cl
           </button>
         </li>
       </ol>
+      {documentOrder.length > 0 && (
+        <section aria-label="PDF outputs" className="mt-4 border-t border-line pt-3">
+          <p className="t-micro mb-2 text-ink-3">PDF outputs</p>
+          <ul className="space-y-2">
+            {documentOrder.map((id) => {
+              const document = documents[id];
+              if (!document) return null;
+              return (
+                <li key={id} className="flex items-center gap-2 rounded-md border border-line bg-surface-3 p-2.5">
+                  <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-sm bg-accent-soft text-accent"><FileText className="size-4" /></span>
+                  <span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{document.name}</span><span className="t-mono text-[10.5px] text-ink-3">{document.pageCount} page{document.pageCount === 1 ? "" : "s"} · {Math.max(1, Math.round(document.bytes / 1024))} KB</span></span>
+                  <button type="button" aria-label={`Download ${document.name}`} onClick={() => downloadAsset(runtime, id)} className={small}><Download className="size-3.5" /></button>
+                  <button type="button" aria-label={`Remove ${document.name}`} onClick={() => runtime.store.getState().removeDocument(id)} className={cn(small, "hover:bg-error-soft hover:text-error")}><Trash2 className="size-3.5" /></button>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
       {hint && <p className="t-body-sm mt-4 border-t border-line pt-3 text-ink-3">{hint}</p>}
     </section>
   );

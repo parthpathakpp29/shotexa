@@ -6,7 +6,7 @@ import { createStore } from "zustand/vanilla";
 import type { ToolId } from "@/config/tools";
 import { clampRect } from "@/core/redaction/geometry";
 import type { ImageRect, Redaction, RedactionMode, RedactionSession } from "@/core/redaction/types";
-import type { ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, StitchPair, StitchSession, StitchViewMode, WorkspaceFile } from "./types";
+import type { ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
 
 /** Consecutive offset edits on the same join within this window merge into one undo step (slider drags). */
 export const COALESCE_MS = 600;
@@ -26,6 +26,9 @@ export interface WorkspaceState {
   stitch: StitchSession;
   redaction: RedactionSession;
   ocr: OcrSession;
+  pdf: PdfSession;
+  documents: Record<string, WorkspaceDocument>;
+  documentOrder: string[];
   /** Most recent tool output (e.g. the stitched image) for "Continue with…". */
   lastArtifactId: FileId | null;
 }
@@ -63,6 +66,15 @@ export interface WorkspaceActions {
   failOcr(assetId: FileId, error: string): void;
   cancelOcr(assetId: FileId): void;
   setOcrEditedText(assetId: FileId, text: string): void;
+  setPdfInputs(ids: FileId[]): void;
+  setPdfSettings(settings: Partial<Pick<PdfSession, "paper" | "marginPt" | "smart" | "imageFormat" | "jpegQuality">>): void;
+  setPdfStatus(status: PdfSession["status"], progress?: number | null, stage?: string, error?: string): void;
+  setPdfPlan(plan: PdfSession["plan"]): void;
+  selectPdfBreak(selected: PdfSession["selectedBreak"]): void;
+  setPdfBreakEdit(assetId: FileId, edit: PdfBreakEdit, opts?: { record?: boolean; coalesce?: boolean; now?: number }): void;
+  resetPdfBreaks(assetId: FileId): void;
+  addDocument(document: WorkspaceDocument): void;
+  removeDocument(id: string): void;
   addArtifact(file: WorkspaceFile): void;
 }
 
@@ -80,6 +92,22 @@ const initial = (): WorkspaceState => ({
   stitch: { pairs: {}, viewMode: "normal", activeJoin: 0, manualMode: false },
   redaction: { byAsset: {}, selectedId: null, mode: "blackout", blurIntensity: 18, pixelateIntensity: 16 },
   ocr: { language: "eng", byAsset: {} },
+  pdf: {
+    paper: "a4",
+    marginPt: 28,
+    smart: true,
+    imageFormat: "jpeg",
+    jpegQuality: 0.9,
+    inputIds: [],
+    status: "idle",
+    progress: null,
+    plan: null,
+    selectedBreak: null,
+    edits: {},
+    lastDocumentId: null,
+  },
+  documents: {},
+  documentOrder: [],
   lastArtifactId: null,
 });
 
@@ -117,8 +145,11 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
       } else if (op.type === "UPDATE_REDACTION") {
         const value = dir === 1 ? op.after : op.before;
         set((s) => ({ redaction: { ...s.redaction, byAsset: { ...s.redaction.byAsset, [value.assetId]: (s.redaction.byAsset[value.assetId] ?? []).map((r) => (r.id === value.id ? value : r)) } } }));
-      } else {
+      } else if (op.type === "CLEAR_REDACTIONS") {
         set((s) => ({ redaction: { ...s.redaction, byAsset: { ...s.redaction.byAsset, [op.assetId]: dir === 1 ? [] : op.redactions }, selectedId: null } }));
+      } else {
+        const value = dir === 1 ? op.after : op.before;
+        set((s) => ({ pdf: { ...s.pdf, edits: { ...s.pdf.edits, [op.assetId]: value }, selectedBreak: null } }));
       }
     };
 
@@ -147,6 +178,8 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           delete byAsset[id];
           const ocrByAsset = { ...s.ocr.byAsset };
           delete ocrByAsset[id];
+          const pdfEdits = { ...s.pdf.edits };
+          delete pdfEdits[id];
           return {
             files,
             order,
@@ -157,13 +190,14 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
             stitch: { ...s.stitch, pairs, activeJoin: 0 },
             redaction: { ...s.redaction, byAsset, selectedId: null },
             ocr: { ...s.ocr, byAsset: ocrByAsset },
+            pdf: { ...s.pdf, inputIds: s.pdf.inputIds.filter((x) => x !== id), edits: pdfEdits, plan: null, selectedBreak: null },
             overlapHint: { ...s.overlapHint, status: "idle", pairs: s.overlapHint.pairs.filter((k) => !k.includes(id)) },
           };
         });
         onRemove?.(id);
       },
       clear() {
-        const ids = get().order;
+        const ids = [...get().order, ...get().documentOrder];
         set(initial());
         for (const id of ids) onRemove?.(id);
       },
@@ -323,6 +357,54 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           const current = s.ocr.byAsset[assetId];
           return current ? { ocr: { ...s.ocr, byAsset: { ...s.ocr.byAsset, [assetId]: { ...current, editedText: text } } } } : {};
         });
+      },
+      setPdfInputs(ids) {
+        set((s) => ({ pdf: { ...s.pdf, inputIds: [...ids], plan: null, selectedBreak: null, status: "idle", error: undefined } }));
+      },
+      setPdfSettings(settings) {
+        set((s) => ({ pdf: { ...s.pdf, ...settings, plan: null, selectedBreak: null, error: undefined } }));
+      },
+      setPdfStatus(status, progress = null, stage, error) {
+        set((s) => ({ pdf: { ...s.pdf, status, progress, stage, error } }));
+      },
+      setPdfPlan(plan) {
+        set((s) => ({ pdf: { ...s.pdf, plan, status: plan ? "ready" : s.pdf.status, progress: plan ? 1 : s.pdf.progress, stage: plan ? "Preview ready" : s.pdf.stage, error: undefined } }));
+      },
+      selectPdfBreak: (selectedBreak) => set((s) => ({ pdf: { ...s.pdf, selectedBreak } })),
+      setPdfBreakEdit(assetId, edit, opts = {}) {
+        const before = get().pdf.edits[assetId] ?? { manual: [] };
+        if (JSON.stringify(before) === JSON.stringify(edit)) return;
+        const now = opts.now ?? Date.now();
+        if (opts.record !== false) {
+          const last = get().history.past.at(-1);
+          if (opts.coalesce && last?.type === "PDF_SET_BREAKS" && last.assetId === assetId && now - last.at < COALESCE_MS) {
+            set((s) => ({ history: { past: [...s.history.past.slice(0, -1), { ...last, after: edit, at: now }], future: [] } }));
+          } else record({ type: "PDF_SET_BREAKS", assetId, before, after: edit, at: now });
+        }
+        applyOp({ type: "PDF_SET_BREAKS", assetId, before, after: edit, at: now }, 1);
+      },
+      resetPdfBreaks(assetId) {
+        get().setPdfBreakEdit(assetId, { manual: [] });
+      },
+      addDocument(document) {
+        set((s) => ({
+          documents: { ...s.documents, [document.id]: document },
+          documentOrder: [...s.documentOrder.filter((id) => id !== document.id), document.id],
+          pdf: { ...s.pdf, lastDocumentId: document.id },
+        }));
+      },
+      removeDocument(id) {
+        if (!get().documents[id]) return;
+        set((s) => {
+          const documents = { ...s.documents };
+          delete documents[id];
+          return {
+            documents,
+            documentOrder: s.documentOrder.filter((x) => x !== id),
+            pdf: { ...s.pdf, lastDocumentId: s.pdf.lastDocumentId === id ? null : s.pdf.lastDocumentId },
+          };
+        });
+        onRemove?.(id);
       },
       addArtifact(file) {
         set((s) => ({ files: { ...s.files, [file.id]: file }, order: [...s.order, file.id], selectedId: file.id, lastArtifactId: file.id }));
