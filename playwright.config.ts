@@ -16,8 +16,8 @@ export default defineConfig({
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
     // Spike C: the OCR flow must work cross-browser (Playwright WebKit ≠ Safari; see report).
-    { name: "firefox", use: { ...devices["Desktop Firefox"] }, testMatch: /ocr-spike|ocr-production|pdf-spike|pdf-production|searchable-pdf-production|metadata-spike|workspace|safe-share/ },
-    { name: "webkit", use: { ...devices["Desktop Safari"] }, testMatch: /ocr-spike|ocr-production|pdf-spike|pdf-production|searchable-pdf-production|metadata-spike|workspace|safe-share/ },
+    { name: "firefox", use: { ...devices["Desktop Firefox"] }, testMatch: /ocr-spike|ocr-production|pdf-spike|pdf-production|searchable-pdf-production|metadata-spike|workspace|safe-share|combine-production/ },
+    { name: "webkit", use: { ...devices["Desktop Safari"] }, testMatch: /ocr-spike|ocr-production|pdf-spike|pdf-production|searchable-pdf-production|metadata-spike|workspace|safe-share|combine-production/ },
   ],
   webServer: external
     ? undefined

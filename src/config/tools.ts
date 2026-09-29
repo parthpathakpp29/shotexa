@@ -42,13 +42,13 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Smart Screenshot Stitcher",
       description: "Automatically join overlapping screenshots into one long image, review the join, adjust it manually and export at full resolution — privately in your browser.",
     },
-    continueWith: ["safe-share", "extract-text", "pdf", "annotate", "compress"],
+    continueWith: ["combine", "safe-share", "extract-text", "pdf", "annotate", "compress"],
   },
   combine: {
     id: "combine",
     name: "Combine",
     route: "/combine-screenshots",
-    status: "preview",
+    status: "live",
     icon: "combine",
     summary: "Place screenshots side by side or in a stack.",
     minFiles: 2,
@@ -68,7 +68,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Redact Sensitive Information From a Screenshot",
       description: "Permanently black out sensitive information and remove private metadata from screenshots, locally in your browser.",
     },
-    continueWith: ["extract-text", "pdf", "annotate", "compress"],
+    continueWith: ["combine", "extract-text", "pdf", "annotate", "compress"],
   },
   blur: {
     id: "blur",
@@ -79,7 +79,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     summary: "Blur or pixelate parts of a screenshot.",
     minFiles: 1,
     seo: { title: "Blur Screenshot Online – Free & Private | Shotexa", h1: "Blur a Screenshot Online", description: "Blur or pixelate parts of a screenshot privately in your browser." },
-    continueWith: ["extract-text", "pdf", "annotate", "compress"],
+    continueWith: ["combine", "extract-text", "pdf", "annotate", "compress"],
   },
   "extract-text": {
     id: "extract-text",

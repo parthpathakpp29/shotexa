@@ -6,6 +6,7 @@ import type { ToolId } from "@/config/tools";
 import type { Redaction } from "@/core/redaction/types";
 import type { OcrLanguage } from "@/core/ocr/types";
 import type { PageBreak, PaginationPlan, PaperSize } from "@/core/pdf/types";
+import type { CombineSettings } from "@/core/combine/types";
 
 export type FileId = string;
 export type ImageMime = "image/png" | "image/jpeg" | "image/webp";
@@ -31,7 +32,7 @@ export interface WorkspaceFile {
 export type JobStatus = "running" | "done" | "failed" | "cancelled";
 export interface Job {
   id: string;
-  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
+  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
   status: JobStatus;
   progress: number | null;
   /** Controlled error code only (never raw messages). */
@@ -131,6 +132,9 @@ export interface ExportSettings {
   quality: number;
 }
 
+/** Lightweight Combine controls; the calculated placement plan and pixels stay outside Zustand. */
+export type CombineSession = CombineSettings;
+
 export interface OverlapHint {
   status: "idle" | "checking" | "likely" | "unlikely";
   /** Pair keys found likely to overlap. */
@@ -146,6 +150,7 @@ export type Operation =
   | { type: "DELETE_REDACTION"; redaction: Redaction }
   | { type: "UPDATE_REDACTION"; before: Redaction; after: Redaction; at: number }
   | { type: "CLEAR_REDACTIONS"; assetId: FileId; redactions: Redaction[] }
+  | { type: "COMBINE_SET_SETTINGS"; before: CombineSettings; after: CombineSettings }
   | { type: "PDF_SET_BREAKS"; assetId: FileId; before: PdfBreakEdit; after: PdfBreakEdit; at: number };
 
 /** Breaks are serialisable and small enough for the command model. */

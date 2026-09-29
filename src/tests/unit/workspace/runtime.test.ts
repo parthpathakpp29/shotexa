@@ -6,6 +6,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { createWorkspaceRuntime } from "@/core/runtime/runtime";
+import { planCombine } from "@/core/combine/layout";
 import { pairKey } from "@/core/runtime/store";
 import type { WorkerBroker } from "@/core/runtime/worker-broker";
 import type { OcrService } from "@/core/ocr/ocr-service";
@@ -98,6 +99,33 @@ describe("WorkspaceRuntime", () => {
     expect(rt.store.getState().stitch.pairs[pairKey(added[0], added[1])]).toMatchObject({ status: "failed", error: "STITCH_WIDTH_MISMATCH" });
     expect(rt.stitchPlan()).toBeNull();
     await expect(rt.exportStitch()).rejects.toMatchObject({ code: "STITCH_NOT_READY" });
+  });
+
+  it("exports a verified Combine artifact through the Image Worker", async () => {
+    let composeInput: unknown;
+    const combined = new Blob([new Uint8Array(96)], { type: "image/png" });
+    const { broker, calls } = fakeBroker({
+      "combine.compose": (input) => {
+        composeInput = input;
+        return { blob: combined, width: 1170, height: 5080, strategy: "single-canvas", ms: 8 };
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const { added } = await rt.ingest([png("chat-light/a.png"), png("chat-light/b.png")], "drop");
+    const plan = planCombine(added.map((id) => {
+      const file = rt.store.getState().files[id];
+      return { width: file.width, height: file.height };
+    }), { layout: "vertical", gap: 16 });
+
+    const output = await rt.exportCombine(added, plan);
+    expect(calls).toContain("image:combine.compose");
+    expect((composeInput as { images: Blob[]; plan: { placements: unknown[] } }).images).toHaveLength(2);
+    expect((composeInput as { plan: { placements: unknown[] } }).plan.placements).toHaveLength(2);
+    expect(rt.store.getState().files[output.id]).toMatchObject({
+      kind: "artifact", producedBy: "combine", derivedFrom: added,
+      name: "combined-screenshots.png", width: 1170, height: 5080,
+    });
+    expect(rt.registry.blob(output.id)).toBe(combined);
   });
 
   it("exports Blur, Pixelate and Blackout operations as one verified Safe Share artifact", async () => {

@@ -13,6 +13,7 @@ import type { OcrResult } from "@/core/ocr/types";
 import type { AnalysedSet, ShotexaPdfEngine } from "@/core/pdf/pdf-engine";
 import type { PageSetup, PaginationPlan } from "@/core/pdf/types";
 import { searchableSourceFromResult } from "@/core/pdf/searchable-text";
+import type { CombinePlan } from "@/core/combine/types";
 import type { SafeShareExportResult } from "@/core/redaction/types";
 import { planStitchChain, type ChainPlan } from "@/core/stitch/chain";
 import { rgbaToGray } from "@/core/stitch/gray";
@@ -40,6 +41,8 @@ export interface StitchExportResult {
   height: number;
   bytes: number;
 }
+
+export interface CombineExportResult extends StitchExportResult {}
 
 export interface WorkspaceSafeShareResult extends Omit<SafeShareExportResult, "blob"> {
   id: FileId;
@@ -81,6 +84,7 @@ export interface WorkspaceRuntime {
   analyseStitch(): Promise<void>;
   stitchPlan(): ChainPlan | null;
   exportStitch(): Promise<StitchExportResult>;
+  exportCombine(inputIds: FileId[], plan: CombinePlan): Promise<CombineExportResult>;
   exportSafeShare(assetId?: FileId): Promise<WorkspaceSafeShareResult>;
   inspectMetadata(assetId?: FileId): Promise<MetadataInspectRun>;
   cleanMetadata(assetId?: FileId): Promise<WorkspaceMetadataCleanResult>;
@@ -347,6 +351,53 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     } catch (e) {
       job(jobId, "stitch-export", "failed", null, codeOf(e));
       throw Object.assign(new Error(codeOf(e)), { code: codeOf(e) });
+    }
+  }
+
+  async function exportCombine(inputIds: FileId[], plan: CombinePlan): Promise<CombineExportResult> {
+    if (inputIds.length < 2 || plan.placements.length !== inputIds.length) throw Object.assign(new Error("Invalid composition"), { code: "COMBINE_INVALID_LAYOUT" });
+    const s = store.getState();
+    const inputs = inputIds.map((id) => s.files[id]);
+    const images = inputIds.map((id) => registry.blob(id));
+    if (inputs.some((file) => !file) || images.some((blob) => !blob)) throw Object.assign(new Error("Missing source"), { code: "DECODE_FAILED" });
+    const { format, quality } = s.exportSettings;
+    const jobId = `combine:${Date.now()}`;
+    job(jobId, "combine-export", "running", 0);
+    try {
+      const result = caps.offscreenCanvas
+        ? await broker.run("image", "combine.compose", { images: images as Blob[], plan, format, quality }, { onProgress: (progress) => job(jobId, "combine-export", "running", progress) })
+        : await (await import("@/core/combine/compose")).composeCombine(images as Blob[], plan, {
+            format,
+            quality,
+            createCanvas: (width, height) => Object.assign(document.createElement("canvas"), { width, height }),
+            yieldBetweenTiles: timeSlicer(),
+            onProgress: (progress) => job(jobId, "combine-export", "running", progress),
+          });
+      if (result.width * result.height > 16_000_000) broker.release("image");
+      const mime: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
+      const id = newId();
+      registry.put(id, result.blob);
+      store.getState().addArtifact({
+        id,
+        name: `combined-screenshots.${EXT[mime]}`,
+        type: mime,
+        bytes: result.blob.size,
+        width: result.width,
+        height: result.height,
+        source: "artifact",
+        kind: "artifact",
+        derivedFrom: [...inputIds],
+        producedBy: "combine",
+        addedAt: Date.now(),
+        previewVersion: 0,
+      });
+      job(jobId, "combine-export", "done", 1);
+      previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
+      return { id, width: result.width, height: result.height, bytes: result.blob.size };
+    } catch (error) {
+      const code = codeOf(error);
+      job(jobId, "combine-export", "failed", null, code);
+      throw Object.assign(new Error(code), { code });
     }
   }
 
@@ -691,6 +742,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     analyseStitch,
     stitchPlan,
     exportStitch,
+    exportCombine,
     exportSafeShare,
     inspectMetadata,
     cleanMetadata,

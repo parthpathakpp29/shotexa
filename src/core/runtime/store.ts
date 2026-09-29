@@ -7,6 +7,8 @@ import type { ToolId } from "@/config/tools";
 import { clampRect } from "@/core/redaction/geometry";
 import type { ImageRect, Redaction, RedactionMode, RedactionSession } from "@/core/redaction/types";
 import type { ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
+import { DEFAULT_COMBINE_SETTINGS } from "@/core/combine/layout";
+import type { CombineSettings } from "@/core/combine/types";
 
 /** Consecutive offset edits on the same join within this window merge into one undo step (slider drags). */
 export const COALESCE_MS = 600;
@@ -23,6 +25,7 @@ export interface WorkspaceState {
   jobs: Record<string, Job>;
   exportSettings: ExportSettings;
   overlapHint: OverlapHint;
+  combine: CombineSettings;
   stitch: StitchSession;
   redaction: RedactionSession;
   ocr: OcrSession;
@@ -46,6 +49,7 @@ export interface WorkspaceActions {
   upsertJob(job: Job): void;
   setExportSettings(s: Partial<ExportSettings>): void;
   setOverlapHint(h: Partial<OverlapHint>): void;
+  setCombineSettings(settings: Partial<CombineSettings>): void;
   setPair(pair: StitchPair): void;
   setPairOffset(key: string, offset: number, opts?: { record?: boolean; coalesce?: boolean; now?: number }): void;
   resetPairs(keys?: string[]): void;
@@ -89,6 +93,7 @@ const initial = (): WorkspaceState => ({
   jobs: {},
   exportSettings: { format: "png", quality: 0.92 },
   overlapHint: { status: "idle", pairs: [], dismissed: false },
+  combine: DEFAULT_COMBINE_SETTINGS,
   stitch: { pairs: {}, viewMode: "normal", activeJoin: 0, manualMode: false },
   redaction: { byAsset: {}, selectedId: null, mode: "blackout", blurIntensity: 18, pixelateIntensity: 16 },
   ocr: { language: "eng", byAsset: {} },
@@ -147,6 +152,8 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
         set((s) => ({ redaction: { ...s.redaction, byAsset: { ...s.redaction.byAsset, [value.assetId]: (s.redaction.byAsset[value.assetId] ?? []).map((r) => (r.id === value.id ? value : r)) } } }));
       } else if (op.type === "CLEAR_REDACTIONS") {
         set((s) => ({ redaction: { ...s.redaction, byAsset: { ...s.redaction.byAsset, [op.assetId]: dir === 1 ? [] : op.redactions }, selectedId: null } }));
+      } else if (op.type === "COMBINE_SET_SETTINGS") {
+        set({ combine: dir === 1 ? op.after : op.before });
       } else {
         const value = dir === 1 ? op.after : op.before;
         set((s) => ({ pdf: { ...s.pdf, edits: { ...s.pdf.edits, [op.assetId]: value }, selectedBreak: null } }));
@@ -228,6 +235,13 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
       upsertJob: (job) => set((s) => ({ jobs: { ...s.jobs, [job.id]: job } })),
       setExportSettings: (e) => set((s) => ({ exportSettings: { ...s.exportSettings, ...e } })),
       setOverlapHint: (h) => set((s) => ({ overlapHint: { ...s.overlapHint, ...h } })),
+      setCombineSettings(settings) {
+        const before = get().combine;
+        const after = { ...before, ...settings };
+        if (JSON.stringify(before) === JSON.stringify(after)) return;
+        applyOp({ type: "COMBINE_SET_SETTINGS", before, after }, 1);
+        record({ type: "COMBINE_SET_SETTINGS", before, after });
+      },
       setPair: (pair) => set((s) => ({ stitch: { ...s.stitch, pairs: { ...s.stitch.pairs, [pair.key]: pair } } })),
       setPairOffset(key, offset, opts = {}) {
         const p = get().stitch.pairs[key];

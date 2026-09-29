@@ -70,7 +70,7 @@ function RedactionWorkspace({ tool, defaultMode }: { tool: "safe-share" | "blur"
               <ShieldCheck className="size-5" />
               <p className="text-sm font-medium">Safe copy verified and downloaded. The result is now available to other Shotexa tools.</p>
             </div>
-            <ContinueWith tools={["extract-text", "pdf", "annotate", "compress"]} fileId={result.id} />
+            <ContinueWith tools={TOOLS[tool].continueWith} fileId={result.id} />
           </div>
         )
       }

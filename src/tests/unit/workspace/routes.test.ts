@@ -20,10 +20,10 @@ describe("tool registry", () => {
     for (const id of WORKSPACE_TABS) expect(TOOLS[id]).toBeDefined();
   });
 
-  it("lists the production tools completed through Phase 2D", () => {
-    expect(TOOL_LIST.filter((t) => t.status === "live").map((t) => t.id)).toEqual(["stitch", "safe-share", "blur", "extract-text", "pdf", "searchable-pdf", "metadata"]);
+  it("lists the production tools completed through Phase 2E", () => {
+    expect(TOOL_LIST.filter((t) => t.status === "live").map((t) => t.id)).toEqual(["stitch", "combine", "safe-share", "blur", "extract-text", "pdf", "searchable-pdf", "metadata"]);
     expect(TOOLS.stitch.route).toBe("/stitch-screenshots");
-    expect(TOOLS.stitch.continueWith).toEqual(["safe-share", "extract-text", "pdf", "annotate", "compress"]);
+    expect(TOOLS.stitch.continueWith).toEqual(["combine", "safe-share", "extract-text", "pdf", "annotate", "compress"]);
   });
 
   it("captures screenshots only on the homepage and tool routes", () => {
@@ -32,6 +32,7 @@ describe("tool registry", () => {
     expect(acceptsScreenshotInput("/blur-screenshot/")).toBe(true);
     expect(acceptsScreenshotInput("/remove-image-metadata")).toBe(true);
     expect(acceptsScreenshotInput("/screenshot-to-searchable-pdf")).toBe(true);
+    expect(acceptsScreenshotInput("/combine-screenshots")).toBe(true);
     expect(acceptsScreenshotInput("/tools")).toBe(false);
     expect(acceptsScreenshotInput("/privacy")).toBe(false);
   });
@@ -46,14 +47,14 @@ describe("tool registry", () => {
 
 describe("SEO config", () => {
   it("sitemap lists indexable static pages and live tools only", () => {
-    expect(sitemapPaths()).toEqual(["/", "/tools", "/privacy", "/stitch-screenshots", "/redact-screenshot", "/blur-screenshot", "/screenshot-to-text", "/screenshot-to-pdf", "/screenshot-to-searchable-pdf", "/remove-image-metadata"]);
+    expect(sitemapPaths()).toEqual(["/", "/tools", "/privacy", "/stitch-screenshots", "/combine-screenshots", "/redact-screenshot", "/blur-screenshot", "/screenshot-to-text", "/screenshot-to-pdf", "/screenshot-to-searchable-pdf", "/remove-image-metadata"]);
     expect(sitemapPaths().some((p) => p.startsWith("/spikes"))).toBe(false);
   });
 
   it("sitemap.xml uses absolute URLs on the site origin", () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
     const entries = sitemap();
-    expect(entries.length).toBe(10);
+    expect(entries.length).toBe(11);
     for (const e of entries) expect(e.url).toMatch(/^https:\/\/[^/]+(\/|$)/);
   });
 

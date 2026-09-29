@@ -120,6 +120,18 @@ describe("workspace store — ordering and history", () => {
   });
 });
 
+describe("workspace store — Combine settings", () => {
+  it("records layout settings as logical undoable state", () => {
+    const { s } = setup(["a", "b"]);
+    s().setCombineSettings({ layout: "grid", gap: 24, gridColumns: 2 });
+    expect(s().combine).toMatchObject({ layout: "grid", gap: 24, gridColumns: 2 });
+    s().undo();
+    expect(s().combine).toMatchObject({ layout: "vertical", gap: 16, gridColumns: "auto" });
+    s().redo();
+    expect(s().combine).toMatchObject({ layout: "grid", gap: 24, gridColumns: 2 });
+  });
+});
+
 describe("workspace store — stitch offsets", () => {
   it("records offset edits as undoable operations", () => {
     const { s } = setup(["a", "b"]);

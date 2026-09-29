@@ -4,6 +4,8 @@
  * Errors carry controlled codes only — never raw third-party messages.
  */
 import type { ComposePlan } from "@/core/image/tiled-compose";
+import type { CombineComposeResult, CombinePlan } from "@/core/combine/types";
+import type { CombineErrorCode } from "@/core/combine/errors";
 import type { MetadataErrorCode } from "@/core/metadata/errors";
 import type { ComposeChainResult } from "@/core/stitch/compose-chain";
 import type { MetadataCleanRun, MetadataInspectRun } from "@/core/metadata/run";
@@ -42,6 +44,11 @@ export interface WorkerOps {
   "metadata.clean": {
     input: { image: Blob; name?: string; type?: string; policy?: Partial<MetadataPolicy> };
     output: MetadataCleanRun;
+  };
+  /** Full-resolution simple composition: vertical, horizontal or grid. */
+  "combine.compose": {
+    input: { images: Blob[]; plan: CombinePlan; format: "png" | "jpeg" | "webp"; quality?: number };
+    output: CombineComposeResult;
   };
   /** Full-resolution redaction render followed by encode → Privacy Clean → verification. */
   "redaction.export": {
@@ -96,7 +103,7 @@ export type WorkerRequest =
   | ({ [K in OpName]: Envelope & { type: "RUN"; op: K; input: WorkerOps[K]["input"] } }[OpName])
   | (Envelope & { type: "CANCEL" });
 
-export type WorkerErrorCode = StitchErrorCode | RedactionErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode | MetadataErrorCode;
+export type WorkerErrorCode = StitchErrorCode | CombineErrorCode | RedactionErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode | MetadataErrorCode;
 
 export type WorkerResponse =
   | (Envelope & { type: "PROGRESS"; progress: number; stage?: string })
