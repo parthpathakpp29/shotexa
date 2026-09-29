@@ -17,6 +17,7 @@ export interface SelectedPdfBreak {
 }
 
 export function PdfInspector({
+  searchable = false,
   session,
   reviewCount,
   selected,
@@ -31,6 +32,7 @@ export function PdfInspector({
   onReset,
   onCancel,
 }: {
+  searchable?: boolean;
   session: PdfSession;
   reviewCount: number;
   selected: SelectedPdfBreak | null;
@@ -97,7 +99,7 @@ export function PdfInspector({
           <p className="mt-3 text-xs leading-5 text-ink-3">JPEG is the fast default. PNG is lossless for flat screenshots but can take several times longer to build.</p>
         </Disclosure>
         {busy && <Button className="mt-3 w-full" variant="secondary" onClick={onCancel} data-testid="cancel-pdf"><X /> Cancel</Button>}
-        <p className="mt-4 text-xs leading-5 text-ink-3">PDF creation runs locally. Normal PDF and Smart Pagination do not load OCR.</p>
+        <p className="mt-4 text-xs leading-5 text-ink-3">{searchable ? "PDF creation and the searchable text layer stay local in this browser." : "PDF creation runs locally. Normal PDF and Smart Pagination do not load OCR."}</p>
       </InspectorSection>
     </div>
   );

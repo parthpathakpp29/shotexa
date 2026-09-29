@@ -39,9 +39,9 @@ serveWorker(
       if (!(d.source instanceof ImageBitmap)) d.close();
       return { bitmap, decodeMs: performance.now() - t };
     },
-    "pdf.create": async ({ images, slices, setup, imageFormat, jpegQuality, title, pages }, ctx) => {
+    "pdf.create": async ({ images, slices, setup, imageFormat, jpegQuality, title, pages, searchableText }, ctx) => {
       const t = performance.now();
-      const o = { setup, imageFormat, jpegQuality, title, signal: ctx.signal, onProgress: (p: number, s: string) => ctx.progress(p, s) };
+      const o = { setup, imageFormat, jpegQuality, title, searchableText, signal: ctx.signal, onProgress: (p: number, s: string) => ctx.progress(p, s) };
       const source = pages ?? renderPages(images ?? [], slices, o);
       const blob = await assemblePdf(source, slices.length, o);
       return { blob, ms: Math.round(performance.now() - t), pages: slices.length };

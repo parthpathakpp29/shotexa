@@ -13,5 +13,9 @@
       "eng",
       "hin"
     ]
+  },
+  "searchablePdf": {
+    "fontPath": "/vendor/pdf/Hind-Regular.ttf",
+    "fontLicensePath": "/vendor/pdf/OFL.txt"
   }
 }

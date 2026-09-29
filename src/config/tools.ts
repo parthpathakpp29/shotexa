@@ -7,7 +7,7 @@
  *  - "preview" route + workspace shell exist (files carry over) but the tool is not finished:
  *              noindex, not in the sitemap, honest "coming next" state
  */
-export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "pdf" | "editor" | "annotate" | "compress" | "metadata";
+export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "compress" | "metadata";
 
 export type ToolStatus = "live" | "preview";
 export type ToolIcon = "stitch" | "combine" | "shield" | "blur" | "text" | "pdf" | "crop" | "pen" | "compress" | "eraser";
@@ -90,7 +90,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     summary: "Copy the text in a screenshot.",
     minFiles: 1,
     seo: { title: "Screenshot to Text – Free Private OCR | Shotexa", h1: "Convert Screenshot to Text", description: "Extract editable text from screenshots with on-device OCR." },
-    continueWith: ["pdf", "safe-share", "annotate"],
+    continueWith: ["searchable-pdf", "pdf", "safe-share", "annotate"],
   },
   pdf: {
     id: "pdf",
@@ -102,6 +102,21 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     minFiles: 1,
     seo: { title: "Screenshot to PDF – Free & Private Converter | Shotexa", h1: "Convert Screenshots to PDF", description: "Convert screenshots into a PDF with smart page breaks, locally in your browser." },
     continueWith: ["extract-text", "safe-share", "annotate"],
+  },
+  "searchable-pdf": {
+    id: "searchable-pdf",
+    name: "Searchable PDF",
+    route: "/screenshot-to-searchable-pdf",
+    status: "live",
+    icon: "pdf",
+    summary: "Keep the screenshot look and add a searchable OCR text layer.",
+    minFiles: 1,
+    seo: {
+      title: "Screenshot to Searchable PDF – OCR PDF Converter | Shotexa",
+      h1: "Convert Screenshots to Searchable PDF",
+      description: "Turn screenshots into searchable PDFs with local OCR and smart page breaks in your browser.",
+    },
+    continueWith: ["safe-share", "pdf", "annotate"],
   },
   editor: {
     id: "editor",
@@ -161,4 +176,4 @@ export function suggestedTools(fileCount: number): ToolId[] {
 }
 
 /** Tool tabs in the workspace header row. */
-export const WORKSPACE_TABS: ToolId[] = ["stitch", "extract-text", "safe-share", "pdf", "annotate", "metadata"];
+export const WORKSPACE_TABS: ToolId[] = ["stitch", "extract-text", "safe-share", "pdf", "searchable-pdf", "annotate", "metadata"];

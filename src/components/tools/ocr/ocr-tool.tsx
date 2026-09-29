@@ -152,7 +152,7 @@ function OcrWorkspace() {
           </InspectorSection>
         </div>
       }
-      below={ready && <div data-testid="ocr-result"><div className="mt-5 rounded-lg border border-[#cfe5d6] bg-success-soft p-4 text-sm font-medium text-success">Text is ready. Your edits are saved in this browser workspace until refresh.</div><div className="mt-6 rounded-lg border border-dashed border-line-strong bg-surface-3 p-4"><p className="font-display text-lg">Searchable PDF</p><p className="mt-1 text-sm text-ink-2">The structured OCR layout is preserved for this future workflow. Searchable PDF is not part of this phase.</p></div><ContinueWith tools={["pdf", "safe-share", "annotate"]} fileId={selectedId} /></div>}
+      below={ready && <div data-testid="ocr-result"><div className="mt-5 rounded-lg border border-[#cfe5d6] bg-success-soft p-4 text-sm font-medium text-success">Text is ready. Your edits are saved in this browser workspace until refresh.</div><div className="mt-6 rounded-lg border border-accent-line bg-accent-soft p-4"><p className="font-display text-lg">Searchable PDF is ready to use this result</p><p className="mt-1 text-sm text-ink-2">The original OCR layout and word geometry stay attached to this screenshot. Your edited text remains the Copy/TXT version.</p></div><ContinueWith tools={["searchable-pdf", "pdf", "safe-share", "annotate"]} fileId={selectedId} /></div>}
     />
   );
 }

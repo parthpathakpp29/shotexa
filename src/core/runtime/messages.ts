@@ -35,6 +35,8 @@ const MESSAGES: Record<string, string> = {
   PDF_CANCELLED: "PDF creation was cancelled.",
   PDF_UNSUPPORTED_SIZE: "One of the screenshots is too large for a reliable PDF on this browser.",
   PDF_INVALID_BREAKS: "One or more page breaks are invalid. Reset the breaks and try again.",
+  PDF_OCR_REQUIRED: "Extract text from every screenshot before creating a searchable PDF.",
+  PDF_FONT_LOAD_FAILED: "The searchable PDF font could not be loaded. Try again while this Shotexa page is online.",
 };
 
 export function messageFor(code: string | undefined): string {

@@ -1,9 +1,10 @@
 "use client";
 
-import { AlertTriangle, Check, Download, FileText, Loader2, X } from "lucide-react";
-import { useEffect, useMemo, useRef, type ReactNode } from "react";
+import { AlertTriangle, Check, Download, FileText, Loader2, ScanText, X } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge, Notice, Progress } from "@/components/ui/primitives";
+import { SegmentedControl } from "@/components/ui/controls";
+import { Badge, InspectorSection, Notice, Progress } from "@/components/ui/primitives";
 import { ContinueWith } from "@/components/workspace/continue-with";
 import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
 import { WorkspaceShell } from "@/components/workspace/workspace-shell";
@@ -11,7 +12,7 @@ import { addBreak, moveBreak, removeBreak, snapTo, validateBreaks } from "@/core
 import type { PageBreak, PageSetup } from "@/core/pdf/types";
 import { messageFor } from "@/core/runtime/messages";
 import { downloadAsset } from "@/core/runtime/runtime";
-import type { FileId, PdfBreakEdit } from "@/core/runtime/types";
+import type { FileId, OcrLanguageChoice, PdfBreakEdit } from "@/core/runtime/types";
 import { PdfInspector, type SelectedPdfBreak } from "./pdf-inspector";
 import { PdfPreview } from "./pdf-preview";
 
@@ -19,16 +20,16 @@ const MIN_GAP_PX = 48;
 const SNAP_PX = 24;
 const formatBytes = (bytes: number) => bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 
-export function PdfTool({ landing }: { landing: ReactNode }) {
+export function PdfTool({ landing, searchable = false }: { landing: ReactNode; searchable?: boolean }) {
   const count = useWorkspace((state) => state.order.length);
-  return count === 0 ? <>{landing}</> : <PdfWorkspace />;
+  return count === 0 ? <>{landing}</> : <PdfWorkspace searchable={searchable} />;
 }
 
 function sameIds(a: string[], b: string[]) {
   return a.length === b.length && a.every((id, index) => id === b[index]);
 }
 
-function PdfWorkspace() {
+function PdfWorkspace({ searchable }: { searchable: boolean }) {
   const { runtime } = useWorkspaceContext();
   const order = useWorkspace((state) => state.order);
   const files = useWorkspace((state) => state.files);
@@ -41,6 +42,10 @@ function PdfWorkspace() {
   const setSelectedBreak = useWorkspace((state) => state.selectPdfBreak);
   const setBreakEdit = useWorkspace((state) => state.setPdfBreakEdit);
   const lastDocument = useWorkspace((state) => state.pdf.lastDocumentId ? state.documents[state.pdf.lastDocumentId] : undefined);
+  const ocr = useWorkspace((state) => state.ocr);
+  const setOcrLanguage = useWorkspace((state) => state.setOcrLanguage);
+  const [extractingMissing, setExtractingMissing] = useState(false);
+  const extractionSequence = useRef(0);
 
   const inputIds = useMemo(() => {
     const selected = selectedId ? files[selectedId] : undefined;
@@ -77,6 +82,11 @@ function PdfWorkspace() {
   }, [runtime, inputSignature, session.paper, session.marginPt, session.smart, editSignature]);
 
   const plan = session.plan;
+  const readyOcrIds = inputIds.filter((id) => ocr.byAsset[id]?.status === "done" && ocr.byAsset[id]?.language === ocr.language && !!ocr.byAsset[id]?.resultId && !!runtime.ocrResults.forAsset(id));
+  const missingOcrIds = inputIds.filter((id) => !readyOcrIds.includes(id));
+  const ocrReady = !searchable || missingOcrIds.length === 0;
+  const activeOcr = inputIds.map((id) => ocr.byAsset[id]).find((state) => state?.status === "running");
+  const ocrFailure = inputIds.map((id) => ocr.byAsset[id]).find((state) => state?.status === "failed");
   const breakEntries = useMemo(() => {
     if (!plan) return [];
     let pagesBefore = 0;
@@ -171,46 +181,81 @@ function PdfWorkspace() {
 
   const busy = session.status === "analysing" || session.status === "exporting";
   const exportPdf = async () => {
-    if (!plan || busy) return;
+    if (!plan || busy || !ocrReady) return;
     const invalid = plan.images.flatMap((image) => validateBreaks(image.breaks, { height: image.height, minGapPx: 1 }));
     if (invalid.length) {
       setStatus("failed", null, undefined, "PDF_INVALID_BREAKS");
       return;
     }
     try {
-      const result = await runtime.exportPdf(inputIds, plan);
+      const result = searchable ? await runtime.exportSearchablePdf(inputIds, plan) : await runtime.exportPdf(inputIds, plan);
       downloadAsset(runtime, result.id);
     } catch {
       // Runtime stores a controlled error code.
     }
   };
 
-  const status = session.status === "exporting" ? <Badge tone="accent" dot>Creating PDF…</Badge> : session.status === "analysing" ? <Badge tone="neutral" dot>Analysing pages…</Badge> : plan ? <Badge tone={reviewEntries.length ? "warning" : "success"} dot>{reviewEntries.length ? `${reviewEntries.length} page break${reviewEntries.length === 1 ? "" : "s"} need review` : session.smart && session.paper !== "fit" ? "High confidence" : `${plan.pages.length} page${plan.pages.length === 1 ? "" : "s"} ready`}</Badge> : undefined;
+  const extractMissing = async () => {
+    if (!searchable || extractingMissing || !missingOcrIds.length) return;
+    const sequence = ++extractionSequence.current;
+    setExtractingMissing(true);
+    try {
+      for (const id of missingOcrIds) {
+        if (sequence !== extractionSequence.current || runtime.ocrResults.forAsset(id)) continue;
+        await runtime.extractText(id, ocr.language);
+      }
+    } catch {
+      // Controlled OCR state and error copy are already stored per asset.
+    } finally {
+      if (sequence === extractionSequence.current) setExtractingMissing(false);
+    }
+  };
+
+  const cancelExtraction = () => {
+    extractionSequence.current++;
+    setExtractingMissing(false);
+    void runtime.cancelOcr();
+  };
+
+  const status = searchable && !ocrReady
+    ? <Badge tone={extractingMissing ? "accent" : "warning"} dot>{extractingMissing ? "Extracting text…" : "Text extraction required"}</Badge>
+    : session.status === "exporting" ? <Badge tone="accent" dot>Creating PDF…</Badge> : session.status === "analysing" ? <Badge tone="neutral" dot>Analysing pages…</Badge> : plan ? <Badge tone={reviewEntries.length ? "warning" : "success"} dot>{reviewEntries.length ? `${reviewEntries.length} page break${reviewEntries.length === 1 ? "" : "s"} need review` : session.smart && session.paper !== "fit" ? "High confidence" : `${plan.pages.length} page${plan.pages.length === 1 ? "" : "s"} ready`}</Badge> : undefined;
   const sourceForContinue = selectedId && inputIds.includes(selectedId) ? selectedId : inputIds[0];
-  const resultMatches = lastDocument && sameIds(lastDocument.sourceIds, inputIds);
+  const resultMatches = lastDocument && lastDocument.producedBy === (searchable ? "searchable-pdf" : "pdf") && sameIds(lastDocument.sourceIds, inputIds);
 
   return (
     <WorkspaceShell
-      tool="pdf"
+      tool={searchable ? "searchable-pdf" : "pdf"}
       status={status}
-      exportAction={{ label: "Export PDF", onClick: exportPdf, disabled: !plan || session.status === "analysing", busy: session.status === "exporting" }}
+      exportAction={{ label: searchable ? "Export Searchable PDF" : "Export PDF", onClick: exportPdf, disabled: !plan || session.status === "analysing" || !ocrReady, busy: session.status === "exporting" }}
       fileHint="Reorder screenshots here to change their order in the PDF. Selecting a Shotexa result converts that result by itself."
       inspectorTitle="PDF settings"
       canvas={
         <div data-testid="pdf-workspace">
-          <h1 className="sr-only">Convert Screenshots to PDF</h1>
+          <h1 className="sr-only">{searchable ? "Convert Screenshots to Searchable PDF" : "Convert Screenshots to PDF"}</h1>
           {session.error && session.status === "failed" && <Notice tone="error" icon={<AlertTriangle />} title="PDF creation stopped" className="mb-4" actions={<Button variant="secondary" onClick={() => setStatus("idle")}><X /> Dismiss</Button>}>{messageFor(session.error)}</Notice>}
           {session.status === "cancelled" && <Notice className="mb-4" title="PDF creation cancelled">Your screenshots and page-break edits are unchanged.</Notice>}
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-line bg-surface px-4 py-3 shadow-xs">
-            <div><p className="font-display text-lg">Screenshot to PDF</p><p className="text-sm text-ink-2">{inputIds.length} screenshot{inputIds.length === 1 ? "" : "s"} · processing stays in this browser</p></div>
+            <div><p className="font-display text-lg">{searchable ? "Searchable PDF" : "Screenshot to PDF"}</p><p className="text-sm text-ink-2">{inputIds.length} screenshot{inputIds.length === 1 ? "" : "s"} · processing stays in this browser</p></div>
             <div className="flex items-center gap-2"><FileText className="size-4 text-accent" /><span className="t-mono text-[12px]">{plan ? `${plan.pages.length} page${plan.pages.length === 1 ? "" : "s"}` : "Preparing…"}</span></div>
           </div>
           {busy && <div className="mb-4 rounded-lg border border-accent-line bg-accent-soft p-4" aria-live="polite"><div className="mb-2 flex items-center justify-between gap-3 text-sm"><span className="font-medium text-accent-ink">{session.stage ?? (session.status === "exporting" ? "Creating PDF" : "Analysing pages")}</span><span className="t-mono text-accent-ink">{session.progress === null ? "" : `${Math.round(session.progress * 100)}%`}</span></div><Progress value={session.progress} label="PDF progress" /></div>}
           {plan ? <PdfPreview inputIds={inputIds} files={files} plan={plan} selected={session.selectedBreak} disabled={session.status === "exporting"} onSelect={(assetId, y) => setSelectedBreak({ assetId, y })} onMove={move} onDelete={remove} onAdd={add} /> : <div className="flex min-h-[28rem] items-center justify-center rounded-lg border border-line bg-surface"><Loader2 className="size-6 animate-spin text-accent" /><span className="ml-3 text-sm text-ink-2">Preparing the page preview…</span></div>}
         </div>
       }
-      inspector={<PdfInspector session={session} reviewCount={reviewEntries.length} selected={selected} busy={busy} onSettings={setSettings} onPrevious={() => navigate(-1)} onNext={() => navigate(1)} onNudge={(delta) => selected && move(selected.assetId, selected.breakIndex, selected.pageBreak.y + delta, { snap: false, coalesce: false })} onSnap={() => selected && move(selected.assetId, selected.breakIndex, selected.pageBreak.y, { snap: true, coalesce: false })} onAdd={addToLargestPage} onDelete={() => selected && remove(selected.assetId, selected.breakIndex)} onReset={reset} onCancel={() => runtime.cancelPdf()} />}
-      below={resultMatches && lastDocument && <div data-testid="pdf-result" className="mt-5"><Notice tone="success" icon={<Check />} title="PDF ready" actions={<Button variant="secondary" onClick={() => downloadAsset(runtime, lastDocument.id)}><Download /> Download again</Button>}><span className="t-mono text-[12px]">{lastDocument.name} · {lastDocument.pageCount} page{lastDocument.pageCount === 1 ? "" : "s"} · {formatBytes(lastDocument.bytes)}</span><span className="block">Downloaded and kept in the workspace as a PDF output.</span></Notice><ContinueWith tools={["extract-text", "safe-share", "annotate"]} fileId={sourceForContinue} /></div>}
+      inspector={<>
+        {searchable && <InspectorSection title="Searchable text" data-testid="searchable-pdf-ocr">
+          <div className="rounded-md border border-line bg-surface-3 p-3">
+            <div className="flex items-center justify-between gap-2"><span className="text-sm font-medium">{ocrReady ? "Text layer ready" : "Text extraction required"}</span><Badge tone={ocrReady ? "success" : extractingMissing ? "accent" : "warning"} dot>{readyOcrIds.length}/{inputIds.length} ready</Badge></div>
+            <ul className="mt-3 space-y-1.5 text-xs text-ink-2">{inputIds.map((id) => <li key={id} className="flex items-center justify-between gap-2"><span className="min-w-0 truncate">{files[id]?.name}</span><span className={readyOcrIds.includes(id) ? "text-success" : "text-warning"}>{readyOcrIds.includes(id) ? "Ready" : ocr.byAsset[id]?.status === "running" ? "Extracting…" : "Needs OCR"}</span></li>)}</ul>
+          </div>
+          <div className="mt-3"><SegmentedControl<OcrLanguageChoice> label="OCR language" value={ocr.language} onChange={setOcrLanguage} options={[{ value: "eng", label: "English" }, { value: "eng+hin", label: "English + Hindi" }]} /></div>
+          {ocrFailure?.error && <p role="alert" className="mt-3 text-xs leading-5 text-error">{messageFor(ocrFailure.error)}</p>}
+          {extractingMissing || activeOcr ? <div className="mt-3 space-y-2"><Progress value={activeOcr?.progress ?? null} label="Searchable PDF text extraction" /><p className="text-xs text-ink-2">{activeOcr?.stage ?? "Extracting text locally"}</p><Button className="w-full" variant="secondary" onClick={cancelExtraction}><X /> Cancel</Button></div> : !ocrReady ? <Button className="mt-3 w-full" variant="primary" onClick={extractMissing} data-testid="extract-for-searchable-pdf"><ScanText /> Extract text for searchable PDF</Button> : <p className="mt-3 text-xs leading-5 text-ink-3">Original OCR geometry positions the invisible text layer. Edits made in Screenshot to Text remain for Copy/TXT only.</p>}
+        </InspectorSection>}
+        <PdfInspector searchable={searchable} session={session} reviewCount={reviewEntries.length} selected={selected} busy={busy} onSettings={setSettings} onPrevious={() => navigate(-1)} onNext={() => navigate(1)} onNudge={(delta) => selected && move(selected.assetId, selected.breakIndex, selected.pageBreak.y + delta, { snap: false, coalesce: false })} onSnap={() => selected && move(selected.assetId, selected.breakIndex, selected.pageBreak.y, { snap: true, coalesce: false })} onAdd={addToLargestPage} onDelete={() => selected && remove(selected.assetId, selected.breakIndex)} onReset={reset} onCancel={() => runtime.cancelPdf()} />
+      </>}
+      below={resultMatches && lastDocument && <div data-testid={searchable ? "searchable-pdf-result" : "pdf-result"} className="mt-5"><Notice tone="success" icon={<Check />} title={searchable ? "Searchable PDF ready" : "PDF ready"} actions={<Button variant="secondary" onClick={() => downloadAsset(runtime, lastDocument.id)}><Download /> Download again</Button>}><span className="t-mono text-[12px]">{lastDocument.name} · {lastDocument.pageCount} page{lastDocument.pageCount === 1 ? "" : "s"} · {formatBytes(lastDocument.bytes)}</span><span className="block">Downloaded and kept in the workspace as a PDF output.</span></Notice><ContinueWith tools={searchable ? ["safe-share", "pdf", "annotate"] : ["extract-text", "safe-share", "annotate"]} fileId={sourceForContinue} /></div>}
     />
   );
 }

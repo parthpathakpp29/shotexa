@@ -99,6 +99,8 @@ export interface PdfCreateInput {
   imageFormat: "jpeg" | "png";
   jpegQuality?: number;
   title?: string;
+  /** Optional original OCR geometry. Presence makes this a searchable PDF export. */
+  searchableText?: import("./searchable-text").SearchableTextSource[];
 }
 
 export interface PdfEngine {

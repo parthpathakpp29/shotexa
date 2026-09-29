@@ -14,6 +14,7 @@ import type { PdfErrorCode } from "@/core/pdf/errors";
 import type { EncodedPage } from "@/core/pdf/render-pdf";
 import type { RowSignals } from "@/core/pdf/signals";
 import type { PageSetup, PageSlice } from "@/core/pdf/types";
+import type { SearchableTextSource } from "@/core/pdf/searchable-text";
 import type { PreprocessStep } from "@/core/ocr/preprocess";
 import type { Redaction, RedactionErrorCode, SafeShareExportResult } from "@/core/redaction/types";
 import type { StitchConfigOverrides } from "@/core/stitch/config";
@@ -80,7 +81,7 @@ export interface WorkerOps {
   };
   /** Page-by-page render + pdf-lib assembly. `pages` = pre-encoded pages (no-OffscreenCanvas fallback). */
   "pdf.create": {
-    input: { images?: Blob[]; slices: PageSlice[]; setup: PageSetup; imageFormat: "jpeg" | "png"; jpegQuality?: number; title?: string; pages?: EncodedPage[] };
+    input: { images?: Blob[]; slices: PageSlice[]; setup: PageSetup; imageFormat: "jpeg" | "png"; jpegQuality?: number; title?: string; pages?: EncodedPage[]; searchableText?: SearchableTextSource[] };
     output: { blob: Blob; ms: number; pages: number };
   };
 }

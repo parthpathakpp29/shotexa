@@ -13,6 +13,10 @@ const copy = (from, toDir, name) => {
   mkdirSync(join(root, "public", toDir), { recursive: true });
   copyFileSync(nm(from), join(root, "public", toDir, name));
 };
+const copyLocal = (from, toDir, name) => {
+  mkdirSync(join(root, "public", toDir), { recursive: true });
+  copyFileSync(join(root, from), join(root, "public", toDir, name));
+};
 
 // OpenCV.js (Smart Stitch)
 const cvVersion = version("@techstark/opencv-js");
@@ -33,6 +37,11 @@ for (const f of ["tesseract-core-lstm.wasm.js", "tesseract-core-simd-lstm.wasm.j
 }
 for (const lang of ["eng", "hin"]) copy(`@tesseract.js-data/${lang}/${langVersion}/${lang}.traineddata.gz`, langDir, `${lang}.traineddata.gz`);
 
+// Searchable PDF: a compact OFL font containing Basic Latin + Devanagari. Kept outside
+// public/vendor (which is generated and ignored) and copied only for local same-origin use.
+copyLocal("src/assets/fonts/Hind-Regular.ttf", "vendor/pdf", "Hind-Regular.ttf");
+copyLocal("src/assets/fonts/Hind-OFL.txt", "vendor/pdf", "OFL.txt");
+
 writeFileSync(
   join(root, "src/config/vendor-assets.json"),
   JSON.stringify(
@@ -45,6 +54,10 @@ writeFileSync(
         corePath: `/${coreDir}`,
         langPath: `/${langDir}`,
         languages: ["eng", "hin"],
+      },
+      searchablePdf: {
+        fontPath: "/vendor/pdf/Hind-Regular.ttf",
+        fontLicensePath: "/vendor/pdf/OFL.txt",
       },
     },
     null,

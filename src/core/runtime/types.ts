@@ -66,7 +66,7 @@ export interface WorkspaceDocument {
   bytes: number;
   pageCount: number;
   sourceIds: FileId[];
-  producedBy: "pdf";
+  producedBy: "pdf" | "searchable-pdf";
   addedAt: number;
 }
 

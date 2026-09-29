@@ -102,7 +102,7 @@ export function createPdfEngine(overrides?: PaginationConfigOverrides) {
         if (hasOffscreen()) {
           const r = await worker.run(
             "pdf.create",
-            { images: input.images, slices, setup: input.plan.setup, imageFormat: input.imageFormat, jpegQuality: input.jpegQuality, title: input.title },
+            { images: input.images, slices, setup: input.plan.setup, imageFormat: input.imageFormat, jpegQuality: input.jpegQuality, title: input.title, searchableText: input.searchableText },
             opts,
           );
           return { ...r, path: "worker", tileRows: DEFAULT_LIMITS.tileHeight };
@@ -122,7 +122,7 @@ export function createPdfEngine(overrides?: PaginationConfigOverrides) {
           pages.push(p);
           opts.onProgress?.((0.8 * pages.length) / slices.length, `encode ${pages.length}/${slices.length}`);
         }
-        const r = await worker.run("pdf.create", { slices, setup: input.plan.setup, imageFormat: input.imageFormat, pages }, opts);
+        const r = await worker.run("pdf.create", { slices, setup: input.plan.setup, imageFormat: input.imageFormat, pages, searchableText: input.searchableText }, opts);
         return { ...r, ms: Math.round(performance.now() - t), path: "main-thread", tileRows: MAIN_THREAD_TILE_ROWS };
       } catch (e) {
         throw mapErr(e);

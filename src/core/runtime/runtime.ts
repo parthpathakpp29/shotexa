@@ -12,6 +12,7 @@ import type { OcrService } from "@/core/ocr/ocr-service";
 import type { OcrResult } from "@/core/ocr/types";
 import type { AnalysedSet, ShotexaPdfEngine } from "@/core/pdf/pdf-engine";
 import type { PageSetup, PaginationPlan } from "@/core/pdf/types";
+import { searchableSourceFromResult } from "@/core/pdf/searchable-text";
 import type { SafeShareExportResult } from "@/core/redaction/types";
 import { planStitchChain, type ChainPlan } from "@/core/stitch/chain";
 import { rgbaToGray } from "@/core/stitch/gray";
@@ -88,6 +89,7 @@ export interface WorkspaceRuntime {
   planPdf(inputIds: FileId[], setup: PageSetup, smart: boolean, edits?: Record<FileId, PdfBreakEdit>): Promise<PaginationPlan>;
   pdfSafeYs(assetId: FileId): number[];
   exportPdf(inputIds: FileId[], plan: PaginationPlan): Promise<WorkspacePdfResult>;
+  exportSearchablePdf(inputIds: FileId[], plan: PaginationPlan): Promise<WorkspacePdfResult>;
   cancelPdf(): void;
   dispose(): void;
 }
@@ -582,7 +584,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     return pdfAnalyses.get(assetId)?.safeYs ?? [];
   }
 
-  async function exportPdf(inputIds: FileId[], plan: PaginationPlan): Promise<WorkspacePdfResult> {
+  async function runPdfExport(inputIds: FileId[], plan: PaginationPlan, searchable: boolean): Promise<WorkspacePdfResult> {
     if (!inputIds.length || !plan.pages.length) throw Object.assign(new Error("No PDF pages"), { code: "PDF_INVALID_BREAKS" });
     const engine = await getPdfEngine();
     const s = store.getState();
@@ -595,13 +597,21 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     job("pdf:export", "pdf-export", "running", 0);
     broker.release("vision");
     try {
+      const searchableText = searchable
+        ? inputIds.map((id, imageIndex) => {
+            const result = ocrResults.forAsset(id);
+            if (!result) throw Object.assign(new Error("OCR required"), { code: "PDF_OCR_REQUIRED" });
+            return searchableSourceFromResult(imageIndex, result, id);
+          })
+        : undefined;
       const result = await engine.createPdf(
         {
           images: blobs as Blob[],
           plan,
           imageFormat: s.pdf.imageFormat,
           jpegQuality: s.pdf.jpegQuality,
-          title: "Shotexa screenshots",
+          title: searchable ? "Shotexa searchable screenshots" : "Shotexa screenshots",
+          searchableText,
         },
         {
           signal: abort.signal,
@@ -618,12 +628,12 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
       const id = newId();
       const document: WorkspaceDocument = {
         id,
-        name: "shotexa-screenshots.pdf",
+        name: searchable ? "shotexa-searchable-screenshots.pdf" : "shotexa-screenshots.pdf",
         type: "application/pdf",
         bytes: result.blob.size,
         pageCount: result.pages,
         sourceIds: [...inputIds],
-        producedBy: "pdf",
+        producedBy: searchable ? "searchable-pdf" : "pdf",
         addedAt: Date.now(),
       };
       registry.put(id, result.blob);
@@ -643,6 +653,9 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
       if (activePdfAbort === abort) activePdfAbort = null;
     }
   }
+
+  const exportPdf = (inputIds: FileId[], plan: PaginationPlan) => runPdfExport(inputIds, plan, false);
+  const exportSearchablePdf = (inputIds: FileId[], plan: PaginationPlan) => runPdfExport(inputIds, plan, true);
 
   function cancelPdf(): void {
     activePdfAbort?.abort();
@@ -686,6 +699,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     planPdf,
     pdfSafeYs,
     exportPdf,
+    exportSearchablePdf,
     cancelPdf,
     dispose() {
       disposed = true;

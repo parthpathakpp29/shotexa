@@ -6,7 +6,9 @@ export type PdfErrorCode =
   | "PDF_MEMORY_PRESSURE"
   | "PDF_CANCELLED"
   | "PDF_UNSUPPORTED_SIZE"
-  | "PDF_INVALID_BREAKS";
+  | "PDF_INVALID_BREAKS"
+  | "PDF_OCR_REQUIRED"
+  | "PDF_FONT_LOAD_FAILED";
 
 export class PdfError extends Error {
   constructor(
