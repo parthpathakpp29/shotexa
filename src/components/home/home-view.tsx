@@ -13,7 +13,7 @@ import { FileTray } from "@/components/workspace/file-tray";
 import { OverlapBanner } from "@/components/workspace/overlap-banner";
 import { ToolTabs } from "@/components/workspace/tool-tabs";
 import { useWorkspace } from "@/components/workspace/workspace-provider";
-import { suggestedTools, type ToolId } from "@/config/tools";
+import { suggestedNext, suggestedTools } from "@/config/tools";
 
 export function HomeView({ marketing, footer }: { marketing: ReactNode; footer: ReactNode }) {
   const count = useWorkspace((s) => s.order.length);
@@ -30,9 +30,11 @@ function ConnectedWorkspace() {
   const count = useWorkspace((s) => s.order.length);
   const originals = useWorkspace((s) => s.order.filter((id) => s.files[id]?.kind === "original").length);
   const selectedId = useWorkspace((s) => s.selectedId);
+  const producedBy = useWorkspace((s) => (s.selectedId ? s.files[s.selectedId]?.producedBy : undefined));
+  const hasOcr = useWorkspace((s) => (s.selectedId ? s.ocr.byAsset[s.selectedId]?.status === "done" : false));
   const checking = useWorkspace((s) => s.overlapHint.status === "checking");
   const tools = suggestedTools(count);
-  const next: ToolId[] = originals >= 2 ? ["stitch", "safe-share", "extract-text"] : ["safe-share", "extract-text", "pdf"];
+  const next = suggestedNext({ originals, producedBy, hasOcr });
 
   return (
     <main className="mx-auto w-full max-w-[1200px] px-3 py-5 sm:px-6 sm:py-8" data-testid="connected-workspace">

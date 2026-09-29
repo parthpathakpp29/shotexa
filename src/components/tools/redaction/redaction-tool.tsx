@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/primitives";
 import { ContinueWith } from "@/components/workspace/continue-with";
 import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
 import { WorkspaceShell } from "@/components/workspace/workspace-shell";
-import { TOOLS } from "@/config/tools";
+import { continuationsFor, TOOLS } from "@/config/tools";
 import { downloadAsset } from "@/core/runtime/runtime";
 import type { RedactionMode, SafeShareVerification } from "@/core/redaction/types";
 import { RedactionCanvas } from "./redaction-canvas";
@@ -70,7 +70,7 @@ function RedactionWorkspace({ tool, defaultMode }: { tool: "safe-share" | "blur"
               <ShieldCheck className="size-5" />
               <p className="text-sm font-medium">Safe copy verified and downloaded. The result is now available to other Shotexa tools.</p>
             </div>
-            <ContinueWith tools={TOOLS[tool].continueWith} fileId={result.id} />
+            <ContinueWith tools={continuationsFor(tool)} fileId={result.id} />
           </div>
         )
       }

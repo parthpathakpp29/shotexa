@@ -12,7 +12,7 @@ import { Badge, EmptyState, IconButton, Mono, Notice, Progress, Toolbar, Toolbar
 import { ContinueWith } from "@/components/workspace/continue-with";
 import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
 import { WorkspaceShell } from "@/components/workspace/workspace-shell";
-import { TOOLS } from "@/config/tools";
+import { continuationsFor, TOOLS } from "@/config/tools";
 import { messageFor } from "@/core/runtime/messages";
 import { downloadAsset } from "@/core/runtime/runtime";
 import { pairKey } from "@/core/runtime/store";
@@ -274,7 +274,7 @@ function StitchWorkspace() {
               </Mono>
               <span className="block">Saved to your downloads and kept in this workspace as a new file.</span>
             </Notice>
-            <ContinueWith tools={TOOLS.stitch.continueWith} fileId={result.id} />
+            <ContinueWith tools={continuationsFor("stitch")} fileId={result.id} />
           </div>
         )}
       </>

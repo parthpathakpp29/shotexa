@@ -127,7 +127,12 @@ test.describe("Phase 2B production OCR", () => {
     await page.getByTestId("cancel-ocr").click();
     await expect(page.getByText("Extraction cancelled")).toBeVisible();
     await page.getByTestId("file-input").setInputFiles(RECEIPT);
+    // Wait for the second screenshot to finish ingesting: `.last()` would otherwise resolve
+    // to the first file and re-run OCR on it.
+    await expect(page.getByTestId("file-item")).toHaveCount(2);
     await page.getByTestId("file-item").last().locator("button").first().click();
+    // The editor only reappears once the newly selected screenshot has its own result.
+    await expect(page.getByTestId("ocr-result-text")).toBeHidden();
     expect((await (await extract(page)).inputValue())).toContain("Corner Cafe");
   });
 

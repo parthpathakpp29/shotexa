@@ -13,7 +13,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Logo, LogoMark, ToolIcon } from "@/components/brand";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
-import { TOOLS, WORKSPACE_TABS, type ToolId } from "@/config/tools";
+import { TOOL_GROUPS, TOOLS, UPCOMING_TOOLS, type ToolId } from "@/config/tools";
 import { cn } from "@/lib/cn";
 import { useShortcutLabel } from "@/lib/use-shortcut-label";
 import { FileTray } from "./file-tray";
@@ -56,20 +56,41 @@ export function ToolSwitcher({ tool }: { tool: ToolId }) {
         <ChevronsUpDown aria-hidden className="size-3.5 text-ink-3" />
       </button>
       {open && (
-        <div role="menu" aria-label="Switch tool" className="absolute left-0 top-full z-40 mt-2 w-60 rounded-lg border border-line bg-surface p-1.5 shadow-md">
-          {[...new Set<ToolId>(["stitch", ...WORKSPACE_TABS, "combine", "compress", "editor"])].map((id) => (
-            <Link
-              key={id}
-              role="menuitem"
-              href={TOOLS[id].route}
-              onClick={() => setOpen(false)}
-              className={cn("flex min-h-10 items-center gap-2.5 rounded-sm px-2.5 text-sm hover:bg-surface-2", id === tool ? "text-accent-ink" : "text-ink")}
-            >
-              <ToolIcon name={TOOLS[id].icon} className="size-4" />
-              {TOOLS[id].name}
-              {TOOLS[id].status !== "live" && <span className="t-micro ml-auto text-[9.5px] text-ink-3">Soon</span>}
-            </Link>
+        <div role="menu" aria-label="Switch tool" className="absolute left-0 top-full z-40 mt-2 max-h-[70dvh] w-64 overflow-y-auto rounded-lg border border-line bg-surface p-1.5 shadow-md">
+          {/* Grouped from the registry, so every live tool is reachable from every tool. */}
+          {TOOL_GROUPS.map((group) => (
+            <div key={group.id} className="mb-1 last:mb-0">
+              <p className="t-micro px-2.5 pb-1 pt-2 text-ink-3">{group.label}</p>
+              {group.tools.map((id) => (
+                <Link
+                  key={id}
+                  role="menuitem"
+                  href={TOOLS[id].route}
+                  onClick={() => setOpen(false)}
+                  className={cn("flex min-h-10 items-center gap-2.5 rounded-sm px-2.5 text-sm hover:bg-surface-2", id === tool ? "text-accent-ink" : "text-ink")}
+                >
+                  <ToolIcon name={TOOLS[id].icon} className="size-4" />
+                  {TOOLS[id].name}
+                </Link>
+              ))}
+            </div>
           ))}
+          <div className="mt-1 border-t border-line pt-1">
+            <p className="t-micro px-2.5 pb-1 pt-2 text-ink-3">Coming soon</p>
+            {UPCOMING_TOOLS.map((id) => (
+              <Link
+                key={id}
+                role="menuitem"
+                href={TOOLS[id].route}
+                onClick={() => setOpen(false)}
+                className={cn("flex min-h-10 items-center gap-2.5 rounded-sm px-2.5 text-sm text-ink-3 hover:bg-surface-2", id === tool && "text-accent-ink")}
+              >
+                <ToolIcon name={TOOLS[id].icon} className="size-4" />
+                {TOOLS[id].name}
+                <span className="t-micro ml-auto text-[9.5px]">Soon</span>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </div>

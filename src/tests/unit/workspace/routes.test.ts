@@ -3,7 +3,7 @@ import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
 import { acceptsScreenshotInput, sitemapPaths, staticMetadata, STATIC_ROUTES, toolMetadata } from "@/config/routes";
 import { isIndexable } from "@/config/site";
-import { suggestedTools, TOOL_LIST, toolByRoute, TOOLS, WORKSPACE_TABS, type ToolId } from "@/config/tools";
+import { continuationsFor, LIVE_TOOLS, suggestedNext, suggestedTools, TOOL_GROUPS, TOOL_LIST, toolByRoute, TOOLS, UPCOMING_TOOLS, type ToolId } from "@/config/tools";
 
 afterEach(() => vi.unstubAllEnvs());
 
@@ -17,13 +17,34 @@ describe("tool registry", () => {
       for (const next of t.continueWith) expect(TOOLS[next]).toBeDefined();
       expect(t.continueWith).not.toContain(t.id);
     }
-    for (const id of WORKSPACE_TABS) expect(TOOLS[id]).toBeDefined();
   });
 
   it("lists the production tools completed through Phase 2E", () => {
     expect(TOOL_LIST.filter((t) => t.status === "live").map((t) => t.id)).toEqual(["stitch", "combine", "safe-share", "blur", "extract-text", "pdf", "searchable-pdf", "metadata"]);
     expect(TOOLS.stitch.route).toBe("/stitch-screenshots");
-    expect(TOOLS.stitch.continueWith).toEqual(["combine", "safe-share", "extract-text", "pdf", "annotate", "compress"]);
+    expect(LIVE_TOOLS).toEqual(["stitch", "combine", "safe-share", "blur", "extract-text", "pdf", "searchable-pdf", "metadata"]);
+    expect(UPCOMING_TOOLS).toEqual(["editor", "annotate", "compress"]);
+  });
+
+  it("groups every live tool into exactly one navigation category", () => {
+    const grouped = TOOL_GROUPS.flatMap((g) => g.tools);
+    expect([...grouped].sort()).toEqual([...LIVE_TOOLS].sort());
+    expect(new Set(grouped).size).toBe(grouped.length);
+    expect(TOOL_GROUPS.map((g) => g.id)).toEqual(["create", "protect", "documents"]);
+    expect(TOOL_GROUPS.find((g) => g.id === "create")?.tools).toEqual(["stitch", "combine"]);
+    expect(TOOL_GROUPS.find((g) => g.id === "protect")?.tools).toEqual(["safe-share", "blur", "metadata"]);
+    expect(TOOL_GROUPS.find((g) => g.id === "documents")?.tools).toEqual(["extract-text", "pdf", "searchable-pdf"]);
+    // Blur must stay reachable from navigation, not only from its own URL.
+    expect(grouped).toContain("blur");
+  });
+
+  it("never offers an unfinished tool as a working continuation", () => {
+    for (const id of LIVE_TOOLS) {
+      const next = continuationsFor(id);
+      expect(next).not.toContain(id);
+      for (const target of next) expect(TOOLS[target].status).toBe("live");
+      expect(next.length).toBeGreaterThan(0);
+    }
   });
 
   it("captures screenshots only on the homepage and tool routes", () => {
@@ -37,11 +58,26 @@ describe("tool registry", () => {
     expect(acceptsScreenshotInput("/privacy")).toBe(false);
   });
 
-  it("suggests tools by screenshot count", () => {
-    const one: ToolId[] = ["safe-share", "extract-text", "pdf", "editor", "annotate"];
-    expect(suggestedTools(1)).toEqual(one);
-    expect(suggestedTools(2)).toEqual(["stitch", "combine", ...one]);
+  it("suggests only live tools, and multi-image tools only when they apply", () => {
+    const single: ToolId[] = ["safe-share", "blur", "extract-text", "pdf", "metadata"];
+    expect(suggestedTools(1)).toEqual(single);
+    expect(suggestedTools(2)).toEqual(["stitch", "combine", ...single]);
     expect(suggestedTools(5).slice(0, 2)).toEqual(["stitch", "combine"]);
+    for (const count of [1, 2, 5]) for (const id of suggestedTools(count)) expect(TOOLS[id].status).toBe("live");
+  });
+
+  it("recommends a deterministic next step for each workspace context", () => {
+    expect(suggestedNext({ originals: 2 })).toEqual(["stitch", "combine", "safe-share"]);
+    expect(suggestedNext({ originals: 1 })).toEqual(["safe-share", "extract-text", "pdf"]);
+    // A redacted or metadata-cleaned result should not be sent back through privacy tools.
+    for (const producedBy of ["safe-share", "blur", "metadata"] as ToolId[]) {
+      expect(suggestedNext({ originals: 1, producedBy })).toEqual(["extract-text", "pdf", "combine"]);
+    }
+    expect(suggestedNext({ originals: 1, hasOcr: true })).toEqual(["searchable-pdf", "pdf", "safe-share"]);
+    expect(suggestedNext({ originals: 1, producedBy: "stitch" })).toEqual(["safe-share", "pdf", "extract-text"]);
+    for (const ctx of [{ originals: 1 }, { originals: 3 }, { originals: 1, producedBy: "combine" as ToolId }, { originals: 1, hasOcr: true }]) {
+      for (const id of suggestedNext(ctx)) expect(TOOLS[id].status).toBe("live");
+    }
   });
 });
 

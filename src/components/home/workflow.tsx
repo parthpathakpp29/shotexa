@@ -33,8 +33,8 @@ const STEPS: Step[] = [
     label: "Smart Stitch",
     tool: "stitch",
     title: "Seamless screenshot alignment",
-    body: "Shotexa finds where overlapping screenshots repeat, keeps fixed headers and footers from appearing twice, and joins them into one long image.",
-    points: ["Repeated headers handled", "Confidence you can see", "Full-resolution export"],
+    body: "Shotexa finds where overlapping screenshots repeat, keeps fixed headers and footers from appearing twice, and joins them into one long image. Captures that don’t overlap can be arranged side by side with Combine instead.",
+    points: ["Repeated headers handled", "Confidence you can see", "Combine for non-overlapping shots"],
     art: <StitchIllustration />,
   },
   {
@@ -42,8 +42,8 @@ const STEPS: Step[] = [
     label: "Redact",
     tool: "safe-share",
     title: "Share without the private parts",
-    body: "Black out names, numbers and messages permanently, and remove hidden metadata before a screenshot leaves your device.",
-    points: ["Solid, irreversible blackout", "Metadata check", "Review before export"],
+    body: "Black out, blur or pixelate names, numbers and messages permanently, and remove hidden metadata before a screenshot leaves your device.",
+    points: ["Solid, irreversible blackout", "Blur and pixelate too", "Metadata removed and verified"],
     art: <RedactIllustration />,
   },
   {
@@ -60,8 +60,8 @@ const STEPS: Step[] = [
     label: "PDF",
     tool: "pdf",
     title: "Long screenshots, clean pages",
-    body: "Turn screenshots into a PDF with page breaks placed between lines of content instead of through them.",
-    points: ["Smart page breaks", "Standard page sizes", "One file to share"],
+    body: "Turn screenshots into a PDF with page breaks placed between lines of content instead of through them — and add a searchable text layer when you need one.",
+    points: ["Smart page breaks", "Standard page sizes", "Searchable PDF option"],
     art: <PdfIllustration />,
   },
 ];

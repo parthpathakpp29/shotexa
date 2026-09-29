@@ -2,10 +2,13 @@
  * Homepage content sections (server components). Copy is deliberately factual: only what
  * Shotexa actually does, no invented users, logos, certifications or offline claims.
  */
-import { Check, Minus, SlidersHorizontal, Sparkles, Lock, ClipboardPaste, FileText, Rows2, ScanText, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, Minus, SlidersHorizontal, Sparkles, Lock, ClipboardPaste, FileText, Rows2, ScanText, ShieldCheck } from "lucide-react";
+import Link from "next/link";
 import type { ReactNode } from "react";
+import { ToolIcon } from "@/components/brand";
 import { Badge, SectionHeading } from "@/components/ui/primitives";
 import { SITE } from "@/config/site";
+import { TOOL_GROUPS, TOOLS } from "@/config/tools";
 import { ChooseScreenshotsButton } from "./choose-button";
 import { Uploader } from "@/components/workspace/uploader";
 
@@ -78,10 +81,10 @@ export function PrinciplesSection() {
 
 const ACTIONS: { icon: ReactNode; title: string; body: string }[] = [
   { icon: <ClipboardPaste />, title: "Paste or drop", body: "Add screenshots straight from your clipboard or files." },
-  { icon: <Rows2 />, title: "Smart Stitch", body: "Join overlapping captures into one continuous image." },
-  { icon: <ShieldCheck />, title: "Safe Share", body: "Black out personal details and remove metadata." },
-  { icon: <ScanText />, title: "Extract Text", body: "Copy the text from the result." },
-  { icon: <FileText />, title: "Export PDF", body: "Save a document with clean page breaks." },
+  { icon: <Rows2 />, title: "Stitch or combine", body: "Join overlapping captures, or arrange separate ones in one image." },
+  { icon: <ShieldCheck />, title: "Redact or blur", body: "Black out or blur personal details, and strip private metadata." },
+  { icon: <ScanText />, title: "Extract text", body: "Read the text from the result and copy or download it." },
+  { icon: <FileText />, title: "Export a PDF", body: "Save a PDF with clean page breaks — searchable when you need it." },
 ];
 
 export function ContinuousSection() {
@@ -103,6 +106,50 @@ export function ContinuousSection() {
             </li>
           ))}
         </ol>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Compact index of everything that actually works today, grouped by the registry categories.
+ * Deliberately quieter than the hero and workflow sections: it is a directory, not a pitch.
+ */
+export function ToolIndexSection() {
+  return (
+    <section className="py-20 sm:py-24">
+      <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
+        <SectionHeading eyebrow="The toolbox" title="Eight Tools," accent="One Workspace" lead="Add your screenshots once, then move between tools without uploading anything again." />
+        <div className="mt-12 grid gap-4 md:grid-cols-3">
+          {TOOL_GROUPS.map((group) => (
+            <div key={group.id} className="rounded-xl border border-line bg-surface p-6 shadow-xs">
+              <p className="t-micro text-accent-ink">{group.label}</p>
+              <ul className="mt-4 space-y-1">
+                {group.tools.map((id) => (
+                  <li key={id}>
+                    <Link href={TOOLS[id].route} className="group flex min-h-11 items-center gap-3 rounded-md px-2 -mx-2 hover:bg-surface-3">
+                      <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-accent-line bg-accent-soft text-accent">
+                        <ToolIcon name={TOOLS[id].icon} className="size-4" />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-sm font-medium text-ink">{TOOLS[id].name}</span>
+                        <span className="t-body-sm block truncate text-ink-3">{TOOLS[id].summary}</span>
+                      </span>
+                      <ArrowRight aria-hidden className="ml-auto size-4 shrink-0 text-ink-3 transition-transform group-hover:translate-x-0.5" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <p className="t-body-sm mt-6 text-center text-ink-3">
+          More tools are on the way —{" "}
+          <Link href="/tools" className="font-medium text-accent-ink hover:underline">
+            see what’s coming
+          </Link>
+          .
+        </p>
       </div>
     </section>
   );

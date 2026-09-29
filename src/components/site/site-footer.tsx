@@ -2,50 +2,46 @@ import Link from "next/link";
 import { Logo } from "@/components/brand";
 import { Kbd } from "@/components/ui/kbd";
 import { Badge } from "@/components/ui/primitives";
-import { TOOLS } from "@/config/tools";
+import { TOOL_GROUPS, TOOLS } from "@/config/tools";
 import { SITE } from "@/config/site";
-
-const TOOL_LINKS = [TOOLS.stitch, TOOLS["safe-share"], TOOLS["extract-text"], TOOLS.pdf];
 
 export function SiteFooter() {
   return (
     <footer className="border-t border-line bg-surface">
-      <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr] lg:grid-cols-[1.4fr_repeat(4,1fr)]">
         <div className="max-w-sm">
           <Logo />
-          <p className="t-body-sm mt-4 text-ink-2">A calm, precise screenshot toolbox for stitching, redaction, text extraction and PDF export — entirely inside your web browser.</p>
+          <p className="t-body-sm mt-4 text-ink-2">A calm, precise screenshot toolbox for stitching, combining, redaction, text extraction and PDF export — entirely inside your web browser.</p>
           <Badge tone="accent" dot className="mt-4">
             {SITE.trustLine}
           </Badge>
         </div>
-        <nav aria-label="Tools">
-          <p className="t-micro mb-4 text-ink">Tools</p>
+        {/* Grouped from the registry: a new live tool appears here automatically. */}
+        {TOOL_GROUPS.map((group) => (
+          <nav key={group.id} aria-label={group.label}>
+            <p className="t-micro mb-4 text-ink">{group.label}</p>
+            <ul className="space-y-2.5">
+              {group.tools.map((id) => (
+                <li key={id}>
+                  <Link href={TOOLS[id].route} className="t-body-sm text-ink-2 hover:text-ink">
+                    {TOOLS[id].name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))}
+        <nav aria-label="More">
+          <p className="t-micro mb-4 text-ink">More</p>
           <ul className="space-y-2.5">
-            {TOOL_LINKS.map((t) => (
-              <li key={t.id}>
-                <Link href={t.route} className="t-body-sm text-ink-2 hover:text-ink">
-                  {t.name}
-                </Link>
-              </li>
-            ))}
             <li>
               <Link href="/tools" className="t-body-sm text-ink-2 hover:text-ink">
                 All tools
               </Link>
             </li>
-          </ul>
-        </nav>
-        <nav aria-label="Privacy">
-          <p className="t-micro mb-4 text-ink">Privacy</p>
-          <ul className="space-y-2.5">
             <li>
               <Link href="/privacy" className="t-body-sm text-ink-2 hover:text-ink">
                 How local processing works
-              </Link>
-            </li>
-            <li>
-              <Link href={TOOLS.metadata.route} className="t-body-sm text-ink-2 hover:text-ink">
-                Remove image metadata
               </Link>
             </li>
           </ul>

@@ -42,7 +42,7 @@ export interface StitchExportResult {
   bytes: number;
 }
 
-export interface CombineExportResult extends StitchExportResult {}
+export type CombineExportResult = StitchExportResult;
 
 export interface WorkspaceSafeShareResult extends Omit<SafeShareExportResult, "blob"> {
   id: FileId;

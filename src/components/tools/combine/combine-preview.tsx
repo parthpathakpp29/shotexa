@@ -2,12 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import type { CombinePlan } from "@/core/combine/types";
-import type { WorkspaceFile } from "@/core/runtime/types";
 import { useElementWidth } from "@/lib/use-element-width";
 import { useWorkspaceContext } from "@/components/workspace/workspace-provider";
 
 /** Downscaled canvas preview. Full-resolution pixels are decoded only during export. */
-export function CombinePreview({ inputIds, files, plan }: { inputIds: string[]; files: Record<string, WorkspaceFile>; plan: CombinePlan }) {
+export function CombinePreview({ inputIds, plan }: { inputIds: string[]; plan: CombinePlan }) {
   const { runtime } = useWorkspaceContext();
   const canvas = useRef<HTMLCanvasElement>(null);
   const [boxRef, boxWidth] = useElementWidth<HTMLDivElement>();
@@ -36,7 +35,7 @@ export function CombinePreview({ inputIds, files, plan }: { inputIds: string[]; 
       if (!bitmap) continue;
       ctx.drawImage(bitmap, placement.x, placement.y, placement.width, placement.height);
     }
-  }, [runtime, inputIds, plan, boxWidth, cssWidth, cssHeight]);
+  }, [runtime, inputIds, plan, boxWidth, cssWidth, cssHeight, scale]);
 
   return (
     <section className="rounded-lg border border-line bg-surface p-2 shadow-xs sm:p-3" data-testid="combine-preview">
