@@ -300,6 +300,62 @@ describe("WorkspaceRuntime", () => {
     expect(again.pieces.map((p) => p.height)).toEqual([200, 200, 200]);
   });
 
+  it("Compress and Convert re-encode the original, and save only when asked", async () => {
+    const inputs: { image: Blob; format: string; quality: number; background: string; probe?: unknown; source: { width: number; height: number } }[] = [];
+    const { broker, calls } = fakeBroker({
+      "image.encode": (i) => {
+        const input = i as (typeof inputs)[number];
+        inputs.push(input);
+        return { blob: new Blob([new Uint8Array(input.format === "png" ? 900 : 300)], { type: `image/${input.format}` }), width: input.source.width, height: input.source.height, format: input.format, strategy: "single-canvas", ms: 1, probe: input.probe ? { ...(input.probe as object), bytes: 200 } : undefined };
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const original = png("chat-light/a.png");
+    const [sourceId] = (await rt.ingest([original], "picker")).added;
+    const f = rt.store.getState().files[sourceId];
+
+    // Compress keeps PNG (never switches format by itself) and measures WebP for a factual hint.
+    const kept = await rt.encodeAsset("compress", sourceId);
+    expect(calls).toContain("image:image.encode");
+    expect(inputs[0]).toMatchObject({ image: original, format: "png", quality: 0.8, background: "#ffffff", probe: { format: "webp", quality: 0.8 }, source: { width: f.width, height: f.height } });
+    expect(kept).toMatchObject({ tool: "compress", name: "compressed-a.png", type: "image/png", width: f.width, height: f.height, bytes: 900, originalBytes: f.bytes, probe: { format: "webp", bytes: 200 } });
+    expect(rt.store.getState().order).toEqual([sourceId]); // nothing added yet
+
+    // Convert: PNG → JPEG by default, on the chosen background.
+    rt.store.getState().setEncodeSettings("convert", { background: "#F7F1E3", quality: 0.7 });
+    const converted = await rt.encodeAsset("convert", sourceId);
+    expect(inputs[1]).toMatchObject({ format: "jpeg", quality: 0.7, background: "#f7f1e3" });
+    expect(inputs[1].probe).toBeUndefined();
+    expect(converted).toMatchObject({ name: "a.jpg", type: "image/jpeg", format: "jpeg" });
+
+    const id = rt.saveEncoded(converted);
+    const s = rt.store.getState();
+    expect(s.selectedId).toBe(id);
+    expect(s.files[id]).toMatchObject({ name: "a.jpg", type: "image/jpeg", kind: "artifact", producedBy: "convert", derivedFrom: [sourceId], width: f.width, height: f.height, bytes: 300 });
+    expect(rt.registry.blob(id)).toBe(converted.blob);
+    expect(rt.registry.blob(sourceId)).toBe(original); // the source is untouched
+
+    // A saved result is an ordinary image: compress it again, without re-upload.
+    rt.store.getState().setEncodeSettings("compress", { format: "webp" });
+    const again = await rt.encodeAsset("compress", id);
+    expect(inputs[2]).toMatchObject({ image: converted.blob, format: "webp" });
+    expect(again.name).toBe("compressed-a.webp");
+    expect(await rt.hasTransparency(id)).toBe(false); // JPEG cannot be transparent
+  });
+
+  it("reports a controlled encode error and adds nothing", async () => {
+    const { broker } = fakeBroker({
+      "image.encode": () => {
+        throw Object.assign(new Error("x"), { code: "ENCODE_FORMAT_TOO_LARGE" });
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const { added } = await rt.ingest([png("chat-light/a.png")], "drop");
+    await expect(rt.encodeAsset("convert", added[0])).rejects.toMatchObject({ code: "ENCODE_FORMAT_TOO_LARGE" });
+    expect(Object.values(rt.store.getState().jobs).find((j) => j.kind === "encode")).toMatchObject({ status: "failed", error: "ENCODE_FORMAT_TOO_LARGE" });
+    expect(rt.store.getState().order).toEqual(added);
+  });
+
   it("reports a controlled Split error and adds nothing", async () => {
     const { broker } = fakeBroker({
       "split.export": () => {

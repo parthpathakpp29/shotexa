@@ -6,7 +6,7 @@ import { createStore } from "zustand/vanilla";
 import type { ToolId } from "@/config/tools";
 import { clampRect } from "@/core/redaction/geometry";
 import type { ImageRect, Redaction, RedactionMode, RedactionSession } from "@/core/redaction/types";
-import type { EditorSession, ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, SplitSession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
+import type { EditorSession, ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, SplitSession, EncodeSession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
 import { DEFAULT_COMBINE_SETTINGS } from "@/core/combine/layout";
 import type { CombineSettings } from "@/core/combine/types";
 import { IDENTITY_TRANSFORM, sameTransform } from "@/core/image-transform/transform";
@@ -14,6 +14,8 @@ import type { ImageTransform } from "@/core/image-transform/types";
 import { DEFAULT_STYLE } from "@/core/annotation/objects";
 import type { AnnotationObject, AnnotationSession, AnnotationStyle, AnnotationTool } from "@/core/annotation/types";
 import type { SplitSettings } from "@/core/split/types";
+import type { EncodeSettings, EncodeTool } from "@/core/image-encode/types";
+import { DEFAULT_ENCODE_SETTINGS, normaliseSettings } from "@/core/image-encode/settings";
 
 /** Consecutive offset edits on the same join within this window merge into one undo step (slider drags). */
 export const COALESCE_MS = 600;
@@ -38,6 +40,7 @@ export interface WorkspaceState {
   editor: EditorSession;
   annotation: AnnotationSession;
   split: SplitSession;
+  encode: EncodeSession;
   documents: Record<string, WorkspaceDocument>;
   documentOrder: string[];
   /** Most recent tool output (e.g. the stitched image) for "Continue with…". */
@@ -115,6 +118,7 @@ export interface WorkspaceActions {
    * `coalesce` is a gesture key, as for annotations (typing a count, nudging one line).
    */
   setSplit(assetId: FileId, next: SplitSettings | null, opts?: { coalesce?: string; now?: number }): void;
+  setEncodeSettings(tool: EncodeTool, patch: Partial<EncodeSettings>): void;
 }
 
 export type WorkspaceStore = ReturnType<typeof createWorkspaceStore>;
@@ -149,6 +153,7 @@ const initial = (): WorkspaceState => ({
   editor: { byAsset: {} },
   annotation: { byAsset: {}, selectedId: null, tool: "arrow", style: DEFAULT_STYLE },
   split: { byAsset: {} },
+  encode: DEFAULT_ENCODE_SETTINGS,
   documents: {},
   documentOrder: [],
   lastArtifactId: null,
@@ -532,6 +537,7 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
         }
         if (opts.select !== undefined) set((s) => ({ annotation: { ...s.annotation, selectedId: opts.select ?? null } }));
       },
+      setEncodeSettings: (tool, patch) => set((s) => ({ encode: { ...s.encode, [tool]: normaliseSettings({ ...s.encode[tool], ...patch }) } })),
       setSplit(assetId, next, opts = {}) {
         if (!get().files[assetId]) return;
         const before = get().split.byAsset[assetId] ?? null;

@@ -13,6 +13,7 @@ import { DEFAULT_LIMITS, type ProcessingLimits } from "@/config/limits";
 import { createPngStreamEncoder } from "@/core/export/png-stream-encoder";
 import { readImageSize } from "@/core/image/image-size";
 import { chooseOutputStrategy, type OutputFormat } from "@/core/image/output-strategy";
+import { encodeCanvas } from "@/core/image-encode/encode";
 import { composeTiles, createBlobBitmapProvider, type ComposePlan } from "@/core/image/tiled-compose";
 import { StitchError } from "./types";
 
@@ -39,10 +40,8 @@ export interface ComposeChainResult {
   ms: number;
 }
 
-const MIME: Record<OutputFormat, string> = { png: "image/png", jpeg: "image/jpeg", webp: "image/webp" };
-
-async function encode(c: AnyCanvas, type: string, quality?: number): Promise<Blob> {
-  const blob = "convertToBlob" in c ? await c.convertToBlob({ type, quality }) : await new Promise<Blob | null>((r) => (c as HTMLCanvasElement).toBlob(r, type, quality));
+async function encode(c: AnyCanvas, format: OutputFormat, quality?: number): Promise<Blob> {
+  const blob = await encodeCanvas(c, format, quality);
   if (!blob) throw new StitchError("INTERNAL", "encoder returned null");
   return blob;
 }
@@ -77,7 +76,7 @@ export async function composeChain(images: Blob[], plan: ComposePlan, o: Compose
         o.onProgress?.((i + 1) / (plan.segments.length + 1));
         await o.yieldBetweenTiles?.();
       }
-      blob = await encode(canvas, MIME[o.format], o.quality);
+      blob = await encode(canvas, o.format, o.quality);
     } finally {
       for (const seg of plan.segments) provider.release(seg.source);
       canvas.width = 0; // a canvas that drew bitmaps pins them until reset (Spike B)

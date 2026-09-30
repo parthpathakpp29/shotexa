@@ -58,6 +58,8 @@ export interface TransformExportOptions {
   format: OutputFormat;
   quality?: number;
   signal?: { readonly aborted: boolean };
+  /** Colour under transparent pixels for formats without transparency (JPEG). Default white. */
+  background?: string;
   createCanvas?: (width: number, height: number) => OffscreenCanvas | HTMLCanvasElement;
   /** Called between tiles on the main-thread fallback to keep the page responsive. */
   yieldBetweenTiles?: () => Promise<void>;

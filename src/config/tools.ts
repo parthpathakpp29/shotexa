@@ -7,10 +7,10 @@
  *  - "preview" route + workspace shell exist (files carry over) but the tool is not finished:
  *              noindex, not in the sitemap, honest "coming next" state
  */
-export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "split" | "compress" | "metadata";
+export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "split" | "compress" | "convert" | "metadata";
 
 export type ToolStatus = "live" | "preview";
-export type ToolIcon = "stitch" | "combine" | "shield" | "blur" | "text" | "pdf" | "crop" | "pen" | "scissors" | "compress" | "eraser";
+export type ToolIcon = "stitch" | "combine" | "shield" | "blur" | "text" | "pdf" | "crop" | "pen" | "scissors" | "compress" | "convert" | "eraser";
 
 /** Grouping used by every discovery surface (tools page, header menu, footer). */
 export type ToolCategory = "create" | "protect" | "documents" | "edit";
@@ -50,7 +50,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Smart Screenshot Stitcher",
       description: "Automatically join overlapping screenshots into one long image, review the join, adjust it manually and export at full resolution — privately in your browser.",
     },
-    continueWith: ["safe-share", "annotate", "pdf", "split", "editor", "extract-text", "combine"],
+    continueWith: ["safe-share", "annotate", "pdf", "split", "editor", "extract-text", "combine", "compress"],
   },
   combine: {
     id: "combine",
@@ -62,7 +62,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     summary: "Place screenshots side by side or in a stack.",
     minFiles: 2,
     seo: { title: "Combine Screenshots Online – Merge Into One Image | Shotexa", h1: "Combine Screenshots Into One Image", description: "Combine screenshots vertically, horizontally or in a grid — locally in your browser." },
-    continueWith: ["safe-share", "annotate", "editor", "pdf", "extract-text", "split", "metadata"],
+    continueWith: ["safe-share", "annotate", "editor", "pdf", "extract-text", "split", "compress", "metadata"],
   },
   "safe-share": {
     id: "safe-share",
@@ -78,7 +78,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Redact Sensitive Information From a Screenshot",
       description: "Permanently black out sensitive information and remove private metadata from screenshots, locally in your browser.",
     },
-    continueWith: ["extract-text", "pdf", "annotate", "editor", "combine"],
+    continueWith: ["extract-text", "pdf", "annotate", "editor", "combine", "compress"],
   },
   blur: {
     id: "blur",
@@ -90,7 +90,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     summary: "Blur or pixelate parts of a screenshot.",
     minFiles: 1,
     seo: { title: "Blur Screenshot Online – Free & Private | Shotexa", h1: "Blur a Screenshot Online", description: "Blur or pixelate parts of a screenshot privately in your browser." },
-    continueWith: ["extract-text", "pdf", "annotate", "editor", "combine"],
+    continueWith: ["extract-text", "pdf", "annotate", "editor", "combine", "compress"],
   },
   "extract-text": {
     id: "extract-text",
@@ -147,7 +147,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Edit a Screenshot Online",
       description: "Crop, resize, rotate and flip screenshots at full resolution — privately in your browser. Your original is never changed.",
     },
-    continueWith: ["annotate", "safe-share", "extract-text", "pdf", "combine", "split"],
+    continueWith: ["annotate", "safe-share", "extract-text", "pdf", "combine", "split", "compress", "convert"],
   },
   annotate: {
     id: "annotate",
@@ -163,7 +163,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Annotate a Screenshot Online",
       description: "Add arrows, boxes, highlights, text, freehand notes and numbered steps to screenshots at full resolution — privately in your browser. Your original is never changed.",
     },
-    continueWith: ["safe-share", "pdf", "combine", "extract-text", "editor", "split"],
+    continueWith: ["safe-share", "pdf", "combine", "extract-text", "editor", "split", "compress", "convert"],
   },
   split: {
     id: "split",
@@ -179,19 +179,39 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Split a Long Screenshot Into Multiple Images",
       description: "Cut a long screenshot into equal parts or at your own split lines, and export every piece at full resolution — privately in your browser.",
     },
-    continueWith: ["combine", "annotate", "editor", "safe-share", "extract-text", "pdf"],
+    continueWith: ["combine", "annotate", "editor", "safe-share", "extract-text", "pdf", "compress", "convert"],
   },
   compress: {
     id: "compress",
     name: "Compress",
     route: "/compress-screenshot",
-    status: "preview",
+    status: "live",
     category: "edit",
     icon: "compress",
     summary: "Make a screenshot file smaller.",
     minFiles: 1,
-    seo: { title: "Compress Screenshot Online – Reduce Image Size | Shotexa", h1: "Compress a Screenshot", description: "Reduce screenshot file size locally in your browser." },
-    continueWith: ["safe-share", "pdf", "combine"],
+    seo: {
+      title: "Compress Screenshot Online – Reduce Image Size | Shotexa",
+      h1: "Compress a Screenshot Online",
+      description: "Make screenshots smaller as JPEG, WebP or PNG, see exactly how much you save, and download the result — privately in your browser.",
+    },
+    continueWith: ["editor", "annotate", "safe-share", "extract-text", "pdf", "combine"],
+  },
+  convert: {
+    id: "convert",
+    name: "Convert",
+    route: "/convert-screenshot",
+    status: "live",
+    category: "edit",
+    icon: "convert",
+    summary: "Change a screenshot to PNG, JPEG or WebP.",
+    minFiles: 1,
+    seo: {
+      title: "Convert Screenshot – PNG, JPEG & WebP | Shotexa",
+      h1: "Convert a Screenshot to PNG, JPEG or WebP",
+      description: "Convert screenshots between PNG, JPEG and WebP at the same size, with a background of your choice for transparent images — privately in your browser.",
+    },
+    continueWith: ["editor", "annotate", "safe-share", "extract-text", "pdf", "combine"],
   },
   metadata: {
     id: "metadata",

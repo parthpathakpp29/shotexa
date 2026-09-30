@@ -75,22 +75,25 @@ export function ToolSwitcher({ tool }: { tool: ToolId }) {
               ))}
             </div>
           ))}
-          <div className="mt-1 border-t border-line pt-1">
-            <p className="t-micro px-2.5 pb-1 pt-2 text-ink-3">Coming soon</p>
-            {UPCOMING_TOOLS.map((id) => (
-              <Link
-                key={id}
-                role="menuitem"
-                href={TOOLS[id].route}
-                onClick={() => setOpen(false)}
-                className={cn("flex min-h-10 items-center gap-2.5 rounded-sm px-2.5 text-sm text-ink-3 hover:bg-surface-2", id === tool && "text-accent-ink")}
-              >
-                <ToolIcon name={TOOLS[id].icon} className="size-4" />
-                {TOOLS[id].name}
-                <span className="t-micro ml-auto text-[9.5px]">Soon</span>
-              </Link>
-            ))}
-          </div>
+          {/* Only while unfinished routes exist. */}
+          {UPCOMING_TOOLS.length > 0 && (
+            <div className="mt-1 border-t border-line pt-1">
+              <p className="t-micro px-2.5 pb-1 pt-2 text-ink-3">Coming soon</p>
+              {UPCOMING_TOOLS.map((id) => (
+                <Link
+                  key={id}
+                  role="menuitem"
+                  href={TOOLS[id].route}
+                  onClick={() => setOpen(false)}
+                  className={cn("flex min-h-10 items-center gap-2.5 rounded-sm px-2.5 text-sm text-ink-3 hover:bg-surface-2", id === tool && "text-accent-ink")}
+                >
+                  <ToolIcon name={TOOLS[id].icon} className="size-4" />
+                  {TOOLS[id].name}
+                  <span className="t-micro ml-auto text-[9.5px]">Soon</span>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

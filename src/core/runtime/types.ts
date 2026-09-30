@@ -10,6 +10,7 @@ import type { CombineSettings } from "@/core/combine/types";
 import type { ImageTransform } from "@/core/image-transform/types";
 import type { AnnotationObject } from "@/core/annotation/types";
 import type { SplitSettings } from "@/core/split/types";
+import type { EncodeSettings, EncodeTool } from "@/core/image-encode/types";
 
 export type FileId = string;
 export type ImageMime = "image/png" | "image/jpeg" | "image/webp";
@@ -35,7 +36,7 @@ export interface WorkspaceFile {
 export type JobStatus = "running" | "done" | "failed" | "cancelled";
 export interface Job {
   id: string;
-  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "editor-export" | "annotate-export" | "split-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
+  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "editor-export" | "annotate-export" | "split-export" | "encode" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
   status: JobStatus;
   progress: number | null;
   /** Controlled error code only (never raw messages). */
@@ -150,6 +151,9 @@ export interface EditorSession {
 export interface SplitSession {
   byAsset: Record<FileId, SplitSettings>;
 }
+
+/** Compress / Convert settings — one set per tool, not undoable (like export settings). */
+export type EncodeSession = Record<EncodeTool, EncodeSettings>;
 
 export interface OverlapHint {
   status: "idle" | "checking" | "likely" | "unlikely";

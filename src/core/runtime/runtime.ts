@@ -14,6 +14,8 @@ import type { AnalysedSet, ShotexaPdfEngine } from "@/core/pdf/pdf-engine";
 import type { PageSetup, PaginationPlan } from "@/core/pdf/types";
 import { searchableSourceFromResult } from "@/core/pdf/searchable-text";
 import type { CombinePlan } from "@/core/combine/types";
+import type { EncodeTool } from "@/core/image-encode/types";
+import type { OutputFormat } from "@/core/image-encode/formats";
 import { IDENTITY_TRANSFORM, isIdentity } from "@/core/image-transform/transform";
 import type { SafeShareExportResult } from "@/core/redaction/types";
 import { planStitchChain, type ChainPlan } from "@/core/stitch/chain";
@@ -84,6 +86,25 @@ export interface SplitRunResult {
   ms: number;
 }
 
+/** A Compress / Convert run, held by the page until the user saves it. */
+export interface EncodeRunResult {
+  tool: EncodeTool;
+  sourceId: FileId;
+  name: string;
+  type: ImageMime;
+  blob: Blob;
+  width: number;
+  height: number;
+  bytes: number;
+  /** Size of the source file, for the comparison. */
+  originalBytes: number;
+  format: OutputFormat;
+  quality: number;
+  background: string;
+  ms: number;
+  probe?: { format: OutputFormat; quality: number; bytes: number };
+}
+
 export interface WorkspacePdfResult {
   id: string;
   blob: Blob;
@@ -122,6 +143,15 @@ export interface WorkspaceRuntime {
   exportSplit(assetId?: FileId): Promise<SplitRunResult>;
   /** Add rendered Split pieces to the workspace as artifacts (the first is selected). */
   addSplitPieces(result: SplitRunResult): FileId[];
+  /**
+   * Compress / Convert: re-encode the asset (same pixel size) with the tool's settings. The
+   * result is returned for comparison, not added — `saveEncoded` makes it an artifact.
+   */
+  encodeAsset(tool: EncodeTool, assetId?: FileId): Promise<EncodeRunResult>;
+  /** Add an encoded result to the workspace as a new, selected artifact. */
+  saveEncoded(result: EncodeRunResult): FileId;
+  /** Whether the asset has transparent pixels (checked on its preview); null until known. */
+  hasTransparency(assetId: FileId): Promise<boolean | null>;
   exportSafeShare(assetId?: FileId): Promise<WorkspaceSafeShareResult>;
   inspectMetadata(assetId?: FileId): Promise<MetadataInspectRun>;
   cleanMetadata(assetId?: FileId): Promise<WorkspaceMetadataCleanResult>;
@@ -582,6 +612,89 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     }
   }
 
+  async function encodeAsset(tool: EncodeTool, assetId?: FileId): Promise<EncodeRunResult> {
+    const { id: sourceId, file, blob } = selected(assetId);
+    const { resolveFormat, encodedName } = await import("@/core/image-encode/settings");
+    const settings = store.getState().encode[tool];
+    const format = resolveFormat(tool, settings.format, file.type);
+    const source = { width: file.width, height: file.height };
+    // PNG has no quality setting; measure WebP too so any hint quotes a real size.
+    const probe = format === "png" ? { format: "webp" as const, quality: 0.8 } : undefined;
+    const input = { source, format, quality: settings.quality, background: settings.background, probe };
+    const jobId = `encode:${Date.now()}`;
+    job(jobId, "encode", "running", 0);
+    try {
+      const onProgress = (progress: number) => job(jobId, "encode", "running", progress);
+      const result = caps.offscreenCanvas
+        ? await broker.run("image", "image.encode", { image: blob, ...input }, { onProgress })
+        : await (await import("@/core/image-encode/reencode")).encodeImage(blob, {
+            ...input,
+            createCanvas: (width, height) => Object.assign(document.createElement("canvas"), { width, height }),
+            yieldBetweenTiles: timeSlicer(),
+            onProgress,
+          });
+      if (source.width * source.height > 16_000_000) broker.release("image");
+      job(jobId, "encode", "done", 1);
+      const mime: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
+      return {
+        tool,
+        sourceId,
+        name: encodedName(tool, file.name, format),
+        type: mime,
+        blob: result.blob,
+        width: result.width,
+        height: result.height,
+        bytes: result.blob.size,
+        originalBytes: file.bytes,
+        format,
+        quality: settings.quality,
+        background: settings.background,
+        ms: result.ms,
+        probe: result.probe,
+      };
+    } catch (error) {
+      const code = codeOf(error);
+      job(jobId, "encode", "failed", null, code);
+      throw Object.assign(new Error(code), { code });
+    }
+  }
+
+  function saveEncoded(result: EncodeRunResult): FileId {
+    const id = newId();
+    registry.put(id, result.blob);
+    // A new artifact: the source keeps its blob exactly as it was.
+    store.getState().addArtifact({
+      id,
+      name: result.name,
+      type: result.type,
+      bytes: result.bytes,
+      width: result.width,
+      height: result.height,
+      source: "artifact",
+      kind: "artifact",
+      derivedFrom: [result.sourceId],
+      producedBy: result.tool,
+      addedAt: Date.now(),
+      previewVersion: 0,
+    });
+    previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
+    return id;
+  }
+
+  const alphaCache = new Map<FileId, boolean>();
+  async function hasTransparency(assetId: FileId): Promise<boolean | null> {
+    const file = store.getState().files[assetId];
+    if (!file) return null;
+    if (file.type === "image/jpeg") return false; // JPEG cannot carry transparency
+    if (alphaCache.has(assetId)) return alphaCache.get(assetId)!;
+    const preview = registry.preview(assetId);
+    if (!preview) return null;
+    const { bitmapHasAlpha } = await import("@/core/image-encode/alpha");
+    const found = bitmapHasAlpha(preview, typeof OffscreenCanvas === "undefined" ? (width, height) => Object.assign(document.createElement("canvas"), { width, height }) : undefined);
+    alphaCache.set(assetId, found);
+    return found;
+  }
+
   function addSplitPieces(result: SplitRunResult): FileId[] {
     if (!store.getState().files[result.sourceId]) return [];
     const added: WorkspaceFile[] = result.pieces.map((p) => {
@@ -954,6 +1067,9 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     exportAnnotated,
     exportSplit,
     addSplitPieces,
+    encodeAsset,
+    saveEncoded,
+    hasTransparency,
     exportSafeShare,
     inspectMetadata,
     cleanMetadata,

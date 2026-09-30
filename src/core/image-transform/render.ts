@@ -12,19 +12,15 @@ import { DEFAULT_LIMITS } from "@/config/limits";
 import { createPngStreamEncoder } from "@/core/export/png-stream-encoder";
 import { readImageSize } from "@/core/image/image-size";
 import { chooseOutputStrategy, type OutputFormat } from "@/core/image/output-strategy";
+import { encodeCanvas, prepareBackground } from "@/core/image-encode/encode";
 import { drawTransformed } from "./matrix";
 import { isValidTransform, outputIssue, outputSize } from "./transform";
 import { EditorError, type ImageTransform, type TransformExportOptions, type TransformExportResult } from "./types";
 
 type Canvas = OffscreenCanvas | HTMLCanvasElement;
 type Ctx = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
-const MIME: Record<OutputFormat, string> = { png: "image/png", jpeg: "image/jpeg", webp: "image/webp" };
-
-async function encode(canvas: Canvas, type: string, quality?: number): Promise<Blob> {
-  const blob =
-    "convertToBlob" in canvas
-      ? await canvas.convertToBlob({ type, quality })
-      : await new Promise<Blob | null>((resolve) => (canvas as HTMLCanvasElement).toBlob(resolve, type, quality));
+async function encode(canvas: Canvas, format: TransformExportOptions["format"], quality?: number): Promise<Blob> {
+  const blob = await encodeCanvas(canvas, format, quality);
   if (!blob) throw new EditorError("EDITOR_MEMORY_PRESSURE", "encoder returned null");
   return blob;
 }
@@ -108,14 +104,12 @@ export async function renderDecoded(bitmap: ImageBitmap, t: ImageTransform, o: T
     if (plan.strategy === "single-canvas") {
       canvas = make(out.width, out.height);
       const ctx = context(canvas);
-      if (o.format === "jpeg") {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, out.width, out.height);
-      }
+      // JPEG has no transparency: paint the chosen background (white by default), never black.
+      prepareBackground(ctx, o.format, out.width, out.height, o.background);
       drawTransformed(ctx, bitmap, 1, t, o.source, out);
       o.overlay?.(ctx, out, 0);
       o.onProgress?.(0.6);
-      blob = await encode(canvas, MIME[o.format], o.quality);
+      blob = await encode(canvas, o.format, o.quality);
     } else {
       const encoder = createPngStreamEncoder(out.width, out.height);
       canvas = make(out.width, plan.tileHeight);

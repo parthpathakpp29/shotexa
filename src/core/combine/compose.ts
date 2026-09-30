@@ -7,17 +7,14 @@ import { DEFAULT_LIMITS } from "@/config/limits";
 import { createPngStreamEncoder } from "@/core/export/png-stream-encoder";
 import { readImageSize } from "@/core/image/image-size";
 import { chooseOutputStrategy, type OutputFormat } from "@/core/image/output-strategy";
+import { encodeCanvas } from "@/core/image-encode/encode";
 import { createBlobBitmapProvider } from "@/core/image/tiled-compose";
 import { CombineError } from "./errors";
 import type { CombineComposeOptions, CombineComposeResult, CombinePlan } from "./types";
 
 type Canvas = OffscreenCanvas | HTMLCanvasElement;
-const MIME: Record<OutputFormat, string> = { png: "image/png", jpeg: "image/jpeg", webp: "image/webp" };
-
-async function encode(canvas: Canvas, type: string, quality?: number): Promise<Blob> {
-  const blob = "convertToBlob" in canvas
-    ? await canvas.convertToBlob({ type, quality })
-    : await new Promise<Blob | null>((resolve) => (canvas as HTMLCanvasElement).toBlob(resolve, type, quality));
+async function encode(canvas: Canvas, format: OutputFormat, quality?: number): Promise<Blob> {
+  const blob = await encodeCanvas(canvas, format, quality);
   if (!blob) throw new CombineError("COMBINE_MEMORY_PRESSURE", "encoder returned null");
   return blob;
 }
@@ -83,7 +80,7 @@ export async function composeCombine(images: Blob[], plan: CombinePlan, options:
           options.onProgress?.((index + 1) / (plan.placements.length + 1));
           await options.yieldBetweenTiles?.();
         }
-        blob = await encode(canvas, MIME[options.format], options.quality);
+        blob = await encode(canvas, options.format, options.quality);
       } finally {
         canvas.width = 0;
         canvas.height = 0;
