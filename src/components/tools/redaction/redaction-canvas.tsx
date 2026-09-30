@@ -73,8 +73,20 @@ export function RedactionCanvas({ assetId }: { assetId: string }) {
   const [containerRef, containerWidth] = useElementWidth<HTMLDivElement>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
-  const [draft, setDraft] = useState<ImageRect | null>(null);
-  const [transient, setTransient] = useState<{ id: string; rect: ImageRect } | null>(null);
+  const [draft, setDraftState] = useState<ImageRect | null>(null);
+  const [transient, setTransientState] = useState<{ id: string; rect: ImageRect } | null>(null);
+  // Pointer-up commits the latest drag value, not the last rendered one: on a slow device a
+  // fast drag can outrun rendering, which previously committed a stale (or no) rectangle.
+  const latestDraft = useRef<ImageRect | null>(null);
+  const latestTransient = useRef<{ id: string; rect: ImageRect } | null>(null);
+  const setDraft = (value: ImageRect | null) => {
+    latestDraft.current = value;
+    setDraftState(value);
+  };
+  const setTransient = (value: { id: string; rect: ImageRect } | null) => {
+    latestTransient.current = value;
+    setTransientState(value);
+  };
   const interaction = useRef<
     | { type: "create"; pointer: number; start: { x: number; y: number } }
     | { type: "move" | "resize"; pointer: number; start: { x: number; y: number }; operation: Redaction }
@@ -138,8 +150,10 @@ export function RedactionCanvas({ assetId }: { assetId: string }) {
   function finish(e: React.PointerEvent<HTMLDivElement>) {
     const active = interaction.current;
     if (!active || active.pointer !== e.pointerId) return;
-    if (active.type === "create" && draft && transform && draft.width >= 4 / (transform.displayWidth / transform.imageWidth) && draft.height >= 4 / (transform.displayHeight / transform.imageHeight)) add(assetId, draft);
-    else if (active.type !== "create" && transient) update(assetId, transient.id, { rect: transient.rect });
+    const created = latestDraft.current;
+    const moved = latestTransient.current;
+    if (active.type === "create" && created && transform && created.width >= 4 / (transform.displayWidth / transform.imageWidth) && created.height >= 4 / (transform.displayHeight / transform.imageHeight)) add(assetId, created);
+    else if (active.type !== "create" && moved) update(assetId, moved.id, { rect: moved.rect });
     interaction.current = null;
     setDraft(null);
     setTransient(null);

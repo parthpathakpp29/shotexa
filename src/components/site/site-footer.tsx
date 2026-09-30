@@ -8,10 +8,11 @@ import { SITE } from "@/config/site";
 export function SiteFooter() {
   return (
     <footer className="border-t border-line bg-surface">
-      <div className="mx-auto grid max-w-[1200px] gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr] lg:grid-cols-[1.4fr_repeat(4,1fr)]">
-        <div className="max-w-sm">
+      {/* The brand block spans two rows so More and Shortcuts sit under the tool columns. */}
+      <div className="mx-auto grid max-w-[1200px] gap-x-10 gap-y-10 px-4 py-12 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr_1fr] lg:grid-cols-[1.4fr_repeat(4,1fr)]">
+        <div className="max-w-sm md:row-span-2">
           <Logo />
-          <p className="t-body-sm mt-4 text-ink-2">A calm, precise screenshot toolbox for stitching, combining, redaction, text extraction and PDF export — entirely inside your web browser.</p>
+          <p className="t-body-sm mt-4 text-ink-2">A calm, precise screenshot toolbox for stitching, combining, editing, redaction, text extraction and PDF export — entirely inside your web browser.</p>
           <Badge tone="accent" dot className="mt-4">
             {SITE.trustLine}
           </Badge>

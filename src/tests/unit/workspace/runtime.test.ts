@@ -7,6 +7,8 @@ import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { createWorkspaceRuntime } from "@/core/runtime/runtime";
 import { planCombine } from "@/core/combine/layout";
+import { flipTransform, IDENTITY_TRANSFORM, rotateTransform, withVisibleCrop } from "@/core/image-transform/transform";
+import type { ImageTransform } from "@/core/image-transform/types";
 import { pairKey } from "@/core/runtime/store";
 import type { WorkerBroker } from "@/core/runtime/worker-broker";
 import type { OcrService } from "@/core/ocr/ocr-service";
@@ -126,6 +128,82 @@ describe("WorkspaceRuntime", () => {
       name: "combined-screenshots.png", width: 1170, height: 5080,
     });
     expect(rt.registry.blob(output.id)).toBe(combined);
+  });
+
+  it("exports an edit as a new artifact and leaves the source untouched", async () => {
+    let exportInput: { image: Blob; transform: ImageTransform; source: { width: number; height: number }; format: string } | undefined;
+    const edited = new Blob([new Uint8Array(48)], { type: "image/png" });
+    const { broker, calls } = fakeBroker({
+      "transform.export": (input) => {
+        exportInput = input as typeof exportInput;
+        return { blob: edited, width: 2532, height: 1170, strategy: "single-canvas", ms: 5 };
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const original = png("chat-light/a.png");
+    const { added } = await rt.ingest([original], "picker");
+    const sourceId = added[0];
+
+    // Nothing changed yet: exporting would only re-encode, so it is refused.
+    await expect(rt.exportEdit(sourceId)).rejects.toMatchObject({ code: "EDITOR_INVALID_TRANSFORM" });
+
+    const transform = rotateTransform(IDENTITY_TRANSFORM, "cw");
+    rt.store.getState().setEditTransform(sourceId, transform);
+    const out = await rt.exportEdit(sourceId);
+
+    expect(calls).toContain("image:transform.export");
+    expect(exportInput!.image).toBe(original); // the ORIGINAL file, never the preview
+    expect(exportInput!.transform).toEqual(transform);
+    expect(exportInput!.source).toEqual({ width: 1170, height: 2532 });
+    const s = rt.store.getState();
+    expect(s.files[out.id]).toMatchObject({ kind: "artifact", producedBy: "editor", derivedFrom: [sourceId], name: "edited-a.png", width: 2532, height: 1170 });
+    expect(s.selectedId).toBe(out.id);
+    expect(s.lastArtifactId).toBe(out.id);
+    expect(rt.registry.blob(out.id)).toBe(edited);
+    // Non-destructive: the source keeps its blob, dimensions and pending transform.
+    expect(rt.registry.blob(sourceId)).toBe(original);
+    expect(s.files[sourceId]).toMatchObject({ kind: "original", width: 1170, height: 2532 });
+    expect(s.editor.byAsset[sourceId]).toEqual(transform);
+    expect(out).toMatchObject({ sourceId, width: 2532, height: 1170 });
+  });
+
+  it("edits another tool's result without re-upload, and names repeat edits cleanly", async () => {
+    const { broker } = fakeBroker({
+      "combine.compose": () => ({ blob: new Blob([new Uint8Array(8)], { type: "image/png" }), width: 1170, height: 5080, strategy: "single-canvas", ms: 1 }),
+      "transform.export": (input) => {
+        const { source } = input as { source: { width: number; height: number } };
+        return { blob: new Blob([new Uint8Array(8)], { type: "image/png" }), width: source.width, height: 100, strategy: "single-canvas", ms: 1 };
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const { added } = await rt.ingest([png("chat-light/a.png"), png("chat-light/b.png")], "drop");
+    const sizes = added.map((id) => rt.store.getState().files[id]);
+    const combined = await rt.exportCombine(added, planCombine(sizes, { layout: "vertical" }));
+
+    const cropped = withVisibleCrop(IDENTITY_TRANSFORM, { width: 1170, height: 5080 }, { x: 0, y: 0, width: 1170, height: 100 });
+    rt.store.getState().setEditTransform(combined.id, cropped);
+    const first = await rt.exportEdit(combined.id);
+    expect(rt.store.getState().files[first.id]).toMatchObject({ derivedFrom: [combined.id], producedBy: "editor", name: "edited-combined-screenshots.png" });
+
+    // Editing the edited result does not stack prefixes.
+    rt.store.getState().setEditTransform(first.id, flipTransform(IDENTITY_TRANSFORM, "horizontal"));
+    const second = await rt.exportEdit(first.id);
+    expect(rt.store.getState().files[second.id].name).toBe("edited-combined-screenshots.png");
+  });
+
+  it("surfaces the renderer's controlled error code", async () => {
+    const { broker } = fakeBroker({
+      "transform.export": () => {
+        throw Object.assign(new Error("x"), { code: "EDITOR_EXPORT_TOO_LARGE" });
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const { added } = await rt.ingest([png("chat-light/a.png")], "drop");
+    rt.store.getState().setEditTransform(added[0], flipTransform(IDENTITY_TRANSFORM, "vertical"));
+    await expect(rt.exportEdit(added[0])).rejects.toMatchObject({ code: "EDITOR_EXPORT_TOO_LARGE" });
+    const job = Object.values(rt.store.getState().jobs).find((j) => j.kind === "editor-export");
+    expect(job).toMatchObject({ status: "failed", error: "EDITOR_EXPORT_TOO_LARGE" });
+    expect(rt.store.getState().order).toEqual(added); // no half-made artifact
   });
 
   it("exports Blur, Pixelate and Blackout operations as one verified Safe Share artifact", async () => {

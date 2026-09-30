@@ -7,6 +7,7 @@ import type { Redaction } from "@/core/redaction/types";
 import type { OcrLanguage } from "@/core/ocr/types";
 import type { PageBreak, PaginationPlan, PaperSize } from "@/core/pdf/types";
 import type { CombineSettings } from "@/core/combine/types";
+import type { ImageTransform } from "@/core/image-transform/types";
 
 export type FileId = string;
 export type ImageMime = "image/png" | "image/jpeg" | "image/webp";
@@ -32,7 +33,7 @@ export interface WorkspaceFile {
 export type JobStatus = "running" | "done" | "failed" | "cancelled";
 export interface Job {
   id: string;
-  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
+  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "editor-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
   status: JobStatus;
   progress: number | null;
   /** Controlled error code only (never raw messages). */
@@ -135,6 +136,14 @@ export interface ExportSettings {
 /** Lightweight Combine controls; the calculated placement plan and pixels stay outside Zustand. */
 export type CombineSession = CombineSettings;
 
+/**
+ * Screenshot Editor state: one logical transform per asset (crop, rotation, flips, resize).
+ * No pixels and no raster snapshots — the source asset is never modified before export.
+ */
+export interface EditorSession {
+  byAsset: Record<FileId, ImageTransform>;
+}
+
 export interface OverlapHint {
   status: "idle" | "checking" | "likely" | "unlikely";
   /** Pair keys found likely to overlap. */
@@ -151,7 +160,9 @@ export type Operation =
   | { type: "UPDATE_REDACTION"; before: Redaction; after: Redaction; at: number }
   | { type: "CLEAR_REDACTIONS"; assetId: FileId; redactions: Redaction[] }
   | { type: "COMBINE_SET_SETTINGS"; before: CombineSettings; after: CombineSettings }
-  | { type: "PDF_SET_BREAKS"; assetId: FileId; before: PdfBreakEdit; after: PdfBreakEdit; at: number };
+  | { type: "PDF_SET_BREAKS"; assetId: FileId; before: PdfBreakEdit; after: PdfBreakEdit; at: number }
+  /** Any editor change — crop, resize, rotate, flip or reset — as a small before/after snapshot. */
+  | { type: "EDIT_SET_TRANSFORM"; assetId: FileId; before: ImageTransform; after: ImageTransform; at: number };
 
 /** Breaks are serialisable and small enough for the command model. */
 export type { PageBreak };

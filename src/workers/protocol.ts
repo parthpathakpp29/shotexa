@@ -6,6 +6,7 @@
 import type { ComposePlan } from "@/core/image/tiled-compose";
 import type { CombineComposeResult, CombinePlan } from "@/core/combine/types";
 import type { CombineErrorCode } from "@/core/combine/errors";
+import type { EditorErrorCode, ImageTransform, TransformExportResult } from "@/core/image-transform/types";
 import type { MetadataErrorCode } from "@/core/metadata/errors";
 import type { ComposeChainResult } from "@/core/stitch/compose-chain";
 import type { MetadataCleanRun, MetadataInspectRun } from "@/core/metadata/run";
@@ -49,6 +50,11 @@ export interface WorkerOps {
   "combine.compose": {
     input: { images: Blob[]; plan: CombinePlan; format: "png" | "jpeg" | "webp"; quality?: number };
     output: CombineComposeResult;
+  };
+  /** Full-resolution Screenshot Editor render: crop → rotate → flip → resize → encode → verify. */
+  "transform.export": {
+    input: { image: Blob; transform: ImageTransform; source: { width: number; height: number }; format: "png" | "jpeg" | "webp"; quality?: number };
+    output: TransformExportResult;
   };
   /** Full-resolution redaction render followed by encode → Privacy Clean → verification. */
   "redaction.export": {
@@ -103,7 +109,7 @@ export type WorkerRequest =
   | ({ [K in OpName]: Envelope & { type: "RUN"; op: K; input: WorkerOps[K]["input"] } }[OpName])
   | (Envelope & { type: "CANCEL" });
 
-export type WorkerErrorCode = StitchErrorCode | CombineErrorCode | RedactionErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode | MetadataErrorCode;
+export type WorkerErrorCode = StitchErrorCode | CombineErrorCode | EditorErrorCode | RedactionErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode | MetadataErrorCode;
 
 export type WorkerResponse =
   | (Envelope & { type: "PROGRESS"; progress: number; stage?: string })

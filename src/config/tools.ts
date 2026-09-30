@@ -50,7 +50,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Smart Screenshot Stitcher",
       description: "Automatically join overlapping screenshots into one long image, review the join, adjust it manually and export at full resolution — privately in your browser.",
     },
-    continueWith: ["safe-share", "pdf", "extract-text", "combine"],
+    continueWith: ["safe-share", "pdf", "editor", "extract-text", "combine"],
   },
   combine: {
     id: "combine",
@@ -62,7 +62,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     summary: "Place screenshots side by side or in a stack.",
     minFiles: 2,
     seo: { title: "Combine Screenshots Online – Merge Into One Image | Shotexa", h1: "Combine Screenshots Into One Image", description: "Combine screenshots vertically, horizontally or in a grid — locally in your browser." },
-    continueWith: ["safe-share", "pdf", "extract-text", "metadata"],
+    continueWith: ["safe-share", "editor", "pdf", "extract-text", "metadata"],
   },
   "safe-share": {
     id: "safe-share",
@@ -78,7 +78,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Redact Sensitive Information From a Screenshot",
       description: "Permanently black out sensitive information and remove private metadata from screenshots, locally in your browser.",
     },
-    continueWith: ["extract-text", "pdf", "combine"],
+    continueWith: ["extract-text", "pdf", "editor", "combine"],
   },
   blur: {
     id: "blur",
@@ -90,7 +90,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     summary: "Blur or pixelate parts of a screenshot.",
     minFiles: 1,
     seo: { title: "Blur Screenshot Online – Free & Private | Shotexa", h1: "Blur a Screenshot Online", description: "Blur or pixelate parts of a screenshot privately in your browser." },
-    continueWith: ["extract-text", "pdf", "combine"],
+    continueWith: ["extract-text", "pdf", "editor", "combine"],
   },
   "extract-text": {
     id: "extract-text",
@@ -134,15 +134,21 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
   },
   editor: {
     id: "editor",
-    name: "Edit",
+    // Not "Edit": it sits in the Edit category, and "Edit / Edit" reads as a mistake.
+    name: "Editor",
     route: "/screenshot-editor",
-    status: "preview",
+    status: "live",
     category: "edit",
     icon: "crop",
-    summary: "Crop, resize, rotate and flip.",
+    summary: "Crop, resize, rotate and flip a screenshot.",
     minFiles: 1,
-    seo: { title: "Screenshot Editor Online – Crop, Resize & Rotate | Shotexa", h1: "Edit a Screenshot Online", description: "Crop, resize, rotate and flip screenshots in your browser." },
-    continueWith: ["safe-share", "pdf", "combine"],
+    seo: {
+      title: "Screenshot Editor Online – Crop, Resize & Rotate | Shotexa",
+      h1: "Edit a Screenshot Online",
+      description: "Crop, resize, rotate and flip screenshots at full resolution — privately in your browser. Your original is never changed.",
+    },
+    // Annotate is listed ahead of time; continuationsFor() hides it until it ships.
+    continueWith: ["annotate", "safe-share", "extract-text", "pdf", "combine"],
   },
   annotate: {
     id: "annotate",
@@ -248,7 +254,7 @@ export function suggestedNext(ctx: SuggestionContext): ToolId[] {
 
 /** Tool tabs above the workspace preview; multi-image tools only appear when they apply. */
 export function suggestedTools(fileCount: number): ToolId[] {
-  const single: ToolId[] = ["safe-share", "blur", "extract-text", "pdf", "metadata"];
+  const single: ToolId[] = ["editor", "safe-share", "blur", "extract-text", "pdf", "metadata"];
   return fileCount >= 2 ? ["stitch", "combine", ...single] : single;
 }
 

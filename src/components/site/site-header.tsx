@@ -44,8 +44,8 @@ function ToolsMenu() {
       </button>
       {/* Anchored left: the Tools button sits near the viewport edge, so a centred menu would clip. */}
       {open && (
-        <div role="menu" aria-label="Tools" className="absolute left-0 top-full z-40 mt-3 w-[min(34rem,calc(100vw-2rem))] rounded-xl border border-line bg-surface p-4 shadow-md">
-          <div className="grid grid-cols-3 gap-x-4 gap-y-1">
+        <div role="menu" aria-label="Tools" className="absolute left-0 top-full z-40 mt-3 w-[min(44rem,calc(100vw-2rem))] rounded-xl border border-line bg-surface p-4 shadow-md">
+          <div className="grid gap-x-4 gap-y-3" style={{ gridTemplateColumns: `repeat(${TOOL_GROUPS.length}, minmax(0, 1fr))` }}>
             {TOOL_GROUPS.map((group) => (
               <div key={group.id}>
                 <p className="t-micro mb-2 text-accent-ink">{group.label}</p>

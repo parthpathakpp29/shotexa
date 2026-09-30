@@ -6,9 +6,11 @@ import { createStore } from "zustand/vanilla";
 import type { ToolId } from "@/config/tools";
 import { clampRect } from "@/core/redaction/geometry";
 import type { ImageRect, Redaction, RedactionMode, RedactionSession } from "@/core/redaction/types";
-import type { ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
+import type { EditorSession, ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
 import { DEFAULT_COMBINE_SETTINGS } from "@/core/combine/layout";
 import type { CombineSettings } from "@/core/combine/types";
+import { IDENTITY_TRANSFORM, sameTransform } from "@/core/image-transform/transform";
+import type { ImageTransform } from "@/core/image-transform/types";
 
 /** Consecutive offset edits on the same join within this window merge into one undo step (slider drags). */
 export const COALESCE_MS = 600;
@@ -30,6 +32,7 @@ export interface WorkspaceState {
   redaction: RedactionSession;
   ocr: OcrSession;
   pdf: PdfSession;
+  editor: EditorSession;
   documents: Record<string, WorkspaceDocument>;
   documentOrder: string[];
   /** Most recent tool output (e.g. the stitched image) for "Continue with…". */
@@ -80,6 +83,13 @@ export interface WorkspaceActions {
   addDocument(document: WorkspaceDocument): void;
   removeDocument(id: string): void;
   addArtifact(file: WorkspaceFile): void;
+  /**
+   * Replace an asset's editor transform as one undoable step. `coalesce` merges rapid edits
+   * of the same asset (typed dimensions, arrow-key nudges) into a single undo step.
+   */
+  setEditTransform(assetId: FileId, next: ImageTransform, opts?: { coalesce?: boolean; now?: number }): void;
+  /** Back to the original image — undoable like any other edit. */
+  resetEditTransform(assetId: FileId): void;
 }
 
 export type WorkspaceStore = ReturnType<typeof createWorkspaceStore>;
@@ -111,6 +121,7 @@ const initial = (): WorkspaceState => ({
     edits: {},
     lastDocumentId: null,
   },
+  editor: { byAsset: {} },
   documents: {},
   documentOrder: [],
   lastArtifactId: null,
@@ -154,7 +165,11 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
         set((s) => ({ redaction: { ...s.redaction, byAsset: { ...s.redaction.byAsset, [op.assetId]: dir === 1 ? [] : op.redactions }, selectedId: null } }));
       } else if (op.type === "COMBINE_SET_SETTINGS") {
         set({ combine: dir === 1 ? op.after : op.before });
-      } else {
+      } else if (op.type === "EDIT_SET_TRANSFORM") {
+        const value = dir === 1 ? op.after : op.before;
+        set((s) => ({ editor: { ...s.editor, byAsset: { ...s.editor.byAsset, [op.assetId]: value } } }));
+      } else if (op.type === "PDF_SET_BREAKS") {
+        // Every operation is matched explicitly: a new type must never fall into another's branch.
         const value = dir === 1 ? op.after : op.before;
         set((s) => ({ pdf: { ...s.pdf, edits: { ...s.pdf.edits, [op.assetId]: value }, selectedBreak: null } }));
       }
@@ -187,6 +202,8 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           delete ocrByAsset[id];
           const pdfEdits = { ...s.pdf.edits };
           delete pdfEdits[id];
+          const editorByAsset = { ...s.editor.byAsset };
+          delete editorByAsset[id];
           return {
             files,
             order,
@@ -198,6 +215,7 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
             redaction: { ...s.redaction, byAsset, selectedId: null },
             ocr: { ...s.ocr, byAsset: ocrByAsset },
             pdf: { ...s.pdf, inputIds: s.pdf.inputIds.filter((x) => x !== id), edits: pdfEdits, plan: null, selectedBreak: null },
+            editor: { ...s.editor, byAsset: editorByAsset },
             overlapHint: { ...s.overlapHint, status: "idle", pairs: s.overlapHint.pairs.filter((k) => !k.includes(id)) },
           };
         });
@@ -422,6 +440,20 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
       },
       addArtifact(file) {
         set((s) => ({ files: { ...s.files, [file.id]: file }, order: [...s.order, file.id], selectedId: file.id, lastArtifactId: file.id }));
+      },
+      setEditTransform(assetId, next, opts = {}) {
+        if (!get().files[assetId]) return;
+        const before = get().editor.byAsset[assetId] ?? IDENTITY_TRANSFORM;
+        if (sameTransform(before, next)) return;
+        const now = opts.now ?? Date.now();
+        const last = get().history.past.at(-1);
+        if (opts.coalesce && last?.type === "EDIT_SET_TRANSFORM" && last.assetId === assetId && now - last.at < COALESCE_MS) {
+          set((s) => ({ history: { past: [...s.history.past.slice(0, -1), { ...last, after: next, at: now }], future: [] } }));
+        } else record({ type: "EDIT_SET_TRANSFORM", assetId, before, after: next, at: now });
+        applyOp({ type: "EDIT_SET_TRANSFORM", assetId, before, after: next, at: now }, 1);
+      },
+      resetEditTransform(assetId) {
+        get().setEditTransform(assetId, IDENTITY_TRANSFORM);
       },
     };
   });

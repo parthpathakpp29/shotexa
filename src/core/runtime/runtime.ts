@@ -14,6 +14,7 @@ import type { AnalysedSet, ShotexaPdfEngine } from "@/core/pdf/pdf-engine";
 import type { PageSetup, PaginationPlan } from "@/core/pdf/types";
 import { searchableSourceFromResult } from "@/core/pdf/searchable-text";
 import type { CombinePlan } from "@/core/combine/types";
+import { IDENTITY_TRANSFORM, isIdentity } from "@/core/image-transform/transform";
 import type { SafeShareExportResult } from "@/core/redaction/types";
 import { planStitchChain, type ChainPlan } from "@/core/stitch/chain";
 import { rgbaToGray } from "@/core/stitch/gray";
@@ -43,6 +44,11 @@ export interface StitchExportResult {
 }
 
 export type CombineExportResult = StitchExportResult;
+
+export interface EditorExportResult extends StitchExportResult {
+  /** The unchanged asset the edit was made from. */
+  sourceId: FileId;
+}
 
 export interface WorkspaceSafeShareResult extends Omit<SafeShareExportResult, "blob"> {
   id: FileId;
@@ -85,6 +91,8 @@ export interface WorkspaceRuntime {
   stitchPlan(): ChainPlan | null;
   exportStitch(): Promise<StitchExportResult>;
   exportCombine(inputIds: FileId[], plan: CombinePlan): Promise<CombineExportResult>;
+  /** Render the asset's editor transform at full resolution into a new workspace artifact. */
+  exportEdit(assetId?: FileId): Promise<EditorExportResult>;
   exportSafeShare(assetId?: FileId): Promise<WorkspaceSafeShareResult>;
   inspectMetadata(assetId?: FileId): Promise<MetadataInspectRun>;
   cleanMetadata(assetId?: FileId): Promise<WorkspaceMetadataCleanResult>;
@@ -397,6 +405,59 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     } catch (error) {
       const code = codeOf(error);
       job(jobId, "combine-export", "failed", null, code);
+      throw Object.assign(new Error(code), { code });
+    }
+  }
+
+  async function exportEdit(assetId?: FileId): Promise<EditorExportResult> {
+    const { id: sourceId, file, blob } = selected(assetId);
+    const s = store.getState();
+    const transform = s.editor.byAsset[sourceId] ?? IDENTITY_TRANSFORM;
+    // Nothing changed: exporting would only re-encode the original.
+    if (isIdentity(transform)) throw Object.assign(new Error("No edits"), { code: "EDITOR_INVALID_TRANSFORM" });
+    const source = { width: file.width, height: file.height };
+    const { format, quality } = s.exportSettings;
+    const jobId = `editor:${Date.now()}`;
+    job(jobId, "editor-export", "running", 0);
+    try {
+      const onProgress = (progress: number) => job(jobId, "editor-export", "running", progress);
+      const result = caps.offscreenCanvas
+        ? await broker.run("image", "transform.export", { image: blob, transform, source, format, quality }, { onProgress })
+        : await (await import("@/core/image-transform/render")).renderTransform(blob, transform, {
+            source,
+            format,
+            quality,
+            createCanvas: (width, height) => Object.assign(document.createElement("canvas"), { width, height }),
+            yieldBetweenTiles: timeSlicer(),
+            onProgress,
+          });
+      // Large outputs: recycle the worker so decoded memory is returned (Spike B).
+      if (result.width * result.height > 16_000_000) broker.release("image");
+      const mime: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
+      const base = file.name.replace(/\.[^.]+$/, "").replace(/^edited-/, "");
+      const id = newId();
+      registry.put(id, result.blob);
+      // A new artifact: the source asset and its blob are left exactly as they were.
+      store.getState().addArtifact({
+        id,
+        name: `edited-${base}.${EXT[mime]}`,
+        type: mime,
+        bytes: result.blob.size,
+        width: result.width,
+        height: result.height,
+        source: "artifact",
+        kind: "artifact",
+        derivedFrom: [sourceId],
+        producedBy: "editor",
+        addedAt: Date.now(),
+        previewVersion: 0,
+      });
+      job(jobId, "editor-export", "done", 1);
+      previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
+      return { id, width: result.width, height: result.height, bytes: result.blob.size, sourceId };
+    } catch (error) {
+      const code = codeOf(error);
+      job(jobId, "editor-export", "failed", null, code);
       throw Object.assign(new Error(code), { code });
     }
   }
@@ -743,6 +804,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     stitchPlan,
     exportStitch,
     exportCombine,
+    exportEdit,
     exportSafeShare,
     inspectMetadata,
     cleanMetadata,

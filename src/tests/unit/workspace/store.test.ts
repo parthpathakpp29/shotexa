@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { COALESCE_MS, createWorkspaceStore, HISTORY_LIMIT, pairKey, selectJoinKeys, selectOriginals } from "@/core/runtime/store";
 import type { StitchPair, WorkspaceDocument, WorkspaceFile } from "@/core/runtime/types";
+import { flipTransform, IDENTITY_TRANSFORM, rotateTransform, withOutputWidth, withVisibleCrop } from "@/core/image-transform/transform";
 
 const file = (id: string, extra: Partial<WorkspaceFile> = {}): WorkspaceFile => ({
   id,
@@ -271,5 +272,72 @@ describe("workspace store — OCR state", () => {
     expect(s().ocr.byAsset.a).toMatchObject({ status: "failed", error: "OCR_ENGINE_LOAD_FAILED" });
     s().removeFile("a");
     expect(s().ocr.byAsset.a).toBeUndefined();
+  });
+});
+
+describe("workspace store — Screenshot Editor", () => {
+  const source = { width: 1000, height: 2000 };
+
+  it("records each transform change as one undoable step, without touching the file", () => {
+    const { s } = setup(["a"]);
+    const cropped = withVisibleCrop(IDENTITY_TRANSFORM, source, { x: 100, y: 200, width: 400, height: 300 });
+    const turned = rotateTransform(cropped, "cw");
+    const flipped = flipTransform(turned, "horizontal");
+    s().setEditTransform("a", cropped);
+    s().setEditTransform("a", turned);
+    s().setEditTransform("a", flipped);
+    expect(s().history.past).toHaveLength(3);
+    expect(s().editor.byAsset.a).toEqual(flipped);
+    s().undo();
+    expect(s().editor.byAsset.a).toEqual(turned);
+    s().undo();
+    s().undo();
+    expect(s().editor.byAsset.a).toEqual(IDENTITY_TRANSFORM);
+    s().redo();
+    s().redo();
+    expect(s().editor.byAsset.a).toEqual(turned);
+    // The source file is logical metadata only and never changes.
+    expect(s().files.a).toMatchObject({ width: 1000, height: 2000, kind: "original" });
+  });
+
+  it("makes reset undoable and ignores no-op changes", () => {
+    const { s } = setup(["a"]);
+    const t = rotateTransform(IDENTITY_TRANSFORM, "cw");
+    s().setEditTransform("a", t);
+    s().setEditTransform("a", t); // unchanged
+    expect(s().history.past).toHaveLength(1);
+    s().resetEditTransform("a");
+    expect(s().editor.byAsset.a).toEqual(IDENTITY_TRANSFORM);
+    s().undo();
+    expect(s().editor.byAsset.a).toEqual(t);
+  });
+
+  it("coalesces rapid typed edits of one asset only when asked", () => {
+    const { s } = setup(["a", "b"]);
+    const w = (n: number) => withOutputWidth(IDENTITY_TRANSFORM, source, n);
+    s().setEditTransform("a", w(900), { coalesce: true, now: 1000 });
+    s().setEditTransform("a", w(800), { coalesce: true, now: 1000 + COALESCE_MS - 1 });
+    expect(s().history.past).toHaveLength(1);
+    s().setEditTransform("b", w(700), { coalesce: true, now: 1000 + COALESCE_MS - 1 }); // other asset
+    expect(s().history.past).toHaveLength(2);
+    s().setEditTransform("a", w(600), { now: 1000 + COALESCE_MS - 1 }); // not coalescing
+    expect(s().history.past).toHaveLength(3);
+    s().undo();
+    s().undo();
+    s().undo();
+    expect(s().editor.byAsset.a).toEqual(IDENTITY_TRANSFORM);
+  });
+
+  it("interleaves with other tools' history, and drops an asset's edits when it is removed", () => {
+    const { s } = setup(["a", "b"]);
+    s().setEditTransform("a", rotateTransform(IDENTITY_TRANSFORM, "cw"));
+    s().reorder(0, 1);
+    s().undo(); // undoes the reorder, not the edit
+    expect(s().order).toEqual(["a", "b"]);
+    expect(s().editor.byAsset.a.rotation).toBe(90);
+    s().removeFile("a");
+    expect(s().editor.byAsset.a).toBeUndefined();
+    s().setEditTransform("missing", rotateTransform(IDENTITY_TRANSFORM, "cw"));
+    expect(s().editor.byAsset.missing).toBeUndefined();
   });
 });

@@ -11,6 +11,8 @@ import { RedactionError } from "@/core/redaction/types";
 import { composeChain } from "@/core/stitch/compose-chain";
 import { composeCombine } from "@/core/combine/compose";
 import { CombineError } from "@/core/combine/errors";
+import { renderTransform } from "@/core/image-transform/render";
+import { EditorError } from "@/core/image-transform/types";
 import { composeStitch } from "@/core/stitch/compose";
 import { StitchError } from "@/core/stitch/types";
 import { serveWorker, type WorkerErrorCode } from "./protocol";
@@ -42,6 +44,8 @@ serveWorker(
       composeChain(images, plan, { format, quality, sources, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
     "combine.compose": async ({ images, plan, format, quality }, ctx) =>
       composeCombine(images, plan, { format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
+    "transform.export": async ({ image, transform, source, format, quality }, ctx) =>
+      renderTransform(image, transform, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "render") }),
     "metadata.inspect": async ({ image, name, type }) => runMetadataInspect(image, name, type),
     "metadata.clean": async ({ image, name, type, policy }) => runMetadataClean(image, name, type, policy),
     "redaction.export": async ({ image, operations, format, quality }, ctx) =>
@@ -51,6 +55,7 @@ serveWorker(
   (err): WorkerErrorCode => {
     if (err instanceof StitchError) return err.code;
     if (err instanceof CombineError) return err.code;
+    if (err instanceof EditorError) return err.code;
     if (err instanceof MetadataError) return err.code;
     if (err instanceof RedactionError) return err.code;
     if (err instanceof PrepareError) return err.code === "CANCELLED" ? "CANCELLED" : err.code;

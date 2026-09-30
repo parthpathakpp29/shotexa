@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 import { ToolIcon } from "@/components/brand";
 import { Badge, SectionHeading } from "@/components/ui/primitives";
 import { SITE } from "@/config/site";
-import { TOOL_GROUPS, TOOLS } from "@/config/tools";
+import { LIVE_TOOLS, TOOL_GROUPS, TOOLS } from "@/config/tools";
 import { ChooseScreenshotsButton } from "./choose-button";
 import { Uploader } from "@/components/workspace/uploader";
 
@@ -115,12 +115,16 @@ export function ContinuousSection() {
  * Compact index of everything that actually works today, grouped by the registry categories.
  * Deliberately quieter than the hero and workflow sections: it is a directory, not a pitch.
  */
+const NUMBER_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen"];
+
 export function ToolIndexSection() {
+  // Counted from the registry, so the headline can never overstate or lag the toolbox.
+  const count = LIVE_TOOLS.length;
   return (
     <section className="py-20 sm:py-24">
       <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
-        <SectionHeading eyebrow="The toolbox" title="Eight Tools," accent="One Workspace" lead="Add your screenshots once, then move between tools without uploading anything again." />
-        <div className="mt-12 grid gap-4 md:grid-cols-3">
+        <SectionHeading eyebrow="The toolbox" title={`${NUMBER_WORDS[count] ?? count} Tools,`} accent="One Workspace" lead="Add your screenshots once, then move between tools without uploading anything again." />
+        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {TOOL_GROUPS.map((group) => (
             <div key={group.id} className="rounded-xl border border-line bg-surface p-6 shadow-xs">
               <p className="t-micro text-accent-ink">{group.label}</p>
