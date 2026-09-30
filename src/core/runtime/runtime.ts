@@ -93,6 +93,8 @@ export interface WorkspaceRuntime {
   exportCombine(inputIds: FileId[], plan: CombinePlan): Promise<CombineExportResult>;
   /** Render the asset's editor transform at full resolution into a new workspace artifact. */
   exportEdit(assetId?: FileId): Promise<EditorExportResult>;
+  /** Flatten the asset's annotations (on top of any pending editor transform) into a new artifact. */
+  exportAnnotated(assetId?: FileId): Promise<EditorExportResult>;
   exportSafeShare(assetId?: FileId): Promise<WorkspaceSafeShareResult>;
   inspectMetadata(assetId?: FileId): Promise<MetadataInspectRun>;
   cleanMetadata(assetId?: FileId): Promise<WorkspaceMetadataCleanResult>;
@@ -462,6 +464,59 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     }
   }
 
+  async function exportAnnotated(assetId?: FileId): Promise<EditorExportResult> {
+    const { id: sourceId, file, blob } = selected(assetId);
+    const s = store.getState();
+    const annotations = s.annotation.byAsset[sourceId] ?? [];
+    if (!annotations.length) throw Object.assign(new Error("No annotations"), { code: "ANNOTATION_EMPTY" });
+    // Annotations sit on top of the asset's pending Screenshot Editor transform, exactly as previewed.
+    const transform = s.editor.byAsset[sourceId] ?? IDENTITY_TRANSFORM;
+    const source = { width: file.width, height: file.height };
+    const { format, quality } = s.exportSettings;
+    const jobId = `annotate:${Date.now()}`;
+    job(jobId, "annotate-export", "running", 0);
+    try {
+      const onProgress = (progress: number) => job(jobId, "annotate-export", "running", progress);
+      const result = caps.offscreenCanvas
+        ? await broker.run("image", "annotation.export", { image: blob, transform, annotations, source, format, quality }, { onProgress })
+        : await (await import("@/core/annotation/export")).renderAnnotated(blob, transform, annotations, {
+            source,
+            format,
+            quality,
+            createCanvas: (width, height) => Object.assign(document.createElement("canvas"), { width, height }),
+            yieldBetweenTiles: timeSlicer(),
+            onProgress,
+          });
+      if (result.width * result.height > 16_000_000) broker.release("image");
+      const mime: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
+      const base = file.name.replace(/\.[^.]+$/, "").replace(/^annotated-/, "");
+      const id = newId();
+      registry.put(id, result.blob);
+      // A new artifact: the source keeps its blob, its annotations and its pending transform.
+      store.getState().addArtifact({
+        id,
+        name: `annotated-${base}.${EXT[mime]}`,
+        type: mime,
+        bytes: result.blob.size,
+        width: result.width,
+        height: result.height,
+        source: "artifact",
+        kind: "artifact",
+        derivedFrom: [sourceId],
+        producedBy: "annotate",
+        addedAt: Date.now(),
+        previewVersion: 0,
+      });
+      job(jobId, "annotate-export", "done", 1);
+      previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
+      return { id, width: result.width, height: result.height, bytes: result.blob.size, sourceId };
+    } catch (error) {
+      const code = codeOf(error);
+      job(jobId, "annotate-export", "failed", null, code);
+      throw Object.assign(new Error(code), { code });
+    }
+  }
+
   function selected(assetId?: FileId) {
     const id = assetId ?? store.getState().selectedId;
     const file = id ? store.getState().files[id] : undefined;
@@ -805,6 +860,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     exportStitch,
     exportCombine,
     exportEdit,
+    exportAnnotated,
     exportSafeShare,
     inspectMetadata,
     cleanMetadata,

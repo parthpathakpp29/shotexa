@@ -72,5 +72,28 @@ export function drawTransformed(ctx: Ctx, image: CanvasImageSource, imageScale: 
   ctx.restore();
 }
 
+/** Inverse of an invertible affine (every editor transform is: scales are always > 0). */
+export function invertMatrix(m: Matrix): Matrix {
+  const [a, b, c, d, e, f] = m;
+  const det = a * d - b * c;
+  return [d / det, -b / det, -c / det, a / det, (c * f - d * e) / det, (b * e - a * f) / det];
+}
+
+/**
+ * Source pixels → output pixels for the whole transform, including the crop offset. This is
+ * the same matrix `drawTransformed` draws the image with, so anything positioned through it
+ * (e.g. annotations) stays attached to the same image content under crop/rotate/flip/resize.
+ */
+export function sourceToOutputMatrix(t: ImageTransform, source: Size): Matrix {
+  const crop = sourceCrop(t, source);
+  return multiply(transformMatrix({ width: crop.width, height: crop.height }, t, outputSize(t, source)), [1, 0, 0, 1, -crop.x, -crop.y]);
+}
+
+/**
+ * How much a length grows from source to output. Uniform for a locked resize; for a stretched
+ * (unlocked) resize, the geometric mean — so one stroke width reads the same in both axes.
+ */
+export const matrixScale = (m: Matrix) => Math.sqrt(Math.abs(m[0] * m[3] - m[1] * m[2]));
+
 /** Final output size for a transform — re-exported so renderers need one import. */
 export { outputSize };

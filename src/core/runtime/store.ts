@@ -11,6 +11,8 @@ import { DEFAULT_COMBINE_SETTINGS } from "@/core/combine/layout";
 import type { CombineSettings } from "@/core/combine/types";
 import { IDENTITY_TRANSFORM, sameTransform } from "@/core/image-transform/transform";
 import type { ImageTransform } from "@/core/image-transform/types";
+import { DEFAULT_STYLE } from "@/core/annotation/objects";
+import type { AnnotationObject, AnnotationSession, AnnotationStyle, AnnotationTool } from "@/core/annotation/types";
 
 /** Consecutive offset edits on the same join within this window merge into one undo step (slider drags). */
 export const COALESCE_MS = 600;
@@ -33,6 +35,7 @@ export interface WorkspaceState {
   ocr: OcrSession;
   pdf: PdfSession;
   editor: EditorSession;
+  annotation: AnnotationSession;
   documents: Record<string, WorkspaceDocument>;
   documentOrder: string[];
   /** Most recent tool output (e.g. the stitched image) for "Continue with…". */
@@ -90,6 +93,16 @@ export interface WorkspaceActions {
   setEditTransform(assetId: FileId, next: ImageTransform, opts?: { coalesce?: boolean; now?: number }): void;
   /** Back to the original image — undoable like any other edit. */
   resetEditTransform(assetId: FileId): void;
+  setAnnotationTool(tool: AnnotationTool): void;
+  selectAnnotation(id: string | null): void;
+  setAnnotationStyle(style: Partial<AnnotationStyle>): void;
+  /**
+   * Replace an asset's annotations as one undoable step. `coalesce` is a gesture key (e.g.
+   * `text:<id>`): consecutive rapid edits with the SAME key merge into one step, so typing or
+   * nudging never folds an unrelated action (like adding an arrow) into the same undo.
+   * `select` sets the selection in the same update.
+   */
+  setAnnotations(assetId: FileId, next: AnnotationObject[], opts?: { coalesce?: string; now?: number; select?: string | null }): void;
 }
 
 export type WorkspaceStore = ReturnType<typeof createWorkspaceStore>;
@@ -122,6 +135,7 @@ const initial = (): WorkspaceState => ({
     lastDocumentId: null,
   },
   editor: { byAsset: {} },
+  annotation: { byAsset: {}, selectedId: null, tool: "arrow", style: DEFAULT_STYLE },
   documents: {},
   documentOrder: [],
   lastArtifactId: null,
@@ -168,6 +182,16 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
       } else if (op.type === "EDIT_SET_TRANSFORM") {
         const value = dir === 1 ? op.after : op.before;
         set((s) => ({ editor: { ...s.editor, byAsset: { ...s.editor.byAsset, [op.assetId]: value } } }));
+      } else if (op.type === "ANNOTATE_SET") {
+        const value = dir === 1 ? op.after : op.before;
+        set((s) => ({
+          annotation: {
+            ...s.annotation,
+            byAsset: { ...s.annotation.byAsset, [op.assetId]: value },
+            // Never leave a selection pointing at an object that undo/redo just removed.
+            selectedId: value.some((o) => o.id === s.annotation.selectedId) ? s.annotation.selectedId : null,
+          },
+        }));
       } else if (op.type === "PDF_SET_BREAKS") {
         // Every operation is matched explicitly: a new type must never fall into another's branch.
         const value = dir === 1 ? op.after : op.before;
@@ -204,6 +228,8 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           delete pdfEdits[id];
           const editorByAsset = { ...s.editor.byAsset };
           delete editorByAsset[id];
+          const annotationByAsset = { ...s.annotation.byAsset };
+          delete annotationByAsset[id];
           return {
             files,
             order,
@@ -216,6 +242,7 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
             ocr: { ...s.ocr, byAsset: ocrByAsset },
             pdf: { ...s.pdf, inputIds: s.pdf.inputIds.filter((x) => x !== id), edits: pdfEdits, plan: null, selectedBreak: null },
             editor: { ...s.editor, byAsset: editorByAsset },
+            annotation: { ...s.annotation, byAsset: annotationByAsset, selectedId: null },
             overlapHint: { ...s.overlapHint, status: "idle", pairs: s.overlapHint.pairs.filter((k) => !k.includes(id)) },
           };
         });
@@ -454,6 +481,23 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
       },
       resetEditTransform(assetId) {
         get().setEditTransform(assetId, IDENTITY_TRANSFORM);
+      },
+      setAnnotationTool: (tool) => set((s) => ({ annotation: { ...s.annotation, tool } })),
+      selectAnnotation: (id) => set((s) => ({ annotation: { ...s.annotation, selectedId: id } })),
+      setAnnotationStyle: (style) => set((s) => ({ annotation: { ...s.annotation, style: { ...s.annotation.style, ...style } } })),
+      setAnnotations(assetId, next, opts = {}) {
+        if (!get().files[assetId]) return;
+        const before = get().annotation.byAsset[assetId] ?? [];
+        if (JSON.stringify(before) !== JSON.stringify(next)) {
+          const now = opts.now ?? Date.now();
+          const last = get().history.past.at(-1);
+          const merge = !!opts.coalesce && last?.type === "ANNOTATE_SET" && last.assetId === assetId && last.key === opts.coalesce && now - last.at < COALESCE_MS;
+          if (merge) {
+            set((s) => ({ history: { past: [...s.history.past.slice(0, -1), { ...last, after: next, at: now }], future: [] } }));
+          } else record({ type: "ANNOTATE_SET", assetId, before, after: next, at: now, key: opts.coalesce });
+          applyOp({ type: "ANNOTATE_SET", assetId, before, after: next, at: now }, 1);
+        }
+        if (opts.select !== undefined) set((s) => ({ annotation: { ...s.annotation, selectedId: opts.select ?? null } }));
       },
     };
   });

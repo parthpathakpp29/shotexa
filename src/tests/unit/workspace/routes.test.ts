@@ -19,12 +19,12 @@ describe("tool registry", () => {
     }
   });
 
-  it("lists the production tools completed through Phase 2G", () => {
-    const live = ["stitch", "combine", "safe-share", "blur", "extract-text", "pdf", "searchable-pdf", "editor", "metadata"];
+  it("lists the production tools completed through Phase 2H", () => {
+    const live = ["stitch", "combine", "safe-share", "blur", "extract-text", "pdf", "searchable-pdf", "editor", "annotate", "metadata"];
     expect(TOOL_LIST.filter((t) => t.status === "live").map((t) => t.id)).toEqual(live);
     expect(TOOLS.stitch.route).toBe("/stitch-screenshots");
     expect(LIVE_TOOLS).toEqual(live);
-    expect(UPCOMING_TOOLS).toEqual(["annotate", "compress"]);
+    expect(UPCOMING_TOOLS).toEqual(["compress"]);
   });
 
   it("ships the Screenshot Editor at one canonical route", () => {
@@ -33,11 +33,20 @@ describe("tool registry", () => {
     expect(TOOLS.editor.seo.h1).toBe("Edit a Screenshot Online");
     // No synonym routes: crop/resize/rotate intents all land on the one editor.
     for (const synonym of ["/crop-screenshot", "/resize-screenshot", "/rotate-screenshot"]) expect(toolByRoute(synonym)).toBeUndefined();
-    // Annotate is listed ahead of time but stays hidden until it ships.
-    expect(TOOLS.editor.continueWith).toContain("annotate");
-    expect(continuationsFor("editor")).toEqual(["safe-share", "extract-text", "pdf", "combine"]);
+    expect(continuationsFor("editor")).toEqual(["annotate", "safe-share", "extract-text", "pdf", "combine"]);
     // Results people typically crop next can hand off to it.
     for (const from of ["stitch", "combine", "safe-share", "blur"] as ToolId[]) expect(continuationsFor(from)).toContain("editor");
+  });
+
+  it("ships Annotation at one canonical route", () => {
+    expect(TOOLS.annotate).toMatchObject({ route: "/annotate-screenshot", status: "live", category: "edit", minFiles: 1 });
+    expect(TOOLS.annotate.seo.title).toBe("Annotate Screenshot Online – Add Arrows, Text & Highlights | Shotexa");
+    expect(TOOLS.annotate.seo.h1).toBe("Annotate a Screenshot Online");
+    // No synonym routes: arrow/highlight/text intents all land on the one annotation tool.
+    for (const synonym of ["/add-arrow-to-screenshot", "/highlight-screenshot", "/add-text-to-screenshot"]) expect(toolByRoute(synonym)).toBeUndefined();
+    // Every result people typically mark up can hand off to it without re-uploading.
+    for (const from of ["editor", "stitch", "combine", "safe-share", "blur"] as ToolId[]) expect(continuationsFor(from)).toContain("annotate");
+    expect(continuationsFor("annotate")).toEqual(["safe-share", "pdf", "combine", "extract-text", "editor"]);
   });
 
   it("groups every live tool into exactly one navigation category", () => {
@@ -45,7 +54,7 @@ describe("tool registry", () => {
     expect([...grouped].sort()).toEqual([...LIVE_TOOLS].sort());
     expect(new Set(grouped).size).toBe(grouped.length);
     expect(TOOL_GROUPS.map((g) => g.id)).toEqual(["create", "protect", "documents", "edit"]);
-    expect(TOOL_GROUPS.find((g) => g.id === "edit")?.tools).toEqual(["editor"]);
+    expect(TOOL_GROUPS.find((g) => g.id === "edit")?.tools).toEqual(["editor", "annotate"]);
     expect(TOOL_GROUPS.find((g) => g.id === "create")?.tools).toEqual(["stitch", "combine"]);
     expect(TOOL_GROUPS.find((g) => g.id === "protect")?.tools).toEqual(["safe-share", "blur", "metadata"]);
     expect(TOOL_GROUPS.find((g) => g.id === "documents")?.tools).toEqual(["extract-text", "pdf", "searchable-pdf"]);
@@ -70,12 +79,13 @@ describe("tool registry", () => {
     expect(acceptsScreenshotInput("/screenshot-to-searchable-pdf")).toBe(true);
     expect(acceptsScreenshotInput("/combine-screenshots")).toBe(true);
     expect(acceptsScreenshotInput("/screenshot-editor")).toBe(true);
+    expect(acceptsScreenshotInput("/annotate-screenshot")).toBe(true);
     expect(acceptsScreenshotInput("/tools")).toBe(false);
     expect(acceptsScreenshotInput("/privacy")).toBe(false);
   });
 
   it("suggests only live tools, and multi-image tools only when they apply", () => {
-    const single: ToolId[] = ["editor", "safe-share", "blur", "extract-text", "pdf", "metadata"];
+    const single: ToolId[] = ["editor", "annotate", "safe-share", "blur", "extract-text", "pdf", "metadata"];
     expect(suggestedTools(1)).toEqual(single);
     expect(suggestedTools(2)).toEqual(["stitch", "combine", ...single]);
     expect(suggestedTools(5).slice(0, 2)).toEqual(["stitch", "combine"]);
@@ -90,7 +100,7 @@ describe("tool registry", () => {
       expect(suggestedNext({ originals: 1, producedBy })).toEqual(["extract-text", "pdf", "combine"]);
     }
     expect(suggestedNext({ originals: 1, hasOcr: true })).toEqual(["searchable-pdf", "pdf", "safe-share"]);
-    expect(suggestedNext({ originals: 1, producedBy: "stitch" })).toEqual(["safe-share", "pdf", "editor"]);
+    expect(suggestedNext({ originals: 1, producedBy: "stitch" })).toEqual(["safe-share", "annotate", "pdf"]);
     for (const ctx of [{ originals: 1 }, { originals: 3 }, { originals: 1, producedBy: "combine" as ToolId }, { originals: 1, hasOcr: true }]) {
       for (const id of suggestedNext(ctx)) expect(TOOLS[id].status).toBe("live");
     }
@@ -99,14 +109,14 @@ describe("tool registry", () => {
 
 describe("SEO config", () => {
   it("sitemap lists indexable static pages and live tools only", () => {
-    expect(sitemapPaths()).toEqual(["/", "/tools", "/privacy", "/stitch-screenshots", "/combine-screenshots", "/redact-screenshot", "/blur-screenshot", "/screenshot-to-text", "/screenshot-to-pdf", "/screenshot-to-searchable-pdf", "/screenshot-editor", "/remove-image-metadata"]);
+    expect(sitemapPaths()).toEqual(["/", "/tools", "/privacy", "/stitch-screenshots", "/combine-screenshots", "/redact-screenshot", "/blur-screenshot", "/screenshot-to-text", "/screenshot-to-pdf", "/screenshot-to-searchable-pdf", "/screenshot-editor", "/annotate-screenshot", "/remove-image-metadata"]);
     expect(sitemapPaths().some((p) => p.startsWith("/spikes"))).toBe(false);
   });
 
   it("sitemap.xml uses absolute URLs on the site origin", () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
     const entries = sitemap();
-    expect(entries.length).toBe(12);
+    expect(entries.length).toBe(13);
     for (const e of entries) expect(e.url).toMatch(/^https:\/\/[^/]+(\/|$)/);
   });
 
@@ -117,7 +127,12 @@ describe("SEO config", () => {
     expect(toolMetadata("safe-share")).toMatchObject({ alternates: { canonical: "/redact-screenshot" }, robots: { index: true } });
     expect(toolMetadata("metadata")).toMatchObject({ alternates: { canonical: "/remove-image-metadata" }, robots: { index: true } });
     expect(toolMetadata("editor")).toMatchObject({ title: "Screenshot Editor Online – Crop, Resize & Rotate | Shotexa", alternates: { canonical: "/screenshot-editor" }, robots: { index: true } });
-    expect(toolMetadata("annotate").robots).toMatchObject({ index: false });
+    expect(toolMetadata("annotate")).toMatchObject({
+      title: "Annotate Screenshot Online – Add Arrows, Text & Highlights | Shotexa",
+      alternates: { canonical: "/annotate-screenshot" },
+      robots: { index: true },
+    });
+    expect(toolMetadata("compress").robots).toMatchObject({ index: false });
     expect(toolMetadata("extract-text")).toMatchObject({
       title: "Screenshot to Text – Free Private OCR | Shotexa",
       alternates: { canonical: "/screenshot-to-text" },

@@ -9,6 +9,7 @@ import { createWorkspaceRuntime } from "@/core/runtime/runtime";
 import { planCombine } from "@/core/combine/layout";
 import { flipTransform, IDENTITY_TRANSFORM, rotateTransform, withVisibleCrop } from "@/core/image-transform/transform";
 import type { ImageTransform } from "@/core/image-transform/types";
+import type { AnnotationObject } from "@/core/annotation/types";
 import { pairKey } from "@/core/runtime/store";
 import type { WorkerBroker } from "@/core/runtime/worker-broker";
 import type { OcrService } from "@/core/ocr/ocr-service";
@@ -189,6 +190,58 @@ describe("WorkspaceRuntime", () => {
     rt.store.getState().setEditTransform(first.id, flipTransform(IDENTITY_TRANSFORM, "horizontal"));
     const second = await rt.exportEdit(first.id);
     expect(rt.store.getState().files[second.id].name).toBe("edited-combined-screenshots.png");
+  });
+
+  it("flattens annotations on top of the pending edit into a new artifact, leaving the source alone", async () => {
+    let input: { image: Blob; transform: ImageTransform; annotations: AnnotationObject[]; source: { width: number; height: number } } | undefined;
+    const flattened = new Blob([new Uint8Array(32)], { type: "image/png" });
+    const { broker, calls } = fakeBroker({
+      "annotation.export": (i) => {
+        input = i as typeof input;
+        return { blob: flattened, width: 2532, height: 1170, strategy: "single-canvas", ms: 3 };
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const original = png("chat-light/a.png");
+    const [sourceId] = (await rt.ingest([original], "picker")).added;
+
+    await expect(rt.exportAnnotated(sourceId)).rejects.toMatchObject({ code: "ANNOTATION_EMPTY" });
+
+    const marks: AnnotationObject[] = [{ id: "s1", type: "step", color: "#e5383b", at: { x: 100, y: 200 }, n: 1, radius: 30 }];
+    const turned = rotateTransform(IDENTITY_TRANSFORM, "cw");
+    rt.store.getState().setEditTransform(sourceId, turned);
+    rt.store.getState().setAnnotations(sourceId, marks);
+    const out = await rt.exportAnnotated(sourceId);
+
+    expect(calls).toContain("image:annotation.export");
+    expect(input!.image).toBe(original); // the original file, never a preview
+    expect(input!.transform).toEqual(turned); // the pending edit travels with the marks
+    expect(input!.annotations).toEqual(marks); // stored in source pixels
+    const s = rt.store.getState();
+    expect(s.files[out.id]).toMatchObject({ kind: "artifact", producedBy: "annotate", derivedFrom: [sourceId], name: "annotated-a.png", width: 2532, height: 1170 });
+    expect(s.selectedId).toBe(out.id);
+    expect(rt.registry.blob(out.id)).toBe(flattened);
+    // Non-destructive: blob, annotations and pending transform of the source are untouched.
+    expect(rt.registry.blob(sourceId)).toBe(original);
+    expect(s.annotation.byAsset[sourceId]).toEqual(marks);
+    expect(s.editor.byAsset[sourceId]).toEqual(turned);
+    // The flattened result starts clean.
+    expect(s.annotation.byAsset[out.id]).toBeUndefined();
+  });
+
+  it("annotates another tool's result without re-upload", async () => {
+    const { broker } = fakeBroker({
+      "transform.export": () => ({ blob: new Blob([new Uint8Array(8)], { type: "image/png" }), width: 500, height: 400, strategy: "single-canvas", ms: 1 }),
+      "annotation.export": () => ({ blob: new Blob([new Uint8Array(8)], { type: "image/png" }), width: 500, height: 400, strategy: "single-canvas", ms: 1 }),
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const [sourceId] = (await rt.ingest([png("chat-light/a.png")], "drop")).added;
+    rt.store.getState().setEditTransform(sourceId, flipTransform(IDENTITY_TRANSFORM, "horizontal"));
+    const edited = await rt.exportEdit(sourceId);
+    rt.store.getState().setAnnotations(edited.id, [{ id: "r", type: "rectangle", color: "#000", rect: { x: 1, y: 1, width: 9, height: 9 }, width: 2 }]);
+    const annotated = await rt.exportAnnotated(edited.id);
+    expect(rt.store.getState().files[annotated.id]).toMatchObject({ derivedFrom: [edited.id], name: "annotated-edited-a.png" });
+    expect(rt.store.getState().order).toHaveLength(3);
   });
 
   it("surfaces the renderer's controlled error code", async () => {

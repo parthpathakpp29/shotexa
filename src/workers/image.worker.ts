@@ -13,6 +13,8 @@ import { composeCombine } from "@/core/combine/compose";
 import { CombineError } from "@/core/combine/errors";
 import { renderTransform } from "@/core/image-transform/render";
 import { EditorError } from "@/core/image-transform/types";
+import { renderAnnotated } from "@/core/annotation/export";
+import { AnnotationError } from "@/core/annotation/types";
 import { composeStitch } from "@/core/stitch/compose";
 import { StitchError } from "@/core/stitch/types";
 import { serveWorker, type WorkerErrorCode } from "./protocol";
@@ -46,6 +48,8 @@ serveWorker(
       composeCombine(images, plan, { format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
     "transform.export": async ({ image, transform, source, format, quality }, ctx) =>
       renderTransform(image, transform, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "render") }),
+    "annotation.export": async ({ image, transform, annotations, source, format, quality }, ctx) =>
+      renderAnnotated(image, transform, annotations, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "render") }),
     "metadata.inspect": async ({ image, name, type }) => runMetadataInspect(image, name, type),
     "metadata.clean": async ({ image, name, type, policy }) => runMetadataClean(image, name, type, policy),
     "redaction.export": async ({ image, operations, format, quality }, ctx) =>
@@ -56,6 +60,7 @@ serveWorker(
     if (err instanceof StitchError) return err.code;
     if (err instanceof CombineError) return err.code;
     if (err instanceof EditorError) return err.code;
+    if (err instanceof AnnotationError) return err.code;
     if (err instanceof MetadataError) return err.code;
     if (err instanceof RedactionError) return err.code;
     if (err instanceof PrepareError) return err.code === "CANCELLED" ? "CANCELLED" : err.code;

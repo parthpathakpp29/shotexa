@@ -87,6 +87,7 @@ export async function renderTransform(image: Blob, t: ImageTransform, o: Transfo
         ctx.fillRect(0, 0, out.width, out.height);
       }
       drawTransformed(ctx, bitmap, 1, t, o.source, out);
+      o.overlay?.(ctx, out, 0);
       o.onProgress?.(0.6);
       blob = await encode(canvas, MIME[o.format], o.quality);
     } else {
@@ -100,6 +101,7 @@ export async function renderTransform(image: Blob, t: ImageTransform, o: Transfo
           if (canvas.height !== tileH) canvas.height = tileH;
           ctx.clearRect(0, 0, out.width, tileH);
           drawTransformed(ctx, bitmap, 1, t, o.source, out, y);
+          o.overlay?.(ctx, out, y);
           await encoder.writeRows(ctx.getImageData(0, 0, out.width, tileH).data, tileH);
           o.onProgress?.((index + 1) / (plan.tiles + 1));
           await o.yieldBetweenTiles?.();

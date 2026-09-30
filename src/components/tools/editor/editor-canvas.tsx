@@ -22,14 +22,10 @@ import { IDENTITY_TRANSFORM, outputSize, visibleCrop, visibleSize, withVisibleCr
 import type { CropHandle, Point, Rect, Size } from "@/core/image-transform/types";
 import { cn } from "@/lib/cn";
 import { useElementWidth } from "@/lib/use-element-width";
+import { backingSize, displayWidth, zoomIn as nextZoomIn, zoomOut as nextZoomOut, type Zoom } from "@/lib/stage-size";
 
 export type EditorView = "crop" | "result";
-type Zoom = "fit" | 0.5 | 1 | 2;
 
-const FIT_HEIGHT = 640;
-/** Tall images still get a usable crop width in Fit; the frame scrolls instead. */
-const MIN_FIT_WIDTH = 320;
-const MAX_BACKING_AREA = 16_000_000;
 /** Pointer travel (CSS px) before a press on the image starts a new crop. */
 const DRAG_THRESHOLD = 4;
 const HANDLES: CropHandle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"];
@@ -49,24 +45,6 @@ type Interaction =
   | { kind: "create"; pointer: number; start: Point; startClient: Point; active: boolean }
   | { kind: "move"; pointer: number; start: Point; rect: Rect }
   | { kind: "resize"; pointer: number; handle: CropHandle; rect: Rect };
-
-/** Fit a `size` into the frame: full width, no taller than FIT_HEIGHT, never uselessly thin. */
-function displayWidth(size: Size, frameWidth: number, zoom: Zoom): number {
-  if (zoom !== "fit") return Math.max(1, Math.round(size.width * zoom));
-  const byHeight = (FIT_HEIGHT * size.width) / size.height;
-  return Math.max(1, Math.floor(Math.min(frameWidth, size.width, Math.max(byHeight, Math.min(MIN_FIT_WIDTH, frameWidth)))));
-}
-
-/** Backing-store size: sharp on high-DPR screens, never beyond the preview's own detail. */
-function backingSize(css: Size, detailWidth: number): Size {
-  const dpr = typeof window === "undefined" ? 1 : Math.min(2, window.devicePixelRatio || 1);
-  let width = Math.max(1, Math.min(Math.round(css.width * dpr), Math.round(detailWidth)));
-  let height = Math.max(1, Math.round((width * css.height) / css.width));
-  const fit = Math.min(1, Math.sqrt(MAX_BACKING_AREA / (width * height)));
-  width = Math.max(1, Math.floor(width * fit));
-  height = Math.max(1, Math.floor(height * fit));
-  return { width, height };
-}
 
 export function EditorCanvas({ assetId, view, onViewChange }: { assetId: string; view: EditorView; onViewChange: (view: EditorView) => void }) {
   const { runtime } = useWorkspaceContext();
@@ -208,8 +186,8 @@ export function EditorCanvas({ assetId, view, onViewChange }: { assetId: string;
     setTransform(assetId, withVisibleCrop(t, source, moveCrop(committedCrop, delta[0], delta[1], visible)), { coalesce: true });
   }
 
-  const zoomOut = () => setZoom(zoom === 2 ? 1 : zoom === 1 ? 0.5 : "fit");
-  const zoomIn = () => setZoom(zoom === "fit" ? 0.5 : zoom === 0.5 ? 1 : 2);
+  const zoomOut = () => setZoom(nextZoomOut(zoom));
+  const zoomIn = () => setZoom(nextZoomIn(zoom));
   const dragging = !!draft;
   const box = crop ? { left: crop.x * scale, top: crop.y * scale, width: crop.width * scale, height: crop.height * scale } : null;
 

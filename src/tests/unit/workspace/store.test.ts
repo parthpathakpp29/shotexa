@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { COALESCE_MS, createWorkspaceStore, HISTORY_LIMIT, pairKey, selectJoinKeys, selectOriginals } from "@/core/runtime/store";
 import type { StitchPair, WorkspaceDocument, WorkspaceFile } from "@/core/runtime/types";
 import { flipTransform, IDENTITY_TRANSFORM, rotateTransform, withOutputWidth, withVisibleCrop } from "@/core/image-transform/transform";
+import type { AnnotationObject } from "@/core/annotation/types";
 
 const file = (id: string, extra: Partial<WorkspaceFile> = {}): WorkspaceFile => ({
   id,
@@ -339,5 +340,77 @@ describe("workspace store — Screenshot Editor", () => {
     expect(s().editor.byAsset.a).toBeUndefined();
     s().setEditTransform("missing", rotateTransform(IDENTITY_TRANSFORM, "cw"));
     expect(s().editor.byAsset.missing).toBeUndefined();
+  });
+});
+
+describe("workspace store — Annotation", () => {
+  const arrow = (id: string, x = 10): AnnotationObject => ({ id, type: "arrow", color: "#e5383b", from: { x, y: 10 }, to: { x: x + 50, y: 10 }, width: 4 });
+
+  it("makes add, move, restyle, delete and clear each one undoable step", () => {
+    const { s } = setup(["a"]);
+    const added = [arrow("x")];
+    const moved = [arrow("x", 40)];
+    const restyled = [{ ...moved[0], color: "#16a34a" }];
+    s().setAnnotations("a", added, { select: "x" });
+    s().setAnnotations("a", moved);
+    s().setAnnotations("a", restyled);
+    s().setAnnotations("a", []); // delete / clear
+    expect(s().history.past).toHaveLength(4);
+    s().undo();
+    expect(s().annotation.byAsset.a).toEqual(restyled);
+    s().undo();
+    s().undo();
+    expect(s().annotation.byAsset.a).toEqual(added);
+    s().redo();
+    expect(s().annotation.byAsset.a).toEqual(moved);
+    // Pixels were never involved: the file is untouched.
+    expect(s().files.a).toMatchObject({ width: 1000, height: 2000, kind: "original" });
+  });
+
+  it("clears a selection that undo removes, and never records a no-op", () => {
+    const { s } = setup(["a"]);
+    s().setAnnotations("a", [arrow("x")], { select: "x" });
+    expect(s().annotation.selectedId).toBe("x");
+    s().undo();
+    expect(s().annotation.selectedId).toBeNull();
+    s().redo();
+    s().setAnnotations("a", [arrow("x")]); // unchanged
+    expect(s().history.past).toHaveLength(1);
+  });
+
+  it("coalesces a burst of typing into one step, only when asked", () => {
+    const { s } = setup(["a"]);
+    const text = (t: string): AnnotationObject[] => [{ id: "t", type: "text", color: "#000", at: { x: 0, y: 0 }, text: t, size: 20 }];
+    s().setAnnotations("a", text("H"), { now: 0 });
+    s().setAnnotations("a", text("He"), { coalesce: "text:t", now: 100 });
+    s().setAnnotations("a", text("Hey"), { coalesce: "text:t", now: 200 });
+    expect(s().history.past).toHaveLength(2);
+    s().undo();
+    expect(s().annotation.byAsset.a).toEqual(text("H"));
+  });
+
+  it("never folds an unrelated quick action into a typing step", () => {
+    const { s } = setup(["a"]);
+    s().setAnnotations("a", [arrow("x")], { now: 0 }); // add an arrow…
+    s().setAnnotations("a", [arrow("x", 20)], { coalesce: "nudge:x", now: 100 }); // …then nudge it
+    s().setAnnotations("a", [arrow("x", 30)], { coalesce: "nudge:x", now: 200 });
+    s().setAnnotations("a", [arrow("x", 30), arrow("y")], { coalesce: "text:y", now: 300 }); // different gesture
+    expect(s().history.past).toHaveLength(3); // add · nudges · other
+    s().undo();
+    s().undo();
+    expect(s().annotation.byAsset.a).toEqual([arrow("x")]); // the add survived
+  });
+
+  it("keeps tool and style out of history, and drops an asset's marks when it is removed", () => {
+    const { s } = setup(["a"]);
+    s().setAnnotationTool("step");
+    s().setAnnotationStyle({ color: "#2563eb" });
+    expect(s().history.past).toHaveLength(0);
+    expect(s().annotation).toMatchObject({ tool: "step", style: { color: "#2563eb" } });
+    s().setAnnotations("a", [arrow("x")]);
+    s().removeFile("a");
+    expect(s().annotation.byAsset.a).toBeUndefined();
+    s().setAnnotations("missing", [arrow("y")]);
+    expect(s().annotation.byAsset.missing).toBeUndefined();
   });
 });

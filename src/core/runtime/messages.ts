@@ -25,6 +25,8 @@ const MESSAGES: Record<string, string> = {
   EDITOR_EXPORT_TOO_LARGE: "The result is too large for that format. Try PNG or a smaller size.",
   EDITOR_EXPORT_VERIFY_FAILED: "The browser produced an incomplete image, so it wasn't saved. Try PNG.",
   EDITOR_CANCELLED: "Editing export was cancelled.",
+  ANNOTATION_EMPTY: "Add an arrow, box, highlight, text, drawing or step before exporting.",
+  ANNOTATION_INVALID: "These annotations couldn't be drawn. Undo the last change and try again.",
   WORKER_CRASHED: "Processing stopped unexpectedly. Please try again.",
   CANCELLED: "Cancelled.",
   REDACTION_DECODE_FAILED: "This screenshot couldn't be decoded for redaction.",

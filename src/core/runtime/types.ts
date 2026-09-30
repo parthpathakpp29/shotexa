@@ -8,6 +8,7 @@ import type { OcrLanguage } from "@/core/ocr/types";
 import type { PageBreak, PaginationPlan, PaperSize } from "@/core/pdf/types";
 import type { CombineSettings } from "@/core/combine/types";
 import type { ImageTransform } from "@/core/image-transform/types";
+import type { AnnotationObject } from "@/core/annotation/types";
 
 export type FileId = string;
 export type ImageMime = "image/png" | "image/jpeg" | "image/webp";
@@ -33,7 +34,7 @@ export interface WorkspaceFile {
 export type JobStatus = "running" | "done" | "failed" | "cancelled";
 export interface Job {
   id: string;
-  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "editor-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
+  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "editor-export" | "annotate-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
   status: JobStatus;
   progress: number | null;
   /** Controlled error code only (never raw messages). */
@@ -162,7 +163,9 @@ export type Operation =
   | { type: "COMBINE_SET_SETTINGS"; before: CombineSettings; after: CombineSettings }
   | { type: "PDF_SET_BREAKS"; assetId: FileId; before: PdfBreakEdit; after: PdfBreakEdit; at: number }
   /** Any editor change — crop, resize, rotate, flip or reset — as a small before/after snapshot. */
-  | { type: "EDIT_SET_TRANSFORM"; assetId: FileId; before: ImageTransform; after: ImageTransform; at: number };
+  | { type: "EDIT_SET_TRANSFORM"; assetId: FileId; before: ImageTransform; after: ImageTransform; at: number }
+  /** Any annotation change — add, move, resize, restyle, text edit, delete, clear, renumber. */
+  | { type: "ANNOTATE_SET"; assetId: FileId; before: AnnotationObject[]; after: AnnotationObject[]; at: number; key?: string };
 
 /** Breaks are serialisable and small enough for the command model. */
 export type { PageBreak };

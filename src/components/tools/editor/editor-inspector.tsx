@@ -1,11 +1,13 @@
 "use client";
 
 import { FlipHorizontal2, FlipVertical2, Link2, Link2Off, RotateCcw, RotateCcwSquare, RotateCwSquare } from "lucide-react";
+import Link from "next/link";
 import { useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Disclosure, SegmentedControl, Slider } from "@/components/ui/controls";
 import { FieldLabel, InspectorSection, Mono } from "@/components/ui/primitives";
 import { useWorkspace } from "@/components/workspace/workspace-provider";
+import { TOOLS } from "@/config/tools";
 import {
   describeOrientation,
   EDITOR_LIMITS,
@@ -99,6 +101,7 @@ export function EditorInspector({ assetId, source }: { assetId: string; source: 
   const reset = useWorkspace((s) => s.resetEditTransform);
   const exportSettings = useWorkspace((s) => s.exportSettings);
   const setExportSettings = useWorkspace((s) => s.setExportSettings);
+  const annotations = useWorkspace((s) => s.annotation.byAsset[assetId]?.length ?? 0);
   const apply = (next: ImageTransform, coalesce = false) => setTransform(assetId, next, { coalesce });
 
   const visible = visibleSize(t, source);
@@ -212,6 +215,16 @@ export function EditorInspector({ assetId, source }: { assetId: string; source: 
             </p>
           )}
         </div>
+        {annotations > 0 && (
+          // Editor export is transform-only; annotations stay live and follow these edits.
+          <p className="t-body-sm mt-3 rounded-md border border-line bg-surface-3 px-3 py-2 text-ink-2" data-testid="editor-annotation-note">
+            This image has {annotations} annotation{annotations === 1 ? "" : "s"}. They follow your edits and are added when you export from{" "}
+            <Link href={TOOLS.annotate.route} className="font-medium text-accent-ink hover:underline">
+              Annotate
+            </Link>
+            .
+          </p>
+        )}
         <Disclosure title="Advanced options" className="mt-4">
           <FieldLabel>Format</FieldLabel>
           <SegmentedControl<"png" | "jpeg" | "webp">

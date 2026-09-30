@@ -62,6 +62,12 @@ export interface TransformExportOptions {
   /** Called between tiles on the main-thread fallback to keep the page responsive. */
   yieldBetweenTiles?: () => Promise<void>;
   onProgress?: (progress: number) => void;
+  /**
+   * Draw on top of the transformed image, in output pixels. For tiled exports it is called once
+   * per tile with the tile's first output row, so an overlay spanning tiles is drawn seamlessly.
+   * Used by Annotation to flatten markup in the same render pass.
+   */
+  overlay?: (ctx: OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D, out: Size, offsetY: number) => void;
 }
 
 export interface TransformExportResult {
