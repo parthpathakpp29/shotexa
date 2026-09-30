@@ -64,6 +64,26 @@ export interface WorkspaceOcrResult {
   result: OcrResult;
 }
 
+/** One rendered Split piece, held by the page until the user downloads it or adds it to the workspace. */
+export interface SplitRunPiece {
+  name: string;
+  type: ImageMime;
+  blob: Blob;
+  width: number;
+  height: number;
+  bytes: number;
+  /** Source rows [y0, y1). */
+  y0: number;
+  y1: number;
+}
+
+export interface SplitRunResult {
+  sourceId: FileId;
+  pieces: SplitRunPiece[];
+  strategy: "single-canvas" | "tiled-png";
+  ms: number;
+}
+
 export interface WorkspacePdfResult {
   id: string;
   blob: Blob;
@@ -95,6 +115,13 @@ export interface WorkspaceRuntime {
   exportEdit(assetId?: FileId): Promise<EditorExportResult>;
   /** Flatten the asset's annotations (on top of any pending editor transform) into a new artifact. */
   exportAnnotated(assetId?: FileId): Promise<EditorExportResult>;
+  /**
+   * Render the asset's split at full resolution. The pieces are returned, NOT added to the
+   * workspace: a long screenshot can make dozens, so adding them is an explicit second step.
+   */
+  exportSplit(assetId?: FileId): Promise<SplitRunResult>;
+  /** Add rendered Split pieces to the workspace as artifacts (the first is selected). */
+  addSplitPieces(result: SplitRunResult): FileId[];
   exportSafeShare(assetId?: FileId): Promise<WorkspaceSafeShareResult>;
   inspectMetadata(assetId?: FileId): Promise<MetadataInspectRun>;
   cleanMetadata(assetId?: FileId): Promise<WorkspaceMetadataCleanResult>;
@@ -517,6 +544,70 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     }
   }
 
+  async function exportSplit(assetId?: FileId): Promise<SplitRunResult> {
+    const { id: sourceId, file, blob } = selected(assetId);
+    const s = store.getState();
+    const source = { width: file.width, height: file.height };
+    const { defaultSplit, planSplit, pieceName } = await import("@/core/split/plan");
+    const pieces = planSplit(s.split.byAsset[sourceId] ?? defaultSplit(source), source);
+    const { format, quality } = s.exportSettings;
+    const jobId = `split:${Date.now()}`;
+    job(jobId, "split-export", "running", 0);
+    try {
+      const onProgress = (progress: number) => job(jobId, "split-export", "running", progress);
+      const result = caps.offscreenCanvas
+        ? await broker.run("image", "split.export", { image: blob, pieces, source, format, quality }, { onProgress })
+        : await (await import("@/core/split/render")).renderSplit(blob, pieces, {
+            source,
+            format,
+            quality,
+            createCanvas: (width, height) => Object.assign(document.createElement("canvas"), { width, height }),
+            yieldBetweenTiles: timeSlicer(),
+            onProgress,
+          });
+      // The whole source was decoded once: recycle the worker so that memory is returned (Spike B).
+      if (source.width * source.height > 16_000_000) broker.release("image");
+      const mime: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
+      job(jobId, "split-export", "done", 1);
+      return {
+        sourceId,
+        strategy: result.strategy,
+        ms: result.ms,
+        pieces: result.pieces.map((p, i) => ({ name: pieceName(i, pieces.length, EXT[mime]), type: mime, blob: p.blob, width: p.width, height: p.height, bytes: p.blob.size, y0: pieces[i].y0, y1: pieces[i].y1 })),
+      };
+    } catch (error) {
+      const code = codeOf(error);
+      job(jobId, "split-export", "failed", null, code);
+      throw Object.assign(new Error(code), { code });
+    }
+  }
+
+  function addSplitPieces(result: SplitRunResult): FileId[] {
+    if (!store.getState().files[result.sourceId]) return [];
+    const added: WorkspaceFile[] = result.pieces.map((p) => {
+      const id = newId();
+      registry.put(id, p.blob);
+      return {
+        id,
+        name: p.name,
+        type: p.type,
+        bytes: p.bytes,
+        width: p.width,
+        height: p.height,
+        source: "artifact",
+        kind: "artifact",
+        derivedFrom: [result.sourceId],
+        producedBy: "split",
+        addedAt: Date.now(),
+        previewVersion: 0,
+      };
+    });
+    // New artifacts only: the source keeps its blob and its split settings.
+    store.getState().addArtifacts(added);
+    for (const f of added) previewChain = previewChain.then(() => makePreview(f.id)).catch(() => undefined);
+    return added.map((f) => f.id);
+  }
+
   function selected(assetId?: FileId) {
     const id = assetId ?? store.getState().selectedId;
     const file = id ? store.getState().files[id] : undefined;
@@ -861,6 +952,8 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     exportCombine,
     exportEdit,
     exportAnnotated,
+    exportSplit,
+    addSplitPieces,
     exportSafeShare,
     inspectMetadata,
     cleanMetadata,
@@ -885,6 +978,30 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
       broker.dispose();
     },
   };
+}
+
+/** Save a Blob that is not (yet) in the registry, e.g. a rendered Split piece. */
+export function downloadBlob(blob: Blob, name: string): void {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  // The click has started the download; give the browser a moment before releasing the URL.
+  setTimeout(() => URL.revokeObjectURL(url), 30_000);
+}
+
+/**
+ * Save several files one after another. Spaced out because browsers drop or block bursts of
+ * programmatic downloads; some ask once to allow "multiple downloads" from the page.
+ */
+export async function downloadBlobs(files: { blob: Blob; name: string }[], gapMs = 250): Promise<void> {
+  for (let i = 0; i < files.length; i++) {
+    downloadBlob(files[i].blob, files[i].name);
+    if (i < files.length - 1) await new Promise((resolve) => setTimeout(resolve, gapMs));
+  }
 }
 
 /** Save a registry asset through a temporary link; the object URL is owned by the registry. */

@@ -244,6 +244,75 @@ describe("WorkspaceRuntime", () => {
     expect(rt.store.getState().order).toHaveLength(3);
   });
 
+  it("splits from the original file, returns pieces, and adds them only when asked", async () => {
+    let input: { image: Blob; pieces: { index: number; y0: number; y1: number }[]; source: { width: number; height: number }; format: string } | undefined;
+    const { broker, calls } = fakeBroker({
+      "split.export": (i) => {
+        input = i as typeof input;
+        return {
+          pieces: input!.pieces.map((p) => ({ blob: new Blob([new Uint8Array(4 + p.index)], { type: "image/png" }), width: input!.source.width, height: p.y1 - p.y0 })),
+          strategy: "single-canvas",
+          ms: 2,
+        };
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const original = png("chat-light/a.png");
+    const [sourceId] = (await rt.ingest([original], "picker")).added;
+    const f = rt.store.getState().files[sourceId];
+
+    // No settings yet: the default equal split into two.
+    const first = await rt.exportSplit(sourceId);
+    expect(calls).toContain("image:split.export");
+    expect(input!.image).toBe(original); // the original file, never a preview
+    expect(input!.pieces).toEqual([
+      { index: 0, y0: 0, y1: Math.round(f.height / 2) },
+      { index: 1, y0: Math.round(f.height / 2), y1: f.height },
+    ]);
+    expect(first.pieces.map((p) => p.name)).toEqual(["shotexa-split-01.png", "shotexa-split-02.png"]);
+    expect(rt.store.getState().order).toEqual([sourceId]); // nothing added yet
+
+    rt.store.getState().setSplit(sourceId, { mode: "custom", by: "count", count: 2, height: 500, lines: [{ id: "x", y: 300, source: "manual" }, { id: "y", y: 900, source: "manual" }] });
+    const result = await rt.exportSplit(sourceId);
+    expect(result.pieces.map((p) => [p.y0, p.y1, p.height])).toEqual([
+      [0, 300, 300],
+      [300, 900, 600],
+      [900, f.height, f.height - 900],
+    ]);
+    const ids = rt.addSplitPieces(result);
+    const s = rt.store.getState();
+    expect(ids).toHaveLength(3);
+    expect(s.order).toEqual([sourceId, ...ids]);
+    expect(s.selectedId).toBe(ids[0]);
+    expect(ids.map((i) => s.files[i])).toMatchObject([
+      { name: "shotexa-split-01.png", kind: "artifact", producedBy: "split", derivedFrom: [sourceId], height: 300 },
+      { name: "shotexa-split-02.png", height: 600 },
+      { name: "shotexa-split-03.png", height: f.height - 900 },
+    ]);
+    expect(rt.registry.blob(ids[1])).toBe(result.pieces[1].blob);
+    // Non-destructive: the source keeps its blob and its split lines.
+    expect(rt.registry.blob(sourceId)).toBe(original);
+    expect(s.split.byAsset[sourceId].lines.map((l) => l.y)).toEqual([300, 900]);
+    // A piece is an ordinary image: it can be split again without re-upload.
+    rt.store.getState().setSplit(ids[1], { mode: "equal", by: "count", count: 3, height: 100, lines: [] });
+    const again = await rt.exportSplit(ids[1]);
+    expect(input!.image).toBe(result.pieces[1].blob);
+    expect(again.pieces.map((p) => p.height)).toEqual([200, 200, 200]);
+  });
+
+  it("reports a controlled Split error and adds nothing", async () => {
+    const { broker } = fakeBroker({
+      "split.export": () => {
+        throw Object.assign(new Error("x"), { code: "SPLIT_INVALID" });
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const { added } = await rt.ingest([png("chat-light/a.png")], "drop");
+    await expect(rt.exportSplit(added[0])).rejects.toMatchObject({ code: "SPLIT_INVALID" });
+    expect(Object.values(rt.store.getState().jobs).find((j) => j.kind === "split-export")).toMatchObject({ status: "failed", error: "SPLIT_INVALID" });
+    expect(rt.store.getState().order).toEqual(added);
+  });
+
   it("surfaces the renderer's controlled error code", async () => {
     const { broker } = fakeBroker({
       "transform.export": () => {

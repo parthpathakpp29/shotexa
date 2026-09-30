@@ -27,6 +27,8 @@ const MESSAGES: Record<string, string> = {
   EDITOR_CANCELLED: "Editing export was cancelled.",
   ANNOTATION_EMPTY: "Add an arrow, box, highlight, text, drawing or step before exporting.",
   ANNOTATION_INVALID: "These annotations couldn't be drawn. Undo the last change and try again.",
+  SPLIT_NOTHING_TO_SPLIT: "Add at least one split line so there are two or more pieces.",
+  SPLIT_INVALID: "These split lines overlap or leave a piece too thin. Undo the last change or reset.",
   WORKER_CRASHED: "Processing stopped unexpectedly. Please try again.",
   CANCELLED: "Cancelled.",
   REDACTION_DECODE_FAILED: "This screenshot couldn't be decoded for redaction.",

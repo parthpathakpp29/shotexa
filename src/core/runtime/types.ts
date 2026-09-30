@@ -9,6 +9,7 @@ import type { PageBreak, PaginationPlan, PaperSize } from "@/core/pdf/types";
 import type { CombineSettings } from "@/core/combine/types";
 import type { ImageTransform } from "@/core/image-transform/types";
 import type { AnnotationObject } from "@/core/annotation/types";
+import type { SplitSettings } from "@/core/split/types";
 
 export type FileId = string;
 export type ImageMime = "image/png" | "image/jpeg" | "image/webp";
@@ -34,7 +35,7 @@ export interface WorkspaceFile {
 export type JobStatus = "running" | "done" | "failed" | "cancelled";
 export interface Job {
   id: string;
-  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "editor-export" | "annotate-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
+  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "editor-export" | "annotate-export" | "split-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
   status: JobStatus;
   progress: number | null;
   /** Controlled error code only (never raw messages). */
@@ -145,6 +146,11 @@ export interface EditorSession {
   byAsset: Record<FileId, ImageTransform>;
 }
 
+/** Split Long Screenshot: small settings per asset (source px). Rendered pieces are never stored here. */
+export interface SplitSession {
+  byAsset: Record<FileId, SplitSettings>;
+}
+
 export interface OverlapHint {
   status: "idle" | "checking" | "likely" | "unlikely";
   /** Pair keys found likely to overlap. */
@@ -165,7 +171,9 @@ export type Operation =
   /** Any editor change — crop, resize, rotate, flip or reset — as a small before/after snapshot. */
   | { type: "EDIT_SET_TRANSFORM"; assetId: FileId; before: ImageTransform; after: ImageTransform; at: number }
   /** Any annotation change — add, move, resize, restyle, text edit, delete, clear, renumber. */
-  | { type: "ANNOTATE_SET"; assetId: FileId; before: AnnotationObject[]; after: AnnotationObject[]; at: number; key?: string };
+  | { type: "ANNOTATE_SET"; assetId: FileId; before: AnnotationObject[]; after: AnnotationObject[]; at: number; key?: string }
+  /** Any split change — mode, count, target height, add/move/delete a line, reset. `null` = never split. */
+  | { type: "SPLIT_SET"; assetId: FileId; before: SplitSettings | null; after: SplitSettings | null; at: number; key?: string };
 
 /** Breaks are serialisable and small enough for the command model. */
 export type { PageBreak };

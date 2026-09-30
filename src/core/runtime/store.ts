@@ -6,13 +6,14 @@ import { createStore } from "zustand/vanilla";
 import type { ToolId } from "@/config/tools";
 import { clampRect } from "@/core/redaction/geometry";
 import type { ImageRect, Redaction, RedactionMode, RedactionSession } from "@/core/redaction/types";
-import type { EditorSession, ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
+import type { EditorSession, ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, SplitSession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
 import { DEFAULT_COMBINE_SETTINGS } from "@/core/combine/layout";
 import type { CombineSettings } from "@/core/combine/types";
 import { IDENTITY_TRANSFORM, sameTransform } from "@/core/image-transform/transform";
 import type { ImageTransform } from "@/core/image-transform/types";
 import { DEFAULT_STYLE } from "@/core/annotation/objects";
 import type { AnnotationObject, AnnotationSession, AnnotationStyle, AnnotationTool } from "@/core/annotation/types";
+import type { SplitSettings } from "@/core/split/types";
 
 /** Consecutive offset edits on the same join within this window merge into one undo step (slider drags). */
 export const COALESCE_MS = 600;
@@ -36,6 +37,7 @@ export interface WorkspaceState {
   pdf: PdfSession;
   editor: EditorSession;
   annotation: AnnotationSession;
+  split: SplitSession;
   documents: Record<string, WorkspaceDocument>;
   documentOrder: string[];
   /** Most recent tool output (e.g. the stitched image) for "Continue with…". */
@@ -87,6 +89,11 @@ export interface WorkspaceActions {
   removeDocument(id: string): void;
   addArtifact(file: WorkspaceFile): void;
   /**
+   * Add several artifacts at once (e.g. Split pieces). The first becomes the selected file, so
+   * a batch never leaves the user looking at its last item.
+   */
+  addArtifacts(files: WorkspaceFile[]): void;
+  /**
    * Replace an asset's editor transform as one undoable step. `coalesce` merges rapid edits
    * of the same asset (typed dimensions, arrow-key nudges) into a single undo step.
    */
@@ -103,6 +110,11 @@ export interface WorkspaceActions {
    * `select` sets the selection in the same update.
    */
   setAnnotations(assetId: FileId, next: AnnotationObject[], opts?: { coalesce?: string; now?: number; select?: string | null }): void;
+  /**
+   * Replace an asset's split settings as one undoable step (`null` = back to the default split).
+   * `coalesce` is a gesture key, as for annotations (typing a count, nudging one line).
+   */
+  setSplit(assetId: FileId, next: SplitSettings | null, opts?: { coalesce?: string; now?: number }): void;
 }
 
 export type WorkspaceStore = ReturnType<typeof createWorkspaceStore>;
@@ -136,6 +148,7 @@ const initial = (): WorkspaceState => ({
   },
   editor: { byAsset: {} },
   annotation: { byAsset: {}, selectedId: null, tool: "arrow", style: DEFAULT_STYLE },
+  split: { byAsset: {} },
   documents: {},
   documentOrder: [],
   lastArtifactId: null,
@@ -192,6 +205,14 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
             selectedId: value.some((o) => o.id === s.annotation.selectedId) ? s.annotation.selectedId : null,
           },
         }));
+      } else if (op.type === "SPLIT_SET") {
+        const value = dir === 1 ? op.after : op.before;
+        set((s) => {
+          const byAsset = { ...s.split.byAsset };
+          if (value) byAsset[op.assetId] = value;
+          else delete byAsset[op.assetId];
+          return { split: { byAsset } };
+        });
       } else if (op.type === "PDF_SET_BREAKS") {
         // Every operation is matched explicitly: a new type must never fall into another's branch.
         const value = dir === 1 ? op.after : op.before;
@@ -230,6 +251,8 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           delete editorByAsset[id];
           const annotationByAsset = { ...s.annotation.byAsset };
           delete annotationByAsset[id];
+          const splitByAsset = { ...s.split.byAsset };
+          delete splitByAsset[id];
           return {
             files,
             order,
@@ -243,6 +266,7 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
             pdf: { ...s.pdf, inputIds: s.pdf.inputIds.filter((x) => x !== id), edits: pdfEdits, plan: null, selectedBreak: null },
             editor: { ...s.editor, byAsset: editorByAsset },
             annotation: { ...s.annotation, byAsset: annotationByAsset, selectedId: null },
+            split: { byAsset: splitByAsset },
             overlapHint: { ...s.overlapHint, status: "idle", pairs: s.overlapHint.pairs.filter((k) => !k.includes(id)) },
           };
         });
@@ -468,6 +492,15 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
       addArtifact(file) {
         set((s) => ({ files: { ...s.files, [file.id]: file }, order: [...s.order, file.id], selectedId: file.id, lastArtifactId: file.id }));
       },
+      addArtifacts(list) {
+        if (!list.length) return;
+        set((s) => ({
+          files: { ...s.files, ...Object.fromEntries(list.map((f) => [f.id, f])) },
+          order: [...s.order, ...list.map((f) => f.id)],
+          selectedId: list[0].id,
+          lastArtifactId: list[0].id,
+        }));
+      },
       setEditTransform(assetId, next, opts = {}) {
         if (!get().files[assetId]) return;
         const before = get().editor.byAsset[assetId] ?? IDENTITY_TRANSFORM;
@@ -498,6 +531,19 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           applyOp({ type: "ANNOTATE_SET", assetId, before, after: next, at: now }, 1);
         }
         if (opts.select !== undefined) set((s) => ({ annotation: { ...s.annotation, selectedId: opts.select ?? null } }));
+      },
+      setSplit(assetId, next, opts = {}) {
+        if (!get().files[assetId]) return;
+        const before = get().split.byAsset[assetId] ?? null;
+        if (JSON.stringify(before) !== JSON.stringify(next)) {
+          const now = opts.now ?? Date.now();
+          const last = get().history.past.at(-1);
+          const merge = !!opts.coalesce && last?.type === "SPLIT_SET" && last.assetId === assetId && last.key === opts.coalesce && now - last.at < COALESCE_MS;
+          if (merge) {
+            set((s) => ({ history: { past: [...s.history.past.slice(0, -1), { ...last, after: next, at: now }], future: [] } }));
+          } else record({ type: "SPLIT_SET", assetId, before, after: next, at: now, key: opts.coalesce });
+          applyOp({ type: "SPLIT_SET", assetId, before, after: next, at: now }, 1);
+        }
       },
     };
   });

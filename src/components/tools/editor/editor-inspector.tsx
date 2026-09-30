@@ -2,9 +2,9 @@
 
 import { FlipHorizontal2, FlipVertical2, Link2, Link2Off, RotateCcw, RotateCcwSquare, RotateCwSquare } from "lucide-react";
 import Link from "next/link";
-import { useId, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Disclosure, SegmentedControl, Slider } from "@/components/ui/controls";
+import { NumberField } from "@/components/ui/number-field";
 import { FieldLabel, InspectorSection, Mono } from "@/components/ui/primitives";
 import { useWorkspace } from "@/components/workspace/workspace-provider";
 import { TOOLS } from "@/config/tools";
@@ -39,61 +39,6 @@ const PRESETS: { value: AspectPreset; label: string }[] = [
   { value: "16:9", label: "16:9" },
 ];
 
-/**
- * Whole-number field that commits on Enter or blur, not on every keystroke — typing "1170"
- * is one edit (one undo step), never four intermediate resizes. Invalid input reverts.
- */
-function NumberField({ label, value, min, max, onCommit, testId }: { label: string; value: number; min: number; max: number; onCommit: (n: number) => void; testId: string }) {
-  const id = useId();
-  // A draft exists only while the field is being edited; otherwise it shows the committed value.
-  const [draft, setDraft] = useState<string | null>(null);
-  const cancelled = useRef(false);
-  const text = draft ?? String(value);
-
-  /** Returns the value now shown in the field. */
-  function commit(): string {
-    const raw = text.trim();
-    const n = Number(raw);
-    if (raw === "" || !Number.isFinite(n)) return String(value);
-    const clamped = Math.min(max, Math.max(min, Math.round(n)));
-    if (clamped !== value) onCommit(clamped);
-    return String(clamped);
-  }
-
-  return (
-    <label htmlFor={id} className="block">
-      <span className="t-micro mb-1.5 block text-ink-3">{label}</span>
-      <span className="flex items-center rounded-sm border border-line bg-surface focus-within:border-accent">
-        <input
-          id={id}
-          type="text"
-          inputMode="numeric"
-          data-testid={testId}
-          value={text}
-          onChange={(e) => setDraft(e.target.value.replace(/[^\d.-]/g, ""))}
-          onFocus={() => setDraft(String(value))}
-          onBlur={() => {
-            // Escape blurs too, but must abandon the draft rather than commit it.
-            if (!cancelled.current) commit();
-            cancelled.current = false;
-            setDraft(null);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault();
-              setDraft(commit());
-            } else if (e.key === "Escape") {
-              cancelled.current = true;
-              (e.target as HTMLInputElement).blur();
-            }
-          }}
-          className="t-mono h-9 w-full min-w-0 bg-transparent px-2.5 text-[13px] text-ink outline-none max-md:h-11"
-        />
-        <span className="t-mono pr-2.5 text-[11px] text-ink-3">px</span>
-      </span>
-    </label>
-  );
-}
 
 export function EditorInspector({ assetId, source }: { assetId: string; source: Size }) {
   const t = useWorkspace((s) => s.editor.byAsset[assetId] ?? IDENTITY_TRANSFORM);

@@ -7,10 +7,10 @@
  *  - "preview" route + workspace shell exist (files carry over) but the tool is not finished:
  *              noindex, not in the sitemap, honest "coming next" state
  */
-export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "compress" | "metadata";
+export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "split" | "compress" | "metadata";
 
 export type ToolStatus = "live" | "preview";
-export type ToolIcon = "stitch" | "combine" | "shield" | "blur" | "text" | "pdf" | "crop" | "pen" | "compress" | "eraser";
+export type ToolIcon = "stitch" | "combine" | "shield" | "blur" | "text" | "pdf" | "crop" | "pen" | "scissors" | "compress" | "eraser";
 
 /** Grouping used by every discovery surface (tools page, header menu, footer). */
 export type ToolCategory = "create" | "protect" | "documents" | "edit";
@@ -50,7 +50,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Smart Screenshot Stitcher",
       description: "Automatically join overlapping screenshots into one long image, review the join, adjust it manually and export at full resolution — privately in your browser.",
     },
-    continueWith: ["safe-share", "annotate", "pdf", "editor", "extract-text", "combine"],
+    continueWith: ["safe-share", "annotate", "pdf", "split", "editor", "extract-text", "combine"],
   },
   combine: {
     id: "combine",
@@ -62,7 +62,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     summary: "Place screenshots side by side or in a stack.",
     minFiles: 2,
     seo: { title: "Combine Screenshots Online – Merge Into One Image | Shotexa", h1: "Combine Screenshots Into One Image", description: "Combine screenshots vertically, horizontally or in a grid — locally in your browser." },
-    continueWith: ["safe-share", "annotate", "editor", "pdf", "extract-text", "metadata"],
+    continueWith: ["safe-share", "annotate", "editor", "pdf", "extract-text", "split", "metadata"],
   },
   "safe-share": {
     id: "safe-share",
@@ -147,7 +147,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Edit a Screenshot Online",
       description: "Crop, resize, rotate and flip screenshots at full resolution — privately in your browser. Your original is never changed.",
     },
-    continueWith: ["annotate", "safe-share", "extract-text", "pdf", "combine"],
+    continueWith: ["annotate", "safe-share", "extract-text", "pdf", "combine", "split"],
   },
   annotate: {
     id: "annotate",
@@ -163,7 +163,23 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Annotate a Screenshot Online",
       description: "Add arrows, boxes, highlights, text, freehand notes and numbered steps to screenshots at full resolution — privately in your browser. Your original is never changed.",
     },
-    continueWith: ["safe-share", "pdf", "combine", "extract-text", "editor"],
+    continueWith: ["safe-share", "pdf", "combine", "extract-text", "editor", "split"],
+  },
+  split: {
+    id: "split",
+    name: "Split",
+    route: "/split-long-screenshot",
+    status: "live",
+    category: "edit",
+    icon: "scissors",
+    summary: "Cut a long screenshot into several images.",
+    minFiles: 1,
+    seo: {
+      title: "Split Long Screenshot Online – Cut Into Multiple Images | Shotexa",
+      h1: "Split a Long Screenshot Into Multiple Images",
+      description: "Cut a long screenshot into equal parts or at your own split lines, and export every piece at full resolution — privately in your browser.",
+    },
+    continueWith: ["combine", "annotate", "editor", "safe-share", "extract-text", "pdf"],
   },
   compress: {
     id: "compress",

@@ -3,6 +3,7 @@ import { COALESCE_MS, createWorkspaceStore, HISTORY_LIMIT, pairKey, selectJoinKe
 import type { StitchPair, WorkspaceDocument, WorkspaceFile } from "@/core/runtime/types";
 import { flipTransform, IDENTITY_TRANSFORM, rotateTransform, withOutputWidth, withVisibleCrop } from "@/core/image-transform/transform";
 import type { AnnotationObject } from "@/core/annotation/types";
+import { addLine, cutsFor, defaultSplit, moveLine, removeLine } from "@/core/split/plan";
 
 const file = (id: string, extra: Partial<WorkspaceFile> = {}): WorkspaceFile => ({
   id,
@@ -412,5 +413,73 @@ describe("workspace store — Annotation", () => {
     expect(s().annotation.byAsset.a).toBeUndefined();
     s().setAnnotations("missing", [arrow("y")]);
     expect(s().annotation.byAsset.missing).toBeUndefined();
+  });
+});
+
+describe("workspace store — Split", () => {
+  const H = 2000; // file() height
+  let n = 0;
+  const id = () => `line${++n}`;
+
+  it("records add, move, delete, count, target height and reset as separate undo steps", () => {
+    const { s } = setup(["a"]);
+    const start = defaultSplit({ width: 1000, height: H });
+    s().setSplit("a", { ...start, count: 4 }); // count
+    s().setSplit("a", { ...s().split.byAsset.a, by: "height", height: 700 }); // target height
+    const added = addLine(s().split.byAsset.a, 300, H, id); // add (converts to custom)
+    s().setSplit("a", added);
+    const moved = moveLine(added, added.lines[0].id, 350, H);
+    s().setSplit("a", moved); // move (one drag = one commit)
+    s().setSplit("a", removeLine(moved, moved.lines[1].id)); // delete
+    s().setSplit("a", null); // reset
+    expect(s().history.past.filter((op) => op.type === "SPLIT_SET")).toHaveLength(6);
+    expect(s().split.byAsset.a).toBeUndefined();
+
+    s().undo(); // reset
+    expect(cutsFor(s().split.byAsset.a, H)).toEqual([350, 1400]);
+    s().undo(); // delete
+    expect(cutsFor(s().split.byAsset.a, H)).toEqual([350, 700, 1400]);
+    s().undo(); // move
+    expect(cutsFor(s().split.byAsset.a, H)).toEqual([300, 700, 1400]);
+    s().undo(); // add
+    expect(s().split.byAsset.a).toMatchObject({ mode: "equal", by: "height", height: 700 });
+    s().undo(); // target height
+    expect(s().split.byAsset.a).toMatchObject({ mode: "equal", by: "count", count: 4 });
+    s().undo(); // count → never split (the page shows the default split again)
+    expect(s().split.byAsset.a).toBeUndefined();
+    for (let i = 0; i < 6; i++) s().redo();
+    expect(s().split.byAsset.a).toBeUndefined();
+  });
+
+  it("coalesces only the same gesture key and skips no-ops", () => {
+    const { s } = setup(["a"]);
+    const base = defaultSplit({ width: 1000, height: H });
+    s().setSplit("a", { ...base, count: 3 }, { coalesce: "count", now: 1000 });
+    s().setSplit("a", { ...base, count: 4 }, { coalesce: "count", now: 1100 });
+    s().setSplit("a", { ...base, count: 5 }, { coalesce: "count", now: 1200 });
+    s().setSplit("a", { ...base, count: 5 }, { coalesce: "count", now: 1300 }); // no-op
+    expect(s().history.past).toHaveLength(1);
+    s().setSplit("a", { ...base, count: 5, by: "height" }, { coalesce: "by", now: 1250 });
+    expect(s().history.past).toHaveLength(2);
+    s().setSplit("a", { ...base, count: 6, by: "height" }, { coalesce: "count", now: 1300 + COALESCE_MS });
+    expect(s().history.past).toHaveLength(3);
+    s().undo();
+    s().undo();
+    expect(s().split.byAsset.a.count).toBe(5);
+    s().undo();
+    expect(s().split.byAsset.a).toBeUndefined();
+  });
+
+  it("removing a file drops its split and adding pieces selects the first", () => {
+    const { s } = setup(["a", "b"]);
+    s().setSplit("a", defaultSplit({ width: 1000, height: H }));
+    s().removeFile("a");
+    expect(s().split.byAsset.a).toBeUndefined();
+    s().addArtifacts([file("p1", { kind: "artifact", producedBy: "split" }), file("p2", { kind: "artifact", producedBy: "split" })]);
+    expect(s().order).toEqual(["b", "p1", "p2"]);
+    expect(s().selectedId).toBe("p1");
+    expect(s().lastArtifactId).toBe("p1");
+    s().setSplit("missing", defaultSplit({ width: 1, height: 100 }));
+    expect(s().split.byAsset.missing).toBeUndefined();
   });
 });

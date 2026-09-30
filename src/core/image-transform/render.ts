@@ -60,23 +60,49 @@ export function planTransformExport(t: ImageTransform, source: { width: number; 
   return { out, strategy: kind, tileHeight, tiles: Math.ceil(out.height / tileHeight) };
 }
 
+/**
+ * Decode the ORIGINAL file once, refusing a decoder that disagrees with the header size: every
+ * crop and split row was authored against the header dimensions, and a reoriented decode (e.g.
+ * EXIF rotation) would silently misplace them. The caller owns — and must close — the bitmap.
+ */
+export async function decodeSource(image: Blob, source: { width: number; height: number }): Promise<ImageBitmap> {
+  const bitmap = await createImageBitmap(image).catch(() => {
+    throw new EditorError("EDITOR_DECODE_FAILED");
+  });
+  if (bitmap.width !== source.width || bitmap.height !== source.height) {
+    bitmap.close();
+    throw new EditorError("EDITOR_SOURCE_MISMATCH", `${bitmap.width}x${bitmap.height}`);
+  }
+  return bitmap;
+}
+
 export async function renderTransform(image: Blob, t: ImageTransform, o: TransformExportOptions): Promise<TransformExportResult> {
+  planTransformExport(t, o.source, o.format, typeof CompressionStream !== "undefined"); // fail fast, before decoding
+  let bitmap: ImageBitmap | null = null;
+  try {
+    bitmap = await decodeSource(image, o.source);
+    return await renderDecoded(bitmap, t, o);
+  } catch (error) {
+    if (error instanceof EditorError) throw error;
+    if (error instanceof RangeError) throw new EditorError("EDITOR_MEMORY_PRESSURE");
+    throw new EditorError("EDITOR_MEMORY_PRESSURE", String(error));
+  } finally {
+    bitmap?.close();
+  }
+}
+
+/**
+ * Render one transform from an already-decoded source. Split renders every piece from a single
+ * decode through here; the bitmap is left open for the caller.
+ */
+export async function renderDecoded(bitmap: ImageBitmap, t: ImageTransform, o: TransformExportOptions): Promise<TransformExportResult> {
   const started = performance.now();
   const plan = planTransformExport(t, o.source, o.format, typeof CompressionStream !== "undefined");
   const { out } = plan;
   const make = o.createCanvas ?? ((w: number, h: number) => new OffscreenCanvas(w, h));
-  let bitmap: ImageBitmap | null = null;
   let canvas: Canvas | null = null;
   let blob: Blob;
   try {
-    bitmap = await createImageBitmap(image).catch(() => {
-      throw new EditorError("EDITOR_DECODE_FAILED");
-    });
-    // The crop was authored against the header dimensions; a decoder that reorients the image
-    // (e.g. EXIF rotation) would silently misplace it, so refuse rather than guess.
-    if (bitmap.width !== o.source.width || bitmap.height !== o.source.height) {
-      throw new EditorError("EDITOR_SOURCE_MISMATCH", `${bitmap.width}x${bitmap.height}`);
-    }
     if (o.signal?.aborted) throw new EditorError("EDITOR_CANCELLED");
 
     if (plan.strategy === "single-canvas") {
@@ -117,7 +143,6 @@ export async function renderTransform(image: Blob, t: ImageTransform, o: Transfo
     if (error instanceof RangeError) throw new EditorError("EDITOR_MEMORY_PRESSURE");
     throw new EditorError("EDITOR_MEMORY_PRESSURE", String(error));
   } finally {
-    bitmap?.close();
     release(canvas);
   }
   // Encoders can crop silently (Chromium WebP beyond 16,383 px): never hand back a wrong size.
