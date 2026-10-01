@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import type { FileId } from "@/core/runtime/types";
 import { cn } from "@/lib/cn";
+import { useReleasingCanvas } from "@/lib/use-canvas-ref";
 import { useWorkspace, useWorkspaceContext } from "./workspace-provider";
 
 /**
@@ -14,6 +15,7 @@ export function BitmapCanvas({ id, width, className, label }: { id: FileId; widt
   const version = useWorkspace((s) => s.files[id]?.previewVersion ?? 0);
   const file = useWorkspace((s) => s.files[id]);
   const ref = useRef<HTMLCanvasElement>(null);
+  const attach = useReleasingCanvas(ref);
 
   useEffect(() => {
     const c = ref.current;
@@ -35,5 +37,5 @@ export function BitmapCanvas({ id, width, className, label }: { id: FileId; widt
   }, [runtime, id, width, version, file]);
 
   if (!file) return null;
-  return <canvas ref={ref} role="img" aria-label={label} className={cn("block h-auto w-full", !version && "animate-pulse bg-surface-2", className)} style={{ aspectRatio: `${file.width} / ${file.height}` }} />;
+  return <canvas ref={attach} role="img" aria-label={label} className={cn("block h-auto w-full", !version && "animate-pulse bg-surface-2", className)} style={{ aspectRatio: `${file.width} / ${file.height}` }} />;
 }

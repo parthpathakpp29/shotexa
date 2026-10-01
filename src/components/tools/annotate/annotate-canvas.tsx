@@ -38,6 +38,7 @@ import { drawTransformed } from "@/core/image-transform/matrix";
 import { IDENTITY_TRANSFORM } from "@/core/image-transform/transform";
 import type { CropHandle, Size } from "@/core/image-transform/types";
 import { cn } from "@/lib/cn";
+import { useReleasingCanvas } from "@/lib/use-canvas-ref";
 import { backingSize, displayWidth, zoomIn, zoomOut, type Zoom } from "@/lib/stage-size";
 import { useElementWidth } from "@/lib/use-element-width";
 
@@ -87,6 +88,7 @@ export function AnnotateCanvas({ assetId }: { assetId: string }) {
   const [zoom, setZoom] = useState<Zoom>("fit");
   const [frameRef, frameWidth] = useElementWidth<HTMLDivElement>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const attachCanvas = useReleasingCanvas(canvasRef);
   const stageRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLTextAreaElement>(null);
   const base = useRef<HTMLCanvasElement | null>(null);
@@ -110,7 +112,8 @@ export function AnnotateCanvas({ assetId }: { assetId: string }) {
   const source = useMemo<Size | null>(() => (file ? { width: file.width, height: file.height } : null), [file]);
   const frame = useMemo(() => (source ? annotationFrame(t, source) : null), [t, source]);
   const out = frame?.out ?? null;
-  const cssWidth = out ? displayWidth(out, Math.max(1, frameWidth - 32), zoom) : 0;
+  // Nothing until the frame is measured: a first render at width 0 would show (and accept input on) a 1 px stage.
+  const cssWidth = out && frameWidth > 0 ? displayWidth(out, Math.max(1, frameWidth - 32), zoom) : 0;
   const cssHeight = out ? (cssWidth * out.height) / out.width : 0;
   /** CSS pixels per output pixel. */
   const s = out ? cssWidth / out.width : 1;
@@ -438,7 +441,7 @@ export function AnnotateCanvas({ assetId }: { assetId: string }) {
             onKeyDown={onKeyDown}
             onDoubleClick={onDoubleClick}
           >
-            <canvas ref={canvasRef} aria-hidden data-testid="annotate-canvas" className="pointer-events-none block h-full w-full" />
+            <canvas ref={attachCanvas} aria-hidden data-testid="annotate-canvas" className="pointer-events-none block h-full w-full" />
             {selBounds && !editing && (
               <span
                 aria-hidden

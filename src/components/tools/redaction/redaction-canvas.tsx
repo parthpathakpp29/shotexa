@@ -7,6 +7,7 @@ import { displayToImage, imageToDisplay, rectFromPoints, type ViewportTransform 
 import type { ImageRect, Redaction } from "@/core/redaction/types";
 import { useElementWidth } from "@/lib/use-element-width";
 import { cn } from "@/lib/cn";
+import { useReleasingCanvas } from "@/lib/use-canvas-ref";
 import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
 
 type Zoom = "fit" | "0.5" | "1" | "2";
@@ -72,6 +73,7 @@ export function RedactionCanvas({ assetId }: { assetId: string }) {
   const [zoom, setZoom] = useState<Zoom>("fit");
   const [containerRef, containerWidth] = useElementWidth<HTMLDivElement>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const attachCanvas = useReleasingCanvas(canvasRef);
   const stageRef = useRef<HTMLDivElement>(null);
   const [draft, setDraftState] = useState<ImageRect | null>(null);
   const [transient, setTransientState] = useState<{ id: string; rect: ImageRect } | null>(null);
@@ -93,7 +95,8 @@ export function RedactionCanvas({ assetId }: { assetId: string }) {
     | null
   >(null);
 
-  const cssWidth = !file ? 0 : zoom === "fit" ? Math.floor(Math.min(Math.max(1, containerWidth - 32), file.width, (FIT_HEIGHT * file.width) / file.height)) : Math.round(file.width * Number(zoom));
+  // Nothing until the container is measured: a first render at width 0 would show (and accept input on) a 1 px stage.
+  const cssWidth = !file || !containerWidth ? 0 : zoom === "fit" ? Math.floor(Math.min(Math.max(1, containerWidth - 32), file.width, (FIT_HEIGHT * file.width) / file.height)) : Math.round(file.width * Number(zoom));
   const cssHeight = file && cssWidth ? (cssWidth * file.height) / file.width : 0;
   const transform = useMemo<ViewportTransform | null>(() => (file && cssWidth ? { imageWidth: file.width, imageHeight: file.height, displayWidth: cssWidth, displayHeight: cssHeight } : null), [file, cssWidth, cssHeight]);
 
@@ -195,7 +198,7 @@ export function RedactionCanvas({ assetId }: { assetId: string }) {
               if (delta) { e.preventDefault(); update(assetId, op.id, { rect: { ...op.rect, x: op.rect.x + delta[0], y: op.rect.y + delta[1] } }, { coalesce: true }); }
             }}
           >
-            <canvas ref={canvasRef} className="pointer-events-none block h-full w-full" aria-hidden />
+            <canvas ref={attachCanvas} className="pointer-events-none block h-full w-full" aria-hidden />
             {shown.map((op) => {
               const r = imageToDisplay(op.rect, transform);
               const selected = op.id === selectedId;

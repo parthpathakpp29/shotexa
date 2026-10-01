@@ -21,6 +21,7 @@ import { orientedSize } from "@/core/image-transform/orientation";
 import { IDENTITY_TRANSFORM, outputSize, visibleCrop, visibleSize, withVisibleCrop } from "@/core/image-transform/transform";
 import type { CropHandle, Point, Rect, Size } from "@/core/image-transform/types";
 import { cn } from "@/lib/cn";
+import { useReleasingCanvas } from "@/lib/use-canvas-ref";
 import { useElementWidth } from "@/lib/use-element-width";
 import { backingSize, displayWidth, zoomIn as nextZoomIn, zoomOut as nextZoomOut, type Zoom } from "@/lib/stage-size";
 
@@ -59,6 +60,7 @@ export function EditorCanvas({ assetId, view, onViewChange }: { assetId: string;
   const [zoom, setZoom] = useState<Zoom>("fit");
   const [frameRef, frameWidth] = useElementWidth<HTMLDivElement>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const attachCanvas = useReleasingCanvas(canvasRef);
   const stageRef = useRef<HTMLDivElement>(null);
   const interaction = useRef<Interaction | null>(null);
   const [draft, setDraftState] = useState<Rect | null>(null);
@@ -77,7 +79,8 @@ export function EditorCanvas({ assetId, view, onViewChange }: { assetId: string;
   // What the stage shows: the whole oriented image (crop view) or the final result.
   const shown = view === "crop" ? visible : output;
   const inner = Math.max(1, frameWidth - 32);
-  const cssWidth = shown ? displayWidth(shown, inner, zoom) : 0;
+  // Nothing until the frame is measured: a first render at width 0 would show (and accept input on) a 1 px stage.
+  const cssWidth = shown && frameWidth > 0 ? displayWidth(shown, inner, zoom) : 0;
   const cssHeight = shown ? (cssWidth * shown.height) / shown.width : 0;
   // CSS pixels per visible-image pixel (crop view only).
   const scale = visible ? cssWidth / visible.width : 1;
@@ -250,7 +253,7 @@ export function EditorCanvas({ assetId, view, onViewChange }: { assetId: string;
             onPointerCancel={finish}
             onKeyDown={onKeyDown}
           >
-            <canvas ref={canvasRef} aria-hidden data-testid="editor-canvas" className="pointer-events-none block h-full w-full" />
+            <canvas ref={attachCanvas} aria-hidden data-testid="editor-canvas" className="pointer-events-none block h-full w-full" />
             {view === "crop" && box && (
               // Dimming lives in its own clipped layer so it never spills past the image,
               // while the handles below may overhang the image edge to stay grabbable.

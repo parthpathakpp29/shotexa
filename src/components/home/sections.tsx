@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 import { ToolIcon } from "@/components/brand";
 import { Badge, SectionHeading } from "@/components/ui/primitives";
 import { SITE } from "@/config/site";
-import { LIVE_TOOLS, TOOL_GROUPS, TOOLS } from "@/config/tools";
+import { LIVE_TOOLS, TOOL_GROUPS, TOOLS, UPCOMING_TOOLS } from "@/config/tools";
 import { ChooseScreenshotsButton } from "./choose-button";
 import { Uploader } from "@/components/workspace/uploader";
 
@@ -148,9 +148,10 @@ export function ToolIndexSection() {
           ))}
         </div>
         <p className="t-body-sm mt-6 text-center text-ink-3">
-          More tools are on the way —{" "}
+          {/* Only promise "coming" tools while the registry actually has some. */}
+          {UPCOMING_TOOLS.length > 0 ? "More tools are on the way — " : "Every tool works on the same workspace — "}
           <Link href="/tools" className="font-medium text-accent-ink hover:underline">
-            see what’s coming
+            {UPCOMING_TOOLS.length > 0 ? "see what’s coming" : "see them all"}
           </Link>
           .
         </p>

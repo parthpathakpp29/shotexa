@@ -173,10 +173,13 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     registry.remove(id);
     ocrResults.removeAsset(id);
     pdfAnalyses.remove(id);
+    alphaCache.delete(id);
   });
   const broker = opts.broker ?? new WorkerBroker(browserWorkerFactories());
   const caps = opts.caps ?? detectCapabilities();
   const proxies = new Map<FileId, GrayImage>();
+  /** Transparency found on each asset's preview (Compress/Convert); dropped with the asset. */
+  const alphaCache = new Map<FileId, boolean>();
   let pasteCount = 0;
   let previewChain: Promise<void> = Promise.resolve();
   let disposed = false;
@@ -491,7 +494,8 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
             onProgress,
           });
       // Large outputs: recycle the worker so decoded memory is returned (Spike B).
-      if (result.width * result.height > 16_000_000) broker.release("image");
+      // The whole source was decoded even when a crop makes the output small: size by the larger.
+      if (Math.max(result.width * result.height, source.width * source.height) > 16_000_000) broker.release("image");
       const mime: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
       const base = file.name.replace(/\.[^.]+$/, "").replace(/^edited-/, "");
       const id = newId();
@@ -544,7 +548,8 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
             yieldBetweenTiles: timeSlicer(),
             onProgress,
           });
-      if (result.width * result.height > 16_000_000) broker.release("image");
+      // The whole source was decoded even when a crop makes the output small: size by the larger.
+      if (Math.max(result.width * result.height, source.width * source.height) > 16_000_000) broker.release("image");
       const mime: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
       const base = file.name.replace(/\.[^.]+$/, "").replace(/^annotated-/, "");
       const id = newId();
@@ -681,7 +686,6 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     return id;
   }
 
-  const alphaCache = new Map<FileId, boolean>();
   async function hasTransparency(assetId: FileId): Promise<boolean | null> {
     const file = store.getState().files[assetId];
     if (!file) return null;
