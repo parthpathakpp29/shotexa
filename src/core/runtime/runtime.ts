@@ -143,6 +143,8 @@ export interface WorkspaceRuntime {
   exportSplit(assetId?: FileId): Promise<SplitRunResult>;
   /** Add rendered Split pieces to the workspace as artifacts (the first is selected). */
   addSplitPieces(result: SplitRunResult): FileId[];
+  /** Compose the asset with its Beautifier settings at full resolution into a new artifact. */
+  exportBeautified(assetId?: FileId): Promise<EditorExportResult>;
   /**
    * Compress / Convert: re-encode the asset (same pixel size) with the tool's settings. The
    * result is returned for comparison, not added — `saveEncoded` makes it an artifact.
@@ -617,6 +619,58 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     }
   }
 
+  async function exportBeautified(assetId?: FileId): Promise<EditorExportResult> {
+    const { id: sourceId, file, blob } = selected(assetId);
+    const s = store.getState();
+    const source = { width: file.width, height: file.height };
+    const { DEFAULT_BEAUTIFY } = await import("@/core/beautify/presets");
+    const settings = s.beautify.byAsset[sourceId] ?? DEFAULT_BEAUTIFY;
+    const { format, quality } = s.exportSettings;
+    const jobId = `beautify:${Date.now()}`;
+    job(jobId, "beautify-export", "running", 0);
+    try {
+      const onProgress = (progress: number) => job(jobId, "beautify-export", "running", progress);
+      const result = caps.offscreenCanvas
+        ? await broker.run("image", "beautify.export", { image: blob, settings, source, format, quality }, { onProgress })
+        : await (await import("@/core/beautify/render")).renderBeautified(blob, settings, {
+            source,
+            format,
+            quality,
+            createCanvas: (width, height) => Object.assign(document.createElement("canvas"), { width, height }),
+            yieldBetweenTiles: timeSlicer(),
+            onProgress,
+          });
+      // The whole source is decoded whatever the output size: size the recycle by the larger.
+      if (Math.max(result.width * result.height, source.width * source.height) > 16_000_000) broker.release("image");
+      const mime: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
+      const base = file.name.replace(/\.[^.]+$/, "").replace(/^beautified-/, "");
+      const id = newId();
+      registry.put(id, result.blob);
+      // A new artifact: the source keeps its blob and its composition settings.
+      store.getState().addArtifact({
+        id,
+        name: `beautified-${base}.${EXT[mime]}`,
+        type: mime,
+        bytes: result.blob.size,
+        width: result.width,
+        height: result.height,
+        source: "artifact",
+        kind: "artifact",
+        derivedFrom: [sourceId],
+        producedBy: "beautify",
+        addedAt: Date.now(),
+        previewVersion: 0,
+      });
+      job(jobId, "beautify-export", "done", 1);
+      previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
+      return { id, width: result.width, height: result.height, bytes: result.blob.size, sourceId };
+    } catch (error) {
+      const code = codeOf(error);
+      job(jobId, "beautify-export", "failed", null, code);
+      throw Object.assign(new Error(code), { code });
+    }
+  }
+
   async function encodeAsset(tool: EncodeTool, assetId?: FileId): Promise<EncodeRunResult> {
     const { id: sourceId, file, blob } = selected(assetId);
     const { resolveFormat, encodedName } = await import("@/core/image-encode/settings");
@@ -1071,6 +1125,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     exportAnnotated,
     exportSplit,
     addSplitPieces,
+    exportBeautified,
     encodeAsset,
     saveEncoded,
     hasTransparency,

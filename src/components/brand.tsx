@@ -1,4 +1,4 @@
-import { ArrowLeftRight, Crop, Eraser, EyeOff, FileText, LayoutGrid, Minimize2, PenLine, Rows2, ScanText, ScissorsLineDashed, ShieldCheck, type LucideProps } from "lucide-react";
+import { ArrowLeftRight, Crop, Sparkles, Eraser, EyeOff, FileText, LayoutGrid, Minimize2, PenLine, Rows2, ScanText, ScissorsLineDashed, ShieldCheck, type LucideProps } from "lucide-react";
 import Link from "next/link";
 import type { ToolIcon as ToolIconName } from "@/config/tools";
 import { cn } from "@/lib/cn";
@@ -35,6 +35,7 @@ const ICONS: Record<ToolIconName, (p: LucideProps) => React.ReactNode> = {
   scissors: ScissorsLineDashed,
   compress: Minimize2,
   convert: ArrowLeftRight,
+  sparkles: Sparkles,
   eraser: Eraser,
 };
 

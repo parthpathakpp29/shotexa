@@ -19,6 +19,8 @@ import { renderSplit } from "@/core/split/render";
 import { SplitError } from "@/core/split/types";
 import { encodeImage } from "@/core/image-encode/reencode";
 import { EncodeError } from "@/core/image-encode/types";
+import { renderBeautified } from "@/core/beautify/render";
+import { BeautifyError } from "@/core/beautify/types";
 import { composeStitch } from "@/core/stitch/compose";
 import { StitchError } from "@/core/stitch/types";
 import { serveWorker, type WorkerErrorCode } from "./protocol";
@@ -58,6 +60,8 @@ serveWorker(
       renderSplit(image, pieces, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "render") }),
     "image.encode": async ({ image, source, format, quality, background, probe }, ctx) =>
       encodeImage(image, { source, format, quality, background, probe, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "encode") }),
+    "beautify.export": async ({ image, settings, source, format, quality }, ctx) =>
+      renderBeautified(image, settings, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
     "metadata.inspect": async ({ image, name, type }) => runMetadataInspect(image, name, type),
     "metadata.clean": async ({ image, name, type, policy }) => runMetadataClean(image, name, type, policy),
     "redaction.export": async ({ image, operations, format, quality }, ctx) =>
@@ -71,6 +75,7 @@ serveWorker(
     if (err instanceof AnnotationError) return err.code;
     if (err instanceof SplitError) return err.code;
     if (err instanceof EncodeError) return err.code;
+    if (err instanceof BeautifyError) return err.code;
     if (err instanceof MetadataError) return err.code;
     if (err instanceof RedactionError) return err.code;
     if (err instanceof PrepareError) return err.code === "CANCELLED" ? "CANCELLED" : err.code;

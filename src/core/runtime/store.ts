@@ -6,7 +6,7 @@ import { createStore } from "zustand/vanilla";
 import type { ToolId } from "@/config/tools";
 import { clampRect } from "@/core/redaction/geometry";
 import type { ImageRect, Redaction, RedactionMode, RedactionSession } from "@/core/redaction/types";
-import type { EditorSession, ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, SplitSession, EncodeSession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
+import type { EditorSession, ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, SplitSession, EncodeSession, BeautifySession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
 import { DEFAULT_COMBINE_SETTINGS } from "@/core/combine/layout";
 import type { CombineSettings } from "@/core/combine/types";
 import { IDENTITY_TRANSFORM, sameTransform } from "@/core/image-transform/transform";
@@ -14,6 +14,7 @@ import type { ImageTransform } from "@/core/image-transform/types";
 import { DEFAULT_STYLE } from "@/core/annotation/objects";
 import type { AnnotationObject, AnnotationSession, AnnotationStyle, AnnotationTool } from "@/core/annotation/types";
 import type { SplitSettings } from "@/core/split/types";
+import type { BeautifySettings } from "@/core/beautify/types";
 import type { EncodeSettings, EncodeTool } from "@/core/image-encode/types";
 import { DEFAULT_ENCODE_SETTINGS, normaliseSettings } from "@/core/image-encode/settings";
 
@@ -41,6 +42,7 @@ export interface WorkspaceState {
   annotation: AnnotationSession;
   split: SplitSession;
   encode: EncodeSession;
+  beautify: BeautifySession;
   documents: Record<string, WorkspaceDocument>;
   documentOrder: string[];
   /** Most recent tool output (e.g. the stitched image) for "Continue with…". */
@@ -119,6 +121,12 @@ export interface WorkspaceActions {
    */
   setSplit(assetId: FileId, next: SplitSettings | null, opts?: { coalesce?: string; now?: number }): void;
   setEncodeSettings(tool: EncodeTool, patch: Partial<EncodeSettings>): void;
+  /**
+   * Replace an asset's Beautifier settings as one undoable step (`null` = back to the default
+   * composition). `coalesce` is a gesture key, so a slider drag is one step but two different
+   * controls are never merged.
+   */
+  setBeautify(assetId: FileId, next: BeautifySettings | null, opts?: { coalesce?: string; now?: number }): void;
 }
 
 export type WorkspaceStore = ReturnType<typeof createWorkspaceStore>;
@@ -154,6 +162,7 @@ const initial = (): WorkspaceState => ({
   annotation: { byAsset: {}, selectedId: null, tool: "arrow", style: DEFAULT_STYLE },
   split: { byAsset: {} },
   encode: DEFAULT_ENCODE_SETTINGS,
+  beautify: { byAsset: {} },
   documents: {},
   documentOrder: [],
   lastArtifactId: null,
@@ -218,6 +227,14 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           else delete byAsset[op.assetId];
           return { split: { byAsset } };
         });
+      } else if (op.type === "BEAUTIFY_SET") {
+        const value = dir === 1 ? op.after : op.before;
+        set((s) => {
+          const byAsset = { ...s.beautify.byAsset };
+          if (value) byAsset[op.assetId] = value;
+          else delete byAsset[op.assetId];
+          return { beautify: { byAsset } };
+        });
       } else if (op.type === "PDF_SET_BREAKS") {
         // Every operation is matched explicitly: a new type must never fall into another's branch.
         const value = dir === 1 ? op.after : op.before;
@@ -258,6 +275,8 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           delete annotationByAsset[id];
           const splitByAsset = { ...s.split.byAsset };
           delete splitByAsset[id];
+          const beautifyByAsset = { ...s.beautify.byAsset };
+          delete beautifyByAsset[id];
           return {
             files,
             order,
@@ -272,6 +291,7 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
             editor: { ...s.editor, byAsset: editorByAsset },
             annotation: { ...s.annotation, byAsset: annotationByAsset, selectedId: null },
             split: { byAsset: splitByAsset },
+            beautify: { byAsset: beautifyByAsset },
             overlapHint: { ...s.overlapHint, status: "idle", pairs: s.overlapHint.pairs.filter((k) => !k.includes(id)) },
           };
         });
@@ -536,6 +556,18 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           applyOp({ type: "ANNOTATE_SET", assetId, before, after: next, at: now }, 1);
         }
         if (opts.select !== undefined) set((s) => ({ annotation: { ...s.annotation, selectedId: opts.select ?? null } }));
+      },
+      setBeautify(assetId, next, opts = {}) {
+        if (!get().files[assetId]) return;
+        const before = get().beautify.byAsset[assetId] ?? null;
+        if (JSON.stringify(before) === JSON.stringify(next)) return;
+        const now = opts.now ?? Date.now();
+        const last = get().history.past.at(-1);
+        const merge = !!opts.coalesce && last?.type === "BEAUTIFY_SET" && last.assetId === assetId && last.key === opts.coalesce && now - last.at < COALESCE_MS;
+        if (merge) {
+          set((s) => ({ history: { past: [...s.history.past.slice(0, -1), { ...last, after: next, at: now }], future: [] } }));
+        } else record({ type: "BEAUTIFY_SET", assetId, before, after: next, at: now, key: opts.coalesce });
+        applyOp({ type: "BEAUTIFY_SET", assetId, before, after: next, at: now }, 1);
       },
       setEncodeSettings: (tool, patch) => set((s) => ({ encode: { ...s.encode, [tool]: normaliseSettings({ ...s.encode[tool], ...patch }) } })),
       setSplit(assetId, next, opts = {}) {

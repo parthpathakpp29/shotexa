@@ -27,6 +27,8 @@ const MESSAGES: Record<string, string> = {
   EDITOR_CANCELLED: "Editing export was cancelled.",
   ANNOTATION_EMPTY: "Add an arrow, box, highlight, text, drawing or step before exporting.",
   ANNOTATION_INVALID: "These annotations couldn't be drawn. Undo the last change and try again.",
+  BEAUTIFY_TOO_LARGE: "This composition is too large to export in a browser. Reduce the padding, lower the scale or choose a smaller preset.",
+  BEAUTIFY_INVALID: "These settings don't make a valid image. Reset the composition and try again.",
   SPLIT_NOTHING_TO_SPLIT: "Add at least one split line so there are two or more pieces.",
   ENCODE_DECODE_FAILED: "This image couldn't be decoded. Try re-saving it as PNG.",
   ENCODE_SOURCE_MISMATCH: "This image's stored orientation doesn't match its size, so it can't be re-encoded safely.",
