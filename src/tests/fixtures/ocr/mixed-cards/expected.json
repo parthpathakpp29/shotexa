@@ -1,0 +1,783 @@
+{
+ "id": "mixed-cards",
+ "lang": "eng",
+ "boxesFrame": "image",
+ "lines": [
+  {
+   "text": "Your workspace",
+   "box": [
+    40,
+    32,
+    221.328125,
+    40
+   ],
+   "words": [
+    {
+     "text": "Your",
+     "box": [
+      40,
+      32,
+      63.953125,
+      40
+     ],
+     "emoji": false
+    },
+    {
+     "text": "workspace",
+     "box": [
+      112.203125,
+      32,
+      149.125,
+      40
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Keep the original file safe and work on a copy whenever possible. A clear heading and short",
+   "box": [
+    40,
+    79,
+    685.859375,
+    22
+   ],
+   "words": [
+    {
+     "text": "Keep",
+     "box": [
+      40,
+      79,
+      37.421875,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      82.0625,
+      79,
+      24.28125,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "original",
+     "box": [
+      110.984375,
+      79,
+      56.515625,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "file",
+     "box": [
+      172.15625,
+      79,
+      22.453125,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "safe",
+     "box": [
+      199.25,
+      79,
+      30.09375,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      233.984375,
+      79,
+      28.296875,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "work",
+     "box": [
+      266.921875,
+      79,
+      36.625,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "on",
+     "box": [
+      308.1875,
+      79,
+      19.59375,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "a",
+     "box": [
+      332.421875,
+      79,
+      8.65625,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "copy",
+     "box": [
+      345.734375,
+      79,
+      36.046875,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "whenever",
+     "box": [
+      386.421875,
+      79,
+      72.265625,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "possible.",
+     "box": [
+      463.328125,
+      79,
+      65.203125,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "A",
+     "box": [
+      533.171875,
+      79,
+      10.96875,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "clear",
+     "box": [
+      548.78125,
+      79,
+      35.4375,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "heading",
+     "box": [
+      588.859375,
+      79,
+      60.9375,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      654.4375,
+      79,
+      28.296875,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "short",
+     "box": [
+      687.375,
+      79,
+      38.484375,
+      22
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "paragraphs make instructions easier to follow.",
+   "box": [
+    40,
+    104.5,
+    344.140625,
+    22
+   ],
+   "words": [
+    {
+     "text": "paragraphs",
+     "box": [
+      40,
+      104.5,
+      84.609375,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "make",
+     "box": [
+      129.25,
+      104.5,
+      40.640625,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "instructions",
+     "box": [
+      174.546875,
+      104.5,
+      86.78125,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "easier",
+     "box": [
+      265.96875,
+      104.5,
+      43.6875,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "to",
+     "box": [
+      314.296875,
+      104.5,
+      15.734375,
+      22
+     ],
+     "emoji": false
+    },
+    {
+     "text": "follow.",
+     "box": [
+      334.671875,
+      104.5,
+      49.46875,
+      22
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Upload files Create folder",
+   "box": [
+    58,
+    157,
+    218.3125,
+    21
+   ],
+   "words": [
+    {
+     "text": "Upload",
+     "box": [
+      58,
+      157,
+      49.15625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "files",
+     "box": [
+      111.265625,
+      157,
+      27.46875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Create",
+     "box": [
+      187.734375,
+      158,
+      43.84375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "folder",
+     "box": [
+      235.6875,
+      158,
+      40.625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Invite people",
+   "box": [
+    326.3125,
+    158,
+    88.96875,
+    20
+   ],
+   "words": [
+    {
+     "text": "Invite",
+     "box": [
+      326.3125,
+      158,
+      37.96875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "people",
+     "box": [
+      368.375,
+      158,
+      46.90625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Recent uploads",
+   "box": [
+    59,
+    234,
+    129.03125,
+    24
+   ],
+   "words": [
+    {
+     "text": "Recent",
+     "box": [
+      59,
+      234,
+      57.328125,
+      24
+     ],
+     "emoji": false
+    },
+    {
+     "text": "uploads",
+     "box": [
+      121.265625,
+      234,
+      66.765625,
+      24
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "12 files this week",
+   "box": [
+    59,
+    264,
+    112.234375,
+    20
+   ],
+   "words": [
+    {
+     "text": "12",
+     "box": [
+      59,
+      264,
+      16.171875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "files",
+     "box": [
+      79.265625,
+      264,
+      26.1875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "this",
+     "box": [
+      109.546875,
+      264,
+      23.59375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "week",
+     "box": [
+      137.234375,
+      264,
+      34,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Active",
+   "box": [
+    68,
+    300,
+    33.546875,
+    16
+   ],
+   "words": [
+    {
+     "text": "Active",
+     "box": [
+      68,
+      300,
+      33.546875,
+      16
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Shared with you",
+   "box": [
+    405.65625,
+    234,
+    137.234375,
+    24
+   ],
+   "words": [
+    {
+     "text": "Shared",
+     "box": [
+      405.65625,
+      234,
+      58.59375,
+      24
+     ],
+     "emoji": false
+    },
+    {
+     "text": "with",
+     "box": [
+      469.203125,
+      234,
+      37.328125,
+      24
+     ],
+     "emoji": false
+    },
+    {
+     "text": "you",
+     "box": [
+      511.484375,
+      234,
+      31.40625,
+      24
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "4 new folders",
+   "box": [
+    405.65625,
+    264,
+    88.859375,
+    20
+   ],
+   "words": [
+    {
+     "text": "4",
+     "box": [
+      405.65625,
+      264,
+      8.09375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "new",
+     "box": [
+      417.84375,
+      264,
+      27.1875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "folders",
+     "box": [
+      449.125,
+      264,
+      45.390625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "New",
+   "box": [
+    414.65625,
+    300,
+    24.65625,
+    16
+   ],
+   "words": [
+    {
+     "text": "New",
+     "box": [
+      414.65625,
+      300,
+      24.65625,
+      16
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Storage",
+   "box": [
+    752.328125,
+    234,
+    65.3125,
+    24
+   ],
+   "words": [
+    {
+     "text": "Storage",
+     "box": [
+      752.328125,
+      234,
+      65.3125,
+      24
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "3.2 GB of 15 GB used",
+   "box": [
+    752.328125,
+    264,
+    138.9375,
+    20
+   ],
+   "words": [
+    {
+     "text": "3.2",
+     "box": [
+      752.328125,
+      264,
+      19.4375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "GB",
+     "box": [
+      775.859375,
+      264,
+      18.890625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "of",
+     "box": [
+      798.84375,
+      264,
+      13.5,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "15",
+     "box": [
+      816.4375,
+      264,
+      16.1875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "GB",
+     "box": [
+      836.71875,
+      264,
+      18.90625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "used",
+     "box": [
+      859.71875,
+      264,
+      31.546875,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "21%",
+   "box": [
+    761.328125,
+    300,
+    21.578125,
+    16
+   ],
+   "words": [
+    {
+     "text": "21%",
+     "box": [
+      761.328125,
+      300,
+      21.578125,
+      16
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Last synced 2 minutes ago · Version 4.7.2",
+   "box": [
+    40,
+    362,
+    251.53125,
+    19
+   ],
+   "words": [
+    {
+     "text": "Last",
+     "box": [
+      40,
+      362,
+      24.40625,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "synced",
+     "box": [
+      68.21875,
+      362,
+      42.6875,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "2",
+     "box": [
+      114.734375,
+      362,
+      7.5625,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "minutes",
+     "box": [
+      126.109375,
+      362,
+      49.3125,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "ago",
+     "box": [
+      179.25,
+      362,
+      23.578125,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "·",
+     "box": [
+      206.65625,
+      362,
+      3.046875,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Version",
+     "box": [
+      213.515625,
+      362,
+      45.46875,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "4.7.2",
+     "box": [
+      262.8125,
+      362,
+      28.71875,
+      19
+     ],
+     "emoji": false
+    }
+   ]
+  }
+ ],
+ "sourceLines": null
+}

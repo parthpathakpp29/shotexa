@@ -1,0 +1,1027 @@
+{
+ "id": "settings-desktop",
+ "lang": "eng",
+ "boxesFrame": "image",
+ "lines": [
+  {
+   "text": "General",
+   "box": [
+    28,
+    33,
+    52.453125,
+    20
+   ],
+   "words": [
+    {
+     "text": "General",
+     "box": [
+      28,
+      33,
+      52.453125,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Account",
+   "box": [
+    28,
+    71,
+    54.390625,
+    20
+   ],
+   "words": [
+    {
+     "text": "Account",
+     "box": [
+      28,
+      71,
+      54.390625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Notifications",
+   "box": [
+    28,
+    109,
+    83.984375,
+    20
+   ],
+   "words": [
+    {
+     "text": "Notifications",
+     "box": [
+      28,
+      109,
+      83.984375,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Privacy",
+   "box": [
+    28,
+    147,
+    46.265625,
+    20
+   ],
+   "words": [
+    {
+     "text": "Privacy",
+     "box": [
+      28,
+      147,
+      46.265625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Storage",
+   "box": [
+    28,
+    185,
+    50.890625,
+    20
+   ],
+   "words": [
+    {
+     "text": "Storage",
+     "box": [
+      28,
+      185,
+      50.890625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Language",
+   "box": [
+    28,
+    223,
+    64.8125,
+    20
+   ],
+   "words": [
+    {
+     "text": "Language",
+     "box": [
+      28,
+      223,
+      64.8125,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "About",
+   "box": [
+    28,
+    261,
+    40.859375,
+    20
+   ],
+   "words": [
+    {
+     "text": "About",
+     "box": [
+      28,
+      261,
+      40.859375,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "General settings",
+   "box": [
+    260,
+    28,
+    197.640625,
+    35
+   ],
+   "words": [
+    {
+     "text": "General",
+     "box": [
+      260,
+      28,
+      94.078125,
+      35
+     ],
+     "emoji": false
+    },
+    {
+     "text": "settings",
+     "box": [
+      361.234375,
+      28,
+      96.40625,
+      35
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Display name",
+   "box": [
+    260,
+    97,
+    94.78125,
+    20
+   ],
+   "words": [
+    {
+     "text": "Display",
+     "box": [
+      260,
+      97,
+      51.640625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "name",
+     "box": [
+      315.765625,
+      97,
+      39.015625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Shown to people you share with",
+   "box": [
+    260,
+    120,
+    184.484375,
+    17
+   ],
+   "words": [
+    {
+     "text": "Shown",
+     "box": [
+      260,
+      120,
+      38.640625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "to",
+     "box": [
+      302.1875,
+      120,
+      12.03125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "people",
+     "box": [
+      317.765625,
+      120,
+      39.671875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "you",
+     "box": [
+      360.984375,
+      120,
+      21.265625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "share",
+     "box": [
+      385.796875,
+      120,
+      30.828125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "with",
+     "box": [
+      420.171875,
+      120,
+      24.3125,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Alex Morgan",
+   "box": [
+    1155.421875,
+    107.5,
+    84.578125,
+    20
+   ],
+   "words": [
+    {
+     "text": "Alex",
+     "box": [
+      1155.421875,
+      107.5,
+      28.046875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Morgan",
+     "box": [
+      1187.5625,
+      107.5,
+      52.4375,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Email address",
+   "box": [
+    260,
+    167,
+    96.328125,
+    20
+   ],
+   "words": [
+    {
+     "text": "Email",
+     "box": [
+      260,
+      167,
+      38.328125,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "address",
+     "box": [
+      302.453125,
+      167,
+      53.875,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Used for sign-in and receipts",
+   "box": [
+    260,
+    190,
+    165.203125,
+    17
+   ],
+   "words": [
+    {
+     "text": "Used",
+     "box": [
+      260,
+      190,
+      28.90625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "for",
+     "box": [
+      292.453125,
+      190,
+      16.21875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "sign-in",
+     "box": [
+      312.21875,
+      190,
+      39.390625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      355.15625,
+      190,
+      21.640625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "receipts",
+     "box": [
+      380.34375,
+      190,
+      44.859375,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "alex@example.com",
+   "box": [
+    1112.203125,
+    177.5,
+    127.796875,
+    20
+   ],
+   "words": [
+    {
+     "text": "alex@example.com",
+     "box": [
+      1112.203125,
+      177.5,
+      127.796875,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Time zone",
+   "box": [
+    260,
+    237,
+    72.59375,
+    20
+   ],
+   "words": [
+    {
+     "text": "Time",
+     "box": [
+      260,
+      237,
+      34.921875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "zone",
+     "box": [
+      299.03125,
+      237,
+      33.5625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Affects reminders and due dates",
+   "box": [
+    260,
+    260,
+    185.4375,
+    17
+   ],
+   "words": [
+    {
+     "text": "Affects",
+     "box": [
+      260,
+      260,
+      39.25,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "reminders",
+     "box": [
+      302.796875,
+      260,
+      57.53125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      363.875,
+      260,
+      21.640625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "due",
+     "box": [
+      389.0625,
+      260,
+      21.828125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "dates",
+     "box": [
+      414.4375,
+      260,
+      31,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "UTC+05:30",
+   "box": [
+    1167.375,
+    247.5,
+    72.625,
+    20
+   ],
+   "words": [
+    {
+     "text": "UTC+05:30",
+     "box": [
+      1167.375,
+      247.5,
+      72.625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Start of week",
+   "box": [
+    260,
+    307,
+    93.65625,
+    20
+   ],
+   "words": [
+    {
+     "text": "Start",
+     "box": [
+      260,
+      307,
+      34.1875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "of",
+     "box": [
+      298.3125,
+      307,
+      14.703125,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "week",
+     "box": [
+      317.140625,
+      307,
+      36.515625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "First day shown in calendars",
+   "box": [
+    260,
+    330,
+    160.71875,
+    17
+   ],
+   "words": [
+    {
+     "text": "First",
+     "box": [
+      260,
+      330,
+      23.9375,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "day",
+     "box": [
+      287.484375,
+      330,
+      20.578125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "shown",
+     "box": [
+      311.609375,
+      330,
+      37.265625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "in",
+     "box": [
+      352.421875,
+      330,
+      10.515625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "calendars",
+     "box": [
+      366.484375,
+      330,
+      54.234375,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Monday",
+   "box": [
+    1185.515625,
+    317.5,
+    54.484375,
+    20
+   ],
+   "words": [
+    {
+     "text": "Monday",
+     "box": [
+      1185.515625,
+      317.5,
+      54.484375,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Auto-save drafts",
+   "box": [
+    260,
+    377,
+    117.34375,
+    20
+   ],
+   "words": [
+    {
+     "text": "Auto-save",
+     "box": [
+      260,
+      377,
+      71.40625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "drafts",
+     "box": [
+      335.53125,
+      377,
+      41.8125,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Save changes every 30 seconds",
+   "box": [
+    260,
+    400,
+    179.21875,
+    17
+   ],
+   "words": [
+    {
+     "text": "Save",
+     "box": [
+      260,
+      400,
+      26.546875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "changes",
+     "box": [
+      290.09375,
+      400,
+      47.328125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "every",
+     "box": [
+      340.96875,
+      400,
+      30.640625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "30",
+     "box": [
+      375.15625,
+      400,
+      14.03125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "seconds",
+     "box": [
+      392.734375,
+      400,
+      46.484375,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "On",
+   "box": [
+    1220.1875,
+    387.5,
+    19.8125,
+    20
+   ],
+   "words": [
+    {
+     "text": "On",
+     "box": [
+      1220.1875,
+      387.5,
+      19.8125,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Download quality",
+   "box": [
+    260,
+    447,
+    124.921875,
+    20
+   ],
+   "words": [
+    {
+     "text": "Download",
+     "box": [
+      260,
+      447,
+      71.921875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "quality",
+     "box": [
+      336.046875,
+      447,
+      48.875,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Higher quality uses more data",
+   "box": [
+    260,
+    470,
+    172.1875,
+    17
+   ],
+   "words": [
+    {
+     "text": "Higher",
+     "box": [
+      260,
+      470,
+      38.71875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "quality",
+     "box": [
+      302.265625,
+      470,
+      38.625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "uses",
+     "box": [
+      344.4375,
+      470,
+      25.203125,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "more",
+     "box": [
+      373.1875,
+      470,
+      30.15625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "data",
+     "box": [
+      406.890625,
+      470,
+      25.296875,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "High",
+   "box": [
+    1208.390625,
+    457.5,
+    31.609375,
+    20
+   ],
+   "words": [
+    {
+     "text": "High",
+     "box": [
+      1208.390625,
+      457.5,
+      31.609375,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Storage used",
+   "box": [
+    260,
+    517,
+    91.640625,
+    20
+   ],
+   "words": [
+    {
+     "text": "Storage",
+     "box": [
+      260,
+      517,
+      54.4375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "used",
+     "box": [
+      318.5625,
+      517,
+      33.078125,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Across all devices",
+   "box": [
+    260,
+    540,
+    99.75,
+    17
+   ],
+   "words": [
+    {
+     "text": "Across",
+     "box": [
+      260,
+      540,
+      37.5625,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "all",
+     "box": [
+      301.109375,
+      540,
+      12.921875,
+      17
+     ],
+     "emoji": false
+    },
+    {
+     "text": "devices",
+     "box": [
+      317.578125,
+      540,
+      42.171875,
+      17
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "3.2 GB of 15 GB",
+   "box": [
+    1136.703125,
+    527.5,
+    103.296875,
+    20
+   ],
+   "words": [
+    {
+     "text": "3.2",
+     "box": [
+      1136.703125,
+      527.5,
+      19.4375,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "GB",
+     "box": [
+      1160.234375,
+      527.5,
+      18.890625,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "of",
+     "box": [
+      1183.21875,
+      527.5,
+      13.5,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "15",
+     "box": [
+      1200.8125,
+      527.5,
+      16.1875,
+      20
+     ],
+     "emoji": false
+    },
+    {
+     "text": "GB",
+     "box": [
+      1221.09375,
+      527.5,
+      18.90625,
+      20
+     ],
+     "emoji": false
+    }
+   ]
+  }
+ ],
+ "sourceLines": null
+}

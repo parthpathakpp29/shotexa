@@ -1,0 +1,53 @@
+Invoices — March 2026
+Invoice
+Customer
+Date
+Amount Status
+INV-1041
+Alex Park
+2026-01-03
+$12.00 Paid
+INV-1042
+Sam Kim
+2026-02-08
+$91.19 Pending
+INV-1043
+Priya Ito
+2026-03-13
+$170.38 Overdue
+INV-1044
+Jordan Singh
+2026-04-18
+$249.57 Paid
+INV-1045
+Mei Novak
+2026-05-23
+$328.76 Paid
+INV-1046
+Omar Brown
+2026-06-03
+$407.95 Pending
+INV-1047
+Lena Garcia
+2026-07-08
+$487.14 Overdue
+INV-1048
+Ravi Silva
+2026-08-13
+$566.33 Paid
+INV-1049
+Chen Park
+2026-09-18
+$645.52 Paid
+INV-1050
+Ana Kim
+2026-01-23
+$724.71 Pending
+INV-1051
+Tom Ito
+2026-02-03
+$803.90 Overdue
+INV-1052
+Ivy Singh
+2026-03-08
+$883.09 Paid

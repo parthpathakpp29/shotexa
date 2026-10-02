@@ -1,0 +1,447 @@
+[
+  {
+    "id": "web-clean",
+    "category": [
+      "ui"
+    ],
+    "description": "Clean landing page: nav, hero, buttons, feature columns",
+    "file": "web-clean/image.png",
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 15,
+    "words": 84,
+    "rotate90": false
+  },
+  {
+    "id": "article",
+    "category": [
+      "article"
+    ],
+    "description": "Text-heavy serif article, 18px body",
+    "file": "article/image.png",
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 15,
+    "words": 165,
+    "rotate90": false
+  },
+  {
+    "id": "article-dark",
+    "category": [
+      "article",
+      "dark"
+    ],
+    "description": "Same article family in dark theme",
+    "file": "article-dark/image.png",
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 15,
+    "words": 167,
+    "rotate90": false
+  },
+  {
+    "id": "settings-desktop",
+    "category": [
+      "ui"
+    ],
+    "description": "Desktop settings: sidebar + label/description/value rows",
+    "file": "settings-desktop/image.png",
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 29,
+    "words": 70,
+    "rotate90": false
+  },
+  {
+    "id": "chat-light",
+    "category": [
+      "chat"
+    ],
+    "description": "WhatsApp-style light chat, multi-line bubbles, timestamps, emoji (DPR 3)",
+    "file": "chat-light/image.png",
+    "format": "png",
+    "width": 1170,
+    "height": 2652,
+    "dpr": 3,
+    "lang": "eng",
+    "lines": 31,
+    "words": 135,
+    "rotate90": false
+  },
+  {
+    "id": "chat-dark",
+    "category": [
+      "chat",
+      "dark"
+    ],
+    "description": "WhatsApp-style dark chat (DPR 3)",
+    "file": "chat-dark/image.png",
+    "format": "png",
+    "width": 1170,
+    "height": 2589,
+    "dpr": 3,
+    "lang": "eng",
+    "lines": 30,
+    "words": 138,
+    "rotate90": false
+  },
+  {
+    "id": "phone-settings-2x",
+    "category": [
+      "small-text",
+      "ui"
+    ],
+    "description": "Phone settings list, 14px text at DPR 2",
+    "file": "phone-settings-2x/image.png",
+    "format": "png",
+    "width": 780,
+    "height": 1936,
+    "dpr": 2,
+    "lang": "eng",
+    "lines": 38,
+    "words": 78,
+    "rotate90": false
+  },
+  {
+    "id": "phone-dense-3x",
+    "category": [
+      "small-text",
+      "ui"
+    ],
+    "description": "Dense phone settings, 11px text at DPR 3",
+    "file": "phone-dense-3x/image.png",
+    "format": "png",
+    "width": 1170,
+    "height": 2532,
+    "dpr": 3,
+    "lang": "eng",
+    "lines": 37,
+    "words": 78,
+    "rotate90": false
+  },
+  {
+    "id": "phone-tiny-1x",
+    "category": [
+      "small-text"
+    ],
+    "description": "Dense phone settings, 11px text at DPR 1 (tiny pixels)",
+    "file": "phone-tiny-1x/image.png",
+    "format": "png",
+    "width": 390,
+    "height": 844,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 37,
+    "words": 78,
+    "rotate90": false
+  },
+  {
+    "id": "code-dark",
+    "category": [
+      "code",
+      "dark"
+    ],
+    "description": "Dark editor, 14px Consolas, line numbers, symbol-heavy TypeScript",
+    "file": "code-dark/image.png",
+    "format": "png",
+    "width": 1000,
+    "height": 400,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 15,
+    "words": 124,
+    "rotate90": false
+  },
+  {
+    "id": "code-light",
+    "category": [
+      "code"
+    ],
+    "description": "Light editor, no line numbers, same code",
+    "file": "code-light/image.png",
+    "format": "png",
+    "width": 1000,
+    "height": 400,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 14,
+    "words": 110,
+    "rotate90": false
+  },
+  {
+    "id": "code-dark-2x",
+    "category": [
+      "code",
+      "dark"
+    ],
+    "description": "Dark editor at DPR 2 (HiDPI laptop)",
+    "file": "code-dark-2x/image.png",
+    "format": "png",
+    "width": 2000,
+    "height": 800,
+    "dpr": 2,
+    "lang": "eng",
+    "lines": 15,
+    "words": 124,
+    "rotate90": false
+  },
+  {
+    "id": "table",
+    "category": [
+      "table"
+    ],
+    "description": "Invoice table: header, zebra rows, numbers, dates",
+    "file": "table/image.png",
+    "format": "png",
+    "width": 1000,
+    "height": 604,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 53,
+    "words": 81,
+    "rotate90": false
+  },
+  {
+    "id": "receipt",
+    "category": [
+      "receipt"
+    ],
+    "description": "Receipt: mixed fonts/sizes, prices, date/time, totals",
+    "file": "receipt/image.png",
+    "format": "png",
+    "width": 520,
+    "height": 700,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 26,
+    "words": 58,
+    "rotate90": false
+  },
+  {
+    "id": "low-contrast",
+    "category": [
+      "low-contrast"
+    ],
+    "description": "Gray #8f8f8f text on #c9c9c9",
+    "file": "low-contrast/image.png",
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 12,
+    "words": 128,
+    "rotate90": false
+  },
+  {
+    "id": "jpeg-q35",
+    "category": [
+      "low-contrast"
+    ],
+    "description": "Article screenshot re-encoded as JPEG q=0.35 (compression artefacts)",
+    "file": "jpeg-q35/image.jpg",
+    "format": "jpeg",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 12,
+    "words": 131,
+    "rotate90": false
+  },
+  {
+    "id": "blurred",
+    "category": [
+      "low-contrast"
+    ],
+    "description": "Article with 0.8px blur",
+    "file": "blurred/image.png",
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 12,
+    "words": 128,
+    "rotate90": false
+  },
+  {
+    "id": "mixed-cards",
+    "category": [
+      "mixed-layout",
+      "ui"
+    ],
+    "description": "Heading, paragraph, buttons, 3 cards with badges, footer",
+    "file": "mixed-cards/image.png",
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 15,
+    "words": 61,
+    "rotate90": false
+  },
+  {
+    "id": "two-column",
+    "category": [
+      "mixed-layout",
+      "article"
+    ],
+    "description": "Two-column article (reading-order test)",
+    "file": "two-column/image.png",
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 20,
+    "words": 152,
+    "rotate90": false
+  },
+  {
+    "id": "hindi-article",
+    "category": [
+      "hindi"
+    ],
+    "description": "Hindi (Devanagari) article, 20px",
+    "file": "hindi-article/image.png",
+    "format": "png",
+    "width": 1280,
+    "height": 800,
+    "dpr": 1,
+    "lang": "hin",
+    "lines": 6,
+    "words": 73,
+    "rotate90": false
+  },
+  {
+    "id": "chat-hindi",
+    "category": [
+      "hindi",
+      "chat"
+    ],
+    "description": "Hindi chat (DPR 3)",
+    "file": "chat-hindi/image.png",
+    "format": "png",
+    "width": 1170,
+    "height": 2532,
+    "dpr": 3,
+    "lang": "hin",
+    "lines": 21,
+    "words": 87,
+    "rotate90": false
+  },
+  {
+    "id": "chat-mixed-en-hi",
+    "category": [
+      "mixed-language",
+      "chat"
+    ],
+    "description": "Mixed English + Hindi chat (DPR 3)",
+    "file": "chat-mixed-en-hi/image.png",
+    "format": "png",
+    "width": 1170,
+    "height": 2532,
+    "dpr": 3,
+    "lang": "eng+hin",
+    "lines": 18,
+    "words": 82,
+    "rotate90": false
+  },
+  {
+    "id": "chat-1080x1920",
+    "category": [
+      "chat",
+      "long"
+    ],
+    "description": "Phone chat 360×640 @3 = 1080×1920",
+    "file": "chat-1080x1920/image.png",
+    "format": "png",
+    "width": 1080,
+    "height": 1920,
+    "dpr": 3,
+    "lang": "eng",
+    "lines": 23,
+    "words": 96,
+    "rotate90": false
+  },
+  {
+    "id": "chat-720x1280",
+    "category": [
+      "chat"
+    ],
+    "description": "Small phone chat 360×640 @2 = 720×1280",
+    "file": "chat-720x1280/image.png",
+    "format": "png",
+    "width": 720,
+    "height": 1280,
+    "dpr": 2,
+    "lang": "eng",
+    "lines": 23,
+    "words": 96,
+    "rotate90": false
+  },
+  {
+    "id": "long-1080x5000",
+    "category": [
+      "long",
+      "chat"
+    ],
+    "description": "Long chat screenshot ~1080×5000",
+    "file": "long-1080x5000/image.png",
+    "format": "png",
+    "width": 1080,
+    "height": 4971,
+    "dpr": 3,
+    "lang": "eng",
+    "lines": 61,
+    "words": 264,
+    "rotate90": false
+  },
+  {
+    "id": "long-1080x10000",
+    "category": [
+      "long",
+      "chat"
+    ],
+    "description": "Long chat screenshot ~1080×10000",
+    "file": "long-1080x10000/image.png",
+    "format": "png",
+    "width": 1080,
+    "height": 10323,
+    "dpr": 3,
+    "lang": "eng",
+    "lines": 131,
+    "words": 538,
+    "rotate90": false
+  },
+  {
+    "id": "rotated-90",
+    "category": [
+      "orientation"
+    ],
+    "description": "Article rotated 90° clockwise",
+    "file": "rotated-90/image.png",
+    "format": "png",
+    "width": 800,
+    "height": 1000,
+    "dpr": 1,
+    "lang": "eng",
+    "lines": 8,
+    "words": 83,
+    "rotate90": true
+  }
+]

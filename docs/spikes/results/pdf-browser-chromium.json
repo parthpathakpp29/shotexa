@@ -1,0 +1,1829 @@
+{
+ "environment": {
+  "browser": "chromium",
+  "version": "153.0.8010.12",
+  "date": "2026-09-24T19:05:07.709Z"
+ },
+ "results": {
+  "single-phone": {
+   "id": "single-phone",
+   "images": [
+    "b:phone-1080x2400-0.png"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 25.299999997019768,
+    "wallMs": 485.70000000298023,
+    "decodeMs": 52.6000000089407,
+    "signalMs": 309.8999999910593,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x2400"
+    ],
+    "peakDeltaMiB": 36.7,
+    "afterDeltaMiB": 32.3
+   },
+   "plan": {
+    "pages": 2,
+    "planMs": 0.3999999910593033,
+    "breaks": [
+     [
+      {
+       "y": 1554,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 454467,
+    "pages": 2,
+    "ms": 361,
+    "wallMs": 364.8999999910593,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 3,
+    "maxStallMs": 14.400000005960464,
+    "peakDeltaMiB": 57.3,
+    "afterDeltaMiB": 40.8
+   },
+   "pdfLibLoadedKiB": 195,
+   "validation": {
+    "ok": true,
+    "pages": 2,
+    "bytes": 454467,
+    "minImageBytes": 82712,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 25.9,
+   "crashed": false
+  },
+  "single-chat": {
+   "id": "single-chat",
+   "images": [
+    "pdf:chat-light"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 21.099999994039536,
+    "wallMs": 391.70000000298023,
+    "decodeMs": 59.70000000298023,
+    "signalMs": 258.30000001192093,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x5355"
+    ],
+    "peakDeltaMiB": 41.3,
+    "afterDeltaMiB": 38.3
+   },
+   "plan": {
+    "pages": 4,
+    "planMs": 0.5999999940395355,
+    "breaks": [
+     [
+      {
+       "y": 1422,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 2915,
+       "idealY": 2995,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 4365,
+       "idealY": 4488,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 718868,
+    "pages": 4,
+    "ms": 406,
+    "wallMs": 408,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 5,
+    "maxStallMs": 14.900000005960464,
+    "peakDeltaMiB": 78.4,
+    "afterDeltaMiB": 46.8
+   },
+   "pdfLibLoadedKiB": 195,
+   "validation": {
+    "ok": true,
+    "pages": 4,
+    "bytes": 718868,
+    "minImageBytes": 152280,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 11.2,
+   "crashed": false
+  },
+  "single-chat-fixed": {
+   "id": "single-chat-fixed",
+   "images": [
+    "pdf:chat-light"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 11.599999994039536,
+    "wallMs": 319.5,
+    "decodeMs": 52.70000000298023,
+    "signalMs": 200.20000000298023,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x5355"
+    ],
+    "peakDeltaMiB": 49.3,
+    "afterDeltaMiB": 33.5
+   },
+   "plan": {
+    "pages": 4,
+    "planMs": 0.09999999403953552,
+    "breaks": [
+     [
+      {
+       "y": 1573,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": null
+      },
+      {
+       "y": 3146,
+       "idealY": 3146,
+       "source": "automatic",
+       "confidence": null
+      },
+      {
+       "y": 4719,
+       "idealY": 4719,
+       "source": "automatic",
+       "confidence": null
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 728884,
+    "pages": 4,
+    "ms": 393,
+    "wallMs": 393.8999999910593,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 5,
+    "maxStallMs": 11.699999988079071,
+    "peakDeltaMiB": 67.9,
+    "afterDeltaMiB": 45
+   },
+   "pdfLibLoadedKiB": 195,
+   "validation": {
+    "ok": true,
+    "pages": 4,
+    "bytes": 728884,
+    "minImageBytes": 72700,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 5.3,
+   "crashed": false
+  },
+  "single-chat-letter": {
+   "id": "single-chat-letter",
+   "images": [
+    "pdf:chat-light"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 11.599999994039536,
+    "wallMs": 369.5,
+    "decodeMs": 98.29999999701977,
+    "signalMs": 196.90000000596046,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x5355"
+    ],
+    "peakDeltaMiB": 36.4,
+    "afterDeltaMiB": 34.3
+   },
+   "plan": {
+    "pages": 4,
+    "planMs": 1.5,
+    "breaks": [
+     [
+      {
+       "y": 1422,
+       "idealY": 1429,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 2835,
+       "idealY": 2851,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 4203,
+       "idealY": 4264,
+       "source": "automatic",
+       "confidence": "medium"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 718639,
+    "pages": 4,
+    "ms": 415,
+    "wallMs": 416.6000000089407,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 5,
+    "maxStallMs": 11.200000002980232,
+    "peakDeltaMiB": 73,
+    "afterDeltaMiB": 44.4
+   },
+   "pdfLibLoadedKiB": 195,
+   "validation": {
+    "ok": true,
+    "pages": 4,
+    "bytes": 718639,
+    "minImageBytes": 166441,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 10.7,
+   "crashed": false
+  },
+  "single-chat-fit": {
+   "id": "single-chat-fit",
+   "images": [
+    "pdf:chat-light"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 11.5,
+    "wallMs": 305,
+    "decodeMs": 54.29999999701977,
+    "signalMs": 187.1000000089407,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x5355"
+    ],
+    "peakDeltaMiB": 55.1,
+    "afterDeltaMiB": 34.9
+   },
+   "plan": {
+    "pages": 1,
+    "planMs": 0,
+    "breaks": [
+     []
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 712881,
+    "pages": 1,
+    "ms": 369,
+    "wallMs": 371,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 2,
+    "maxStallMs": 11.799999997019768,
+    "peakDeltaMiB": 61,
+    "afterDeltaMiB": 43.3
+   },
+   "pdfLibLoadedKiB": 195,
+   "validation": {
+    "ok": true,
+    "pages": 1,
+    "bytes": 712881,
+    "minImageBytes": 187787,
+    "maxBandsPerPage": 3,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 1.7,
+   "crashed": false
+  },
+  "multi-4-phone-reorder": {
+   "id": "multi-4-phone-reorder",
+   "images": [
+    "b:phone-1080x2400-0.png",
+    "b:phone-1080x2400-1.png",
+    "b:phone-1080x2400-2.png",
+    "b:phone-1080x2400-3.png"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 23.599999994039536,
+    "wallMs": 575.2000000029802,
+    "decodeMs": 120.70000000298023,
+    "signalMs": 375.5,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap",
+     "createImageBitmap",
+     "createImageBitmap",
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x2400",
+     "1080x2400",
+     "1080x2400",
+     "1080x2400"
+    ],
+    "peakDeltaMiB": 54.4,
+    "afterDeltaMiB": 9.3
+   },
+   "plan": {
+    "pages": 8,
+    "planMs": 0.3999999910593033,
+    "breaks": [
+     [
+      {
+       "y": 1504,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ],
+     [
+      {
+       "y": 1554,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ],
+     [
+      {
+       "y": 1524,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ],
+     [
+      {
+       "y": 1482,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 4",
+     "image 1",
+     "image 2",
+     "image 3"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 1340477,
+    "pages": 8,
+    "ms": 546,
+    "wallMs": 606.7000000029802,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 9,
+    "maxStallMs": 13,
+    "peakDeltaMiB": 34.6,
+    "afterDeltaMiB": 15.6
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 8,
+    "bytes": 1340477,
+    "minImageBytes": 69099,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 15.6,
+   "crashed": false
+  },
+  "multi-mixed": {
+   "id": "multi-mixed",
+   "images": [
+    "pdf:article",
+    "b:phone-1440x3200-0.png",
+    "pdf:code",
+    "pdf:receipt"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 24.200000002980232,
+    "wallMs": 1025.199999988079,
+    "decodeMs": 265.1000000089407,
+    "signalMs": 683.9999999850988,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap",
+     "createImageBitmap",
+     "createImageBitmap",
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x5673",
+     "1440x3200",
+     "1280x4772",
+     "1080x5892"
+    ],
+    "peakDeltaMiB": 90.9,
+    "afterDeltaMiB": 14.1
+   },
+   "plan": {
+    "pages": 13,
+    "planMs": 0.7999999970197678,
+    "breaks": [
+     [
+      {
+       "y": 1484,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 2925,
+       "idealY": 3057,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 4475,
+       "idealY": 4498,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ],
+     [
+      {
+       "y": 1936,
+       "idealY": 2098,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ],
+     [
+      {
+       "y": 1865,
+       "idealY": 1865,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 3672,
+       "idealY": 3730,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ],
+     [
+      {
+       "y": 1548,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 3036,
+       "idealY": 3121,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 4588,
+       "idealY": 4609,
+       "source": "automatic",
+       "confidence": "medium"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1",
+     "image 2",
+     "image 3",
+     "image 4"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 3213729,
+    "pages": 13,
+    "ms": 1064,
+    "wallMs": 1165.8999999910593,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 14,
+    "maxStallMs": 19.099999994039536,
+    "peakDeltaMiB": 57.4,
+    "afterDeltaMiB": 22.7
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 13,
+    "bytes": 3213729,
+    "minImageBytes": 140508,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 19,
+   "crashed": false
+  },
+  "long-5000": {
+   "id": "long-5000",
+   "images": [
+    "b:tall-1080x5000.png"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 14.299999997019768,
+    "wallMs": 459.59999999403954,
+    "decodeMs": 115.30000001192093,
+    "signalMs": 230.5,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x5000"
+    ],
+    "peakDeltaMiB": 62.4,
+    "afterDeltaMiB": 40.9
+   },
+   "plan": {
+    "pages": 4,
+    "planMs": 0.5999999940395355,
+    "breaks": [
+     [
+      {
+       "y": 1528,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 3052,
+       "idealY": 3101,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 4534,
+       "idealY": 4625,
+       "source": "automatic",
+       "confidence": "low"
+      }
+     ]
+    ],
+    "needsReview": 1,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 1547699,
+    "pages": 4,
+    "ms": 430,
+    "wallMs": 431.5,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 5,
+    "maxStallMs": 11.400000005960464,
+    "peakDeltaMiB": 75.4,
+    "afterDeltaMiB": 55.8
+   },
+   "pdfLibLoadedKiB": 195,
+   "validation": {
+    "ok": true,
+    "pages": 4,
+    "bytes": 1547699,
+    "minImageBytes": 117473,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 22.7,
+   "crashed": false
+  },
+  "long-10000": {
+   "id": "long-10000",
+   "images": [
+    "pdf:long-chat-10000"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 15,
+    "wallMs": 604.9000000059605,
+    "decodeMs": 151.70000000298023,
+    "signalMs": 371.1000000089407,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x11586"
+    ],
+    "peakDeltaMiB": 93.1,
+    "afterDeltaMiB": 6.6
+   },
+   "plan": {
+    "pages": 8,
+    "planMs": 0.29999999701976776,
+    "breaks": [
+     [
+      {
+       "y": 1530,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 3103,
+       "idealY": 3103,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 4580,
+       "idealY": 4676,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 6140,
+       "idealY": 6153,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 7713,
+       "idealY": 7713,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 9246,
+       "idealY": 9286,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 10778,
+       "idealY": 10819,
+       "source": "automatic",
+       "confidence": "medium"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 1811094,
+    "pages": 8,
+    "ms": 631,
+    "wallMs": 683.2999999970198,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 9,
+    "maxStallMs": 12.799999997019768,
+    "peakDeltaMiB": 74.9,
+    "afterDeltaMiB": 16.7
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 8,
+    "bytes": 1811094,
+    "minImageBytes": 117037,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 13.3,
+   "crashed": false
+  },
+  "long-10000-png": {
+   "id": "long-10000-png",
+   "images": [
+    "pdf:long-chat-10000"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 16.5,
+    "wallMs": 540.2000000029802,
+    "decodeMs": 134.29999999701977,
+    "signalMs": 345.1000000089407,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x11586"
+    ],
+    "peakDeltaMiB": 87.2,
+    "afterDeltaMiB": 3.2
+   },
+   "plan": {
+    "pages": 8,
+    "planMs": 0.30000001192092896,
+    "breaks": [
+     [
+      {
+       "y": 1530,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 3103,
+       "idealY": 3103,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 4580,
+       "idealY": 4676,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 6140,
+       "idealY": 6153,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 7713,
+       "idealY": 7713,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 9246,
+       "idealY": 9286,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 10778,
+       "idealY": 10819,
+       "source": "automatic",
+       "confidence": "medium"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 910563,
+    "pages": 8,
+    "ms": 3354,
+    "wallMs": 3406,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 9,
+    "maxStallMs": 12.299999997019768,
+    "peakDeltaMiB": 136.8,
+    "afterDeltaMiB": -0.1
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 8,
+    "bytes": 910563,
+    "minImageBytes": 58559,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": -2.8,
+   "crashed": false
+  },
+  "long-10000-overlap48": {
+   "id": "long-10000-overlap48",
+   "images": [
+    "pdf:long-chat-10000"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 26.799999997019768,
+    "wallMs": 656.0999999940395,
+    "decodeMs": 142.69999998807907,
+    "signalMs": 386.40000000596046,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x11586"
+    ],
+    "peakDeltaMiB": 105.7,
+    "afterDeltaMiB": 8.1
+   },
+   "plan": {
+    "pages": 8,
+    "planMs": 0.20000000298023224,
+    "breaks": [
+     [
+      {
+       "y": 1530,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 2898,
+       "idealY": 3055,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 4400,
+       "idealY": 4423,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 5888,
+       "idealY": 5925,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 7366,
+       "idealY": 7413,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 8856,
+       "idealY": 8891,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 10368,
+       "idealY": 10381,
+       "source": "automatic",
+       "confidence": "medium"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 1856237,
+    "pages": 8,
+    "ms": 718,
+    "wallMs": 785,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 9,
+    "maxStallMs": 16.599999994039536,
+    "peakDeltaMiB": 80.5,
+    "afterDeltaMiB": 14.1
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 8,
+    "bytes": 1856237,
+    "minImageBytes": 202969,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 9.4,
+   "crashed": false
+  },
+  "long-20000": {
+   "id": "long-20000",
+   "images": [
+    "pdf:long-article-20000"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 19.599999994039536,
+    "wallMs": 983,
+    "decodeMs": 243.8999999910593,
+    "signalMs": 618.7999999970198,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x21342"
+    ],
+    "peakDeltaMiB": 181.7,
+    "afterDeltaMiB": 5
+   },
+   "plan": {
+    "pages": 14,
+    "planMs": 0.7000000029802322,
+    "breaks": [
+     [
+      {
+       "y": 1532,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 3105,
+       "idealY": 3105,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 4662,
+       "idealY": 4678,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 6218,
+       "idealY": 6235,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 7791,
+       "idealY": 7791,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 9320,
+       "idealY": 9364,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 10830,
+       "idealY": 10893,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 12403,
+       "idealY": 12403,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 13954,
+       "idealY": 13976,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 15527,
+       "idealY": 15527,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 17032,
+       "idealY": 17100,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 18548,
+       "idealY": 18605,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 20072,
+       "idealY": 20121,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 4233918,
+    "pages": 14,
+    "ms": 1021,
+    "wallMs": 1085.5999999940395,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 15,
+    "maxStallMs": 11.700000002980232,
+    "peakDeltaMiB": 121.1,
+    "afterDeltaMiB": 19
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 14,
+    "bytes": 4233918,
+    "minImageBytes": 241786,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 7.1,
+   "crashed": false
+  },
+  "long-20000-with-preview": {
+   "id": "long-20000-with-preview",
+   "images": [
+    "pdf:long-article-20000"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 18.900000005960464,
+    "wallMs": 1033.7000000029802,
+    "decodeMs": 269.1000000089407,
+    "signalMs": 680.8999999910593,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x21342"
+    ],
+    "peakDeltaMiB": 183,
+    "afterDeltaMiB": 69.3
+   },
+   "plan": {
+    "pages": 14,
+    "planMs": 0.7000000029802322,
+    "breaks": [
+     [
+      {
+       "y": 1532,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 3105,
+       "idealY": 3105,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 4662,
+       "idealY": 4678,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 6218,
+       "idealY": 6235,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 7791,
+       "idealY": 7791,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 9320,
+       "idealY": 9364,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 10830,
+       "idealY": 10893,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 12403,
+       "idealY": 12403,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 13954,
+       "idealY": 13976,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 15527,
+       "idealY": 15527,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 17032,
+       "idealY": 17100,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 18548,
+       "idealY": 18605,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 20072,
+       "idealY": 20121,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 4233918,
+    "pages": 14,
+    "ms": 1124,
+    "wallMs": 1180.2999999970198,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 15,
+    "maxStallMs": 11.599999994039536,
+    "peakDeltaMiB": 181.8,
+    "afterDeltaMiB": 72.6
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 14,
+    "bytes": 4233918,
+    "minImageBytes": 241786,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 72.8,
+   "crashed": false
+  },
+  "long-20000-fit": {
+   "id": "long-20000-fit",
+   "images": [
+    "pdf:long-article-20000"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 19.599999994039536,
+    "wallMs": 934.7999999970198,
+    "decodeMs": 237.80000001192093,
+    "signalMs": 617,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x21342"
+    ],
+    "peakDeltaMiB": 160.4,
+    "afterDeltaMiB": -8.9
+   },
+   "plan": {
+    "pages": 1,
+    "planMs": 0,
+    "breaks": [
+     []
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 4223719,
+    "pages": 1,
+    "ms": 942,
+    "wallMs": 992.3000000119209,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 2,
+    "maxStallMs": 14.799999997019768,
+    "peakDeltaMiB": 108.3,
+    "afterDeltaMiB": 3.7
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 1,
+    "bytes": 4223719,
+    "minImageBytes": 145173,
+    "maxBandsPerPage": 11,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 3.8,
+   "crashed": false
+  },
+  "long-30000": {
+   "id": "long-30000",
+   "images": [
+    "b:tall-1080x30000.png"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 22,
+    "wallMs": 1405.5999999940395,
+    "decodeMs": 377.8999999910593,
+    "signalMs": 921.9000000059605,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x30000"
+    ],
+    "peakDeltaMiB": 269.1,
+    "afterDeltaMiB": 21
+   },
+   "plan": {
+    "pages": 20,
+    "planMs": 1.1000000089406967,
+    "breaks": [
+     [
+      {
+       "y": 1494,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 3058,
+       "idealY": 3067,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 4484,
+       "idealY": 4631,
+       "source": "automatic",
+       "confidence": "low"
+      },
+      {
+       "y": 6008,
+       "idealY": 6057,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 7452,
+       "idealY": 7581,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 8978,
+       "idealY": 9025,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 10506,
+       "idealY": 10551,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 12064,
+       "idealY": 12079,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 13500,
+       "idealY": 13637,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 15073,
+       "idealY": 15073,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 16626,
+       "idealY": 16646,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 18112,
+       "idealY": 18199,
+       "source": "automatic",
+       "confidence": "low"
+      },
+      {
+       "y": 19685,
+       "idealY": 19685,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 21182,
+       "idealY": 21258,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 22630,
+       "idealY": 22755,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 24082,
+       "idealY": 24203,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 25510,
+       "idealY": 25655,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 26926,
+       "idealY": 27083,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 28464,
+       "idealY": 28499,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ]
+    ],
+    "needsReview": 2,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 3992807,
+    "pages": 20,
+    "ms": 1410,
+    "wallMs": 1489.4000000059605,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 21,
+    "maxStallMs": 13,
+    "peakDeltaMiB": 182.2,
+    "afterDeltaMiB": 30.1
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 20,
+    "bytes": 3992807,
+    "minImageBytes": 95530,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 29.5,
+   "crashed": false
+  },
+  "multi-2x10000": {
+   "id": "multi-2x10000",
+   "images": [
+    "b:pair-1080x10000-a.png",
+    "b:pair-1080x10000-b.png"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 14,
+    "wallMs": 947.4000000059605,
+    "decodeMs": 262.90000000596046,
+    "signalMs": 600.7999999970198,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap",
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x10000",
+     "1080x10000"
+    ],
+    "peakDeltaMiB": 132.3,
+    "afterDeltaMiB": 16.4
+   },
+   "plan": {
+    "pages": 14,
+    "planMs": 0.5,
+    "breaks": [
+     [
+      {
+       "y": 1564,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 3042,
+       "idealY": 3137,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 4615,
+       "idealY": 4615,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 6184,
+       "idealY": 6188,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 7680,
+       "idealY": 7757,
+       "source": "automatic",
+       "confidence": "low"
+      },
+      {
+       "y": 9096,
+       "idealY": 9253,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ],
+     [
+      {
+       "y": 1524,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 3012,
+       "idealY": 3097,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 4464,
+       "idealY": 4585,
+       "source": "automatic",
+       "confidence": "medium"
+      },
+      {
+       "y": 5952,
+       "idealY": 6037,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 7464,
+       "idealY": 7525,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 8896,
+       "idealY": 9037,
+       "source": "automatic",
+       "confidence": "medium"
+      }
+     ]
+    ],
+    "needsReview": 1,
+    "order": [
+     "image 1",
+     "image 2"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 3514393,
+    "pages": 14,
+    "ms": 968,
+    "wallMs": 1087.9000000059605,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 15,
+    "maxStallMs": 22.400000005960464,
+    "peakDeltaMiB": 90,
+    "afterDeltaMiB": 25.2
+   },
+   "pdfLibLoadedKiB": 204,
+   "validation": {
+    "ok": true,
+    "pages": 14,
+    "bytes": 3514393,
+    "minImageBytes": 105328,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 22.7,
+   "crashed": false
+  },
+  "manual-edit": {
+   "id": "manual-edit",
+   "images": [
+    "pdf:chat-light"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 16.799999997019768,
+    "wallMs": 358.79999999701977,
+    "decodeMs": 67.29999999701977,
+    "signalMs": 218.1000000089407,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x5355"
+    ],
+    "peakDeltaMiB": 38.6,
+    "afterDeltaMiB": 37.4
+   },
+   "manualEdit": {
+    "from": 1422,
+    "requested": 1302
+   },
+   "plan": {
+    "pages": 4,
+    "planMs": 0.29999999701976776,
+    "breaks": [
+     [
+      {
+       "y": 1303,
+       "idealY": 1573,
+       "source": "manual",
+       "confidence": null
+      },
+      {
+       "y": 2835,
+       "idealY": 2876,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 4365,
+       "idealY": 4408,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": true,
+    "size": 719471,
+    "pages": 4,
+    "ms": 438,
+    "wallMs": 439.40000000596046,
+    "path": "worker",
+    "tileRows": 2048,
+    "progressEvents": 5,
+    "maxStallMs": 12.599999994039536,
+    "peakDeltaMiB": 69.2,
+    "afterDeltaMiB": 50.9
+   },
+   "pdfLibLoadedKiB": 195,
+   "validation": {
+    "ok": true,
+    "pages": 4,
+    "bytes": 719471,
+    "minImageBytes": 143081,
+    "maxBandsPerPage": 1,
+    "problems": [],
+    "producer": "Shotexa (local, in-browser)"
+   },
+   "afterClearDeltaMiB": 18.1,
+   "crashed": false
+  },
+  "cancel-20000": {
+   "id": "cancel-20000",
+   "images": [
+    "pdf:long-article-20000"
+   ],
+   "appJsBeforeIntentKiB": 196,
+   "analyse": {
+    "maxStallMs": 15.700000002980232,
+    "wallMs": 978.6000000089407,
+    "decodeMs": 241.20000000298023,
+    "signalMs": 650.1000000089407,
+    "path": "worker",
+    "decoders": [
+     "createImageBitmap"
+    ],
+    "sizes": [
+     "1080x21342"
+    ],
+    "peakDeltaMiB": 185.1,
+    "afterDeltaMiB": 10.9
+   },
+   "plan": {
+    "pages": 14,
+    "planMs": 0.5999999940395355,
+    "breaks": [
+     [
+      {
+       "y": 1532,
+       "idealY": 1573,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 3105,
+       "idealY": 3105,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 4662,
+       "idealY": 4678,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 6218,
+       "idealY": 6235,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 7791,
+       "idealY": 7791,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 9320,
+       "idealY": 9364,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 10830,
+       "idealY": 10893,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 12403,
+       "idealY": 12403,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 13954,
+       "idealY": 13976,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 15527,
+       "idealY": 15527,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 17032,
+       "idealY": 17100,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 18548,
+       "idealY": 18605,
+       "source": "automatic",
+       "confidence": "high"
+      },
+      {
+       "y": 20072,
+       "idealY": 20121,
+       "source": "automatic",
+       "confidence": "high"
+      }
+     ]
+    ],
+    "needsReview": 0,
+    "order": [
+     "image 1"
+    ]
+   },
+   "export": {
+    "ok": false,
+    "code": "PDF_CANCELLED",
+    "wallMs": 401.09999999403954,
+    "progressEvents": 0,
+    "maxStallMs": 11,
+    "peakDeltaMiB": 108.2,
+    "afterDeltaMiB": 5.9
+   },
+   "pdfLibLoadedKiB": 204,
+   "afterCancelDeltaMiB": 5.8,
+   "exportAfterCancel": {
+    "ok": true,
+    "pages": 14,
+    "ms": 996,
+    "peakDeltaMiB": 120.7
+   },
+   "afterClearDeltaMiB": 8.9,
+   "crashed": false
+  }
+ }
+}

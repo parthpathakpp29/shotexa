@@ -1,0 +1,38 @@
+Settings
+Airplane Mode
+Off
+Wi-Fi
+HomeNet-5G
+Bluetooth
+On
+Mobile Data
+4G
+Personal Hotspot
+Off
+Notifications
+Sounds & Haptics
+Focus
+Work
+Screen Time
+2h 14m
+General
+Display & Brightness
+Auto
+Wallpaper
+Battery
+82%
+Privacy & Security
+Passwords
+Storage
+41.3 GB used
+Software Update
+v18.2.1
+Keyboard
+English (US)
+Date & Time
+24-hour
+VPN
+Not Connected
+Screenshots stay on your device and are never uploaded to a
+server. If the upload fails, check your connection and try again
+in a minute.

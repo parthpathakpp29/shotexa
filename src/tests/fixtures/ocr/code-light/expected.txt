@@ -1,0 +1,14 @@
+transform.ts index.ts
+export function mapBox(box: Box, t: Transform): Box {
+const x = (box.x - t.offsetX) / t.scale;
+const y = (box.y - t.offsetY) / t.scale;
+return { x, y, w: box.w / t.scale, h: box.h / t.scale };
+}
+const isReady = (state) => state.status === "ready" && !state.error;
+const paths = ["C:\\tmp\\shots", "/var/data/ocr_out"];
+for (let i = 0; i < items.length; i++) {
+if (items[i]?.id !== undefined) total += items[i].size ?? 0;
+}
+// TODO: handle [0] and {} edge-cases -> fallback
+type Result = { ok: true; value: number[] } | { ok: false; error: string };
+const pct = Math.round((done / total) * 100) + '%';

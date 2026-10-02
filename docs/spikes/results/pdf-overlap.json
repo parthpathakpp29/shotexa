@@ -1,0 +1,66 @@
+[
+ {
+  "overlapPx": 0,
+  "mode": "fixed",
+  "pages": 152,
+  "strictBad": 101,
+  "rescuedByOverlap": 0,
+  "stillBroken": 101
+ },
+ {
+  "overlapPx": 0,
+  "mode": "visual",
+  "pages": 155,
+  "strictBad": 33,
+  "rescuedByOverlap": 0,
+  "stillBroken": 33
+ },
+ {
+  "overlapPx": 24,
+  "mode": "fixed",
+  "pages": 155,
+  "strictBad": 101,
+  "rescuedByOverlap": 33,
+  "stillBroken": 68
+ },
+ {
+  "overlapPx": 24,
+  "mode": "visual",
+  "pages": 158,
+  "strictBad": 35,
+  "rescuedByOverlap": 2,
+  "stillBroken": 33
+ },
+ {
+  "overlapPx": 48,
+  "mode": "fixed",
+  "pages": 155,
+  "strictBad": 105,
+  "rescuedByOverlap": 50,
+  "stillBroken": 55
+ },
+ {
+  "overlapPx": 48,
+  "mode": "visual",
+  "pages": 160,
+  "strictBad": 33,
+  "rescuedByOverlap": 2,
+  "stillBroken": 31
+ },
+ {
+  "overlapPx": 96,
+  "mode": "fixed",
+  "pages": 161,
+  "strictBad": 101,
+  "rescuedByOverlap": 64,
+  "stillBroken": 37
+ },
+ {
+  "overlapPx": 96,
+  "mode": "visual",
+  "pages": 165,
+  "strictBad": 37,
+  "rescuedByOverlap": 7,
+  "stillBroken": 30
+ }
+]

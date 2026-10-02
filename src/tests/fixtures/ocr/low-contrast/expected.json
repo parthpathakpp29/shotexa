@@ -1,0 +1,1420 @@
+{
+ "id": "low-contrast",
+ "lang": "eng",
+ "boxesFrame": "image",
+ "lines": [
+  {
+   "text": "How small teams stay organised",
+   "box": [
+    48,
+    40,
+    544.265625,
+    48
+   ],
+   "words": [
+    {
+     "text": "How",
+     "box": [
+      48,
+      40,
+      78.296875,
+      48
+     ],
+     "emoji": false
+    },
+    {
+     "text": "small",
+     "box": [
+      136.21875,
+      40,
+      88.65625,
+      48
+     ],
+     "emoji": false
+    },
+    {
+     "text": "teams",
+     "box": [
+      234.796875,
+      40,
+      101.546875,
+      48
+     ],
+     "emoji": false
+    },
+    {
+     "text": "stay",
+     "box": [
+      346.265625,
+      40,
+      68.59375,
+      48
+     ],
+     "emoji": false
+    },
+    {
+     "text": "organised",
+     "box": [
+      424.78125,
+      40,
+      167.484375,
+      48
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "By the editorial team · 6 min read · March 14, 2026",
+   "box": [
+    48,
+    96,
+    310.71875,
+    19
+   ],
+   "words": [
+    {
+     "text": "By",
+     "box": [
+      48,
+      96,
+      14.8125,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      66.625,
+      96,
+      20,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "editorial",
+     "box": [
+      90.453125,
+      96,
+      50.6875,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "team",
+     "box": [
+      144.953125,
+      96,
+      31.265625,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "·",
+     "box": [
+      180.046875,
+      96,
+      3.046875,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "6",
+     "box": [
+      186.90625,
+      96,
+      7.5625,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "min",
+     "box": [
+      198.296875,
+      96,
+      23.390625,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "read",
+     "box": [
+      225.5,
+      96,
+      27.578125,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "·",
+     "box": [
+      256.890625,
+      96,
+      3.046875,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "March",
+     "box": [
+      263.765625,
+      96,
+      38.96875,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "14,",
+     "box": [
+      306.546875,
+      96,
+      18.140625,
+      19
+     ],
+     "emoji": false
+    },
+    {
+     "text": "2026",
+     "box": [
+      328.515625,
+      96,
+      30.203125,
+      19
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Screenshots stay on your device and are never uploaded to a server. We moved the",
+   "box": [
+    48,
+    136,
+    652.46875,
+    21
+   ],
+   "words": [
+    {
+     "text": "Screenshots",
+     "box": [
+      48,
+      136,
+      95.640625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "stay",
+     "box": [
+      147.96875,
+      136,
+      31.9375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "on",
+     "box": [
+      184.234375,
+      136,
+      20.34375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "your",
+     "box": [
+      208.90625,
+      136,
+      36.3125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "device",
+     "box": [
+      249.546875,
+      136,
+      50.140625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      304.015625,
+      136,
+      30.046875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "are",
+     "box": [
+      338.390625,
+      136,
+      25.15625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "never",
+     "box": [
+      367.875,
+      136,
+      44.375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "uploaded",
+     "box": [
+      416.578125,
+      136,
+      73.9375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "to",
+     "box": [
+      494.84375,
+      136,
+      15.9375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "a",
+     "box": [
+      515.109375,
+      136,
+      9.078125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "server.",
+     "box": [
+      528.515625,
+      136,
+      53.734375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "We",
+     "box": [
+      586.578125,
+      136,
+      26.28125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "moved",
+     "box": [
+      617.1875,
+      136,
+      53.546875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      675.0625,
+      136,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "weekly planning call to Thursday at half past ten. Battery usage dropped by twelve",
+   "box": [
+    48,
+    164.796875,
+    650.25,
+    21
+   ],
+   "words": [
+    {
+     "text": "weekly",
+     "box": [
+      48,
+      164.796875,
+      54.328125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "planning",
+     "box": [
+      106.65625,
+      164.796875,
+      70.859375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "call",
+     "box": [
+      181.84375,
+      164.796875,
+      27.5625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "to",
+     "box": [
+      213.734375,
+      164.796875,
+      15.9375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Thursday",
+     "box": [
+      234,
+      164.796875,
+      75.390625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "at",
+     "box": [
+      313.71875,
+      164.796875,
+      15.296875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "half",
+     "box": [
+      333.34375,
+      164.796875,
+      30.5625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "past",
+     "box": [
+      368.234375,
+      164.796875,
+      33.359375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "ten.",
+     "box": [
+      405.921875,
+      164.796875,
+      30.421875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Battery",
+     "box": [
+      440.671875,
+      164.796875,
+      58.21875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "usage",
+     "box": [
+      503.21875,
+      164.796875,
+      45.078125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "dropped",
+     "box": [
+      552.625,
+      164.796875,
+      67.03125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "by",
+     "box": [
+      623.984375,
+      164.796875,
+      18.953125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "twelve",
+     "box": [
+      647.265625,
+      164.796875,
+      50.984375,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "percent after the latest update.",
+   "box": [
+    48,
+    193.59375,
+    243,
+    21
+   ],
+   "words": [
+    {
+     "text": "percent",
+     "box": [
+      48,
+      193.59375,
+      60.09375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "after",
+     "box": [
+      112.421875,
+      193.59375,
+      37.21875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      153.96875,
+      193.59375,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "latest",
+     "box": [
+      183.703125,
+      193.59375,
+      43.140625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "update.",
+     "box": [
+      231.171875,
+      193.59375,
+      59.828125,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Remember to export the report as a PDF before sending it to the client. The new",
+   "box": [
+    48,
+    238.390625,
+    634.171875,
+    21
+   ],
+   "words": [
+    {
+     "text": "Remember",
+     "box": [
+      48,
+      238.390625,
+      87.90625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "to",
+     "box": [
+      140.234375,
+      238.390625,
+      15.9375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "export",
+     "box": [
+      160.5,
+      238.390625,
+      51.375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      216.203125,
+      238.390625,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "report",
+     "box": [
+      245.9375,
+      238.390625,
+      49.65625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "as",
+     "box": [
+      299.921875,
+      238.390625,
+      16.859375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "a",
+     "box": [
+      321.109375,
+      238.390625,
+      9.09375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "PDF",
+     "box": [
+      334.53125,
+      238.390625,
+      35.25,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "before",
+     "box": [
+      374.109375,
+      238.390625,
+      50.4375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "sending",
+     "box": [
+      428.859375,
+      238.390625,
+      62.546875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "it",
+     "box": [
+      495.734375,
+      238.390625,
+      11.5,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "to",
+     "box": [
+      511.5625,
+      238.390625,
+      15.9375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      531.828125,
+      238.390625,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "client.",
+     "box": [
+      561.5625,
+      238.390625,
+      49,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "The",
+     "box": [
+      614.890625,
+      238.390625,
+      30.328125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "new",
+     "box": [
+      649.546875,
+      238.390625,
+      32.625,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "dashboard shows daily totals, weekly trends and monthly goals. Our office will be",
+   "box": [
+    48,
+    267.1875,
+    643.34375,
+    21
+   ],
+   "words": [
+    {
+     "text": "dashboard",
+     "box": [
+      48,
+      267.1875,
+      84.234375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "shows",
+     "box": [
+      136.5625,
+      267.1875,
+      49.015625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "daily",
+     "box": [
+      189.90625,
+      267.1875,
+      38.703125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "totals,",
+     "box": [
+      232.9375,
+      267.1875,
+      49,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "weekly",
+     "box": [
+      286.265625,
+      267.1875,
+      54.34375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "trends",
+     "box": [
+      344.9375,
+      267.1875,
+      51.046875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      400.3125,
+      267.1875,
+      30.046875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "monthly",
+     "box": [
+      434.6875,
+      267.1875,
+      66.921875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "goals.",
+     "box": [
+      505.921875,
+      267.1875,
+      45.75,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Our",
+     "box": [
+      555.984375,
+      267.1875,
+      31.140625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "office",
+     "box": [
+      591.453125,
+      267.1875,
+      43.578125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "will",
+     "box": [
+      639.359375,
+      267.1875,
+      28.859375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "be",
+     "box": [
+      672.546875,
+      267.1875,
+      18.796875,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "closed on Friday for the public holiday.",
+   "box": [
+    48,
+    295.984375,
+    309.296875,
+    21
+   ],
+   "words": [
+    {
+     "text": "closed",
+     "box": [
+      48,
+      295.984375,
+      49.84375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "on",
+     "box": [
+      102.171875,
+      295.984375,
+      20.359375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "Friday",
+     "box": [
+      126.859375,
+      295.984375,
+      51.703125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "for",
+     "box": [
+      182.890625,
+      295.984375,
+      22.953125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      210.171875,
+      295.984375,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "public",
+     "box": [
+      239.90625,
+      295.984375,
+      49.328125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "holiday.",
+     "box": [
+      293.5625,
+      295.984375,
+      63.734375,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "Start with one shared list",
+   "box": [
+    48,
+    349.78125,
+    281.859375,
+    32
+   ],
+   "words": [
+    {
+     "text": "Start",
+     "box": [
+      48,
+      349.78125,
+      54.703125,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "with",
+     "box": [
+      109.3125,
+      349.78125,
+      49.75,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "one",
+     "box": [
+      165.671875,
+      349.78125,
+      42.1875,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "shared",
+     "box": [
+      214.46875,
+      349.78125,
+      75.234375,
+      32
+     ],
+     "emoji": false
+    },
+    {
+     "text": "list",
+     "box": [
+      296.3125,
+      349.78125,
+      33.546875,
+      32
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "If the upload fails, check your connection and try again in a minute. She suggested",
+   "box": [
+    48,
+    388.78125,
+    651.265625,
+    21
+   ],
+   "words": [
+    {
+     "text": "If",
+     "box": [
+      48,
+      388.78125,
+      12.875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      65.203125,
+      388.78125,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "upload",
+     "box": [
+      94.9375,
+      388.78125,
+      54.90625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "fails,",
+     "box": [
+      154.171875,
+      388.78125,
+      38,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "check",
+     "box": [
+      196.5,
+      388.78125,
+      45.171875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "your",
+     "box": [
+      246,
+      388.78125,
+      36.3125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "connection",
+     "box": [
+      286.640625,
+      388.78125,
+      87.859375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      378.828125,
+      388.78125,
+      30.046875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "try",
+     "box": [
+      413.203125,
+      388.78125,
+      22.46875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "again",
+     "box": [
+      440,
+      388.78125,
+      43.21875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "in",
+     "box": [
+      487.546875,
+      388.78125,
+      15.921875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "a",
+     "box": [
+      507.796875,
+      388.78125,
+      9.09375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "minute.",
+     "box": [
+      521.21875,
+      388.78125,
+      61.890625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "She",
+     "box": [
+      587.4375,
+      388.78125,
+      29.296875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "suggested",
+     "box": [
+      621.0625,
+      388.78125,
+      78.203125,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "a shorter title and a clearer summary for the article. The invoice includes three",
+   "box": [
+    48,
+    417.578125,
+    621.515625,
+    21
+   ],
+   "words": [
+    {
+     "text": "a",
+     "box": [
+      48,
+      417.578125,
+      9.078125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "shorter",
+     "box": [
+      61.40625,
+      417.578125,
+      57.640625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "title",
+     "box": [
+      123.375,
+      417.578125,
+      31.5625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      159.265625,
+      417.578125,
+      30.046875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "a",
+     "box": [
+      193.640625,
+      417.578125,
+      9.09375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "clearer",
+     "box": [
+      207.0625,
+      417.578125,
+      54.546875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "summary",
+     "box": [
+      265.9375,
+      417.578125,
+      75.171875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "for",
+     "box": [
+      345.4375,
+      417.578125,
+      22.9375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      372.703125,
+      417.578125,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "article.",
+     "box": [
+      402.4375,
+      417.578125,
+      54.828125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "The",
+     "box": [
+      461.59375,
+      417.578125,
+      30.328125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "invoice",
+     "box": [
+      496.25,
+      417.578125,
+      56.703125,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "includes",
+     "box": [
+      557.28125,
+      417.578125,
+      66.421875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "three",
+     "box": [
+      628.03125,
+      417.578125,
+      41.484375,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  },
+  {
+   "text": "items, one discount and the local tax.",
+   "box": [
+    48,
+    446.375,
+    294.140625,
+    21
+   ],
+   "words": [
+    {
+     "text": "items,",
+     "box": [
+      48,
+      446.375,
+      48.6875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "one",
+     "box": [
+      101.015625,
+      446.375,
+      29.046875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "discount",
+     "box": [
+      134.390625,
+      446.375,
+      68.484375,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "and",
+     "box": [
+      207.203125,
+      446.375,
+      30.046875,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "the",
+     "box": [
+      241.578125,
+      446.375,
+      25.40625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "local",
+     "box": [
+      271.3125,
+      446.375,
+      37.265625,
+      21
+     ],
+     "emoji": false
+    },
+    {
+     "text": "tax.",
+     "box": [
+      312.90625,
+      446.375,
+      29.234375,
+      21
+     ],
+     "emoji": false
+    }
+   ]
+  }
+ ],
+ "sourceLines": null
+}

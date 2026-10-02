@@ -1,0 +1,727 @@
+[
+ {
+  "id": "jpeg/clean",
+  "format": "jpeg",
+  "file": "jpeg/clean.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "JFIF only (jpeg-js)",
+  "expect": {
+   "noPrivacy": true,
+   "preserved": [
+    "APP0 JFIF"
+   ]
+  }
+ },
+ {
+  "id": "jpeg/exif-gps",
+  "format": "jpeg",
+  "file": "jpeg/exif-gps.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "Full EXIF: GPS, make/model, serial, owner, dates, software, comments (little-endian)",
+  "expect": {
+   "privacy": [
+    "exif",
+    "location",
+    "device",
+    "author",
+    "software",
+    "timestamp",
+    "comment"
+   ]
+  }
+ },
+ {
+  "id": "jpeg/exif-gps-be",
+  "format": "jpeg",
+  "file": "jpeg/exif-gps-be.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "Same EXIF, big-endian TIFF",
+  "expect": {
+   "privacy": [
+    "exif",
+    "location",
+    "device",
+    "author"
+   ]
+  }
+ },
+ {
+  "id": "jpeg/exif-thumbnail",
+  "format": "jpeg",
+  "file": "jpeg/exif-thumbnail.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "EXIF with an IFD1 JPEG thumbnail of different content",
+  "expect": {
+   "privacy": [
+    "exif",
+    "thumbnail",
+    "location"
+   ],
+   "thumbnail": true
+  }
+ },
+ {
+  "id": "jpeg/xmp",
+  "format": "jpeg",
+  "file": "jpeg/xmp.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "XMP only (creator, tool, city, GPS, dates, document ID)",
+  "expect": {
+   "privacy": [
+    "xmp",
+    "author",
+    "location",
+    "software"
+   ]
+  }
+ },
+ {
+  "id": "jpeg/xmp-extended",
+  "format": "jpeg",
+  "file": "jpeg/xmp-extended.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "XMP + extended XMP segment",
+  "expect": {
+   "privacy": [
+    "xmp"
+   ]
+  }
+ },
+ {
+  "id": "jpeg/icc",
+  "format": "jpeg",
+  "file": "jpeg/icc.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "Display-P3 ICC profile + EXIF",
+  "expect": {
+   "privacy": [
+    "exif",
+    "location"
+   ],
+   "preserved": [
+    "APP2 ICC",
+    "APP0 JFIF"
+   ]
+  }
+ },
+ {
+  "id": "jpeg/comments",
+  "format": "jpeg",
+  "file": "jpeg/comments.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "Two COM segments",
+  "expect": {
+   "privacy": [
+    "comment"
+   ]
+  }
+ },
+ {
+  "id": "jpeg/iptc",
+  "format": "jpeg",
+  "file": "jpeg/iptc.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "Photoshop APP13 IPTC: by-line, city, country, caption",
+  "expect": {
+   "privacy": [
+    "iptc",
+    "author",
+    "location"
+   ]
+  }
+ },
+ {
+  "id": "jpeg/jfif-thumbnail",
+  "format": "jpeg",
+  "file": "jpeg/jfif-thumbnail.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "JFIF header thumbnail + JFXX thumbnail",
+  "expect": {
+   "privacy": [
+    "thumbnail"
+   ],
+   "preserved": [
+    "APP0 JFIF"
+   ]
+  }
+ },
+ {
+  "id": "jpeg/mpf-appended",
+  "format": "jpeg",
+  "file": "jpeg/mpf-appended.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "MPF index + a second image appended after EOI",
+  "expect": {
+   "privacy": [
+    "hidden-image"
+   ],
+   "hiddenImage": true
+  }
+ },
+ {
+  "id": "jpeg/trailing",
+  "format": "jpeg",
+  "file": "jpeg/trailing.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "Text appended after EOI",
+  "expect": {
+   "privacy": [
+    "other"
+   ]
+  }
+ },
+ {
+  "id": "jpeg/kitchen-sink",
+  "format": "jpeg",
+  "file": "jpeg/kitchen-sink.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "EXIF(+GPS+thumbnail) + XMP + ICC + IPTC + COM + unknown APP4 + JUMBF/C2PA APP11 + Adobe APP14",
+  "expect": {
+   "privacy": [
+    "exif",
+    "xmp",
+    "iptc",
+    "comment",
+    "thumbnail",
+    "location",
+    "private-app",
+    "provenance"
+   ],
+   "preserved": [
+    "APP2 ICC",
+    "APP14 Adobe",
+    "APP0 JFIF"
+   ],
+   "thumbnail": true
+  }
+ },
+ {
+  "id": "jpeg/orientation-1",
+  "format": "jpeg",
+  "file": "jpeg/orientation-1.jpg",
+  "width": 240,
+  "height": 160,
+  "description": "EXIF Orientation 1 + camera make",
+  "expect": {
+   "privacy": [
+    "exif",
+    "device"
+   ],
+   "orientation": 1
+  }
+ },
+ {
+  "id": "jpeg/orientation-2",
+  "format": "jpeg",
+  "file": "jpeg/orientation-2.jpg",
+  "width": 240,
+  "height": 160,
+  "description": "EXIF Orientation 2 + camera make",
+  "expect": {
+   "privacy": [
+    "exif",
+    "device"
+   ],
+   "orientation": 2
+  }
+ },
+ {
+  "id": "jpeg/orientation-3",
+  "format": "jpeg",
+  "file": "jpeg/orientation-3.jpg",
+  "width": 240,
+  "height": 160,
+  "description": "EXIF Orientation 3 + camera make",
+  "expect": {
+   "privacy": [
+    "exif",
+    "device"
+   ],
+   "orientation": 3
+  }
+ },
+ {
+  "id": "jpeg/orientation-5",
+  "format": "jpeg",
+  "file": "jpeg/orientation-5.jpg",
+  "width": 240,
+  "height": 160,
+  "description": "EXIF Orientation 5 + camera make",
+  "expect": {
+   "privacy": [
+    "exif",
+    "device"
+   ],
+   "orientation": 5
+  }
+ },
+ {
+  "id": "jpeg/orientation-6",
+  "format": "jpeg",
+  "file": "jpeg/orientation-6.jpg",
+  "width": 240,
+  "height": 160,
+  "description": "EXIF Orientation 6 + camera make",
+  "expect": {
+   "privacy": [
+    "exif",
+    "device"
+   ],
+   "orientation": 6
+  }
+ },
+ {
+  "id": "jpeg/orientation-7",
+  "format": "jpeg",
+  "file": "jpeg/orientation-7.jpg",
+  "width": 240,
+  "height": 160,
+  "description": "EXIF Orientation 7 + camera make",
+  "expect": {
+   "privacy": [
+    "exif",
+    "device"
+   ],
+   "orientation": 7
+  }
+ },
+ {
+  "id": "jpeg/orientation-8",
+  "format": "jpeg",
+  "file": "jpeg/orientation-8.jpg",
+  "width": 240,
+  "height": 160,
+  "description": "EXIF Orientation 8 + camera make",
+  "expect": {
+   "privacy": [
+    "exif",
+    "device"
+   ],
+   "orientation": 8
+  }
+ },
+ {
+  "id": "jpeg/orientation-minimal-6",
+  "format": "jpeg",
+  "file": "jpeg/orientation-minimal-6.jpg",
+  "width": 240,
+  "height": 160,
+  "description": "Orientation-only EXIF (already clean)",
+  "expect": {
+   "noPrivacy": true,
+   "orientation": 6
+  }
+ },
+ {
+  "id": "jpeg/duplicate-exif",
+  "format": "jpeg",
+  "file": "jpeg/duplicate-exif.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "Two EXIF APP1 segments",
+  "expect": {
+   "privacy": [
+    "exif",
+    "location"
+   ]
+  }
+ },
+ {
+  "id": "jpeg/malformed-exif",
+  "format": "jpeg",
+  "file": "jpeg/malformed-exif.jpg",
+  "width": 480,
+  "height": 320,
+  "description": "EXIF APP1 with an IFD offset past its end (container valid)",
+  "expect": {
+   "privacy": [
+    "exif"
+   ]
+  }
+ },
+ {
+  "id": "png/clean",
+  "format": "png",
+  "file": "png/clean.png",
+  "width": 480,
+  "height": 320,
+  "description": "pngjs output, no metadata",
+  "expect": {
+   "noPrivacy": true
+  }
+ },
+ {
+  "id": "png/text",
+  "format": "png",
+  "file": "png/text.png",
+  "width": 480,
+  "height": 320,
+  "description": "tEXt Author/Software/Creation Time/Source/Comment + zTXt + iTXt XMP",
+  "expect": {
+   "privacy": [
+    "author",
+    "software",
+    "timestamp",
+    "device",
+    "comment",
+    "xmp"
+   ]
+  }
+ },
+ {
+  "id": "png/exif",
+  "format": "png",
+  "file": "png/exif.png",
+  "width": 480,
+  "height": 320,
+  "description": "eXIf with GPS/device/author",
+  "expect": {
+   "privacy": [
+    "exif",
+    "location",
+    "device"
+   ]
+  }
+ },
+ {
+  "id": "png/exif-orientation-6",
+  "format": "png",
+  "file": "png/exif-orientation-6.png",
+  "width": 240,
+  "height": 160,
+  "description": "eXIf Orientation 6 + make",
+  "expect": {
+   "privacy": [
+    "exif"
+   ],
+   "orientation": 6
+  }
+ },
+ {
+  "id": "png/time",
+  "format": "png",
+  "file": "png/time.png",
+  "width": 480,
+  "height": 320,
+  "description": "tIME only",
+  "expect": {
+   "privacy": [
+    "timestamp"
+   ]
+  }
+ },
+ {
+  "id": "png/icc",
+  "format": "png",
+  "file": "png/icc.png",
+  "width": 480,
+  "height": 320,
+  "description": "iCCP Display-P3 + Author",
+  "expect": {
+   "privacy": [
+    "author"
+   ],
+   "preserved": [
+    "PNG iCCP"
+   ]
+  }
+ },
+ {
+  "id": "png/gamma",
+  "format": "png",
+  "file": "png/gamma.png",
+  "width": 480,
+  "height": 320,
+  "description": "gAMA 1.0 + cHRM (P3 primaries) + Software",
+  "expect": {
+   "privacy": [
+    "software"
+   ],
+   "preserved": [
+    "PNG gAMA",
+    "PNG cHRM"
+   ]
+  }
+ },
+ {
+  "id": "png/srgb",
+  "format": "png",
+  "file": "png/srgb.png",
+  "width": 480,
+  "height": 320,
+  "description": "sRGB + gAMA + Author",
+  "expect": {
+   "privacy": [
+    "author"
+   ],
+   "preserved": [
+    "PNG sRGB",
+    "PNG gAMA"
+   ]
+  }
+ },
+ {
+  "id": "png/phys",
+  "format": "png",
+  "file": "png/phys.png",
+  "width": 480,
+  "height": 320,
+  "description": "pHYs 72 dpi + Author",
+  "expect": {
+   "privacy": [
+    "author"
+   ],
+   "preserved": [
+    "PNG pHYs"
+   ]
+  }
+ },
+ {
+  "id": "png/alpha",
+  "format": "png",
+  "file": "png/alpha.png",
+  "width": 480,
+  "height": 320,
+  "description": "RGBA with transparency + Author + tIME",
+  "expect": {
+   "privacy": [
+    "author",
+    "timestamp"
+   ],
+   "alpha": true
+  }
+ },
+ {
+  "id": "png/apng",
+  "format": "png",
+  "file": "png/apng.png",
+  "width": 480,
+  "height": 320,
+  "description": "Animated PNG (2 frames) + Software",
+  "expect": {
+   "privacy": [
+    "software"
+   ],
+   "animated": true
+  }
+ },
+ {
+  "id": "png/idot",
+  "format": "png",
+  "file": "png/idot.png",
+  "width": 480,
+  "height": 320,
+  "description": "Apple-style iDOT chunk + Software",
+  "expect": {
+   "privacy": [
+    "private-app",
+    "software"
+   ]
+  }
+ },
+ {
+  "id": "png/unknown-trailing",
+  "format": "png",
+  "file": "png/unknown-trailing.png",
+  "width": 480,
+  "height": 320,
+  "description": "Unknown private ancillary chunk + data after IEND",
+  "expect": {
+   "privacy": [
+    "private-app",
+    "other"
+   ]
+  }
+ },
+ {
+  "id": "png/kitchen-sink",
+  "format": "png",
+  "file": "png/kitchen-sink.png",
+  "width": 480,
+  "height": 320,
+  "description": "RGBA + iCCP + pHYs + tEXt + zTXt + iTXt XMP + eXIf + tIME + dSIG",
+  "expect": {
+   "privacy": [
+    "author",
+    "comment",
+    "xmp",
+    "exif",
+    "location",
+    "timestamp",
+    "provenance"
+   ],
+   "preserved": [
+    "PNG iCCP",
+    "PNG pHYs"
+   ],
+   "alpha": true
+  }
+ },
+ {
+  "id": "webp/clean-lossy",
+  "format": "webp",
+  "file": "webp/clean-lossy.webp",
+  "width": 480,
+  "height": 320,
+  "description": "Simple lossy (VP8)",
+  "expect": {
+   "noPrivacy": true
+  }
+ },
+ {
+  "id": "webp/clean-lossless",
+  "format": "webp",
+  "file": "webp/clean-lossless.webp",
+  "width": 480,
+  "height": 320,
+  "description": "Simple lossless (VP8L)",
+  "expect": {
+   "noPrivacy": true
+  }
+ },
+ {
+  "id": "webp/exif-lossy",
+  "format": "webp",
+  "file": "webp/exif-lossy.webp",
+  "width": 480,
+  "height": 320,
+  "description": "VP8X + VP8 + EXIF",
+  "expect": {
+   "privacy": [
+    "exif",
+    "location",
+    "device"
+   ]
+  }
+ },
+ {
+  "id": "webp/exif-lossless",
+  "format": "webp",
+  "file": "webp/exif-lossless.webp",
+  "width": 480,
+  "height": 320,
+  "description": "VP8X + VP8L + EXIF + XMP",
+  "expect": {
+   "privacy": [
+    "exif",
+    "xmp",
+    "location"
+   ]
+  }
+ },
+ {
+  "id": "webp/xmp",
+  "format": "webp",
+  "file": "webp/xmp.webp",
+  "width": 480,
+  "height": 320,
+  "description": "VP8X + VP8 + XMP",
+  "expect": {
+   "privacy": [
+    "xmp",
+    "author"
+   ]
+  }
+ },
+ {
+  "id": "webp/icc",
+  "format": "webp",
+  "file": "webp/icc.webp",
+  "width": 480,
+  "height": 320,
+  "description": "ICCP Display-P3 + EXIF",
+  "expect": {
+   "privacy": [
+    "exif"
+   ],
+   "preserved": [
+    "WebP ICCP"
+   ]
+  }
+ },
+ {
+  "id": "webp/alpha",
+  "format": "webp",
+  "file": "webp/alpha.webp",
+  "width": 480,
+  "height": 320,
+  "description": "Lossy + ALPH + EXIF + XMP",
+  "expect": {
+   "privacy": [
+    "exif",
+    "xmp"
+   ],
+   "alpha": true
+  }
+ },
+ {
+  "id": "webp/animated",
+  "format": "webp",
+  "file": "webp/animated.webp",
+  "width": 160,
+  "height": 100,
+  "description": "Animated (2 ANMF frames) + EXIF + XMP",
+  "expect": {
+   "privacy": [
+    "exif",
+    "xmp"
+   ],
+   "animated": true
+  }
+ },
+ {
+  "id": "webp/exif-orientation-6",
+  "format": "webp",
+  "file": "webp/exif-orientation-6.webp",
+  "width": 240,
+  "height": 160,
+  "description": "EXIF Orientation 6 + make",
+  "expect": {
+   "privacy": [
+    "exif"
+   ],
+   "orientation": 6
+  }
+ },
+ {
+  "id": "webp/exif-prefixed",
+  "format": "webp",
+  "file": "webp/exif-prefixed.webp",
+  "width": 480,
+  "height": 320,
+  "description": "EXIF chunk with an 'Exif\\0\\0' prefix (some writers)",
+  "expect": {
+   "privacy": [
+    "exif",
+    "location"
+   ]
+  }
+ },
+ {
+  "id": "webp/unknown-trailing",
+  "format": "webp",
+  "file": "webp/unknown-trailing.webp",
+  "width": 480,
+  "height": 320,
+  "description": "Unknown chunk + data after the RIFF container",
+  "expect": {
+   "privacy": [
+    "private-app",
+    "other"
+   ]
+  }
+ }
+]
