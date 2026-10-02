@@ -7,10 +7,10 @@
  *  - "preview" route + workspace shell exist (files carry over) but the tool is not finished:
  *              noindex, not in the sitemap, honest "coming next" state
  */
-export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "split" | "compress" | "convert" | "beautify" | "metadata";
+export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "split" | "compress" | "convert" | "beautify" | "compare" | "metadata";
 
 export type ToolStatus = "live" | "preview";
-export type ToolIcon = "stitch" | "combine" | "shield" | "blur" | "text" | "pdf" | "crop" | "pen" | "scissors" | "compress" | "convert" | "sparkles" | "eraser";
+export type ToolIcon = "stitch" | "combine" | "shield" | "blur" | "text" | "pdf" | "crop" | "pen" | "scissors" | "compress" | "convert" | "sparkles" | "compare" | "eraser";
 
 /** Grouping used by every discovery surface (tools page, header menu, footer). */
 export type ToolCategory = "create" | "protect" | "documents" | "edit";
@@ -50,7 +50,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Smart Screenshot Stitcher",
       description: "Automatically join overlapping screenshots into one long image, review the join, adjust it manually and export at full resolution — privately in your browser.",
     },
-    continueWith: ["safe-share", "annotate", "beautify", "pdf", "split", "editor", "extract-text", "combine", "compress"],
+    continueWith: ["safe-share", "annotate", "beautify", "compare", "pdf", "split", "editor", "extract-text", "combine", "compress"],
   },
   combine: {
     id: "combine",
@@ -78,7 +78,23 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Beautify a Screenshot Online",
       description: "Put a screenshot on a styled background, or inside a browser window or phone frame, and export it at full resolution — privately in your browser.",
     },
-    continueWith: ["editor", "annotate", "safe-share", "compress", "pdf", "combine"],
+    continueWith: ["editor", "annotate", "safe-share", "compare", "compress", "pdf", "combine"],
+  },
+  compare: {
+    id: "compare",
+    name: "Compare",
+    route: "/compare-screenshots",
+    status: "live",
+    category: "create",
+    icon: "compare",
+    summary: "See what changed between two screenshots.",
+    minFiles: 2,
+    seo: {
+      title: "Compare Screenshots Online – Before & After Image Comparison | Shotexa",
+      h1: "Compare Two Screenshots Online",
+      description: "Compare two screenshots side by side, with a before/after slider, as an overlay, or as a pixel difference — privately in your browser.",
+    },
+    continueWith: ["editor", "annotate", "beautify", "safe-share", "compress", "pdf"],
   },
   "safe-share": {
     id: "safe-share",
@@ -163,7 +179,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Edit a Screenshot Online",
       description: "Crop, resize, rotate and flip screenshots at full resolution — privately in your browser. Your original is never changed.",
     },
-    continueWith: ["annotate", "beautify", "safe-share", "extract-text", "pdf", "combine", "split", "compress", "convert"],
+    continueWith: ["annotate", "beautify", "compare", "safe-share", "extract-text", "pdf", "combine", "split", "compress", "convert"],
   },
   annotate: {
     id: "annotate",
@@ -179,7 +195,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Annotate a Screenshot Online",
       description: "Add arrows, boxes, highlights, text, freehand notes and numbered steps to screenshots at full resolution — privately in your browser. Your original is never changed.",
     },
-    continueWith: ["safe-share", "beautify", "pdf", "combine", "extract-text", "editor", "split", "compress", "convert"],
+    continueWith: ["safe-share", "beautify", "compare", "pdf", "combine", "extract-text", "editor", "split", "compress", "convert"],
   },
   split: {
     id: "split",

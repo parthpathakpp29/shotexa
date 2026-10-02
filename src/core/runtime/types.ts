@@ -12,6 +12,7 @@ import type { AnnotationObject } from "@/core/annotation/types";
 import type { SplitSettings } from "@/core/split/types";
 import type { EncodeSettings, EncodeTool } from "@/core/image-encode/types";
 import type { BeautifySettings } from "@/core/beautify/types";
+import type { CompareSettings } from "@/core/compare/types";
 
 export type FileId = string;
 export type ImageMime = "image/png" | "image/jpeg" | "image/webp";
@@ -37,7 +38,7 @@ export interface WorkspaceFile {
 export type JobStatus = "running" | "done" | "failed" | "cancelled";
 export interface Job {
   id: string;
-  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "editor-export" | "annotate-export" | "split-export" | "encode" | "beautify-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
+  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "editor-export" | "annotate-export" | "split-export" | "encode" | "beautify-export" | "compare-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
   status: JobStatus;
   progress: number | null;
   /** Controlled error code only (never raw messages). */
@@ -158,6 +159,9 @@ export interface BeautifySession {
   byAsset: Record<FileId, BeautifySettings>;
 }
 
+/** Compare Screenshots: two chosen assets and a few numbers. No rendered pixels here. */
+export type CompareSession = CompareSettings;
+
 /** Compress / Convert settings — one set per tool, not undoable (like export settings). */
 export type EncodeSession = Record<EncodeTool, EncodeSettings>;
 
@@ -185,7 +189,9 @@ export type Operation =
   /** Any split change — mode, count, target height, add/move/delete a line, reset. `null` = never split. */
   | { type: "SPLIT_SET"; assetId: FileId; before: SplitSettings | null; after: SplitSettings | null; at: number; key?: string }
   /** Any Beautifier change — mode, background, padding, radius, shadow, scale, position, frames. */
-  | { type: "BEAUTIFY_SET"; assetId: FileId; before: BeautifySettings | null; after: BeautifySettings | null; at: number; key?: string };
+  | { type: "BEAUTIFY_SET"; assetId: FileId; before: BeautifySettings | null; after: BeautifySettings | null; at: number; key?: string }
+  /** Any Compare change — the chosen screenshots, mode, fit, alignment, divider, opacity, threshold. */
+  | { type: "COMPARE_SET"; before: CompareSettings; after: CompareSettings; at: number; key?: string };
 
 /** Breaks are serialisable and small enough for the command model. */
 export type { PageBreak };

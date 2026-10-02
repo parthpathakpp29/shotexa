@@ -483,3 +483,52 @@ describe("workspace store — Split", () => {
     expect(s().split.byAsset.missing).toBeUndefined();
   });
 });
+
+describe("workspace store — Compare", () => {
+  it("records the chosen screenshots, mode and settings as undoable steps", () => {
+    const { s } = setup(["a", "b", "c"]);
+    const base = s().compare;
+    s().setCompare({ ...base, a: "a", b: "b" });
+    s().setCompare({ ...s().compare, mode: "overlay" });
+    s().setCompare({ ...s().compare, opacity: 0.8 });
+    // Swap is an ordinary settings change.
+    s().setCompare({ ...s().compare, a: "b", b: "a" });
+    expect(s().compare).toMatchObject({ a: "b", b: "a", mode: "overlay", opacity: 0.8 });
+    expect(s().history.past.filter((op) => op.type === "COMPARE_SET")).toHaveLength(4);
+
+    s().undo();
+    expect(s().compare).toMatchObject({ a: "a", b: "b", opacity: 0.8 });
+    s().undo();
+    expect(s().compare.opacity).toBe(base.opacity);
+    s().undo();
+    expect(s().compare.mode).toBe(base.mode);
+    s().undo();
+    expect(s().compare).toEqual(base); // no screenshots chosen again
+    for (let i = 0; i < 4; i++) s().redo();
+    expect(s().compare).toMatchObject({ a: "b", b: "a", mode: "overlay", opacity: 0.8 });
+  });
+
+  it("collapses one divider drag into a single step and skips no-ops", () => {
+    const { s } = setup(["a", "b"]);
+    const base = { ...s().compare, a: "a", b: "b", mode: "slider" as const };
+    s().setCompare(base, { now: 1000 });
+    s().setCompare({ ...base, divider: 60 }, { coalesce: "divider", now: 1100 });
+    s().setCompare({ ...base, divider: 70 }, { coalesce: "divider", now: 1200 });
+    s().setCompare({ ...base, divider: 80 }, { coalesce: "divider", now: 1300 });
+    s().setCompare({ ...base, divider: 80 }, { coalesce: "divider", now: 1400 }); // no-op
+    expect(s().history.past).toHaveLength(2);
+    s().undo();
+    expect(s().compare.divider).toBe(base.divider);
+    // A different control starts its own step.
+    s().setCompare({ ...base, threshold: 40 }, { coalesce: "threshold", now: 1500 });
+    s().setCompare({ ...base, threshold: 40, divider: 90 }, { coalesce: "divider", now: 1550 });
+    expect(s().history.past).toHaveLength(3);
+  });
+
+  it("forgets a screenshot that is removed from the workspace", () => {
+    const { s } = setup(["a", "b"]);
+    s().setCompare({ ...s().compare, a: "a", b: "b" });
+    s().removeFile("a");
+    expect(s().compare).toMatchObject({ a: null, b: "b" });
+  });
+});

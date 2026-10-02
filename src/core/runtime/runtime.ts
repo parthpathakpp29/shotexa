@@ -143,6 +143,11 @@ export interface WorkspaceRuntime {
   exportSplit(assetId?: FileId): Promise<SplitRunResult>;
   /** Add rendered Split pieces to the workspace as artifacts (the first is selected). */
   addSplitPieces(result: SplitRunResult): FileId[];
+  /**
+   * Render the current comparison of the two chosen screenshots at full resolution into a new
+   * artifact that records BOTH parents.
+   */
+  exportCompare(): Promise<EditorExportResult>;
   /** Compose the asset with its Beautifier settings at full resolution into a new artifact. */
   exportBeautified(assetId?: FileId): Promise<EditorExportResult>;
   /**
@@ -615,6 +620,62 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     } catch (error) {
       const code = codeOf(error);
       job(jobId, "split-export", "failed", null, code);
+      throw Object.assign(new Error(code), { code });
+    }
+  }
+
+  async function exportCompare(): Promise<EditorExportResult> {
+    const s = store.getState();
+    const settings = s.compare;
+    const fileA = settings.a ? s.files[settings.a] : undefined;
+    const fileB = settings.b ? s.files[settings.b] : undefined;
+    const blobA = settings.a ? registry.blob(settings.a) : undefined;
+    const blobB = settings.b ? registry.blob(settings.b) : undefined;
+    if (!settings.a || !settings.b || !fileA || !fileB || !blobA || !blobB) throw Object.assign(new Error("Two screenshots"), { code: "COMPARE_NEEDS_TWO" });
+    const a = { width: fileA.width, height: fileA.height };
+    const b = { width: fileB.width, height: fileB.height };
+    const { format, quality } = s.exportSettings;
+    const jobId = `compare:${Date.now()}`;
+    job(jobId, "compare-export", "running", 0);
+    try {
+      const onProgress = (progress: number) => job(jobId, "compare-export", "running", progress);
+      const result = caps.offscreenCanvas
+        ? await broker.run("image", "compare.export", { imageA: blobA, imageB: blobB, settings, a, b, format, quality }, { onProgress })
+        : await (await import("@/core/compare/render")).renderCompare(blobA, blobB, settings, {
+            a,
+            b,
+            format,
+            quality,
+            createCanvas: (width, height) => Object.assign(document.createElement("canvas"), { width, height }),
+            onProgress,
+          });
+      // Both sources are decoded whatever the output size: size the recycle by the largest.
+      if (Math.max(result.width * result.height, a.width * a.height, b.width * b.height) > 16_000_000) broker.release("image");
+      const mime: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
+      const { COMPARE_NAMES } = await import("@/core/compare/presets");
+      const id = newId();
+      registry.put(id, result.blob);
+      // Two parents: the comparison is derived from both screenshots, and neither is changed.
+      store.getState().addArtifact({
+        id,
+        name: `${COMPARE_NAMES[settings.mode]}.${EXT[mime]}`,
+        type: mime,
+        bytes: result.blob.size,
+        width: result.width,
+        height: result.height,
+        source: "artifact",
+        kind: "artifact",
+        derivedFrom: [settings.a, settings.b],
+        producedBy: "compare",
+        addedAt: Date.now(),
+        previewVersion: 0,
+      });
+      job(jobId, "compare-export", "done", 1);
+      previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
+      return { id, width: result.width, height: result.height, bytes: result.blob.size, sourceId: settings.a };
+    } catch (error) {
+      const code = codeOf(error);
+      job(jobId, "compare-export", "failed", null, code);
       throw Object.assign(new Error(code), { code });
     }
   }
@@ -1126,6 +1187,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     exportSplit,
     addSplitPieces,
     exportBeautified,
+    exportCompare,
     encodeAsset,
     saveEncoded,
     hasTransparency,

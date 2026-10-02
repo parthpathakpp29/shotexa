@@ -12,6 +12,8 @@ import type { SplitErrorCode, SplitExportResult, SplitPiece } from "@/core/split
 import type { EncodeErrorCode, EncodeResult } from "@/core/image-encode/types";
 import type { BeautifyErrorCode, BeautifySettings } from "@/core/beautify/types";
 import type { BeautifyRenderResult } from "@/core/beautify/render";
+import type { CompareErrorCode, CompareSettings } from "@/core/compare/types";
+import type { CompareRenderResult } from "@/core/compare/render";
 import type { MetadataErrorCode } from "@/core/metadata/errors";
 import type { ComposeChainResult } from "@/core/stitch/compose-chain";
 import type { MetadataCleanRun, MetadataInspectRun } from "@/core/metadata/run";
@@ -81,6 +83,11 @@ export interface WorkerOps {
     input: { image: Blob; settings: BeautifySettings; source: { width: number; height: number }; format: "png" | "jpeg" | "webp"; quality?: number };
     output: BeautifyRenderResult;
   };
+  /** Compare: decode both screenshots, compose the comparison at full size, encode, verify. */
+  "compare.export": {
+    input: { imageA: Blob; imageB: Blob; settings: CompareSettings; a: { width: number; height: number }; b: { width: number; height: number }; format: "png" | "jpeg" | "webp"; quality?: number };
+    output: CompareRenderResult;
+  };
   /** Full-resolution redaction render followed by encode → Privacy Clean → verification. */
   "redaction.export": {
     input: { image: Blob; operations: Redaction[]; format: "png" | "jpeg" | "webp"; quality?: number };
@@ -134,7 +141,7 @@ export type WorkerRequest =
   | ({ [K in OpName]: Envelope & { type: "RUN"; op: K; input: WorkerOps[K]["input"] } }[OpName])
   | (Envelope & { type: "CANCEL" });
 
-export type WorkerErrorCode = StitchErrorCode | CombineErrorCode | EditorErrorCode | AnnotationErrorCode | SplitErrorCode | EncodeErrorCode | BeautifyErrorCode | RedactionErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode | MetadataErrorCode;
+export type WorkerErrorCode = StitchErrorCode | CombineErrorCode | EditorErrorCode | AnnotationErrorCode | SplitErrorCode | EncodeErrorCode | BeautifyErrorCode | CompareErrorCode | RedactionErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode | MetadataErrorCode;
 
 export type WorkerResponse =
   | (Envelope & { type: "PROGRESS"; progress: number; stage?: string })

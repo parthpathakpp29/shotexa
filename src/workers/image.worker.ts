@@ -21,6 +21,8 @@ import { encodeImage } from "@/core/image-encode/reencode";
 import { EncodeError } from "@/core/image-encode/types";
 import { renderBeautified } from "@/core/beautify/render";
 import { BeautifyError } from "@/core/beautify/types";
+import { renderCompare } from "@/core/compare/render";
+import { CompareError } from "@/core/compare/types";
 import { composeStitch } from "@/core/stitch/compose";
 import { StitchError } from "@/core/stitch/types";
 import { serveWorker, type WorkerErrorCode } from "./protocol";
@@ -62,6 +64,8 @@ serveWorker(
       encodeImage(image, { source, format, quality, background, probe, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "encode") }),
     "beautify.export": async ({ image, settings, source, format, quality }, ctx) =>
       renderBeautified(image, settings, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
+    "compare.export": async ({ imageA, imageB, settings, a, b, format, quality }, ctx) =>
+      renderCompare(imageA, imageB, settings, { a, b, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
     "metadata.inspect": async ({ image, name, type }) => runMetadataInspect(image, name, type),
     "metadata.clean": async ({ image, name, type, policy }) => runMetadataClean(image, name, type, policy),
     "redaction.export": async ({ image, operations, format, quality }, ctx) =>
@@ -76,6 +80,7 @@ serveWorker(
     if (err instanceof SplitError) return err.code;
     if (err instanceof EncodeError) return err.code;
     if (err instanceof BeautifyError) return err.code;
+    if (err instanceof CompareError) return err.code;
     if (err instanceof MetadataError) return err.code;
     if (err instanceof RedactionError) return err.code;
     if (err instanceof PrepareError) return err.code === "CANCELLED" ? "CANCELLED" : err.code;

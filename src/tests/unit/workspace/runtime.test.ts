@@ -343,6 +343,65 @@ describe("WorkspaceRuntime", () => {
     expect(await rt.hasTransparency(id)).toBe(false); // JPEG cannot be transparent
   });
 
+  it("compares two screenshots into one artifact that records both parents", async () => {
+    let input: { imageA: Blob; imageB: Blob; settings: { mode: string }; a: { width: number }; b: { width: number } } | undefined;
+    const composed = new Blob([new Uint8Array(64)], { type: "image/png" });
+    const { broker, calls } = fakeBroker({
+      "compare.export": (i) => {
+        input = i as typeof input;
+        return { blob: composed, width: 2400, height: 1200, ms: 4 };
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const first = png("chat-light/a.png");
+    const second = png("chat-light/b.png");
+    const [idA, idB] = (await rt.ingest([first, second], "picker")).added;
+
+    await expect(rt.exportCompare()).rejects.toMatchObject({ code: "COMPARE_NEEDS_TWO" }); // nothing chosen yet
+    rt.store.getState().setCompare({ ...rt.store.getState().compare, a: idA, b: idB, mode: "difference" });
+    const out = await rt.exportCompare();
+
+    expect(calls).toContain("image:compare.export");
+    expect(input!.imageA).toBe(first); // the original files, never previews
+    expect(input!.imageB).toBe(second);
+    expect(input!.settings.mode).toBe("difference");
+    const s = rt.store.getState();
+    expect(s.files[out.id]).toMatchObject({
+      name: "compare-difference.png",
+      kind: "artifact",
+      producedBy: "compare",
+      derivedFrom: [idA, idB], // both parents kept, in order
+      width: 2400,
+      height: 1200,
+    });
+    expect(s.selectedId).toBe(out.id);
+    expect(rt.registry.blob(out.id)).toBe(composed);
+    // Non-destructive: both sources keep their blobs and the comparison settings are untouched.
+    expect(rt.registry.blob(idA)).toBe(first);
+    expect(rt.registry.blob(idB)).toBe(second);
+    expect(s.compare).toMatchObject({ a: idA, b: idB });
+
+    // The comparison itself is an ordinary image: it can be compared again.
+    rt.store.getState().setCompare({ ...s.compare, a: out.id, b: idB, mode: "slider" });
+    const again = await rt.exportCompare();
+    expect(input!.imageA).toBe(composed);
+    expect(rt.store.getState().files[again.id]).toMatchObject({ name: "compare-before-after.png", derivedFrom: [out.id, idB] });
+  });
+
+  it("reports a controlled Compare error and adds nothing", async () => {
+    const { broker } = fakeBroker({
+      "compare.export": () => {
+        throw Object.assign(new Error("x"), { code: "COMPARE_TOO_LARGE" });
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const { added } = await rt.ingest([png("chat-light/a.png"), png("chat-light/b.png")], "drop");
+    rt.store.getState().setCompare({ ...rt.store.getState().compare, a: added[0], b: added[1] });
+    await expect(rt.exportCompare()).rejects.toMatchObject({ code: "COMPARE_TOO_LARGE" });
+    expect(Object.values(rt.store.getState().jobs).find((j) => j.kind === "compare-export")).toMatchObject({ status: "failed", error: "COMPARE_TOO_LARGE" });
+    expect(rt.store.getState().order).toEqual(added);
+  });
+
   it("reports a controlled encode error and adds nothing", async () => {
     const { broker } = fakeBroker({
       "image.encode": () => {

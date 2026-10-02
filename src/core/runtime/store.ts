@@ -6,7 +6,7 @@ import { createStore } from "zustand/vanilla";
 import type { ToolId } from "@/config/tools";
 import { clampRect } from "@/core/redaction/geometry";
 import type { ImageRect, Redaction, RedactionMode, RedactionSession } from "@/core/redaction/types";
-import type { EditorSession, ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, SplitSession, EncodeSession, BeautifySession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
+import type { EditorSession, ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, SplitSession, EncodeSession, BeautifySession, CompareSession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
 import { DEFAULT_COMBINE_SETTINGS } from "@/core/combine/layout";
 import type { CombineSettings } from "@/core/combine/types";
 import { IDENTITY_TRANSFORM, sameTransform } from "@/core/image-transform/transform";
@@ -15,6 +15,8 @@ import { DEFAULT_STYLE } from "@/core/annotation/objects";
 import type { AnnotationObject, AnnotationSession, AnnotationStyle, AnnotationTool } from "@/core/annotation/types";
 import type { SplitSettings } from "@/core/split/types";
 import type { BeautifySettings } from "@/core/beautify/types";
+import type { CompareSettings } from "@/core/compare/types";
+import { DEFAULT_COMPARE } from "@/core/compare/presets";
 import type { EncodeSettings, EncodeTool } from "@/core/image-encode/types";
 import { DEFAULT_ENCODE_SETTINGS, normaliseSettings } from "@/core/image-encode/settings";
 
@@ -43,6 +45,7 @@ export interface WorkspaceState {
   split: SplitSession;
   encode: EncodeSession;
   beautify: BeautifySession;
+  compare: CompareSession;
   documents: Record<string, WorkspaceDocument>;
   documentOrder: string[];
   /** Most recent tool output (e.g. the stitched image) for "Continue with…". */
@@ -127,6 +130,12 @@ export interface WorkspaceActions {
    * controls are never merged.
    */
   setBeautify(assetId: FileId, next: BeautifySettings | null, opts?: { coalesce?: string; now?: number }): void;
+  /**
+   * Replace the Compare settings as one undoable step (the chosen screenshots included).
+   * `coalesce` is a gesture key, so one divider drag is one step. `record: false` applies the
+   * change without a history entry, for the automatic first choice of screenshots.
+   */
+  setCompare(next: CompareSettings, opts?: { coalesce?: string; now?: number; record?: boolean }): void;
 }
 
 export type WorkspaceStore = ReturnType<typeof createWorkspaceStore>;
@@ -163,6 +172,7 @@ const initial = (): WorkspaceState => ({
   split: { byAsset: {} },
   encode: DEFAULT_ENCODE_SETTINGS,
   beautify: { byAsset: {} },
+  compare: DEFAULT_COMPARE,
   documents: {},
   documentOrder: [],
   lastArtifactId: null,
@@ -235,6 +245,8 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           else delete byAsset[op.assetId];
           return { beautify: { byAsset } };
         });
+      } else if (op.type === "COMPARE_SET") {
+        set({ compare: dir === 1 ? op.after : op.before });
       } else if (op.type === "PDF_SET_BREAKS") {
         // Every operation is matched explicitly: a new type must never fall into another's branch.
         const value = dir === 1 ? op.after : op.before;
@@ -277,6 +289,8 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           delete splitByAsset[id];
           const beautifyByAsset = { ...s.beautify.byAsset };
           delete beautifyByAsset[id];
+          // A comparison cannot point at a file that is gone.
+          const compare = { ...s.compare, a: s.compare.a === id ? null : s.compare.a, b: s.compare.b === id ? null : s.compare.b };
           return {
             files,
             order,
@@ -292,6 +306,7 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
             annotation: { ...s.annotation, byAsset: annotationByAsset, selectedId: null },
             split: { byAsset: splitByAsset },
             beautify: { byAsset: beautifyByAsset },
+            compare,
             overlapHint: { ...s.overlapHint, status: "idle", pairs: s.overlapHint.pairs.filter((k) => !k.includes(id)) },
           };
         });
@@ -568,6 +583,21 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           set((s) => ({ history: { past: [...s.history.past.slice(0, -1), { ...last, after: next, at: now }], future: [] } }));
         } else record({ type: "BEAUTIFY_SET", assetId, before, after: next, at: now, key: opts.coalesce });
         applyOp({ type: "BEAUTIFY_SET", assetId, before, after: next, at: now }, 1);
+      },
+      setCompare(next, opts = {}) {
+        const before = get().compare;
+        if (JSON.stringify(before) === JSON.stringify(next)) return;
+        if (opts.record === false) {
+          set({ compare: next });
+          return;
+        }
+        const now = opts.now ?? Date.now();
+        const last = get().history.past.at(-1);
+        const merge = !!opts.coalesce && last?.type === "COMPARE_SET" && last.key === opts.coalesce && now - last.at < COALESCE_MS;
+        if (merge) {
+          set((s) => ({ history: { past: [...s.history.past.slice(0, -1), { ...last, after: next, at: now }], future: [] } }));
+        } else record({ type: "COMPARE_SET", before, after: next, at: now, key: opts.coalesce });
+        applyOp({ type: "COMPARE_SET", before, after: next, at: now }, 1);
       },
       setEncodeSettings: (tool, patch) => set((s) => ({ encode: { ...s.encode, [tool]: normaliseSettings({ ...s.encode[tool], ...patch }) } })),
       setSplit(assetId, next, opts = {}) {
