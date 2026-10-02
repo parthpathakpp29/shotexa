@@ -13,6 +13,7 @@ import type { SplitSettings } from "@/core/split/types";
 import type { EncodeSettings, EncodeTool } from "@/core/image-encode/types";
 import type { BeautifySettings } from "@/core/beautify/types";
 import type { CompareSettings } from "@/core/compare/types";
+import type { BatchSession } from "@/core/batch/types";
 
 export type FileId = string;
 export type ImageMime = "image/png" | "image/jpeg" | "image/webp";
@@ -38,7 +39,7 @@ export interface WorkspaceFile {
 export type JobStatus = "running" | "done" | "failed" | "cancelled";
 export interface Job {
   id: string;
-  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "editor-export" | "annotate-export" | "split-export" | "encode" | "beautify-export" | "compare-export" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
+  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "editor-export" | "annotate-export" | "split-export" | "encode" | "beautify-export" | "compare-export" | "batch" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
   status: JobStatus;
   progress: number | null;
   /** Controlled error code only (never raw messages). */
@@ -164,6 +165,8 @@ export type CompareSession = CompareSettings;
 
 /** Compress / Convert settings — one set per tool, not undoable (like export settings). */
 export type EncodeSession = Record<EncodeTool, EncodeSettings>;
+
+export type { BatchSession };
 
 export interface OverlapHint {
   status: "idle" | "checking" | "likely" | "unlikely";

@@ -414,9 +414,9 @@ test.describe("product surface", () => {
   test("every sitemap route works; tools page and menu list every tool with no 'Coming soon'", async ({ page, request }) => {
     const xml = await (await request.get("/sitemap.xml")).text();
     const paths = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]).pathname);
-    expect(paths.length).toBe(18);
+    expect(paths.length).toBe(19);
     for (const path of paths) expect((await request.get(path)).status(), path).toBe(200);
-    for (const synonym of ["/png-to-jpg", "/jpg-to-png", "/webp-to-png", "/split-screenshot", "/crop-screenshot", "/add-arrow-to-screenshot", "/highlight-screenshot"]) {
+    for (const synonym of ["/png-to-jpg", "/jpg-to-png", "/webp-to-png", "/split-screenshot", "/crop-screenshot", "/add-arrow-to-screenshot", "/highlight-screenshot", "/batch-compress", "/batch-convert", "/bulk-resize", "/bulk-screenshot-tools"]) {
       expect((await request.get(synonym)).status(), synonym).toBe(404);
     }
     const robots = await (await request.get("/robots.txt")).text();
@@ -428,7 +428,7 @@ test.describe("product surface", () => {
     for (const route of toolRoutes) await expect(page.locator(`main a[href="${route}"]`).first()).toBeVisible();
 
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /Fifteen Tools/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Sixteen Tools/ })).toBeVisible();
     await expect(page.getByText(/on the way|what’s coming/i)).toHaveCount(0);
 
     await page.goto("/compress-screenshot");

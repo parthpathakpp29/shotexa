@@ -60,7 +60,7 @@ export interface WorkerOps {
   };
   /** Full-resolution Screenshot Editor render: crop → rotate → flip → resize → encode → verify. */
   "transform.export": {
-    input: { image: Blob; transform: ImageTransform; source: { width: number; height: number }; format: "png" | "jpeg" | "webp"; quality?: number };
+    input: { image: Blob; transform: ImageTransform; source: { width: number; height: number }; format: "png" | "jpeg" | "webp"; quality?: number; background?: string };
     output: TransformExportResult;
   };
   /** Screenshot Editor render with annotations flattened in the same pass. */

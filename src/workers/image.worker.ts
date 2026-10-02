@@ -54,8 +54,8 @@ serveWorker(
       composeChain(images, plan, { format, quality, sources, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
     "combine.compose": async ({ images, plan, format, quality }, ctx) =>
       composeCombine(images, plan, { format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
-    "transform.export": async ({ image, transform, source, format, quality }, ctx) =>
-      renderTransform(image, transform, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "render") }),
+    "transform.export": async ({ image, transform, source, format, quality, background }, ctx) =>
+      renderTransform(image, transform, { source, format, quality, background, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "render") }),
     "annotation.export": async ({ image, transform, annotations, source, format, quality }, ctx) =>
       renderAnnotated(image, transform, annotations, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "render") }),
     "split.export": async ({ image, pieces, source, format, quality }, ctx) =>

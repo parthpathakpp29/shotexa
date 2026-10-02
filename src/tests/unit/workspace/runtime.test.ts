@@ -38,6 +38,43 @@ function fakeBroker(handlers: Record<string, (input: unknown) => unknown>) {
 const CAPS = { offscreenCanvas: true, compressionStream: true, createImageBitmapResize: true };
 
 describe("WorkspaceRuntime", () => {
+  it("runs batch jobs sequentially, isolates failures and adds successful results only on request", async () => {
+    let encodeCalls = 0;
+    let active = 0;
+    let peak = 0;
+    const { broker } = fakeBroker({
+      "image.encode": async () => {
+        const call = encodeCalls++;
+        active++;
+        peak = Math.max(peak, active);
+        await Promise.resolve();
+        active--;
+        if (call === 1) throw Object.assign(new Error("bad image"), { code: "ENCODE_FORMAT_TOO_LARGE" });
+        return { blob: new Blob([new Uint8Array([call + 1])], { type: "image/png" }), width: 1170, height: 2532, format: "png", strategy: "single-canvas", ms: 1 };
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const { added } = await rt.ingest([png("chat-light/a.png"), png("chat-light/b.png"), png("chat-light/a.png")], "drop");
+    rt.store.getState().setBatchSelection(added);
+    const summary = await rt.runBatch();
+    expect(summary).toEqual({ completed: 2, failed: 1, cancelled: 0 });
+    expect(peak).toBe(1);
+    expect(rt.batchResults.stats().results).toBe(2);
+    expect(rt.store.getState().order).toEqual(added); // processing does not flood the workspace
+    expect(rt.store.getState().batch.items[added[1]]).toMatchObject({ status: "failed", error: "ENCODE_FORMAT_TOO_LARGE" });
+
+    const artifacts = rt.addBatchResults();
+    expect(artifacts).toHaveLength(2);
+    expect(rt.store.getState().selectedId).toBe(artifacts[0]);
+    expect(artifacts.map((id) => rt.store.getState().files[id].producedBy)).toEqual(["batch", "batch"]);
+    expect(artifacts.map((id) => rt.store.getState().files[id].derivedFrom)).toEqual([[added[0]], [added[2]]]);
+    expect(rt.addBatchResults()).toEqual([]); // explicit action is idempotent
+    rt.removeFile(added[0]);
+    expect(rt.batchResults.list().every((result) => result.sourceId !== added[0])).toBe(true);
+    rt.dispose();
+    expect(rt.batchResults.stats().results).toBe(0);
+  });
+
   it("ingests valid screenshots with header-only sizing and rejects others", async () => {
     const { broker } = fakeBroker({}); // previews fail in Node → recorded as failed jobs
     const rt = createWorkspaceRuntime({ broker, caps: CAPS });

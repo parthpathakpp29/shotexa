@@ -532,3 +532,31 @@ describe("workspace store — Compare", () => {
     expect(s().compare).toMatchObject({ a: null, b: "b" });
   });
 });
+
+describe("workspace store — Batch", () => {
+  it("selects, unselects, preserves order and enforces the 50-file limit", () => {
+    const ids = Array.from({ length: 55 }, (_, i) => `f${i}`);
+    const { s } = setup(ids);
+    s().setBatchSelection([...ids].reverse());
+    expect(s().batch.selectedIds).toEqual([...ids].reverse().slice(0, 50));
+    s().toggleBatchSelection("f54");
+    expect(s().batch.selectedIds).not.toContain("f54");
+    s().toggleBatchSelection("f0");
+    expect(s().batch.selectedIds.at(-1)).toBe("f0");
+  });
+
+  it("keeps only logical status/settings and drops a removed source", () => {
+    const { s } = setup(["a", "b"]);
+    s().setBatchSelection(["a", "b"]);
+    s().setBatchOperation("resize");
+    s().setBatchSettings("resize", { mode: "width", width: 640 });
+    s().setBatchRun("running", 0);
+    s().setBatchItem("a", { status: "completed", resultId: "opaque-result-id" });
+    expect(s().batch).toMatchObject({ operation: "resize", status: "running", currentIndex: 0, selectedIds: ["a", "b"] });
+    expect(s().batch.settings.resize.width).toBe(640);
+    expect(JSON.stringify(s().batch)).not.toContain("Blob");
+    s().removeFile("a");
+    expect(s().batch.selectedIds).toEqual(["b"]);
+    expect(s().batch.items.a).toBeUndefined();
+  });
+});

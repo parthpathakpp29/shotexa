@@ -26,6 +26,12 @@ import { WorkerJobError } from "@/workers/broker/worker-client";
 import { AssetRegistry } from "./asset-registry";
 import { OcrResultRegistry } from "./ocr-result-registry";
 import { PdfAnalysisRegistry } from "./pdf-analysis-registry";
+import { BatchResultRegistry } from "./batch-result-registry";
+import type { BatchResult, BatchSource } from "@/core/batch/types";
+import { MAX_BATCH_FILES, MAX_BATCH_INPUT_BYTES } from "@/core/batch/types";
+import { batchFormat, batchOutputName, resizeOutput, resultMime } from "@/core/batch/settings";
+import { uniqueOutputNames } from "@/core/batch/naming";
+import { runSequential } from "@/core/batch/runner";
 import { detectCapabilities, timeSlicer, type Capabilities } from "./capabilities";
 import { createWorkspaceStore, pairKey, selectJoinKeys, selectOriginals, type WorkspaceStore } from "./store";
 import { ocrLanguages, type FileId, type FileSource, type ImageMime, type Job, type OcrLanguageChoice, type PdfBreakEdit, type StitchPair, type WorkspaceDocument, type WorkspaceFile } from "./types";
@@ -123,6 +129,7 @@ export interface WorkspaceRuntime {
   registry: AssetRegistry;
   ocrResults: OcrResultRegistry;
   pdfAnalyses: PdfAnalysisRegistry;
+  batchResults: BatchResultRegistry;
   broker: WorkerBroker;
   caps: Capabilities;
   ingest(files: File[], source: FileSource): Promise<IngestResult>;
@@ -169,6 +176,12 @@ export interface WorkspaceRuntime {
   exportPdf(inputIds: FileId[], plan: PaginationPlan): Promise<WorkspacePdfResult>;
   exportSearchablePdf(inputIds: FileId[], plan: PaginationPlan): Promise<WorkspacePdfResult>;
   cancelPdf(): void;
+  runBatch(ids?: FileId[]): Promise<{ completed: number; failed: number; cancelled: number }>;
+  cancelBatch(): void;
+  resetBatch(): void;
+  retryBatchFailed(): Promise<{ completed: number; failed: number; cancelled: number }>;
+  createBatchZip(): Promise<{ blob: Blob; names: string[] }>;
+  addBatchResults(): FileId[];
   dispose(): void;
 }
 
@@ -176,10 +189,12 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
   const registry = new AssetRegistry();
   const ocrResults = new OcrResultRegistry();
   const pdfAnalyses = new PdfAnalysisRegistry();
+  const batchResults = new BatchResultRegistry();
   const store = createWorkspaceStore((id) => {
     registry.remove(id);
     ocrResults.removeAsset(id);
     pdfAnalyses.remove(id);
+    batchResults.removeSource(id);
     alphaCache.delete(id);
   });
   const broker = opts.broker ?? new WorkerBroker(browserWorkerFactories());
@@ -188,6 +203,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
   /** Transparency found on each asset's preview (Compress/Convert); dropped with the asset. */
   const alphaCache = new Map<FileId, boolean>();
   let pasteCount = 0;
+  let activeBatchAbort: AbortController | null = null;
   let previewChain: Promise<void> = Promise.resolve();
   let disposed = false;
   let ocrService: OcrService | null = null;
@@ -814,6 +830,160 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     return found;
   }
 
+  async function executeBatch(inputIds: FileId[], reset: boolean) {
+    if (activeBatchAbort) throw Object.assign(new Error("Batch already running"), { code: "BATCH_RUNNING" });
+    const state = store.getState();
+    const ids = inputIds.filter((id, i) => !!state.files[id] && inputIds.indexOf(id) === i);
+    if ((reset && ids.length < 2) || ids.length < 1) throw Object.assign(new Error("Choose at least two images"), { code: "BATCH_NEEDS_TWO" });
+    if (ids.length > MAX_BATCH_FILES) throw Object.assign(new Error("Too many images"), { code: "BATCH_TOO_MANY_FILES" });
+    if (ids.reduce((n, id) => n + state.files[id].bytes, 0) > MAX_BATCH_INPUT_BYTES) throw Object.assign(new Error("Inputs are too large"), { code: "BATCH_INPUT_TOO_LARGE" });
+    if (reset) {
+      batchResults.clear();
+      store.getState().resetBatchResults();
+    }
+    const settings = structuredClone(store.getState().batch.settings);
+    const operation = store.getState().batch.operation;
+    const allIds = store.getState().batch.selectedIds;
+    const plannedNames = uniqueOutputNames(allIds.map((id) => {
+      const file = store.getState().files[id] as BatchSource;
+      return batchOutputName(operation, file.name, batchFormat(operation, file, settings));
+    }));
+    const names = new Map(allIds.map((id, i) => [id, plannedNames[i]]));
+    const abort = new AbortController();
+    activeBatchAbort = abort;
+    const jobId = `batch:${Date.now()}`;
+    store.getState().setBatchRun("running", 0);
+    for (const id of ids) store.getState().setBatchItem(id, { status: "pending", error: undefined, resultId: undefined });
+    job(jobId, "batch", "running", 0);
+    try {
+      const summary = await runSequential<BatchResult>(
+        ids,
+        async (id, index) => {
+          const current = store.getState().files[id];
+          const blob = registry.blob(id);
+          if (!current || !blob) throw Object.assign(new Error("Source removed"), { code: "BATCH_SOURCE_MISSING" });
+          const source: BatchSource = current;
+          const format = batchFormat(operation, source, settings);
+          const onProgress = (p: number) => job(jobId, "batch", "running", (index + p) / ids.length);
+          let output: Blob;
+          let width = source.width;
+          let height = source.height;
+          let changed: boolean | undefined;
+          if (operation === "privacy") {
+            const cleaned = caps.offscreenCanvas
+              ? await broker.run("image", "metadata.clean", { image: blob, name: source.name, type: source.type }, { signal: abort.signal })
+              : await (await import("@/core/metadata/run")).runMetadataClean(blob, source.name, source.type);
+            output = cleaned.output ?? blob;
+            changed = cleaned.changed;
+            if (!cleaned.verification.passed) throw Object.assign(new Error("Verification failed"), { code: "METADATA_VERIFICATION_FAILED" });
+          } else if (operation === "resize") {
+            const planned = resizeOutput(source, settings.resize);
+            width = planned.size.width;
+            height = planned.size.height;
+            const quality = settings.resize.quality;
+            const background = settings.resize.background;
+            const rendered = caps.offscreenCanvas
+              ? await broker.run("image", "transform.export", { image: blob, transform: planned.transform, source, format, quality, background }, { signal: abort.signal, onProgress })
+              : await (await import("@/core/image-transform/render")).renderTransform(blob, planned.transform, {
+                  source,
+                  format,
+                  quality,
+                  background,
+                  signal: abort.signal,
+                  createCanvas: (w, h) => Object.assign(document.createElement("canvas"), { width: w, height: h }),
+                  yieldBetweenTiles: timeSlicer(),
+                  onProgress,
+                });
+            output = rendered.blob;
+          } else {
+            const encode = operation === "compress" ? settings.compress : settings.convert;
+            const quality = encode.quality;
+            const background = operation === "convert" ? settings.convert.background : "#ffffff";
+            const encoded = caps.offscreenCanvas
+              ? await broker.run("image", "image.encode", { image: blob, source, format, quality, background }, { signal: abort.signal, onProgress })
+              : await (await import("@/core/image-encode/reencode")).encodeImage(blob, {
+                  source,
+                  format,
+                  quality,
+                  background,
+                  signal: abort.signal,
+                  createCanvas: (w, h) => Object.assign(document.createElement("canvas"), { width: w, height: h }),
+                  yieldBetweenTiles: timeSlicer(),
+                  onProgress,
+                });
+            output = encoded.blob;
+          }
+          const result: BatchResult = {
+            id: newId(),
+            sourceId: id,
+            sourceName: source.name,
+            outputName: operation === "privacy" && changed === false ? source.name : names.get(id)!,
+            blob: output,
+            bytes: output.size,
+            originalBytes: source.bytes,
+            type: resultMime(format),
+            format,
+            width,
+            height,
+            operation,
+            changed,
+          };
+          // The worker is deliberately retained for small files, but a large decoded heap is
+          // recycled before the next item (Spike B/Phase 2K).
+          if (source.width * source.height > 16_000_000) broker.release("image");
+          return result;
+        },
+        abort.signal,
+        {
+          before: (id, index) => { store.getState().setBatchRun("running", index); store.getState().setBatchItem(id, { status: "processing" }); },
+          success: (id, result, index) => { batchResults.put(result); store.getState().setBatchItem(id, { status: "completed", resultId: result.id }); job(jobId, "batch", "running", (index + 1) / ids.length); },
+          failure: (id, error) => store.getState().setBatchItem(id, { status: "failed", error: codeOf(error), resultId: undefined }),
+          cancelled: (id) => store.getState().setBatchItem(id, { status: "cancelled", error: undefined, resultId: undefined }),
+          // Especially important on WebKit's main-thread fallback: browser input gets a real
+          // task between files, so Cancel can stop before the next full decode begins.
+          between: () => caps.offscreenCanvas ? Promise.resolve() : new Promise((resolve) => setTimeout(resolve, 120)),
+        },
+      );
+      const cancelled = abort.signal.aborted || summary.cancelled > 0;
+      store.getState().setBatchRun(cancelled ? "cancelled" : "completed", null);
+      job(jobId, "batch", cancelled ? "cancelled" : "done", cancelled ? null : 1);
+      return summary;
+    } finally {
+      activeBatchAbort = null;
+    }
+  }
+
+  function runBatch(ids = store.getState().batch.selectedIds) { return executeBatch(ids, true); }
+  function cancelBatch() { activeBatchAbort?.abort(); }
+  function resetBatch() { activeBatchAbort?.abort(); batchResults.clear(); store.getState().resetBatchResults(); }
+  function retryBatchFailed() {
+    const s = store.getState().batch;
+    const ids = s.selectedIds.filter((id) => s.items[id]?.status === "failed" || s.items[id]?.status === "cancelled");
+    if (!ids.length) return Promise.resolve({ completed: 0, failed: 0, cancelled: 0 });
+    return executeBatch(ids, false);
+  }
+  async function zipBatch() {
+    const s = store.getState().batch;
+    const results = s.selectedIds.flatMap((id) => { const resultId = s.items[id]?.resultId; const result = resultId ? batchResults.get(resultId) : undefined; return result ? [result] : []; });
+    return (await import("@/core/archive/zip")).createBatchZip(results);
+  }
+  function addBatchResults(): FileId[] {
+    const s = store.getState().batch;
+    if (s.addedToWorkspace) return [];
+    const added: WorkspaceFile[] = s.selectedIds.flatMap((sourceId) => {
+      const resultId = s.items[sourceId]?.resultId;
+      const result = resultId ? batchResults.get(resultId) : undefined;
+      if (!result) return [];
+      const id = newId();
+      registry.put(id, result.blob);
+      return [{ id, name: result.outputName, type: result.type, bytes: result.bytes, width: result.width, height: result.height, source: "artifact" as const, kind: "artifact" as const, derivedFrom: [sourceId], producedBy: "batch" as const, addedAt: Date.now(), previewVersion: 0 }];
+    });
+    store.getState().addArtifacts(added);
+    store.getState().markBatchAdded();
+    for (const file of added) previewChain = previewChain.then(() => makePreview(file.id)).catch(() => undefined);
+    return added.map((f) => f.id);
+  }
+
   function addSplitPieces(result: SplitRunResult): FileId[] {
     if (!store.getState().files[result.sourceId]) return [];
     const added: WorkspaceFile[] = result.pieces.map((p) => {
@@ -1166,6 +1336,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     registry,
     ocrResults,
     pdfAnalyses,
+    batchResults,
     broker,
     caps,
     ingest,
@@ -1201,6 +1372,12 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     exportPdf,
     exportSearchablePdf,
     cancelPdf,
+    runBatch,
+    cancelBatch,
+    resetBatch,
+    retryBatchFailed,
+    createBatchZip: zipBatch,
+    addBatchResults,
     dispose() {
       disposed = true;
       unsubscribe();
@@ -1208,6 +1385,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
       registry.clear();
       ocrResults.clear();
       pdfAnalyses.clear();
+      batchResults.clear();
       void ocrService?.dispose();
       ocrService = null;
       pdfEngine?.dispose();

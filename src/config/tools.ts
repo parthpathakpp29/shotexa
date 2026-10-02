@@ -7,10 +7,10 @@
  *  - "preview" route + workspace shell exist (files carry over) but the tool is not finished:
  *              noindex, not in the sitemap, honest "coming next" state
  */
-export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "split" | "compress" | "convert" | "beautify" | "compare" | "metadata";
+export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "split" | "compress" | "convert" | "beautify" | "compare" | "metadata" | "batch";
 
 export type ToolStatus = "live" | "preview";
-export type ToolIcon = "stitch" | "combine" | "shield" | "blur" | "text" | "pdf" | "crop" | "pen" | "scissors" | "compress" | "convert" | "sparkles" | "compare" | "eraser";
+export type ToolIcon = "stitch" | "combine" | "shield" | "blur" | "text" | "pdf" | "crop" | "pen" | "scissors" | "compress" | "convert" | "sparkles" | "compare" | "eraser" | "batch";
 
 /** Grouping used by every discovery surface (tools page, header menu, footer). */
 export type ToolCategory = "create" | "protect" | "documents" | "edit";
@@ -257,6 +257,22 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     seo: { title: "Remove Image Metadata – Free EXIF & GPS Remover | Shotexa", h1: "Remove Metadata From Images", description: "Remove GPS, EXIF and other privacy-sensitive metadata locally in your browser." },
     continueWith: ["safe-share", "extract-text", "pdf"],
   },
+  batch: {
+    id: "batch",
+    name: "Batch",
+    route: "/batch-screenshots",
+    status: "live",
+    category: "edit",
+    icon: "batch",
+    summary: "Compress, convert, resize or privacy-clean several screenshots at once.",
+    minFiles: 2,
+    seo: {
+      title: "Batch Process Screenshots Online – Compress, Convert & Resize | Shotexa",
+      h1: "Batch Process Screenshots Online",
+      description: "Process several screenshots sequentially and download the verified results together as a ZIP — privately in your browser.",
+    },
+    continueWith: ["editor", "safe-share", "extract-text", "pdf"],
+  },
 };
 
 export const TOOL_LIST: ToolConfig[] = Object.values(TOOLS);
@@ -326,6 +342,5 @@ export function suggestedNext(ctx: SuggestionContext): ToolId[] {
 /** Tool tabs above the workspace preview; multi-image tools only appear when they apply. */
 export function suggestedTools(fileCount: number): ToolId[] {
   const single: ToolId[] = ["editor", "annotate", "safe-share", "blur", "extract-text", "pdf", "metadata"];
-  return fileCount >= 2 ? ["stitch", "combine", ...single] : single;
+  return fileCount >= 2 ? ["stitch", "combine", "batch", ...single] : single;
 }
-

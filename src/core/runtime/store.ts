@@ -7,6 +7,9 @@ import type { ToolId } from "@/config/tools";
 import { clampRect } from "@/core/redaction/geometry";
 import type { ImageRect, Redaction, RedactionMode, RedactionSession } from "@/core/redaction/types";
 import type { EditorSession, ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, SplitSession, EncodeSession, BeautifySession, CompareSession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
+import type { BatchItemState, BatchOperation, BatchSession, BatchSettings } from "@/core/batch/types";
+import { DEFAULT_BATCH_SETTINGS } from "@/core/batch/settings";
+import { MAX_BATCH_FILES } from "@/core/batch/types";
 import { DEFAULT_COMBINE_SETTINGS } from "@/core/combine/layout";
 import type { CombineSettings } from "@/core/combine/types";
 import { IDENTITY_TRANSFORM, sameTransform } from "@/core/image-transform/transform";
@@ -46,6 +49,7 @@ export interface WorkspaceState {
   encode: EncodeSession;
   beautify: BeautifySession;
   compare: CompareSession;
+  batch: BatchSession;
   documents: Record<string, WorkspaceDocument>;
   documentOrder: string[];
   /** Most recent tool output (e.g. the stitched image) for "Continue with…". */
@@ -136,6 +140,14 @@ export interface WorkspaceActions {
    * change without a history entry, for the automatic first choice of screenshots.
    */
   setCompare(next: CompareSettings, opts?: { coalesce?: string; now?: number; record?: boolean }): void;
+  setBatchSelection(ids: FileId[]): void;
+  toggleBatchSelection(id: FileId): void;
+  setBatchOperation(operation: BatchOperation): void;
+  setBatchSettings<K extends keyof BatchSettings>(kind: K, patch: Partial<BatchSettings[K]>): void;
+  setBatchRun(status: BatchSession["status"], currentIndex?: number | null): void;
+  setBatchItem(id: FileId, item: Partial<BatchItemState>): void;
+  resetBatchResults(): void;
+  markBatchAdded(): void;
 }
 
 export type WorkspaceStore = ReturnType<typeof createWorkspaceStore>;
@@ -173,6 +185,7 @@ const initial = (): WorkspaceState => ({
   encode: DEFAULT_ENCODE_SETTINGS,
   beautify: { byAsset: {} },
   compare: DEFAULT_COMPARE,
+  batch: { selectedIds: [], operation: "compress", settings: DEFAULT_BATCH_SETTINGS, status: "idle", currentIndex: null, items: {}, addedToWorkspace: false },
   documents: {},
   documentOrder: [],
   lastArtifactId: null,
@@ -307,6 +320,11 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
             split: { byAsset: splitByAsset },
             beautify: { byAsset: beautifyByAsset },
             compare,
+            batch: {
+              ...s.batch,
+              selectedIds: s.batch.selectedIds.filter((x) => x !== id),
+              items: Object.fromEntries(Object.entries(s.batch.items).filter(([assetId]) => assetId !== id)),
+            },
             overlapHint: { ...s.overlapHint, status: "idle", pairs: s.overlapHint.pairs.filter((k) => !k.includes(id)) },
           };
         });
@@ -600,6 +618,36 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
         applyOp({ type: "COMPARE_SET", before, after: next, at: now }, 1);
       },
       setEncodeSettings: (tool, patch) => set((s) => ({ encode: { ...s.encode, [tool]: normaliseSettings({ ...s.encode[tool], ...patch }) } })),
+      setBatchSelection(ids) {
+        const valid = ids.filter((id, i) => !!get().files[id] && ids.indexOf(id) === i).slice(0, MAX_BATCH_FILES);
+        set((s) => ({ batch: { ...s.batch, selectedIds: valid, status: "idle", currentIndex: null, items: {}, addedToWorkspace: false } }));
+      },
+      toggleBatchSelection(id) {
+        if (!get().files[id] || get().batch.status === "running") return;
+        const selected = get().batch.selectedIds;
+        get().setBatchSelection(selected.includes(id) ? selected.filter((x) => x !== id) : [...selected, id]);
+      },
+      setBatchOperation(operation) {
+        if (get().batch.status === "running") return;
+        set((s) => ({ batch: { ...s.batch, operation, status: "idle", currentIndex: null, items: {}, addedToWorkspace: false } }));
+      },
+      setBatchSettings(kind, patch) {
+        if (get().batch.status === "running") return;
+        set((s) => ({ batch: { ...s.batch, settings: { ...s.batch.settings, [kind]: { ...s.batch.settings[kind], ...patch } }, addedToWorkspace: false } }));
+      },
+      setBatchRun(status, currentIndex = null) {
+        set((s) => ({ batch: { ...s.batch, status, currentIndex } }));
+      },
+      setBatchItem(id, item) {
+        set((s) => {
+          const previous = s.batch.items[id];
+          return { batch: { ...s.batch, items: { ...s.batch.items, [id]: { ...previous, ...item, assetId: id, status: item.status ?? previous?.status ?? "pending" } } } };
+        });
+      },
+      resetBatchResults() {
+        set((s) => ({ batch: { ...s.batch, status: "idle", currentIndex: null, items: {}, addedToWorkspace: false } }));
+      },
+      markBatchAdded() { set((s) => ({ batch: { ...s.batch, addedToWorkspace: true } })); },
       setSplit(assetId, next, opts = {}) {
         if (!get().files[assetId]) return;
         const before = get().split.byAsset[assetId] ?? null;
