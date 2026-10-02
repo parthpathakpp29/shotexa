@@ -8,7 +8,7 @@ const STEPS = [
 ];
 
 const QA = [
-  { q: "Why are fixed headers not repeated?", a: "Bars that stay in place while you scroll — like app headers, tab bars or chat inputs — are detected and kept only once, at the top and bottom of the result." },
+  { q: "Why are fixed headers not repeated?", a: "When Shotexa can identify bars that stay in place while you scroll — like app headers, tab bars or chat inputs — it avoids repeating them in the result. Check the seam and adjust it when the suggestion needs review." },
   { q: "What if the automatic result is wrong?", a: "Use Adjust manually: drag the seam line, use the arrow keys, or type an exact position. Undo and redo work for every change." },
   { q: "Are my screenshots uploaded?", a: "No. Stitching happens in your browser. Nothing is sent to a server, and the files are cleared when you close the tab." },
 ];

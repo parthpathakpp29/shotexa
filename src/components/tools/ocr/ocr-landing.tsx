@@ -39,6 +39,7 @@ export function OcrLanding() {
             <Link href="/stitch-screenshots" className="rounded-md border border-line bg-surface px-4 py-3 text-sm font-medium shadow-xs hover:border-line-strong">Smart Stitch</Link>
             <Link href="/redact-screenshot" className="rounded-md border border-line bg-surface px-4 py-3 text-sm font-medium shadow-xs hover:border-line-strong">Redact Screenshot</Link>
             <Link href="/screenshot-to-pdf" className="rounded-md border border-line bg-surface px-4 py-3 text-sm font-medium shadow-xs hover:border-line-strong">Screenshot to PDF</Link>
+            <Link href="/screenshot-to-searchable-pdf" className="rounded-md border border-line bg-surface px-4 py-3 text-sm font-medium shadow-xs hover:border-line-strong">Searchable PDF</Link>
           </div>
         </div>
       </section>

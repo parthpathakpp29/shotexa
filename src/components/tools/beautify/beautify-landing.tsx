@@ -19,7 +19,7 @@ const QA = [
 ];
 
 export function BeautifyLanding() {
-  const related = continuationsFor("beautify");
+  const related = continuationsFor("beautify").slice(0, 4);
   return (
     <ToolLanding tool="beautify" dropHint="or drag and drop a screenshot to put it on a background or in a frame">
       <section className="border-t border-line bg-surface-3/60 py-16 sm:py-20">

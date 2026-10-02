@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Mono, Inter, Playfair_Display } from "next/font/google";
-import { isIndexable, SITE } from "@/config/site";
+import { isIndexable, SITE, SOCIAL_IMAGE } from "@/config/site";
 import "./globals.css";
 
 // Display serif (headings, italic accent words) · UI/body sans · restrained mono for values.
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   title: { default: "Shotexa – Free Private Screenshot Tools Online", template: "%s" },
   description: SITE.description,
   applicationName: SITE.name,
-  openGraph: { type: "website", siteName: SITE.name, locale: "en_US", url: "/" },
+  openGraph: { type: "website", siteName: SITE.name, locale: "en_US", url: "/", images: [SOCIAL_IMAGE] },
   twitter: { card: "summary_large_image" },
   robots: isIndexable() ? { index: true, follow: true } : { index: false, follow: false },
   formatDetection: { telephone: false, email: false, address: false },

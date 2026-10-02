@@ -37,7 +37,7 @@ const PRINCIPLES: { icon: ReactNode; title: string; body: string; points: string
     icon: <Sparkles />,
     title: "Smart",
     body: "Shotexa looks at what you add and suggests the right next step — like joining screenshots that overlap.",
-    points: ["Overlap detection", "Repeated headers and footers handled", "Confidence shown, never hidden"],
+    points: ["Overlap detection", "Helps avoid repeated headers and footers", "Confidence shown, never hidden"],
   },
   {
     icon: <SlidersHorizontal />,
@@ -91,7 +91,7 @@ export function ContinuousSection() {
   return (
     <section className="border-y border-line bg-surface-3/60 py-20 sm:py-24">
       <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
-        <SectionHeading eyebrow="Effortless multi-tasking" title="One Screenshot," accent="Continuous Actions" lead="Each result stays in your workspace, ready for the next tool — no downloading and re-uploading in between." />
+        <SectionHeading eyebrow="One workspace" title="One Screenshot," accent="Continuous Actions" lead="Each result stays in your workspace, ready for the next tool — no downloading and re-uploading in between." />
         <ol className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {ACTIONS.map((a, i) => (
             <li key={a.title} className="relative rounded-lg border border-line bg-surface p-5 shadow-xs">
@@ -230,7 +230,7 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "Which formats and sizes are supported?",
-    a: "PNG, JPEG and WebP. There’s no fixed limit on the number of screenshots; very large images depend on your device’s memory. Tall stitched images are exported as PNG in sections so they don’t exhaust memory, and Shotexa tells you if something is too large to process.",
+    a: "PNG, JPEG and WebP. Very large images depend on your device’s memory, and batch processing accepts up to 50 files at a time. Tall stitched images are exported as PNG in sections when needed, and Shotexa tells you if something is too large to process.",
   },
 ];
 
@@ -266,7 +266,7 @@ export function FinalCta() {
           <h2 className="t-h1 mt-3 text-white">
             Paste Any Screenshot to <em className="text-[#f0a584]">Begin</em>
           </h2>
-          <p className="t-body mt-3 text-white/70">No account, no upload. {SITE.trustLine}.</p>
+          <p className="t-body mt-3 text-white/70">No account. Screenshot processing stays in your browser. {SITE.trustLine}.</p>
         </div>
         <ChooseScreenshotsButton />
       </div>

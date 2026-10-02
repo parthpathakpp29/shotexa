@@ -2,6 +2,8 @@
  * Site-wide configuration. Production is the only indexable environment: Vercel preview
  * deployments (VERCEL_ENV=preview) and development are always noindex (architecture §50).
  */
+export const SOCIAL_IMAGE = { url: "/opengraph-image", width: 1200, height: 630, alt: "Shotexa screenshot workspace" };
+
 export const SITE = {
   name: "Shotexa",
   url: (process.env.NEXT_PUBLIC_SITE_URL ?? "https://shotexa.com").replace(/\/$/, ""),

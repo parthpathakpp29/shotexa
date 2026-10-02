@@ -4,7 +4,7 @@
  * routes exist for workspace continuity but stay noindex and out of the sitemap.
  */
 import type { Metadata } from "next";
-import { isIndexable } from "./site";
+import { isIndexable, SOCIAL_IMAGE } from "./site";
 import { TOOL_LIST, TOOLS, toolByRoute, type ToolId } from "./tools";
 
 export interface StaticRoute {
@@ -17,7 +17,7 @@ export interface StaticRoute {
 export const STATIC_ROUTES: StaticRoute[] = [
   { path: "/", title: "Shotexa – Free Private Screenshot Tools Online", description: "Stitch screenshots, hide sensitive information, extract text and create PDFs directly in your browser. Files stay on your device.", indexable: true },
   { path: "/tools", title: "All Screenshot Tools | Shotexa", description: "Every Shotexa screenshot tool — stitch, redact, extract text, PDF and more, all processed locally in your browser.", indexable: true },
-  { path: "/privacy", title: "Privacy | Shotexa", description: "How Shotexa keeps your screenshots on your device.", indexable: true },
+  { path: "/privacy", title: "How Shotexa Keeps Screenshots Local | Shotexa", description: "Learn how Shotexa processes screenshots in your browser, keeps files in the current workspace and clears them when the tab closes or reloads.", indexable: true },
 ];
 
 /** Paths that belong in sitemap.xml: indexable static pages + live tools only. */
@@ -33,7 +33,7 @@ export function staticMetadata(path: StaticRoute["path"]): Metadata {
     title: r.title,
     description: r.description,
     alternates: { canonical: path },
-    openGraph: { title: r.title, description: r.description, url: path },
+    openGraph: { title: r.title, description: r.description, url: path, images: [SOCIAL_IMAGE] },
     robots: robotsFor(r.indexable),
   };
 }
@@ -44,7 +44,7 @@ export function toolMetadata(id: ToolId): Metadata {
     title: t.seo.title,
     description: t.seo.description,
     alternates: { canonical: t.route },
-    openGraph: { title: t.seo.title, description: t.seo.description, url: t.route },
+    openGraph: { title: t.seo.title, description: t.seo.description, url: t.route, images: [SOCIAL_IMAGE] },
     robots: robotsFor(t.status === "live"),
   };
 }

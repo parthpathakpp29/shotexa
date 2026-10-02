@@ -19,7 +19,7 @@ const QA = [
 ];
 
 export function EditorLanding() {
-  const related = continuationsFor("editor");
+  const related = continuationsFor("editor").slice(0, 4);
   return (
     <ToolLanding tool="editor" dropHint="or drag and drop a screenshot to crop, rotate or resize it">
       <section className="border-t border-line bg-surface-3/60 py-16 sm:py-20">

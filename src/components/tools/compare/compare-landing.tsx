@@ -19,7 +19,7 @@ const QA = [
 ];
 
 export function CompareLanding() {
-  const related = continuationsFor("compare");
+  const related = continuationsFor("compare").slice(0, 4);
   return (
     <ToolLanding tool="compare" dropHint="or drag and drop two screenshots to compare them">
       <section className="border-t border-line bg-surface-3/60 py-16 sm:py-20">

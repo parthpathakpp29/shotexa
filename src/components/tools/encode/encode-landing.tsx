@@ -19,7 +19,7 @@ const COPY: Record<EncodeTool, { drop: string; heading: [string, string]; steps:
       { q: "How much smaller will my screenshot get?", a: "It depends on the image. Shotexa encodes it on your device and shows the exact new size and the percentage saved before you download — and says so plainly if a setting would make the file larger." },
       { q: "Why is there no quality slider for PNG?", a: "PNG is lossless: the browser keeps every pixel exactly and has no quality setting. For a much smaller file, choose WebP or JPEG." },
       { q: "Are my screenshots uploaded?", a: "No. Compression happens in your browser. Your screenshot is not sent to a server." },
-      { q: "Does compressing change the image size?", a: "No. The width and height stay the same; only the file gets smaller. Metadata such as EXIF is not copied into the new file." },
+      { q: "Does compressing change the image size?", a: "No. The width and height stay the same; only the file gets smaller. Re-encoding normally omits source metadata; use Privacy Clean when you need a verified metadata check." },
     ],
   },
   convert: {
@@ -41,7 +41,7 @@ const COPY: Record<EncodeTool, { drop: string; heading: [string, string]; steps:
 
 export function EncodeLanding({ tool }: { tool: EncodeTool }) {
   const copy = COPY[tool];
-  const related = continuationsFor(tool);
+  const related = continuationsFor(tool).slice(0, 4);
   return (
     <ToolLanding tool={tool} dropHint={copy.drop}>
       <section className="border-t border-line bg-surface-3/60 py-16 sm:py-20">
