@@ -5,7 +5,7 @@ import { ToolLanding } from "@/components/workspace/tool-landing";
 const QUESTIONS = [
   { q: "Does Shotexa upload my screenshots?", a: "No. Pagination and PDF creation happen in your browser. Screenshot bytes are not sent to a Shotexa processing server." },
   { q: "What does Smart Pagination change?", a: "It looks near each expected page boundary for whitespace and visual separators, then moves the cut when that avoids splitting content. Every suggested break remains editable." },
-  { q: "Does PDF conversion run OCR?", a: "No. Normal PDF and Smart Pagination do not load OCR. Existing OCR data stays attached to its source for a future searchable-PDF workflow." },
+  { q: "Does PDF conversion run OCR?", a: "No. Normal PDF and Smart Pagination do not load OCR. Use Searchable PDF when you need an OCR text layer for searching and selecting text." },
   { q: "Can I combine several screenshots?", a: "Yes. Add several screenshots, reorder them in the Files panel, and Shotexa places their pages in that order." },
 ];
 
@@ -39,6 +39,7 @@ export function PdfLanding() {
           <div className="mt-4 flex flex-wrap gap-3">
             <Link href="/stitch-screenshots" className="rounded-md border border-line bg-surface px-4 py-3 text-sm font-medium shadow-xs hover:border-line-strong">Smart Stitch</Link>
             <Link href="/screenshot-to-text" className="rounded-md border border-line bg-surface px-4 py-3 text-sm font-medium shadow-xs hover:border-line-strong">Extract Text</Link>
+            <Link href="/screenshot-to-searchable-pdf" className="rounded-md border border-line bg-surface px-4 py-3 text-sm font-medium shadow-xs hover:border-line-strong">Searchable PDF</Link>
             <Link href="/redact-screenshot" className="rounded-md border border-line bg-surface px-4 py-3 text-sm font-medium shadow-xs hover:border-line-strong">Safe Share</Link>
           </div>
         </div>

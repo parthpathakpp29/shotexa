@@ -19,7 +19,7 @@ const QA = [
 ];
 
 export function SplitLanding() {
-  const related = continuationsFor("split");
+  const related = continuationsFor("split").slice(0, 4);
   return (
     <ToolLanding tool="split" dropHint="or drag and drop a long screenshot to cut it into several images">
       <section className="border-t border-line bg-surface-3/60 py-16 sm:py-20">

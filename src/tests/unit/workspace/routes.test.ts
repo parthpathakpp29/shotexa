@@ -227,6 +227,25 @@ describe("SEO config", () => {
     for (const r of STATIC_ROUTES) expect(staticMetadata(r.path)).toMatchObject({ alternates: { canonical: r.path } });
   });
 
+  it("gives every indexable route distinct, useful metadata", () => {
+    const pages = [
+      ...STATIC_ROUTES.map((route) => ({ path: route.path, title: route.title, description: route.description })),
+      ...TOOL_LIST.filter((tool) => tool.status === "live").map((tool) => ({ path: tool.route, title: tool.seo.title, description: tool.seo.description })),
+    ];
+    expect(new Set(pages.map((page) => page.path)).size).toBe(pages.length);
+    expect(new Set(pages.map((page) => page.title)).size).toBe(pages.length);
+    for (const page of pages) {
+      expect(page.title).toContain("Shotexa");
+      expect(page.description.length).toBeGreaterThanOrEqual(45);
+    }
+    for (const page of [staticMetadata("/"), ...TOOL_LIST.filter((tool) => tool.status === "live").map((tool) => toolMetadata(tool.id))]) {
+      expect(page.openGraph).toMatchObject({ images: [expect.objectContaining({ url: "/opengraph-image", width: 1200, height: 630 })] });
+    }
+    expect(staticMetadata("/privacy")).toMatchObject({
+      title: "How Shotexa Keeps Screenshots Local | Shotexa",
+      alternates: { canonical: "/privacy" },
+    });
+  });
   it("previews and non-production deploys are never indexable", () => {
     vi.stubEnv("VERCEL_ENV", "preview");
     expect(isIndexable()).toBe(false);
