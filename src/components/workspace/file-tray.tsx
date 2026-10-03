@@ -3,6 +3,7 @@
 import { ArrowDown, ArrowUp, Download, FileText, GripVertical, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/cn";
+import { formatBytes, imageTypeLabel } from "@/lib/format-bytes";
 import { downloadAsset } from "@/core/runtime/runtime";
 import { BitmapCanvas } from "./bitmap-canvas";
 import { useDropTarget, useWorkspace, useWorkspaceContext } from "./workspace-provider";
@@ -85,8 +86,9 @@ export function FileTray({ hint, className, onAfterSelect }: { hint?: string; cl
               </button>
               <div className="flex items-center gap-1 py-1.5 pl-2 pr-1">
                 <GripVertical aria-hidden className="size-3.5 shrink-0 cursor-grab text-ink-3 max-md:hidden" />
-                <span className="t-mono min-w-0 flex-1 truncate text-[12px] text-ink" title={f.name}>
-                  {f.name}
+                <span className="min-w-0 flex-1">
+                  <span className="t-mono block truncate text-[12px] text-ink" title={f.name}>{f.name}</span>
+                  <span className="t-mono block truncate text-[10.5px] text-ink-3">{imageTypeLabel(f.type)} · {formatBytes(f.bytes)}</span>
                 </span>
                 <button type="button" aria-label={`Move ${f.name} up`} disabled={i === 0} onClick={() => reorder(i, i - 1)} className={small}>
                   <ArrowUp className="size-3.5" />

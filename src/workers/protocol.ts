@@ -75,7 +75,7 @@ export interface WorkerOps {
   };
   /** Compress / Convert: decode once, re-encode at the same size (JPEG on a chosen background), verify. */
   "image.encode": {
-    input: { image: Blob; source: { width: number; height: number }; format: "png" | "jpeg" | "webp"; quality: number; background: string; probe?: { format: "png" | "jpeg" | "webp"; quality: number } };
+    input: { image: Blob; source: { width: number; height: number }; format: "png" | "jpeg" | "webp"; quality: number; background: string; probe?: { format: "png" | "jpeg" | "webp"; quality: number }; targetBytes?: number | null };
     output: EncodeResult;
   };
   /** Beautifier: decode once, compose background/frame/screenshot at full size, encode, verify. */

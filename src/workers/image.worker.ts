@@ -60,8 +60,8 @@ serveWorker(
       renderAnnotated(image, transform, annotations, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "render") }),
     "split.export": async ({ image, pieces, source, format, quality }, ctx) =>
       renderSplit(image, pieces, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "render") }),
-    "image.encode": async ({ image, source, format, quality, background, probe }, ctx) =>
-      encodeImage(image, { source, format, quality, background, probe, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "encode") }),
+    "image.encode": async ({ image, source, format, quality, background, probe, targetBytes }, ctx) =>
+      encodeImage(image, { source, format, quality, background, probe, targetBytes, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "encode") }),
     "beautify.export": async ({ image, settings, source, format, quality }, ctx) =>
       renderBeautified(image, settings, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
     "compare.export": async ({ imageA, imageB, settings, a, b, format, quality }, ctx) =>

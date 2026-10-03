@@ -144,7 +144,7 @@ describe("suggestions", () => {
 
 describe("settings", () => {
   it("Compress keeps the input format unless the user picks one", () => {
-    expect(DEFAULT_ENCODE_SETTINGS.compress).toEqual({ format: "same", quality: 0.8, background: "#ffffff" });
+    expect(DEFAULT_ENCODE_SETTINGS.compress).toEqual({ format: "same", quality: 0.8, background: "#ffffff", targetBytes: null });
     expect(resolveFormat("compress", "same", "image/png")).toBe("png");
     expect(resolveFormat("compress", "same", "image/jpeg")).toBe("jpeg");
     expect(resolveFormat("compress", "webp", "image/png")).toBe("webp");
@@ -158,8 +158,9 @@ describe("settings", () => {
   });
 
   it("normalises quality and background colours", () => {
-    expect(normaliseSettings({ format: "jpeg", quality: 3, background: "#ABCDEF" })).toEqual({ format: "jpeg", quality: 1, background: "#abcdef" });
-    expect(normaliseSettings({ format: "jpeg", quality: 0.8, background: "red" }).background).toBe("#ffffff");
+    expect(normaliseSettings({ format: "jpeg", quality: 3, background: "#ABCDEF", targetBytes: 200_123 })).toEqual({ format: "jpeg", quality: 1, background: "#abcdef", targetBytes: 200_123 });
+    expect(normaliseSettings({ format: "jpeg", quality: 0.8, background: "red", targetBytes: 100 }).background).toBe("#ffffff");
+    expect(normaliseSettings({ format: "jpeg", quality: 0.8, background: "red", targetBytes: 100 }).targetBytes).toBeNull();
   });
 
   it("names results", () => {

@@ -128,6 +128,13 @@ function Comparison({ result, stale, busy, blocked, onRun, onApply }: { result: 
         </div>
       ) : (
         <>
+          {result.target && (
+            <p className={cn("t-body-sm mt-3", result.target.metTarget ? "text-success" : "text-warning")} data-testid="encode-target-result">
+              {result.target.metTarget
+                ? `Target ${formatBytes(result.target.bytes)} met at ${Math.round(result.quality * 100)}% quality after ${result.target.attempts} ${result.target.attempts === 1 ? "try" : "tries"}.`
+                : `The target ${formatBytes(result.target.bytes)} could not be reached at 50% quality without resizing or changing format. This is the smallest measured result.`}
+            </p>
+          )}
           {c.outcome === "larger" && (
             <p className="t-body-sm mt-3 text-ink" data-testid="encode-larger">
               This result is <strong>larger</strong> than the original — keeping the original is smaller.

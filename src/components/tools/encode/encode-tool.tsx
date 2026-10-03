@@ -34,7 +34,7 @@ export function EncodeTool({ tool, landing }: { tool: EncodeToolId; landing: Rea
 }
 
 /** Identifies the output a set of settings produces for one asset. */
-const runKey = (assetId: string, format: string, quality: number | null, background: string | null) => JSON.stringify([assetId, format, quality, background]);
+const runKey = (assetId: string, format: string, quality: number | null, background: string | null, targetBytes: number | null) => JSON.stringify([assetId, format, quality, background, targetBytes]);
 
 function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
   const { runtime } = useWorkspaceContext();
@@ -49,7 +49,8 @@ function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
 
   if (!selectedId || !file) return null;
   const format = resolveFormat(tool, settings.format, file.type);
-  const key = runKey(selectedId, format, supportsQuality(format) ? settings.quality : null, format === "jpeg" ? settings.background : null);
+  const targetBytes = tool === "compress" && supportsQuality(format) ? settings.targetBytes : null;
+  const key = runKey(selectedId, format, supportsQuality(format) ? settings.quality : null, format === "jpeg" ? settings.background : null, targetBytes);
   const current = run?.key === key ? run.result : null;
   // The last result for this image, shown dimmed once the settings move on.
   const shown = run && run.result.sourceId === selectedId ? run.result : null;
@@ -62,7 +63,7 @@ function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
     setError(null);
     try {
       const result = await runtime.encodeAsset(tool, selectedId);
-      setRun({ key: runKey(selectedId, result.format, supportsQuality(result.format) ? result.quality : null, result.format === "jpeg" ? result.background : null), result });
+      setRun({ key: runKey(selectedId, result.format, supportsQuality(result.format) ? settings.quality : null, result.format === "jpeg" ? result.background : null, result.target?.bytes ?? null), result });
       return result;
     } catch (e) {
       setError((e as { code?: string }).code ?? "ENCODE_MEMORY_PRESSURE");
@@ -86,7 +87,7 @@ function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
   ) : (
     <Badge tone="accent" dot>
       → {FORMAT_LABEL[format]}
-      {supportsQuality(format) ? ` ${Math.round(settings.quality * 100)}%` : ""}
+      {targetBytes ? ` · target ${Math.round(targetBytes / 1024)} KB` : supportsQuality(format) ? ` ${Math.round(settings.quality * 100)}%` : ""}
     </Badge>
   );
 

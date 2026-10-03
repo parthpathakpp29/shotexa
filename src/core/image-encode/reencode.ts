@@ -12,6 +12,7 @@ import { IDENTITY_TRANSFORM } from "@/core/image-transform/transform";
 import { EditorError, type EditorErrorCode } from "@/core/image-transform/types";
 import { encoderQuality } from "./formats";
 import { encodeIssue } from "./limits";
+import { searchTargetSize } from "./target-size";
 import { EncodeError, type EncodeErrorCode, type EncodeOptions, type EncodeResult } from "./types";
 
 /** Largest image the optional size probe runs on (it is a second full encode). */
@@ -47,22 +48,53 @@ export async function encodeImage(image: Blob, o: EncodeOptions): Promise<Encode
   let bitmap: ImageBitmap | null = null;
   try {
     bitmap = await decodeSource(image, o.source);
+    const decoded = bitmap;
     const common = { source: o.source, background: o.background, createCanvas: o.createCanvas, yieldBetweenTiles: o.yieldBetweenTiles, signal: o.signal };
-    const main = await renderDecoded(bitmap, IDENTITY_TRANSFORM, {
-      ...common,
-      format: o.format,
-      quality: encoderQuality(o.format, o.quality),
-      onProgress: (p) => o.onProgress?.(o.probe ? p * 0.8 : p),
-    });
+    const render = (quality: number) =>
+      renderDecoded(decoded, IDENTITY_TRANSFORM, {
+        ...common,
+        format: o.format,
+        quality: encoderQuality(o.format, quality),
+      });
+    const targetEnabled = !!o.targetBytes && o.targetBytes > 0 && o.format !== "png";
+    let quality = o.quality;
+    let main;
+    let target: EncodeResult["target"];
+    if (targetEnabled) {
+      let best: Awaited<ReturnType<typeof render>> | null = null;
+      let bestQuality = 0;
+      let smallest: Awaited<ReturnType<typeof render>> | null = null;
+      const found = await searchTargetSize(o.targetBytes!, o.quality, async (candidateQuality) => {
+        const candidate = await render(candidateQuality);
+        if (!smallest || candidate.blob.size < smallest.blob.size) smallest = candidate;
+        if (candidate.blob.size <= o.targetBytes! && (!best || candidateQuality > bestQuality)) {
+          best = candidate;
+          bestQuality = candidateQuality;
+        }
+        o.onProgress?.(Math.min(0.95, (candidateQuality / Math.max(0.5, o.quality)) * 0.9));
+        return candidate.blob.size;
+      });
+      main = best ?? smallest;
+      if (!main) throw new EncodeError("ENCODE_MEMORY_PRESSURE", "target search did not encode");
+      quality = found.quality;
+      target = { bytes: o.targetBytes!, metTarget: found.metTarget, attempts: found.attempts };
+    } else {
+      main = await renderDecoded(bitmap, IDENTITY_TRANSFORM, {
+        ...common,
+        format: o.format,
+        quality: encoderQuality(o.format, o.quality),
+        onProgress: (p) => o.onProgress?.(o.probe ? p * 0.8 : p),
+      });
+    }
     let probe: EncodeResult["probe"];
     const probeFormat = o.probe?.format;
-    if (o.probe && probeFormat && probeFormat !== o.format && o.source.width * o.source.height <= PROBE_MAX_PIXELS && !encodeIssue(o.source, probeFormat)) {
+    if (!targetEnabled && o.probe && probeFormat && probeFormat !== o.format && o.source.width * o.source.height <= PROBE_MAX_PIXELS && !encodeIssue(o.source, probeFormat)) {
       // Best effort: a failed probe only means no size hint.
       const alt = await renderDecoded(bitmap, IDENTITY_TRANSFORM, { ...common, format: probeFormat, quality: encoderQuality(probeFormat, o.probe.quality) }).catch(() => null);
       if (alt) probe = { format: probeFormat, quality: o.probe.quality, bytes: alt.blob.size };
     }
     o.onProgress?.(1);
-    return { blob: main.blob, width: main.width, height: main.height, format: o.format, strategy: main.strategy, ms: Math.round(performance.now() - started), probe };
+    return { blob: main.blob, width: main.width, height: main.height, format: o.format, strategy: main.strategy, ms: Math.round(performance.now() - started), quality, target, probe };
   } catch (error) {
     throw toEncodeError(error);
   } finally {

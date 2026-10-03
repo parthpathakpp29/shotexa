@@ -5,6 +5,7 @@ import { useState } from "react";
 import { SegmentedControl } from "@/components/ui/controls";
 import { EmptyState } from "@/components/ui/primitives";
 import { SITE } from "@/config/site";
+import { formatBytes, imageTypeLabel } from "@/lib/format-bytes";
 import { useElementWidth } from "@/lib/use-element-width";
 import { BitmapCanvas } from "./bitmap-canvas";
 import { useWorkspace, useWorkspaceContext } from "./workspace-provider";
@@ -41,7 +42,7 @@ export function FilePreview({ className }: { className?: string }) {
           />
           {file && (
             <p className="t-mono truncate text-[12px] text-ink-3">
-              {file.name} · {file.width} × {file.height} px
+              {file.name} · {file.width} × {file.height} px · {imageTypeLabel(file.type)} · {formatBytes(file.bytes)}
             </p>
           )}
         </div>

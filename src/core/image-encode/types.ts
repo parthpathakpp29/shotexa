@@ -16,6 +16,8 @@ export interface EncodeSettings {
   quality: number;
   /** Colour painted under transparent pixels when the output is JPEG. */
   background: string;
+  /** Requested byte budget for lossy Compress output, or null for manual quality. */
+  targetBytes: number | null;
 }
 
 export interface EncodeOptions {
@@ -25,6 +27,8 @@ export interface EncodeOptions {
   background: string;
   /** Also measure one alternative (for a factual "WebP would be X" hint). */
   probe?: { format: OutputFormat; quality: number };
+  /** Bounded JPEG/WebP search target. PNG never accepts a made-up quality target. */
+  targetBytes?: number | null;
   createCanvas?: (width: number, height: number) => OffscreenCanvas | HTMLCanvasElement;
   yieldBetweenTiles?: () => Promise<void>;
   signal?: { readonly aborted: boolean };
@@ -38,6 +42,9 @@ export interface EncodeResult {
   format: OutputFormat;
   strategy: "single-canvas" | "tiled-png";
   ms: number;
+  /** The actual quality used; it can be lower than the selected cap after target search. */
+  quality: number;
+  target?: { bytes: number; metTarget: boolean; attempts: number };
   /** Size the probe format would produce, when it was measured. */
   probe?: { format: OutputFormat; quality: number; bytes: number };
 }

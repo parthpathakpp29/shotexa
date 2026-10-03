@@ -176,6 +176,25 @@ test.describe("Phase 2J Compress + Convert", () => {
     expect(near(d.samples[0], [29, 78, 216, 255], 30)).toBe(true); // gradient starts blue
   });
 
+  test("Compress target size searches locally and reports the measured outcome", async ({ page }) => {
+    const { errors, outbound } = watch(page);
+    const input = await makeImage(page, "target.jpg", { width: 800, height: 600, type: "image/jpeg", quality: 1, kind: "noise" });
+    await open(page, "/compress-screenshot", input);
+    await format(page, "WebP").click();
+    await page.getByRole("radiogroup", { name: "Target file size" }).getByRole("radio", { name: "200 KB" }).click();
+    const cmp = await checkSize(page);
+    const target = page.getByTestId("encode-target-result");
+    await expect(target).toBeVisible();
+    const measured = Number(await cmp.getAttribute("data-output"));
+    if (await target.innerText().then((text) => text.includes("met"))) expect(measured).toBeLessThanOrEqual(200 * 1024);
+    else await expect(target).toContainText("could not be reached");
+    const out = await exportFile(page);
+    expect(out.buffer.length).toBe(measured);
+    expect(signature(out.buffer)).toBe("webp");
+    expect(outbound).toEqual([]);
+    expect(errors).toEqual([]);
+  });
+
   test("transparent PNG → JPEG on the default white background", async ({ page }) => {
     await page.goto("/convert-screenshot");
     const input = await makeImage(page, "logo.png", { width: 400, height: 300, type: "image/png", kind: "halves" });

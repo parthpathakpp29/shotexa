@@ -108,6 +108,7 @@ export interface EncodeRunResult {
   quality: number;
   background: string;
   ms: number;
+  target?: { bytes: number; metTarget: boolean; attempts: number };
   probe?: { format: OutputFormat; quality: number; bytes: number };
 }
 
@@ -756,7 +757,8 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     const source = { width: file.width, height: file.height };
     // PNG has no quality setting; measure WebP too so any hint quotes a real size.
     const probe = format === "png" ? { format: "webp" as const, quality: 0.8 } : undefined;
-    const input = { source, format, quality: settings.quality, background: settings.background, probe };
+    const targetBytes = tool === "compress" && format !== "png" ? settings.targetBytes : null;
+    const input = { source, format, quality: settings.quality, background: settings.background, probe, targetBytes };
     const jobId = `encode:${Date.now()}`;
     job(jobId, "encode", "running", 0);
     try {
@@ -783,9 +785,10 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
         bytes: result.blob.size,
         originalBytes: file.bytes,
         format,
-        quality: settings.quality,
+        quality: result.quality,
         background: settings.background,
         ms: result.ms,
+        target: result.target,
         probe: result.probe,
       };
     } catch (error) {
