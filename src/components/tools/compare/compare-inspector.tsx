@@ -1,10 +1,12 @@
 "use client";
 
 import { ArrowLeftRight, RotateCcw } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Disclosure, SegmentedControl, Slider, Toggle } from "@/components/ui/controls";
 import { FieldLabel, InspectorSection, Mono } from "@/components/ui/primitives";
-import { useWorkspace } from "@/components/workspace/workspace-provider";
+import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
+import { formatBytes } from "@/components/tools/stitch/stitch-tool";
 import { ALIGN_OPTIONS, BACKGROUND_OPTIONS, COMPARE_MODES, DEFAULT_COMPARE, FIT_OPTIONS } from "@/core/compare/presets";
 import type { CompareAlign, CompareFit, CompareMode } from "@/core/compare/types";
 import { cn } from "@/lib/cn";
@@ -39,12 +41,25 @@ function AssetPicker({ label, value, exclude, onChange, testId }: { label: strin
 }
 
 export function CompareInspector() {
+  const { runtime } = useWorkspaceContext();
   const settings = useWorkspace((s) => s.compare);
   const setCompare = useWorkspace((s) => s.setCompare);
   const exportSettings = useWorkspace((s) => s.exportSettings);
   const setExportSettings = useWorkspace((s) => s.setExportSettings);
   const fileA = useWorkspace((s) => (s.compare.a ? s.files[s.compare.a] : undefined));
   const fileB = useWorkspace((s) => (s.compare.b ? s.files[s.compare.b] : undefined));
+  const versionA = useWorkspace((s) => (s.compare.a ? s.files[s.compare.a]?.previewVersion ?? 0 : 0));
+  const versionB = useWorkspace((s) => (s.compare.b ? s.files[s.compare.b]?.previewVersion ?? 0 : 0));
+  const [alpha, setAlpha] = useState<{ a: boolean | null; b: boolean | null }>({ a: null, b: null });
+
+  useEffect(() => {
+    let live = true;
+    if (!settings.a || !settings.b) return;
+    void Promise.all([runtime.hasTransparency(settings.a), runtime.hasTransparency(settings.b)]).then(([a, b]) => live && setAlpha({ a, b }));
+    return () => {
+      live = false;
+    };
+  }, [runtime, settings.a, settings.b, versionA, versionB]);
 
   const apply = (patch: Partial<typeof settings>, coalesce?: string) => setCompare({ ...settings, ...patch }, { coalesce });
   const differentSizes = !!fileA && !!fileB && (fileA.width !== fileB.width || fileA.height !== fileB.height);
@@ -75,6 +90,27 @@ export function CompareInspector() {
             These screenshots are different sizes ({fileA.width} × {fileA.height} and {fileB.width} × {fileB.height}). Neither is stretched — choose how they are fitted below.
           </p>
         )}
+        {fileA && fileB && (
+          <Disclosure title="File details" className="mt-4">
+            <div className="grid grid-cols-2 gap-3" data-testid="compare-file-details">
+              {([
+                ["A", fileA, alpha.a],
+                ["B", fileB, alpha.b],
+              ] as const).map(([label, file, transparent]) => (
+                <div key={label} className="min-w-0 rounded-md border border-line bg-surface-3 p-3">
+                  <p className="t-micro text-ink-3">{label} · {file.name}</p>
+                  <dl className="t-mono mt-2 space-y-1 text-[11px] text-ink-2">
+                    <div><dt className="inline text-ink-3">Size </dt><dd className="inline">{file.width} × {file.height}</dd></div>
+                    <div><dt className="inline text-ink-3">Ratio </dt><dd className="inline">{(file.width / file.height).toFixed(2)}:1</dd></div>
+                    <div><dt className="inline text-ink-3">Format </dt><dd className="inline">{file.type.replace("image/", "").toUpperCase()}</dd></div>
+                    <div><dt className="inline text-ink-3">Bytes </dt><dd className="inline">{formatBytes(file.bytes)}</dd></div>
+                    <div><dt className="inline text-ink-3">Alpha </dt><dd className="inline">{transparent === null ? "Checking…" : transparent ? "Present" : "None detected"}</dd></div>
+                  </dl>
+                </div>
+              ))}
+            </div>
+          </Disclosure>
+        )}
       </InspectorSection>
 
       <InspectorSection title="Comparison">
@@ -101,13 +137,25 @@ export function CompareInspector() {
             <Slider label="After opacity" value={Math.round(settings.opacity * 100)} min={0} max={100} onChange={(v) => apply({ opacity: v / 100 }, "opacity")} valueText={`${Math.round(settings.opacity * 100)}%`} />
           </div>
         )}
-        {settings.mode === "difference" && (
+        {(settings.mode === "difference" || settings.mode === "heatmap") && (
           <div className="mt-4">
             <FieldLabel value={String(settings.threshold)}>Sensitivity</FieldLabel>
             <Slider label="Difference sensitivity" value={120 - settings.threshold} min={0} max={120} onChange={(v) => apply({ threshold: 120 - v }, "threshold")} valueText={`threshold ${settings.threshold}`} />
             <p className="t-body-sm mt-2 text-ink-3">
               Higher sensitivity marks smaller changes. Shotexa shows <em>where</em> pixels differ — it does not interpret what changed.
             </p>
+            <Disclosure title="Changed region controls" className="mt-4">
+              <Toggle label="Ignore tiny differences" checked={settings.ignoreTiny} onChange={(ignoreTiny) => apply({ ignoreTiny })} />
+              <div className="mt-3">
+                <FieldLabel value={`${settings.minRegionSize} px`}>Minimum region size</FieldLabel>
+                <Slider label="Minimum changed region size" value={settings.minRegionSize} min={1} max={500} onChange={(minRegionSize) => apply({ minRegionSize }, "region-size")} />
+              </div>
+              <div className="mt-3">
+                <FieldLabel value={`${settings.mergeDistance} px`}>Merge distance</FieldLabel>
+                <Slider label="Changed region merge distance" value={settings.mergeDistance} min={0} max={40} onChange={(mergeDistance) => apply({ mergeDistance }, "merge-distance")} />
+              </div>
+              <p className="t-body-sm mt-2 text-ink-3">Region pixel counts and distances use the bounded interaction preview, shown beside the result.</p>
+            </Disclosure>
           </div>
         )}
         {settings.mode === "side-by-side" && (
@@ -116,6 +164,26 @@ export function CompareInspector() {
             <Slider label="Gap between screenshots" value={settings.gap} min={0} max={20} onChange={(gap) => apply({ gap }, "gap")} valueText={`${settings.gap}%`} />
           </div>
         )}
+        <div className="mt-4">
+          <Toggle label={settings.flicker ? "Flicker playing" : "Flicker paused"} description="Preview only" checked={settings.flicker} onChange={(flicker) => apply({ flicker })} />
+          {settings.flicker && (
+            <div className="mt-3">
+              <FieldLabel>Speed</FieldLabel>
+              <SegmentedControl<"250" | "500" | "1000">
+                label="Flicker speed"
+                size="sm"
+                value={String(settings.flickerSpeed) as "250" | "500" | "1000"}
+                onChange={(value) => apply({ flickerSpeed: Number(value) as 250 | 500 | 1000 })}
+                options={[
+                  { value: "1000", label: "Slow" },
+                  { value: "500", label: "Medium" },
+                  { value: "250", label: "Fast" },
+                ]}
+              />
+              <p className="t-body-sm mt-2 text-ink-3">Alternates A and B locally. Reduced-motion settings pause the effect automatically.</p>
+            </div>
+          )}
+        </div>
       </InspectorSection>
 
       <InspectorSection title="Fitting">

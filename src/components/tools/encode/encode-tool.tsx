@@ -9,7 +9,7 @@
  * when the settings haven't changed (no second encode), saves it as a new, selected workspace
  * artifact and downloads it. Moving a slider never re-encodes.
  */
-import { AlertTriangle, Check, Download } from "lucide-react";
+import { AlertTriangle, Check, Copy, Download } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { formatBytes } from "@/components/tools/stitch/stitch-tool";
 import { Button } from "@/components/ui/button";
@@ -21,12 +21,13 @@ import { continuationsFor, TOOLS } from "@/config/tools";
 import { compareSize } from "@/core/image-encode/compare";
 import { FORMAT_LABEL, supportsQuality } from "@/core/image-encode/formats";
 import { encodeIssue } from "@/core/image-encode/limits";
-import { resolveFormat } from "@/core/image-encode/settings";
+import { customOutputName, resolveFormat } from "@/core/image-encode/settings";
 import type { EncodeTool as EncodeToolId } from "@/core/image-encode/types";
 import { messageFor } from "@/core/runtime/messages";
-import { downloadAsset, type EncodeRunResult } from "@/core/runtime/runtime";
+import { downloadAsset, type EncodeRunResult, type FormatComparisonRun } from "@/core/runtime/runtime";
 import { EncodeInspector } from "./encode-inspector";
 import { EncodePreview } from "./encode-preview";
+import { FormatComparison } from "./format-comparison";
 
 export function EncodeTool({ tool, landing }: { tool: EncodeToolId; landing: ReactNode }) {
   const count = useWorkspace((s) => s.order.length);
@@ -44,14 +45,23 @@ function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
   const setSettings = useWorkspace((s) => s.setEncodeSettings);
   const job = useWorkspace((s) => Object.values(s.jobs).find((j) => j.kind === "encode" && j.status === "running"));
   const [run, setRun] = useState<{ key: string; result: EncodeRunResult } | null>(null);
+  const [comparison, setComparison] = useState<{ key: string; result: FormatComparisonRun } | null>(null);
   const [saved, setSaved] = useState<{ id: string; result: EncodeRunResult } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [outputNames, setOutputNames] = useState<Record<string, string>>({});
+  const [copyStatus, setCopyStatus] = useState<string | null>(null);
 
   if (!selectedId || !file) return null;
+  const assetId = selectedId;
+  const asset = file;
+  const outputName = outputNames[assetId] ?? asset.name.replace(/\.[^.]+$/, "");
+  const setOutputName = (value: string) => setOutputNames((names) => ({ ...names, [assetId]: value }));
   const format = resolveFormat(tool, settings.format, file.type);
   const targetBytes = tool === "compress" && supportsQuality(format) ? settings.targetBytes : null;
   const key = runKey(selectedId, format, supportsQuality(format) ? settings.quality : null, format === "jpeg" ? settings.background : null, targetBytes);
   const current = run?.key === key ? run.result : null;
+  const comparisonKey = JSON.stringify([selectedId, settings.quality, settings.background]);
+  const currentComparison = comparison?.key === comparisonKey && comparison.result.sourceId === selectedId ? comparison.result : null;
   // The last result for this image, shown dimmed once the settings move on.
   const shown = run && run.result.sourceId === selectedId ? run.result : null;
   const blocked = !!encodeIssue(file, format);
@@ -62,8 +72,8 @@ function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
     if (!selectedId || blocked) return null;
     setError(null);
     try {
-      const result = await runtime.encodeAsset(tool, selectedId);
-      setRun({ key: runKey(selectedId, result.format, supportsQuality(result.format) ? settings.quality : null, result.format === "jpeg" ? result.background : null, result.target?.bytes ?? null), result });
+      const result = await runtime.encodeAsset(tool, assetId);
+      setRun({ key: runKey(assetId, result.format, supportsQuality(result.format) ? settings.quality : null, result.format === "jpeg" ? result.background : null, result.target?.bytes ?? null), result });
       return result;
     } catch (e) {
       setError((e as { code?: string }).code ?? "ENCODE_MEMORY_PRESSURE");
@@ -75,9 +85,41 @@ function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
     if (busy || blocked) return;
     const result = current ?? (await encode());
     if (!result) return;
-    const id = runtime.saveEncoded(result);
-    setSaved({ id, result });
+    const named = tool === "convert" ? { ...result, name: customOutputName(outputName, asset.name, result.format) } : result;
+    const id = runtime.saveEncoded(named);
+    setSaved({ id, result: named });
     downloadAsset(runtime, id);
+  }
+
+  async function compareAllFormats() {
+    if (busy) return;
+    setError(null);
+    try {
+      const result = await runtime.compareEncodeFormats(assetId);
+      setComparison({ key: comparisonKey, result });
+    } catch (e) {
+      setError((e as { code?: string }).code ?? "ENCODE_MEMORY_PRESSURE");
+    }
+  }
+
+  function selectCandidate(candidate: EncodeRunResult) {
+    setSettings("convert", { format: candidate.format });
+    setRun({ key: runKey(assetId, candidate.format, supportsQuality(candidate.format) ? settings.quality : null, candidate.format === "jpeg" ? settings.background : null, null), result: candidate });
+    setCopyStatus(null);
+  }
+
+  async function copyPng() {
+    if (!current || current.format !== "png") return;
+    if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
+      setCopyStatus("Copy PNG is not supported in this browser. Download remains available.");
+      return;
+    }
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": current.blob })]);
+      setCopyStatus("PNG copied to the clipboard.");
+    } catch {
+      setCopyStatus("The browser blocked clipboard image access. Download the PNG instead.");
+    }
   }
 
   const status = busy ? (
@@ -130,9 +172,20 @@ function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
               void encode();
             }}
           />
+          {tool === "convert" && (
+            <>
+              <FormatComparison comparison={currentComparison} selected={current} originalBytes={file.bytes} busy={busy} blocked={false} onCompare={() => void compareAllFormats()} onSelect={selectCandidate} />
+              {current?.format === "png" && (
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <Button variant="secondary" onClick={() => void copyPng()} className="max-md:h-11" data-testid="copy-output-png"><Copy /> Copy PNG</Button>
+                  {copyStatus && <p className="t-body-sm text-ink-2" role="status" data-testid="copy-output-status">{copyStatus}</p>}
+                </div>
+              )}
+            </>
+          )}
         </>
       }
-      inspector={<EncodeInspector key={selectedId} tool={tool} assetId={selectedId} format={format} busy={busy} onRun={() => void encode()} />}
+      inspector={<EncodeInspector key={selectedId} tool={tool} assetId={selectedId} format={format} busy={busy} outputName={tool === "convert" ? outputName : undefined} onOutputName={tool === "convert" ? setOutputName : undefined} onRun={() => void encode()} />}
       below={saved && <SavedResult tool={tool} saved={saved} onDownload={() => downloadAsset(runtime, saved.id)} />}
     />
   );

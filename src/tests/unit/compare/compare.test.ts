@@ -4,7 +4,7 @@
  * threshold, and settings clamping. The rendered pixels are verified again in the E2E suite.
  */
 import { describe, expect, it } from "vitest";
-import { differencePixels, isHighlighted } from "@/core/compare/difference";
+import { changedRegions, differencePixels, differenceStats, isHighlighted } from "@/core/compare/difference";
 import { clampSettings, compareCell, compareLayout, compareSize, dividerFromX, place } from "@/core/compare/layout";
 import { COMPARE_NAMES, DEFAULT_COMPARE, DIFF_HIGHLIGHT } from "@/core/compare/presets";
 import { compareIssue } from "@/core/compare/render";
@@ -111,7 +111,7 @@ describe("side by side", () => {
   });
 
   it("the other modes share one cell", () => {
-    for (const mode of ["slider", "overlay", "difference"] as const) {
+    for (const mode of ["slider", "overlay", "difference", "heatmap"] as const) {
       const l = compareLayout(S({ mode }), input(1200, 400), input(500, 900));
       expect(l.canvas).toEqual({ width: 1200, height: 900 });
       expect(l.cellA).toEqual(l.cellB);
@@ -147,12 +147,12 @@ describe("settings", () => {
   });
 
   it("names results after the mode, never after an asset id", () => {
-    expect(COMPARE_NAMES).toEqual({ "side-by-side": "compare-side-by-side", slider: "compare-before-after", overlay: "compare-overlay", difference: "compare-difference" });
+    expect(COMPARE_NAMES).toEqual({ "side-by-side": "compare-side-by-side", slider: "compare-before-after", overlay: "compare-overlay", difference: "compare-difference", heatmap: "compare-heatmap" });
     for (const name of Object.values(COMPARE_NAMES)) expect(name).toMatch(/^compare-[a-z-]+$/);
   });
 
   it("reports the exported size without building the layout", () => {
-    for (const mode of ["side-by-side", "slider", "overlay", "difference"] as const) {
+    for (const mode of ["side-by-side", "slider", "overlay", "difference", "heatmap"] as const) {
       const settings = S({ mode });
       expect(compareSize(settings, { width: 800, height: 600 }, { width: 500, height: 900 })).toEqual(
         compareLayout(settings, input(800, 600), input(500, 900)).canvas,
@@ -167,11 +167,18 @@ describe("settings", () => {
     const big = { width: 4000, height: 4000 };
     expect(compareIssue(big, "slider", big, big)).toBeNull();
     expect(compareIssue(big, "difference", big, big)).toBe("too-large");
+    expect(compareIssue(big, "heatmap", big, big)).toBe("too-large");
     expect(compareIssue({ width: 1200, height: 800 }, "difference", { width: 1200, height: 800 }, { width: 1200, height: 800 })).toBeNull();
   });
 });
 
 describe("pixel difference", () => {
+  it("reports changed and unchanged preview percentages from measured pixels", () => {
+    expect(differenceStats(38, 100)).toEqual({ changedPixels: 38, totalPixels: 100, changedPercent: 38, unchangedPercent: 62 });
+    expect(differenceStats(999, 5)).toEqual({ changedPixels: 5, totalPixels: 5, changedPercent: 100, unchangedPercent: 0 });
+    expect(differenceStats(-1, 0)).toEqual({ changedPixels: 0, totalPixels: 0, changedPercent: 0, unchangedPercent: 100 });
+  });
+
   /** A tiny RGBA buffer helper: `fill` decides each pixel. */
   const buffer = (w: number, h: number, fill: (x: number, y: number) => [number, number, number]) => {
     const data = new Uint8ClampedArray(w * h * 4);
@@ -235,5 +242,32 @@ describe("pixel difference", () => {
     const other = new Uint8ClampedArray(a.length);
     expect(differencePixels(a, b, one, 5)).toBe(differencePixels(b, a, other, 5));
     for (let i = 3; i < one.length; i += 4) expect(one[i]).toBe(255);
+  });
+
+  it("renders a deterministic cool-to-hot heatmap from the same threshold", () => {
+    const a = buffer(3, 1, () => [20, 20, 20]);
+    const b = buffer(3, 1, (x) => [20 + [0, 80, 235][x], 20, 20]);
+    const out = new Uint8ClampedArray(a.length);
+    const mask = new Uint8Array(3);
+    expect(differencePixels(a, b, out, 10, mask, "heatmap")).toBe(2);
+    expect([...mask]).toEqual([0, 1, 1]);
+    expect(pixel(out, 3, 1, 0)[2]).toBeGreaterThan(0);
+    expect(pixel(out, 3, 2, 0)[0]).toBe(255);
+  });
+
+  it("groups changed pixels into bounded regions and merges nearby boxes", () => {
+    const mask = new Uint8Array(12 * 8);
+    const mark = (x0: number, y0: number, w: number, h: number) => {
+      for (let y = y0; y < y0 + h; y++) for (let x = x0; x < x0 + w; x++) mask[y * 12 + x] = 1;
+    };
+    mark(1, 1, 2, 2);
+    mark(5, 1, 2, 2);
+    mark(10, 7, 1, 1);
+    const separate = changedRegions(mask.slice(), 12, 8, { minRegionSize: 2, mergeDistance: 0, ignoreTiny: true });
+    expect(separate.regions).toHaveLength(2); // the one-pixel speck is ignored
+    expect(separate.regions.map((region) => region.pixels)).toEqual([4, 4]);
+    const merged = changedRegions(mask.slice(), 12, 8, { minRegionSize: 2, mergeDistance: 2, ignoreTiny: true });
+    expect(merged.regions).toHaveLength(1);
+    expect(merged.regions[0]).toMatchObject({ x: 1, y: 1, width: 6, height: 2, pixels: 8, id: 1 });
   });
 });

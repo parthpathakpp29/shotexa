@@ -10,13 +10,15 @@
 import { decodeSource, renderDecoded } from "@/core/image-transform/render";
 import { IDENTITY_TRANSFORM } from "@/core/image-transform/transform";
 import { EditorError, type EditorErrorCode } from "@/core/image-transform/types";
-import { encoderQuality } from "./formats";
+import { encoderQuality, OUTPUT_FORMATS, type OutputFormat } from "./formats";
 import { encodeIssue } from "./limits";
 import { searchTargetSize } from "./target-size";
-import { EncodeError, type EncodeErrorCode, type EncodeOptions, type EncodeResult } from "./types";
+import { EncodeError, type EncodeErrorCode, type EncodeOptions, type EncodeResult, type FormatComparisonResult } from "./types";
 
 /** Largest image the optional size probe runs on (it is a second full encode). */
 export const PROBE_MAX_PIXELS = 16_000_000;
+/** Three retained candidate Blobs are deliberately limited more tightly than one normal export. */
+export const FORMAT_COMPARE_MAX_PIXELS = 16_000_000;
 
 const FROM_EDITOR: Record<EditorErrorCode, EncodeErrorCode> = {
   EDITOR_INVALID_TRANSFORM: "ENCODE_TOO_LARGE",
@@ -95,6 +97,47 @@ export async function encodeImage(image: Blob, o: EncodeOptions): Promise<Encode
     }
     o.onProgress?.(1);
     return { blob: main.blob, width: main.width, height: main.height, format: o.format, strategy: main.strategy, ms: Math.round(performance.now() - started), quality, target, probe };
+  } catch (error) {
+    throw toEncodeError(error);
+  } finally {
+    bitmap?.close();
+  }
+}
+
+/**
+ * Encode PNG/JPEG/WebP from one decoded source. Candidates are created sequentially so only one
+ * render canvas is live at a time. The caller owns the returned Blobs and should drop unselected
+ * candidates when the comparison is replaced or the tool unmounts.
+ */
+export async function compareFormats(
+  image: Blob,
+  o: Omit<EncodeOptions, "format" | "probe" | "targetBytes"> & { formats?: readonly OutputFormat[] },
+): Promise<FormatComparisonResult> {
+  if (o.source.width * o.source.height > FORMAT_COMPARE_MAX_PIXELS) throw new EncodeError("ENCODE_TOO_LARGE", "format comparison is limited to 16 MP");
+  const formats = o.formats ?? OUTPUT_FORMATS;
+  for (const format of formats) assertEncodable(o.source, format);
+  const started = performance.now();
+  let bitmap: ImageBitmap | null = null;
+  try {
+    bitmap = await decodeSource(image, o.source);
+    const candidates = [] as FormatComparisonResult["candidates"];
+    for (let index = 0; index < formats.length; index++) {
+      if (o.signal?.aborted) throw new EncodeError("ENCODE_CANCELLED");
+      const format = formats[index];
+      const rendered = await renderDecoded(bitmap, IDENTITY_TRANSFORM, {
+        source: o.source,
+        background: o.background,
+        format,
+        quality: encoderQuality(format, o.quality),
+        createCanvas: o.createCanvas,
+        yieldBetweenTiles: o.yieldBetweenTiles,
+        signal: o.signal,
+        onProgress: (progress) => o.onProgress?.((index + progress) / formats.length),
+      });
+      candidates.push({ blob: rendered.blob, bytes: rendered.blob.size, width: rendered.width, height: rendered.height, format, quality: o.quality, strategy: rendered.strategy });
+    }
+    o.onProgress?.(1);
+    return { candidates, ms: Math.round(performance.now() - started) };
   } catch (error) {
     throw toEncodeError(error);
   } finally {

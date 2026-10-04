@@ -74,6 +74,11 @@ export async function renderBeautified(image: Blob, settings: BeautifySettings, 
   const started = performance.now();
   const layout = beautifyLayout(settings, o.source);
   const plan = planBeautifyExport(layout, o.source, o.format, typeof CompressionStream !== "undefined");
+  // Filtered canvas draws can sample outside a tile. Until every supported engine proves the
+  // same edge behaviour, refuse a tiled blurred-background export rather than risk faint seams.
+  if (plan.strategy === "tiled-png" && settings.background.kind === "screenshot" && settings.background.blur > 0) {
+    throw new BeautifyError("BEAUTIFY_TOO_LARGE", "BLURRED_BACKGROUND_REQUIRES_SINGLE_CANVAS");
+  }
   const { out } = plan;
   const make = o.createCanvas ?? ((w: number, h: number) => new OffscreenCanvas(w, h));
   let bitmap: ImageBitmap | null = null;

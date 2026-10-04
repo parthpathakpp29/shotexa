@@ -50,7 +50,7 @@ export function compareIssue(canvas: Size, mode: CompareSettings["mode"], a: Siz
   const limits = DEFAULT_LIMITS;
   if (canvas.height > limits.maxSingleCanvasHeight || canvas.width * canvas.height > limits.maxSingleCanvasArea) return "too-large";
   // Both sources stay decoded, plus the canvas — and difference holds two more full buffers.
-  const buffers = mode === "difference" ? 3 : 1;
+  const buffers = mode === "difference" || mode === "heatmap" ? 3 : 1;
   const peak = decodedBytes(canvas.width, canvas.height) * buffers + decodedBytes(a.width, a.height) + decodedBytes(b.width, b.height);
   return peak > limits.softBudgetBytes ? "too-large" : null;
 }
@@ -72,7 +72,7 @@ export async function renderCompare(imageA: Blob, imageB: Blob, settings: Compar
     o.onProgress?.(0.5);
     if (o.signal?.aborted) throw new EncodeError("ENCODE_CANCELLED");
     canvas = make(out.width, out.height);
-    const ctx = canvas.getContext("2d", { willReadFrequently: layout.mode === "difference" });
+    const ctx = canvas.getContext("2d", { willReadFrequently: layout.mode === "difference" || layout.mode === "heatmap" });
     if (!ctx) throw new EncodeError("ENCODE_MEMORY_PRESSURE", "2d context unavailable");
     drawCompare(ctx as never, layout, { image: bitmapA, imageScale: 1 }, { image: bitmapB, imageScale: 1 }, out.width, out.height, { scale: 1, createCanvas: make });
     o.onProgress?.(0.8);

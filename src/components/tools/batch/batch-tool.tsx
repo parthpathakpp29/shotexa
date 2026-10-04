@@ -13,11 +13,12 @@ import { continuationsFor, TOOLS } from "@/config/tools";
 import { BACKGROUND_PRESETS } from "@/core/image-encode/settings";
 import { FORMAT_LABEL, OUTPUT_FORMATS, supportsQuality, type OutputFormat } from "@/core/image-encode/formats";
 import { MAX_BATCH_FILES } from "@/core/batch/types";
-import type { BatchOperation, BatchSettings, ResizeMode } from "@/core/batch/types";
+import type { BatchItemState, BatchOperation, BatchResult, BatchSettings, ResizeMode } from "@/core/batch/types";
 import { resizeOutput } from "@/core/batch/settings";
 import { compareSize } from "@/core/image-encode/compare";
 import { formatBytes } from "@/components/tools/stitch/stitch-tool";
 import { downloadBlob } from "@/core/runtime/runtime";
+import type { WorkspaceFile } from "@/core/runtime/types";
 
 const OPS: { value: BatchOperation; label: string }[] = [
   { value: "compress", label: "Compress" }, { value: "convert", label: "Convert" }, { value: "privacy", label: "Privacy Clean" }, { value: "resize", label: "Resize" },
@@ -38,6 +39,7 @@ function BatchWorkspace() {
   const toggle = useWorkspace((s) => s.toggleBatchSelection);
   const [error, setError] = useState<string | null>(null);
   const [zipNames, setZipNames] = useState<string[]>([]);
+  const [resultFilter, setResultFilter] = useState<"all" | "successful" | "failed">("all");
   const initialised = useRef(false);
 
   useEffect(() => {
@@ -49,6 +51,11 @@ function BatchWorkspace() {
   const items = batch.selectedIds.map((id) => ({ file: files[id], state: batch.items[id] })).filter((x) => x.file);
   const complete = items.filter((x) => x.state?.status === "completed");
   const failed = items.filter((x) => x.state?.status === "failed");
+  const completedResults = complete.flatMap((item) => item.state?.resultId ? [runtime.batchResults.get(item.state.resultId)] : []).filter((result): result is NonNullable<typeof result> => !!result);
+  const originalTotal = completedResults.reduce((sum, result) => sum + result.originalBytes, 0);
+  const outputTotal = completedResults.reduce((sum, result) => sum + result.bytes, 0);
+  const bytesSaved = originalTotal - outputTotal;
+  const savingsPercent = originalTotal > 0 ? Math.round((bytesSaved / originalTotal) * 100) : 0;
   const running = batch.status === "running";
   const current = batch.currentIndex === null ? null : items[batch.currentIndex]?.file;
   const progress = items.length ? items.filter((x) => x.state?.status === "completed" || x.state?.status === "failed").length / items.length : 0;
@@ -82,7 +89,7 @@ function BatchWorkspace() {
         {order.length < 2 ? <EmptyState icon={<Files />} title="Add at least two screenshots">Batch processing needs two or more workspace images.</EmptyState> : <BatchFileList onSelection={alterSelection} onToggle={toggle} />}
       </>}
       inspector={<BatchInspector disabled={running} onReset={() => { runtime.resetBatch(); setZipNames([]); }} />}
-      below={complete.length > 0 && <div className="mt-6 space-y-4" data-testid="batch-results"><Notice tone={failed.length ? "warning" : "success"} icon={failed.length ? <AlertTriangle /> : <Check />} title={failed.length ? `${complete.length} completed · ${failed.length} failed` : `${complete.length} files ready`} actions={<div className="flex flex-wrap gap-2"><Button variant="primary" onClick={zip}><PackageOpen /> Download ZIP</Button>{failed.length > 0 && <Button variant="secondary" onClick={retry}><RefreshCw /> Retry failed</Button>}<Button variant="secondary" disabled={batch.addedToWorkspace} onClick={() => runtime.addBatchResults()}><Files /> {batch.addedToWorkspace ? "Added" : "Add results to workspace"}</Button></div>}>Only successful outputs are included. Completed files remain available if another item fails or the batch is cancelled.{zipNames.length > 0 && <span className="mt-1 block t-mono text-[11px]">ZIP: {zipNames.join(", ")}</span>}</Notice><ResultList />{batch.addedToWorkspace && <ContinueWith tools={continuationsFor("batch")} fileId={selectedId} />}</div>}
+      below={(complete.length > 0 || failed.length > 0) && <div className="mt-6 space-y-4" data-testid="batch-results"><Notice tone={failed.length ? "warning" : "success"} icon={failed.length ? <AlertTriangle /> : <Check />} title={failed.length ? `${complete.length} completed · ${failed.length} failed` : `${complete.length} files ready`} actions={<div className="flex flex-wrap gap-2"><Button variant="primary" onClick={zip} disabled={!complete.length}><PackageOpen /> Download ZIP</Button>{failed.length > 0 && <Button variant="secondary" onClick={retry}><RefreshCw /> Retry failed</Button>}<Button variant="secondary" disabled={batch.addedToWorkspace || !complete.length} onClick={() => runtime.addBatchResults()}><Files /> {batch.addedToWorkspace ? "Added" : "Add results to workspace"}</Button></div>}>Only successful outputs are included. Completed files remain available if another item fails or the batch is cancelled.{zipNames.length > 0 && <span className="mt-1 block t-mono text-[11px]">ZIP: {zipNames.join(", ")}</span>}</Notice><div className="grid grid-cols-2 gap-2 sm:grid-cols-4" data-testid="batch-summary"><SummaryStat label="Original total" value={formatBytes(originalTotal)} /><SummaryStat label="Output total" value={formatBytes(outputTotal)} /><SummaryStat label="Bytes saved" value={`${bytesSaved < 0 ? "+" : ""}${formatBytes(Math.abs(bytesSaved))}`} warn={bytesSaved < 0} /><SummaryStat label="Savings" value={`${bytesSaved < 0 ? "+" : ""}${Math.abs(savingsPercent)}%`} warn={bytesSaved < 0} /></div><SegmentedControl value={resultFilter} onChange={setResultFilter} options={[{ value: "all", label: "All" }, { value: "successful", label: "Successful" }, { value: "failed", label: "Failed" }]} label="Batch result filter" className="max-w-md" /><ResultList filter={resultFilter} />{batch.addedToWorkspace && <ContinueWith tools={continuationsFor("batch")} fileId={selectedId} />}</div>}
     />
   );
 }
@@ -107,6 +114,7 @@ function BatchInspector({ disabled, onReset }: { disabled: boolean; onReset(): v
   const batch = useWorkspace((s) => s.batch);
   const setOperation = useWorkspace((s) => s.setBatchOperation);
   const setSettings = useWorkspace((s) => s.setBatchSettings);
+  const setNaming = useWorkspace((s) => s.setBatchNaming);
   const files = useWorkspace((s) => s.files);
   const first = files[batch.selectedIds[0]];
   const retryable = Object.values(batch.items).some((item) => item.status === "failed" || item.status === "cancelled");
@@ -122,6 +130,7 @@ function BatchInspector({ disabled, onReset }: { disabled: boolean; onReset(): v
     {batch.operation === "convert" && <EncodeBatchSettings value={batch.settings.convert} onChange={(p) => update("convert", p as Partial<BatchSettings["convert"]>)} background />}
     {batch.operation === "resize" && <ResizeSettings value={batch.settings.resize} onChange={(p) => update("resize", p)} preview={first ? resizeOutput(first, batch.settings.resize).size : null} />}
     {batch.operation === "privacy" && <InspectorSection title="Privacy Clean"><p className="t-body-sm text-ink-2">Removes supported GPS, private EXIF, XMP, comments and software metadata. Required orientation and colour information are preserved and every output is verified.</p></InspectorSection>}
+    <InspectorSection title="Filenames"><div className="grid gap-3"><label className="block"><span className="t-micro text-ink-3">Prefix</span><input data-testid="batch-filename-prefix" value={batch.filenamePrefix} onChange={(event) => { onReset(); setNaming(event.target.value, batch.filenameSuffix); }} className="mt-1 min-h-11 w-full rounded-md border border-line bg-surface px-3 text-sm outline-none focus-visible:border-accent" /></label><label className="block"><span className="t-micro text-ink-3">Suffix</span><input data-testid="batch-filename-suffix" value={batch.filenameSuffix} onChange={(event) => { onReset(); setNaming(batch.filenamePrefix, event.target.value); }} className="mt-1 min-h-11 w-full rounded-md border border-line bg-surface px-3 text-sm outline-none focus-visible:border-accent" /></label></div><p className="t-body-sm mt-2 text-ink-3">Applied before the extension. Invalid filename characters become hyphens.</p></InspectorSection>
     {retryable && <p className="t-body-sm mt-4 rounded-md border border-warning/20 bg-warning-soft p-3 text-warning">Changed settings apply to failed or cancelled files when you choose Retry failed. Completed outputs stay unchanged.</p>}
   </div>;
 }
@@ -137,12 +146,25 @@ function ResizeSettings({ value, onChange, preview }: { value: BatchSettings["re
   return <><InspectorSection title="Resize by"><SegmentedControl value={value.mode} onChange={(mode: ResizeMode) => onChange({ mode })} options={[{ value: "width", label: "Width" }, { value: "height", label: "Height" }, { value: "percentage", label: "%" }, { value: "fit", label: "Fit" }]} label="Resize method" />{value.mode === "width" && <div className="mt-3">{number("Width", "width")}</div>}{value.mode === "height" && <div className="mt-3">{number("Height", "height")}</div>}{value.mode === "percentage" && <div className="mt-3">{number("Percentage", "percentage", "%")}</div>}{value.mode === "fit" && <div className="mt-3 grid grid-cols-2 gap-2">{number("Fit width", "fitWidth")}{number("Fit height", "fitHeight")}</div>}{preview && <p className="t-mono mt-3 text-[11px] text-ink-3">First result: {preview.width} × {preview.height} px</p>}</InspectorSection><InspectorSection title="Sizing"><Toggle checked={value.allowEnlarge} onChange={(allowEnlarge) => onChange({ allowEnlarge })} label="Allow enlargement" description={value.allowEnlarge ? "Small images may be enlarged" : "Small images stay at original size"} /></InspectorSection><EncodeBatchSettings value={value} onChange={onChange} allowSame background /></>;
 }
 
-function ResultList() {
+function SummaryStat({ label, value, warn = false }: { label: string; value: string; warn?: boolean }) {
+  return <div className="rounded-lg border border-line bg-surface p-3"><p className="t-micro text-ink-3">{label}</p><p className={`mt-1 font-mono text-sm ${warn ? "text-warning" : "text-ink"}`}>{value}</p></div>;
+}
+
+function ResultList({ filter }: { filter: "all" | "successful" | "failed" }) {
   const { runtime } = useWorkspaceContext();
   const batch = useWorkspace((s) => s.batch);
   const files = useWorkspace((s) => s.files);
-  const rows = batch.selectedIds.flatMap((id) => { const state = batch.items[id]; const result = state?.resultId ? runtime.batchResults.get(state.resultId) : undefined; return result ? [{ result, source: files[id] }] : []; });
-  return <ul className="divide-y divide-line rounded-lg border border-line bg-surface">{rows.map(({ result }) => { const comparison = compareSize(result.originalBytes, result.bytes); return <li key={result.id} className="flex flex-wrap items-center gap-3 px-4 py-3"><Check className="size-4 text-success" /><span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{result.outputName}</span><span className="t-mono text-[10.5px] text-ink-3">{result.width} × {result.height} · {formatBytes(result.bytes)}{result.operation === "compress" && comparison.outcome === "smaller" ? ` · ${comparison.percent}% saved` : ""}{result.operation === "compress" && comparison.outcome === "larger" ? " · larger than original" : ""}{result.operation === "privacy" && result.changed === false ? " · no private metadata found; original bytes retained" : ""}</span></span><Button size="sm" variant="ghost" onClick={() => downloadBlob(result.blob, result.outputName)}><Download /> Download</Button></li>; })}</ul>;
+  type Row = { kind: "successful"; result: BatchResult; source: WorkspaceFile; state: BatchItemState } | { kind: "failed"; source: WorkspaceFile; state: BatchItemState };
+  const rows: Row[] = [];
+  for (const id of batch.selectedIds) {
+    const state = batch.items[id];
+    const source = files[id];
+    const result = state?.resultId ? runtime.batchResults.get(state.resultId) : undefined;
+    if (result && source && state) rows.push({ kind: "successful", result, source, state });
+    else if (state?.status === "failed" && source) rows.push({ kind: "failed", source, state });
+  }
+  const shown = rows.filter((row) => filter === "all" || row.kind === filter);
+  return <ul className="divide-y divide-line rounded-lg border border-line bg-surface" data-testid="batch-result-list">{shown.map((row) => { if (row.kind === "failed") return <li key={row.source.id} className="flex items-center gap-3 px-4 py-3"><AlertTriangle className="size-4 text-warning" /><span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{row.source.name}</span><span className="t-mono text-[10.5px] text-warning">Failed · {row.state.error ?? "Could not process"}</span></span></li>; const { result } = row; const comparison = compareSize(result.originalBytes, result.bytes); return <li key={result.id} className="flex flex-wrap items-center gap-3 px-4 py-3"><Check className="size-4 text-success" /><span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{result.outputName}</span><span className="t-mono text-[10.5px] text-ink-3">{result.width} × {result.height} · {formatBytes(result.bytes)}{result.operation === "compress" && comparison.outcome === "smaller" ? ` · ${comparison.percent}% saved` : ""}{result.operation === "compress" && comparison.outcome === "larger" ? " · larger than original" : ""}{result.operation === "privacy" && result.changed === false ? " · no private metadata found; original bytes retained" : ""}</span></span><Button size="sm" variant="ghost" onClick={() => downloadBlob(result.blob, result.outputName)}><Download /> Download</Button></li>; })}</ul>;
 }
 
 function batchError(code: string) {

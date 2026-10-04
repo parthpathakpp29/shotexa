@@ -18,7 +18,7 @@ export type SplitRenderOptions = Omit<TransformExportOptions, "overlay">;
 export const pieceTransform = (p: SplitPiece, width: number) => ({ ...IDENTITY_TRANSFORM, crop: { x: 0, y: p.y0, width, height: p.y1 - p.y0 } });
 
 export async function renderSplit(image: Blob, pieces: SplitPiece[], o: SplitRenderOptions): Promise<SplitExportResult> {
-  const issues = validatePieces(pieces, o.source.height);
+  const issues = validatePieces(pieces, o.source.height, true);
   if (issues.includes("NOTHING_TO_SPLIT")) throw new SplitError("SPLIT_NOTHING_TO_SPLIT");
   if (issues.length) throw new SplitError("SPLIT_INVALID", issues.join(","));
   const started = performance.now();

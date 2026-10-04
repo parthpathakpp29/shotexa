@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyMatrix, transformMatrix } from "@/core/image-transform/matrix";
+import { adjustmentFilter, applyMatrix, transformMatrix } from "@/core/image-transform/matrix";
 import { toOriented } from "@/core/image-transform/orientation";
 import { planTransformExport } from "@/core/image-transform/render";
 import {
@@ -17,12 +17,15 @@ import {
   rotate180,
   rotateTransform,
   sourceCrop,
+  straightenedSize,
   visibleCrop,
+  withAdjustments,
   withCropAspect,
   withCropField,
   withLockAspect,
   withOutputHeight,
   withOutputWidth,
+  withStraighten,
   withVisibleCrop,
 } from "@/core/image-transform/transform";
 import { EditorError, type ImageTransform, type Orientation, type Rotation, type Size } from "@/core/image-transform/types";
@@ -137,6 +140,39 @@ describe("rotate and flip", () => {
     t = flipTransform(t, "vertical");
     // cw·flipH·ccw = flipV, so one more vertical flip cancels everything.
     expect(isIdentity(t)).toBe(true);
+  });
+});
+
+describe("straighten and adjustments", () => {
+  it("adds free rotation to the canonical output bounds and clamps it to a conservative range", () => {
+    expect(straightenedSize({ width: 100, height: 60 }, 0)).toEqual({ width: 100, height: 60 });
+    const tilted = withStraighten(T, 10);
+    expect(tilted.straighten).toBe(10);
+    expect(outputSize(tilted, WIDE)).toEqual(straightenedSize(WIDE, 10));
+    expect(outputSize(tilted, WIDE).width).toBeGreaterThan(WIDE.width);
+    expect(withStraighten(T, 99).straighten).toBe(15);
+    expect(withStraighten(T, -99).straighten).toBe(-15);
+  });
+
+  it("maps every corner inside the expanded free-rotation canvas", () => {
+    const t = withStraighten(T, 12);
+    const out = outputSize(t, WIDE);
+    const matrix = transformMatrix(WIDE, t, out);
+    for (const point of [{ x: 0, y: 0 }, { x: 100, y: 0 }, { x: 0, y: 60 }, { x: 100, y: 60 }]) {
+      const mapped = applyMatrix(matrix, point);
+      expect(mapped.x).toBeGreaterThanOrEqual(-0.01);
+      expect(mapped.y).toBeGreaterThanOrEqual(-0.01);
+      expect(mapped.x).toBeLessThanOrEqual(out.width + 0.01);
+      expect(mapped.y).toBeLessThanOrEqual(out.height + 0.01);
+    }
+  });
+
+  it("keeps adjustments as settings and builds one deterministic render filter", () => {
+    const adjusted = withAdjustments(T, { brightness: 12, contrast: 20, saturation: -15, warmth: 30, grayscale: 10, exposure: 1.2 });
+    expect(adjusted.adjustments).toEqual({ brightness: 12, contrast: 20, saturation: -15, warmth: 30, grayscale: 10, exposure: 1.2 });
+    expect(adjustmentFilter(adjusted.adjustments)).toBe("brightness(142%) contrast(120%) saturate(85%) grayscale(10%) sepia(11%) hue-rotate(-4deg)");
+    expect(isIdentity(adjusted)).toBe(false);
+    expect(withAdjustments(T, { brightness: 999, grayscale: -2, exposure: 8 }).adjustments).toMatchObject({ brightness: 100, grayscale: 0, exposure: 2 });
   });
 });
 

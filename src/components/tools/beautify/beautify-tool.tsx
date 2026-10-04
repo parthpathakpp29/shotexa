@@ -5,7 +5,7 @@
  * phone shell. The composition is a few numbers per asset (undoable); export renders it from
  * the ORIGINAL file through the shared pipeline into a new workspace artifact.
  */
-import { AlertTriangle, Check, Download } from "lucide-react";
+import { AlertTriangle, Check, Copy, Download } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { formatBytes } from "@/components/tools/stitch/stitch-tool";
 import { Button } from "@/components/ui/button";
@@ -39,6 +39,7 @@ function BeautifyWorkspace() {
   const files = useWorkspace((s) => s.files);
   const [completedId, setCompletedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [copyStatus, setCopyStatus] = useState<string | null>(null);
 
   if (!selectedId || !file) return null;
   const canvas = beautifySize(settings, { width: file.width, height: file.height });
@@ -56,6 +57,21 @@ function BeautifyWorkspace() {
       downloadAsset(runtime, exported.id);
     } catch (e) {
       setError((e as { code?: string }).code ?? "BEAUTIFY_TOO_LARGE");
+    }
+  }
+
+  async function copyResultPng(id: string) {
+    const blob = runtime.registry.blob(id);
+    if (!blob || blob.type !== "image/png") return;
+    if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
+      setCopyStatus("Copy PNG is not supported in this browser. Download remains available.");
+      return;
+    }
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      setCopyStatus("PNG copied to the clipboard.");
+    } catch {
+      setCopyStatus("The browser blocked clipboard image access. Download the PNG instead.");
     }
   }
 
@@ -112,15 +128,17 @@ function BeautifyWorkspace() {
               icon={<Check />}
               title="Image ready"
               actions={
-                <Button variant="secondary" onClick={() => downloadAsset(runtime, result.id)}>
-                  <Download /> Download again
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  {result.type === "image/png" && <Button variant="secondary" onClick={() => void copyResultPng(result.id)} data-testid="beautify-copy-png"><Copy /> Copy PNG</Button>}
+                  <Button variant="secondary" onClick={() => downloadAsset(runtime, result.id)}><Download /> Download again</Button>
+                </div>
               }
             >
               <span className="t-mono text-[12px]">
                 {result.name} · {result.width} × {result.height} px · {formatBytes(result.bytes)}
               </span>
               <span className="block">Saved to your downloads and added to this workspace as a new file. The original screenshot is unchanged.</span>
+              {copyStatus && <span className="mt-1 block" role="status" data-testid="beautify-copy-status">{copyStatus}</span>}
             </Notice>
             <ContinueWith tools={continuationsFor("beautify")} fileId={result.id} />
           </div>

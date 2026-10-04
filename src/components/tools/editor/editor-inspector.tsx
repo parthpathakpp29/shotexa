@@ -2,12 +2,15 @@
 
 import { FlipHorizontal2, FlipVertical2, Link2, Link2Off, RotateCcw, RotateCcwSquare, RotateCwSquare } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Disclosure, SegmentedControl, Slider } from "@/components/ui/controls";
 import { NumberField } from "@/components/ui/number-field";
 import { FieldLabel, InspectorSection, Mono } from "@/components/ui/primitives";
-import { useWorkspace } from "@/components/workspace/workspace-provider";
+import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
 import { TOOLS } from "@/config/tools";
+import { FILTER_PRESETS, type FilterPreset } from "@/core/image-transform/adjustments";
+import { alphaBounds } from "@/core/image-transform/trim";
 import {
   describeOrientation,
   EDITOR_LIMITS,
@@ -23,30 +26,41 @@ import {
   visibleCrop,
   visibleSize,
   withCropAspect,
+  withAdjustments,
   withCropField,
   withLockAspect,
   withOutputHeight,
   withOutputWidth,
+  withStraighten,
 } from "@/core/image-transform/transform";
 import type { AspectPreset, ImageTransform, Rect, Size } from "@/core/image-transform/types";
 import { cn } from "@/lib/cn";
+import type { EditorGuide } from "./editor-canvas";
 
 const PRESETS: { value: AspectPreset; label: string }[] = [
   { value: "free", label: "Free" },
   { value: "original", label: "Original" },
   { value: "1:1", label: "1:1" },
+  { value: "4:5", label: "4:5" },
   { value: "4:3", label: "4:3" },
+  { value: "9:16", label: "9:16" },
   { value: "16:9", label: "16:9" },
+  { value: "3:2", label: "3:2" },
+  { value: "2:1", label: "2:1" },
+  { value: "1.91:1", label: "1.91:1" },
 ];
 
 
-export function EditorInspector({ assetId, source }: { assetId: string; source: Size }) {
+export function EditorInspector({ assetId, source, guide, onGuideChange }: { assetId: string; source: Size; guide: EditorGuide; onGuideChange: (guide: EditorGuide) => void }) {
+  const { runtime } = useWorkspaceContext();
   const t = useWorkspace((s) => s.editor.byAsset[assetId] ?? IDENTITY_TRANSFORM);
   const setTransform = useWorkspace((s) => s.setEditTransform);
   const reset = useWorkspace((s) => s.resetEditTransform);
   const exportSettings = useWorkspace((s) => s.exportSettings);
   const setExportSettings = useWorkspace((s) => s.setExportSettings);
   const annotations = useWorkspace((s) => s.annotation.byAsset[assetId]?.length ?? 0);
+  const previewVersion = useWorkspace((s) => s.files[assetId]?.previewVersion ?? 0);
+  const [trimStatus, setTrimStatus] = useState<string | null>(null);
   const apply = (next: ImageTransform, coalesce = false) => setTransform(assetId, next, { coalesce });
 
   const visible = visibleSize(t, source);
@@ -60,6 +74,41 @@ export function EditorInspector({ assetId, source }: { assetId: string; source: 
   const percent = Math.round((out.width / natural.width) * 100);
 
   const setCropField = (field: keyof Rect, value: number) => apply(withCropField(t, source, field, value));
+  const activeFilter = FILTER_PRESETS.find((preset) => JSON.stringify(preset.adjustments) === JSON.stringify(t.adjustments))?.value ?? "custom";
+
+  function trimTransparentEdges() {
+    const bitmap = runtime.registry.preview(assetId);
+    if (!bitmap) {
+      setTrimStatus("The preview is still loading. Try again in a moment.");
+      return;
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    try {
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) return;
+      context.drawImage(bitmap, 0, 0);
+      const bounds = alphaBounds(context.getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height, 0);
+      if (!bounds) {
+        setTrimStatus("No visible pixels were found; the crop was not changed.");
+        return;
+      }
+      const scaleX = source.width / bitmap.width;
+      const scaleY = source.height / bitmap.height;
+      const x = Math.max(0, Math.floor(bounds.x * scaleX) - 1);
+      const y = Math.max(0, Math.floor(bounds.y * scaleY) - 1);
+      const right = Math.min(source.width, Math.ceil((bounds.x + bounds.width) * scaleX) + 1);
+      const bottom = Math.min(source.height, Math.ceil((bounds.y + bounds.height) * scaleY) + 1);
+      const crop = { x, y, width: right - x, height: bottom - y };
+      const whole = crop.x === 0 && crop.y === 0 && crop.width === source.width && crop.height === source.height;
+      apply({ ...t, crop: whole ? null : crop, cropAspect: "free" });
+      setTrimStatus(whole ? "No transparent edge was detected." : `Transparent edges trimmed to ${crop.width} × ${crop.height} px.`);
+    } finally {
+      canvas.width = 0;
+      canvas.height = 0;
+    }
+  }
 
   return (
     <div data-testid="editor-inspector">
@@ -78,7 +127,7 @@ export function EditorInspector({ assetId, source }: { assetId: string; source: 
           value={t.cropAspect}
           onChange={(preset) => apply(withCropAspect(t, source, preset))}
           options={PRESETS}
-          // Five options never fit the inspector on one line: wrap rather than truncate "Original".
+          // The options intentionally wrap on small inspectors rather than truncating a ratio.
           className="grid-flow-row grid-cols-3"
         />
         <div className="mt-4 grid grid-cols-2 gap-2.5" data-testid="crop-fields">
@@ -86,6 +135,25 @@ export function EditorInspector({ assetId, source }: { assetId: string; source: 
           <NumberField label="Y" testId="crop-y" value={crop.y} min={0} max={visible.height - 1} onCommit={(v) => setCropField("y", v)} />
           <NumberField label="Width" testId="crop-width" value={crop.width} min={1} max={visible.width} onCommit={(v) => setCropField("width", v)} />
           <NumberField label="Height" testId="crop-height" value={crop.height} min={1} max={visible.height} onCommit={(v) => setCropField("height", v)} />
+        </div>
+        <Button variant="secondary" size="sm" className="mt-4 w-full max-md:h-11" data-testid="editor-auto-trim" disabled={previewVersion === 0 || !runtime.registry.preview(assetId)} onClick={trimTransparentEdges}>
+          Trim transparent edges
+        </Button>
+        {trimStatus && <p className="t-body-sm mt-2 text-ink-3" role="status">{trimStatus}</p>}
+        <div className="mt-4">
+          <FieldLabel>Preview guides</FieldLabel>
+          <SegmentedControl<EditorGuide>
+            label="Preview guides"
+            size="sm"
+            value={guide}
+            onChange={onGuideChange}
+            options={[
+              { value: "none", label: "None" },
+              { value: "thirds", label: "Thirds" },
+              { value: "center", label: "Centre" },
+            ]}
+          />
+          <p className="t-body-sm mt-2 text-ink-3">Guides help framing and are never exported.</p>
         </div>
       </InspectorSection>
 
@@ -107,6 +175,53 @@ export function EditorInspector({ assetId, source }: { assetId: string; source: 
         <p className="t-mono mt-3 text-[12px] text-ink-2" data-testid="orientation-status">
           {orientation.length ? orientation.join(" · ") : "Original orientation"}
         </p>
+        <div className="mt-4 rounded-md border border-line bg-surface-3 p-3">
+          <div className="flex items-center justify-between gap-2">
+            <FieldLabel value={`${t.straighten > 0 ? "+" : ""}${t.straighten}°`}>Straighten</FieldLabel>
+            <button type="button" onClick={() => apply(withStraighten(t, 0))} disabled={t.straighten === 0} className="t-micro min-h-8 rounded-sm px-2 text-ink-2 hover:text-ink disabled:opacity-40 max-md:min-h-11">Reset</button>
+          </div>
+          <Slider label="Straighten angle" value={t.straighten} min={-15} max={15} step={0.1} onChange={(straighten) => apply(withStraighten(t, straighten), true)} valueText={`${t.straighten} degrees`} />
+          <div className="mt-2">
+            <NumberField label="Angle (degrees)" testId="straighten-angle" value={t.straighten} min={-15} max={15} onCommit={(value) => apply(withStraighten(t, value))} />
+          </div>
+        </div>
+      </InspectorSection>
+
+      <InspectorSection title="Adjustments">
+        <FieldLabel>Filter preset</FieldLabel>
+        <SegmentedControl<FilterPreset | "custom">
+          label="Filter preset"
+          size="sm"
+          value={activeFilter}
+          onChange={(value) => {
+            const preset = FILTER_PRESETS.find((item) => item.value === value);
+            if (preset) apply({ ...t, adjustments: { ...preset.adjustments } });
+          }}
+          options={[...FILTER_PRESETS.map((preset) => ({ value: preset.value, label: preset.label })), ...(activeFilter === "custom" ? [{ value: "custom" as const, label: "Custom" }] : [])]}
+          className="grid-flow-row grid-cols-2"
+        />
+        <Disclosure title="Fine adjustments" className="mt-4" defaultOpen>
+          <div className="space-y-3">
+            {([
+              ["brightness", "Brightness", -100, 100, 1],
+              ["contrast", "Contrast", -100, 100, 1],
+              ["saturation", "Saturation", -100, 100, 1],
+              ["warmth", "Warmth", -100, 100, 1],
+              ["grayscale", "Grayscale", 0, 100, 1],
+              ["exposure", "Exposure", -2, 2, 0.1],
+            ] as const).map(([key, label, min, max, step]) => (
+              <div key={key}>
+                <FieldLabel value={key === "exposure" ? `${t.adjustments[key] > 0 ? "+" : ""}${t.adjustments[key]} EV` : `${t.adjustments[key] > 0 ? "+" : ""}${t.adjustments[key]}`}>
+                  {label}
+                </FieldLabel>
+                <Slider label={label} value={t.adjustments[key]} min={min} max={max} step={step} onChange={(value) => apply(withAdjustments(t, { [key]: value }), true)} />
+              </div>
+            ))}
+          </div>
+          <Button variant="ghost" size="sm" className="mt-3 w-full max-md:h-11" onClick={() => apply({ ...t, adjustments: { ...IDENTITY_TRANSFORM.adjustments } })} disabled={Object.values(t.adjustments).every((value) => value === 0)}>
+            <RotateCcw /> Reset adjustments
+          </Button>
+        </Disclosure>
       </InspectorSection>
 
       <InspectorSection

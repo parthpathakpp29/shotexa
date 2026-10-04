@@ -6,7 +6,7 @@ import { Disclosure, SegmentedControl, Slider } from "@/components/ui/controls";
 import { NumberField } from "@/components/ui/number-field";
 import { FieldLabel, InspectorSection, Mono } from "@/components/ui/primitives";
 import { useWorkspace } from "@/components/workspace/workspace-provider";
-import { canSplit, clampCount, clampHeight, cutsFor, defaultSplit, heightBounds, maxPieces, MIN_SLICE_PX, piecesFor, withMode } from "@/core/split/plan";
+import { canSplit, clampCount, clampHeight, defaultSplit, heightBounds, maxPieces, MIN_SLICE_PX, planSplit, withMode } from "@/core/split/plan";
 import type { EqualBy, SplitMode, SplitSettings } from "@/core/split/types";
 import { newLineId } from "./split-stage";
 
@@ -23,7 +23,7 @@ export function SplitInspector({ assetId }: { assetId: string }) {
   const H = file.height;
   const source = { width: file.width, height: H };
   const settings = stored ?? defaultSplit(source);
-  const pieces = piecesFor(cutsFor(settings, H), H);
+  const pieces = planSplit(settings, source);
   const splittable = canSplit(H);
   const bounds = heightBounds(H);
   const apply = (next: SplitSettings, coalesce?: string) => setSplit(assetId, next, { coalesce });
@@ -104,7 +104,23 @@ export function SplitInspector({ assetId }: { assetId: string }) {
           ))}
           {pieces.length > SHOWN_PIECES && <li className="text-xs text-ink-3">…and {pieces.length - SHOWN_PIECES} more</li>}
         </ol>
-        <p className="t-body-sm mt-3 text-ink-3">Every row of the original is in exactly one piece, at full resolution.</p>
+        <p className="t-body-sm mt-3 text-ink-3">{(settings.overlap ?? 0) > 0 ? `${settings.overlap} px is intentionally repeated between neighbouring pieces.` : "Every row of the original is in exactly one piece, at full resolution."}</p>
+        <div className="mt-4">
+          <FieldLabel>Overlap</FieldLabel>
+          <SegmentedControl<"0" | "20" | "50" | "custom">
+            label="Piece overlap"
+            size="sm"
+            value={[0, 20, 50].includes(settings.overlap ?? 0) ? String(settings.overlap ?? 0) as "0" | "20" | "50" : "custom"}
+            onChange={(value) => apply({ ...settings, overlap: value === "custom" ? Math.max(1, settings.overlap ?? 100) : Number(value) })}
+            options={[{ value: "0", label: "0" }, { value: "20", label: "20 px" }, { value: "50", label: "50 px" }, { value: "custom", label: "Custom" }]}
+          />
+          {![0, 20, 50].includes(settings.overlap ?? 0) && <div className="mt-3"><NumberField label="Custom overlap" testId="split-overlap" value={settings.overlap ?? 100} min={1} max={1000} onCommit={(overlap) => apply({ ...settings, overlap: Math.max(1, Math.min(1000, Math.round(overlap))) }, "overlap")} /></div>}
+        </div>
+        <div className="mt-4">
+          <label htmlFor="split-name-template" className="block text-sm font-medium text-ink">Naming template</label>
+          <input id="split-name-template" data-testid="split-name-template" value={settings.namingTemplate ?? "shotexa-split-{n}"} onChange={(event) => apply({ ...settings, namingTemplate: event.target.value }, "naming")} className="mt-2 h-10 w-full rounded-sm border border-line-strong bg-surface px-3 font-mono text-sm text-ink outline-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/30 max-md:h-11" />
+          <p className="t-body-sm mt-2 text-ink-3">Use {"{n}"} for the zero-padded piece number. The export format adds the extension.</p>
+        </div>
         <Button variant="ghost" size="sm" className="mt-3 w-full max-md:h-11" data-testid="split-reset" disabled={!stored} onClick={() => setSplit(assetId, null)}>
           <RotateCcw /> Reset split
         </Button>

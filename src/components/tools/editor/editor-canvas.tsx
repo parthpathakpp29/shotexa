@@ -18,7 +18,7 @@ import { useWorkspace, useWorkspaceContext } from "@/components/workspace/worksp
 import { aspectRatio, moveCrop, resizeCrop } from "@/core/image-transform/crop";
 import { drawTransformed } from "@/core/image-transform/matrix";
 import { orientedSize } from "@/core/image-transform/orientation";
-import { IDENTITY_TRANSFORM, outputSize, visibleCrop, visibleSize, withVisibleCrop } from "@/core/image-transform/transform";
+import { IDENTITY_TRANSFORM, isIdentity, outputSize, visibleCrop, visibleSize, withVisibleCrop } from "@/core/image-transform/transform";
 import type { CropHandle, Point, Rect, Size } from "@/core/image-transform/types";
 import { cn } from "@/lib/cn";
 import { useReleasingCanvas } from "@/lib/use-canvas-ref";
@@ -26,6 +26,7 @@ import { useElementWidth } from "@/lib/use-element-width";
 import { backingSize, displayWidth, zoomIn as nextZoomIn, zoomOut as nextZoomOut, type Zoom } from "@/lib/stage-size";
 
 export type EditorView = "crop" | "result";
+export type EditorGuide = "none" | "thirds" | "center";
 
 /** Pointer travel (CSS px) before a press on the image starts a new crop. */
 const DRAG_THRESHOLD = 4;
@@ -47,7 +48,7 @@ type Interaction =
   | { kind: "move"; pointer: number; start: Point; rect: Rect }
   | { kind: "resize"; pointer: number; handle: CropHandle; rect: Rect };
 
-export function EditorCanvas({ assetId, view, onViewChange }: { assetId: string; view: EditorView; onViewChange: (view: EditorView) => void }) {
+export function EditorCanvas({ assetId, view, onViewChange, guide }: { assetId: string; view: EditorView; onViewChange: (view: EditorView) => void; guide: EditorGuide }) {
   const { runtime } = useWorkspaceContext();
   const file = useWorkspace((s) => s.files[assetId]);
   const version = useWorkspace((s) => s.files[assetId]?.previewVersion ?? 0);
@@ -58,6 +59,7 @@ export function EditorCanvas({ assetId, view, onViewChange }: { assetId: string;
   const canUndo = useWorkspace((s) => s.history.past.length > 0);
   const canRedo = useWorkspace((s) => s.history.future.length > 0);
   const [zoom, setZoom] = useState<Zoom>("fit");
+  const [showOriginal, setShowOriginal] = useState(false);
   const [frameRef, frameWidth] = useElementWidth<HTMLDivElement>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const attachCanvas = useReleasingCanvas(canvasRef);
@@ -75,7 +77,8 @@ export function EditorCanvas({ assetId, view, onViewChange }: { assetId: string;
 
   const source = useMemo<Size | null>(() => (file ? { width: file.width, height: file.height } : null), [file]);
   const visible = source ? visibleSize(t, source) : null;
-  const output = source ? outputSize(t, source) : null;
+  const resultTransform = showOriginal ? IDENTITY_TRANSFORM : t;
+  const output = source ? outputSize(resultTransform, source) : null;
   // What the stage shows: the whole oriented image (crop view) or the final result.
   const shown = view === "crop" ? visible : output;
   const inner = Math.max(1, frameWidth - 32);
@@ -102,23 +105,23 @@ export function EditorCanvas({ assetId, view, onViewChange }: { assetId: string;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
       ctx.clearRect(0, 0, size.width, size.height);
-      drawTransformed(ctx, bitmap, imageScale, { ...t, crop: null, resize: null }, source, size);
+      drawTransformed(ctx, bitmap, imageScale, { ...t, crop: null, resize: null, straighten: 0 }, source, size);
     } else {
       // The result, drawn through the export's own matrix.
-      const cropWidth = t.crop ? t.crop.width : source.width;
-      const cropHeight = t.crop ? t.crop.height : source.height;
-      const detail = orientedSize({ width: cropWidth * imageScale, height: cropHeight * imageScale }, t.rotation).width;
+      const cropWidth = resultTransform.crop ? resultTransform.crop.width : source.width;
+      const cropHeight = resultTransform.crop ? resultTransform.crop.height : source.height;
+      const detail = orientedSize({ width: cropWidth * imageScale, height: cropHeight * imageScale }, resultTransform.rotation).width;
       const size = backingSize({ width: cssWidth, height: cssHeight }, Math.max(detail, 1));
       canvas.width = size.width;
       canvas.height = size.height;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
       ctx.clearRect(0, 0, size.width, size.height);
-      drawTransformed(ctx, bitmap, imageScale, t, source, size);
+      drawTransformed(ctx, bitmap, imageScale, resultTransform, source, size);
     }
     // `t` only changes when an edit is committed — a crop drag lives in local `draft` state —
     // so dragging never triggers this redraw; each finished gesture costs one.
-  }, [runtime, assetId, version, source, view, cssWidth, cssHeight, t]);
+  }, [runtime, assetId, version, source, view, cssWidth, cssHeight, t, resultTransform]);
 
   function toImage(e: { clientX: number; clientY: number }): Point {
     const box = stageRef.current!.getBoundingClientRect();
@@ -219,17 +222,33 @@ export function EditorCanvas({ assetId, view, onViewChange }: { assetId: string;
             <Maximize2 />
           </IconButton>
         </Toolbar>
-        <SegmentedControl<EditorView>
-          label="Editor view"
-          size="sm"
-          value={view}
-          onChange={onViewChange}
-          className="w-48"
-          options={[
-            { value: "crop", label: "Crop" },
-            { value: "result", label: "Result" },
-          ]}
-        />
+        <div className="flex flex-wrap items-center gap-2">
+          {view === "result" && !isIdentity(t) && (
+            <button
+              type="button"
+              aria-pressed={showOriginal}
+              data-testid="editor-before-after"
+              onClick={() => setShowOriginal((value) => !value)}
+              className={cn("h-9 rounded-sm border px-3 text-xs font-medium max-md:h-11", showOriginal ? "border-accent bg-accent-soft text-accent-ink" : "border-line bg-surface text-ink-2")}
+            >
+              {showOriginal ? "Original" : "Edited"}
+            </button>
+          )}
+          <SegmentedControl<EditorView>
+            label="Editor view"
+            size="sm"
+            value={view}
+            onChange={(next) => {
+              if (next === "crop") setShowOriginal(false);
+              onViewChange(next);
+            }}
+            className="w-48"
+            options={[
+              { value: "crop", label: "Crop" },
+              { value: "result", label: "Result" },
+            ]}
+          />
+        </div>
       </div>
 
       <div ref={frameRef} className="max-h-[calc(100dvh-12rem)] min-h-[420px] overflow-auto rounded-lg border border-line bg-surface-2 p-4 max-md:min-h-[55dvh] max-md:p-2">
@@ -254,6 +273,20 @@ export function EditorCanvas({ assetId, view, onViewChange }: { assetId: string;
             onKeyDown={onKeyDown}
           >
             <canvas ref={attachCanvas} aria-hidden data-testid="editor-canvas" className="pointer-events-none block h-full w-full" />
+            {guide === "thirds" && (
+              <span aria-hidden data-testid="editor-guides-thirds" className="pointer-events-none absolute inset-0">
+                <span className="absolute inset-y-0 left-1/3 w-px bg-white/70 shadow-sm" />
+                <span className="absolute inset-y-0 left-2/3 w-px bg-white/70 shadow-sm" />
+                <span className="absolute inset-x-0 top-1/3 h-px bg-white/70 shadow-sm" />
+                <span className="absolute inset-x-0 top-2/3 h-px bg-white/70 shadow-sm" />
+              </span>
+            )}
+            {guide === "center" && (
+              <span aria-hidden data-testid="editor-guides-center" className="pointer-events-none absolute inset-0">
+                <span className="absolute inset-y-0 left-1/2 w-px bg-white/70 shadow-sm" />
+                <span className="absolute inset-x-0 top-1/2 h-px bg-white/70 shadow-sm" />
+              </span>
+            )}
             {view === "crop" && box && (
               // Dimming lives in its own clipped layer so it never spills past the image,
               // while the handles below may overhang the image edge to stay grabbable.
@@ -305,7 +338,9 @@ export function EditorCanvas({ assetId, view, onViewChange }: { assetId: string;
       <p className="t-body-sm mt-3 text-ink-2">
         {view === "crop"
           ? "Drag the box or its handles to crop, or drag on the image to draw a new box. Arrow keys move the box (Shift moves 10 px)."
-          : `This is the exported result: ${output?.width} × ${output?.height} px. Switch to Crop to adjust the framing.`}
+          : showOriginal
+            ? `Showing the untouched original: ${source?.width} × ${source?.height} px. Guides are preview-only.`
+            : `This is the exported result: ${output?.width} × ${output?.height} px. Guides are preview-only.`}
       </p>
     </section>
   );

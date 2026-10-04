@@ -38,6 +38,8 @@ export interface BatchSession {
   currentIndex: number | null;
   items: Record<string, BatchItemState>;
   addedToWorkspace: boolean;
+  filenamePrefix: string;
+  filenameSuffix: string;
 }
 
 export interface BatchSource {

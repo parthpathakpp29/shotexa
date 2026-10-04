@@ -3,7 +3,7 @@
  * the original image is never modified, and no pixels live in the workspace store.
  *
  * Deterministic order, applied at preview and at export alike:
- *   crop (source pixels) → rotate (clockwise quarter turns) → flip (visible frame) → resize
+ *   crop (source pixels) → rotate (clockwise quarter turns) → flip → straighten → resize → adjustments
  */
 import type { OutputFormat } from "@/core/image/output-strategy";
 
@@ -25,7 +25,7 @@ export interface Rect {
 }
 
 export type Rotation = 0 | 90 | 180 | 270;
-export type AspectPreset = "free" | "original" | "1:1" | "4:3" | "16:9";
+export type AspectPreset = "free" | "original" | "1:1" | "4:5" | "4:3" | "9:16" | "16:9" | "3:2" | "2:1" | "1.91:1";
 export type CropHandle = "n" | "s" | "e" | "w" | "ne" | "nw" | "se" | "sw";
 
 /** The orientation part of a transform: a rotation followed by flips in the rotated frame. */
@@ -50,6 +50,17 @@ export interface ImageTransform extends Orientation {
   lockAspect: boolean;
   /** Ratio the crop box keeps while it is dragged, in the visible (oriented) frame. */
   cropAspect: AspectPreset;
+  /** Conservative free rotation, applied after quarter-turn orientation. */
+  straighten: number;
+  /** Non-destructive colour settings. Neutral values are all zero. */
+  adjustments: {
+    brightness: number;
+    contrast: number;
+    saturation: number;
+    warmth: number;
+    grayscale: number;
+    exposure: number;
+  };
 }
 
 export interface TransformExportOptions {

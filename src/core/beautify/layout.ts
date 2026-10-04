@@ -21,10 +21,7 @@ import {
   PHONE_BEZEL_MIN,
   PHONE_BEZEL_RATIO,
   PHONE_SCREEN_RATIO,
-  SHADOW_BLUR,
-  SHADOW_COLOR,
-  SHADOW_COLOR_STRONG,
-  SHADOW_OFFSET_RATIO,
+  SHADOW_PRESETS,
 } from "./presets";
 import type { BeautifyLayout, BeautifyMode, BeautifySettings, FrameLayout, ScreenFit } from "./types";
 
@@ -38,6 +35,8 @@ const PHONE_NOTCH_HEIGHT_RATIO = 0.028;
 
 export function clampSettings(s: BeautifySettings): BeautifySettings {
   const colour = (c: string, fallback: string) => (/^#[0-9a-f]{6}$/i.test(c) ? c.toLowerCase() : fallback);
+  const width = clamp(Math.round(s.customCanvas.width), 64, 16_384);
+  const height = clamp(Math.round(s.customCanvas.height), 64, 16_384);
   return {
     ...s,
     padding: clamp(Math.round(s.padding), 0, MAX_PADDING),
@@ -45,7 +44,38 @@ export function clampSettings(s: BeautifySettings): BeautifySettings {
     scale: clamp(Math.round(s.scale * 100) / 100, 0.4, 1),
     offsetX: clamp(Math.round(s.offsetX * 100) / 100, -1, 1),
     offsetY: clamp(Math.round(s.offsetY * 100) / 100, -1, 1),
-    background: { ...s.background, color: colour(s.background.color, "#f7f1e3"), color2: colour(s.background.color2, "#e8dcc4") },
+    background: {
+      ...s.background,
+      color: colour(s.background.color, "#f7f1e3"),
+      color2: colour(s.background.color2, "#e8dcc4"),
+      blur: clamp(Math.round(s.background.blur), 0, 48),
+      brightness: clamp(Math.round(s.background.brightness), 35, 120),
+      saturation: clamp(Math.round(s.background.saturation), 70, 140),
+    },
+    border: {
+      ...s.border,
+      width: clamp(Math.round(s.border.width * 10) / 10, 1, 24),
+      opacity: clamp(Math.round(s.border.opacity), 5, 100),
+      color: colour(s.border.color, "#ffffff"),
+    },
+    shadowAdvanced: {
+      x: clamp(s.shadowAdvanced.x, -12, 12),
+      y: clamp(s.shadowAdvanced.y, -12, 12),
+      blur: clamp(s.shadowAdvanced.blur, 0, 20),
+      spread: clamp(s.shadowAdvanced.spread, 0, 8),
+      opacity: clamp(s.shadowAdvanced.opacity, 0, 80),
+    },
+    customCanvas: { ...s.customCanvas, width, height, aspectRatio: clamp(s.customCanvas.aspectRatio || width / height, 0.05, 20) },
+    exportScale: s.exportScale === 2 || s.exportScale === 4 ? s.exportScale : 1,
+    text: {
+      ...s.text,
+      title: s.text.title.slice(0, 120),
+      subtitle: s.text.subtitle.slice(0, 200),
+      fontSize: clamp(Math.round(s.text.fontSize), 18, 120),
+      spacing: clamp(Math.round(s.text.spacing), 0, 48),
+      maxWidth: clamp(Math.round(s.text.maxWidth), 30, 100),
+      color: colour(s.text.color, "#1c1714"),
+    },
     browser: { ...s.browser, address: s.browser.address.slice(0, 80) },
   };
 }
@@ -120,20 +150,43 @@ export function naturalComposition(s: BeautifySettings, source: Size): Natural {
   return { size: { width: source.width, height: source.height }, screen: whole, image: whole, sourceRect: whole };
 }
 
+function captionHeight(s: BeautifySettings): number {
+  const title = s.text.title.trim();
+  const subtitle = s.text.subtitle.trim();
+  if (!title && !subtitle) return 0;
+  const titleHeight = title ? s.text.fontSize * 1.2 : 0;
+  const subtitleHeight = subtitle ? Math.max(14, Math.round(s.text.fontSize * 0.56)) * 1.3 : 0;
+  return Math.ceil(titleHeight + subtitleHeight + (title && subtitle ? s.text.spacing : 0) + s.text.fontSize * 0.8);
+}
+
 /** The canvas the current preset asks for, and the padding kept clear around the composition. */
-export function canvasFor(s: BeautifySettings, base: Size): { canvas: Size; pad: number } {
+export function canvasFor(s: BeautifySettings, base: Size): { canvas: Size; pad: number; captionSpace: number } {
   const fraction = clamp(s.padding, 0, MAX_PADDING) / 100;
   const preset = outputPreset(s.preset);
-  if (preset.fixed) {
-    const canvas = { ...preset.fixed };
-    return { canvas, pad: Math.round(fraction * Math.min(canvas.width, canvas.height)) };
+  const scale = s.exportScale;
+  const custom = s.preset === "custom" ? { width: s.customCanvas.width, height: s.customCanvas.height } : null;
+  const fixed = custom ?? preset.fixed;
+  if (fixed) {
+    const basePad = Math.round(fraction * Math.min(fixed.width, fixed.height));
+    return {
+      canvas: { width: Math.round(fixed.width * scale), height: Math.round(fixed.height * scale) },
+      pad: Math.round(basePad * scale),
+      captionSpace: Math.round(captionHeight(s) * scale),
+    };
   }
-  const pad = Math.round(fraction * Math.min(base.width, base.height));
-  const auto = { width: base.width + pad * 2, height: base.height + pad * 2 };
-  if (preset.ratio === null) return { canvas: auto, pad };
+  const basePad = Math.round(fraction * Math.min(base.width, base.height));
+  const baseCaption = captionHeight(s);
+  const auto = { width: base.width + basePad * 2, height: base.height + basePad * 2 + baseCaption };
+  let baseCanvas = auto;
+  if (preset.ratio !== null) {
   // A ratio preset only ever grows the canvas, so the composition is never cropped.
-  const canvas = auto.width / auto.height < preset.ratio ? { width: round(auto.height * preset.ratio), height: auto.height } : { width: auto.width, height: round(auto.width / preset.ratio) };
-  return { canvas, pad };
+    baseCanvas = auto.width / auto.height < preset.ratio ? { width: round(auto.height * preset.ratio), height: auto.height } : { width: auto.width, height: round(auto.width / preset.ratio) };
+  }
+  return {
+    canvas: { width: Math.round(baseCanvas.width * scale), height: Math.round(baseCanvas.height * scale) },
+    pad: Math.round(basePad * scale),
+    captionSpace: Math.round(baseCaption * scale),
+  };
 }
 
 function frameLayout(s: BeautifySettings, content: Rect, screen: Rect, k: number): FrameLayout | null {
@@ -173,21 +226,23 @@ export function beautifyLayout(settings: BeautifySettings, source: Size): Beauti
   const s = clampSettings(settings);
   const natural = naturalComposition(s, source);
   const base = natural.size;
-  const { canvas, pad } = canvasFor(s, base);
+  const { canvas, pad, captionSpace } = canvasFor(s, base);
+  const captionTop = captionSpace > 0 && s.text.placement === "top" ? captionSpace : 0;
+  const availableHeight = Math.max(1, canvas.height - captionSpace);
   // Fit the composition inside the padded canvas, then apply the user's scale.
-  const fit = Math.min((canvas.width - pad * 2) / base.width, (canvas.height - pad * 2) / base.height);
+  const fit = Math.min((canvas.width - pad * 2) / base.width, (availableHeight - pad * 2) / base.height);
   const k = Math.max(0.01, fit) * s.scale;
   const content = {
     x: 0,
     y: 0,
     width: Math.min(canvas.width, round(base.width * k)),
-    height: Math.min(canvas.height, round(base.height * k)),
+    height: Math.min(availableHeight, round(base.height * k)),
   };
   // Position inside the free space: offset 0 centres, ±1 reaches an edge, never past it.
   const freeX = Math.max(0, canvas.width - content.width);
-  const freeY = Math.max(0, canvas.height - content.height);
+  const freeY = Math.max(0, availableHeight - content.height);
   content.x = clamp(Math.round((freeX / 2) * (1 + s.offsetX)), 0, freeX);
-  content.y = clamp(Math.round((freeY / 2) * (1 + s.offsetY)), 0, freeY);
+  content.y = captionTop + clamp(Math.round((freeY / 2) * (1 + s.offsetY)), 0, freeY);
 
   const place = (r: typeof natural.screen) => ({
     x: content.x + Math.round(r.x * k),
@@ -214,11 +269,35 @@ export function beautifyLayout(settings: BeautifySettings, source: Size): Beauti
     screenRadii = [screenRadius, screenRadius, screenRadius, screenRadius];
   }
 
-  const blur = Math.round(SHADOW_BLUR[s.shadow] * shortContent);
-  const shadow = s.shadow === "none" || blur <= 0 ? null : { blur, offsetY: Math.round(blur * SHADOW_OFFSET_RATIO), color: s.shadow === "strong" ? SHADOW_COLOR_STRONG : SHADOW_COLOR };
+  const shadowSettings = s.shadow === "custom" ? s.shadowAdvanced : SHADOW_PRESETS[s.shadow];
+  const shadow = s.shadow === "none" || shadowSettings.opacity <= 0
+    ? null
+    : {
+        blur: Math.round((shadowSettings.blur / 100) * shortContent),
+        offsetX: Math.round((shadowSettings.x / 100) * shortContent),
+        offsetY: Math.round((shadowSettings.y / 100) * shortContent),
+        spread: Math.round((shadowSettings.spread / 100) * shortContent),
+        color: hexAlpha(s.shadow === "glow" ? s.background.color : "#14100c", shadowSettings.opacity),
+      };
+  const border = s.border.kind === "none" ? null : { kind: s.border.kind, width: s.border.width * s.exportScale, color: hexAlpha(s.border.color, s.border.opacity) };
+  const caption = captionSpace <= 0
+    ? null
+    : {
+        ...s.text,
+        fontSize: s.text.fontSize * s.exportScale,
+        spacing: s.text.spacing * s.exportScale,
+        subtitleSize: Math.max(14, Math.round(s.text.fontSize * 0.56)) * s.exportScale,
+        rect: {
+          x: Math.round((canvas.width * (100 - s.text.maxWidth)) / 200),
+          y: s.text.placement === "top" ? 0 : canvas.height - captionSpace,
+          width: Math.round((canvas.width * s.text.maxWidth) / 100),
+          height: captionSpace,
+        },
+      };
 
   return {
     canvas,
+    source,
     background: { ...s.background },
     content,
     screen,
@@ -227,10 +306,20 @@ export function beautifyLayout(settings: BeautifySettings, source: Size): Beauti
     radius: Math.min(radius, Math.floor(shortContent / 2)),
     screenRadii: screenRadii.map((r) => Math.min(r, Math.floor(shortScreen / 2))) as unknown as readonly [number, number, number, number],
     shadow,
+    border,
+    caption,
     frame: frameLayout(s, content, screen, k),
     screenBackground: s.mode === "phone" ? FRAME_COLORS[s.phone.theme].screen : FRAME_COLORS.light.screen,
     zoom: image.width / natural.sourceRect.width,
   };
+}
+
+function hexAlpha(hex: string, opacity: number): string {
+  const value = Number.parseInt(hex.slice(1), 16);
+  const r = (value >> 16) & 255;
+  const g = (value >> 8) & 255;
+  const b = value & 255;
+  return `rgba(${r}, ${g}, ${b}, ${clamp(opacity, 0, 100) / 100})`;
 }
 
 /** The exported image's size, without building the rest of the layout. */

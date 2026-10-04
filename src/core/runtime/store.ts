@@ -144,6 +144,7 @@ export interface WorkspaceActions {
   toggleBatchSelection(id: FileId): void;
   setBatchOperation(operation: BatchOperation): void;
   setBatchSettings<K extends keyof BatchSettings>(kind: K, patch: Partial<BatchSettings[K]>): void;
+  setBatchNaming(prefix: string, suffix: string): void;
   setBatchRun(status: BatchSession["status"], currentIndex?: number | null): void;
   setBatchItem(id: FileId, item: Partial<BatchItemState>): void;
   resetBatchResults(): void;
@@ -185,7 +186,7 @@ const initial = (): WorkspaceState => ({
   encode: DEFAULT_ENCODE_SETTINGS,
   beautify: { byAsset: {} },
   compare: DEFAULT_COMPARE,
-  batch: { selectedIds: [], operation: "compress", settings: DEFAULT_BATCH_SETTINGS, status: "idle", currentIndex: null, items: {}, addedToWorkspace: false },
+  batch: { selectedIds: [], operation: "compress", settings: DEFAULT_BATCH_SETTINGS, status: "idle", currentIndex: null, items: {}, addedToWorkspace: false, filenamePrefix: "", filenameSuffix: "" },
   documents: {},
   documentOrder: [],
   lastArtifactId: null,
@@ -634,6 +635,10 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
       setBatchSettings(kind, patch) {
         if (get().batch.status === "running") return;
         set((s) => ({ batch: { ...s.batch, settings: { ...s.batch.settings, [kind]: { ...s.batch.settings[kind], ...patch } }, addedToWorkspace: false } }));
+      },
+      setBatchNaming(filenamePrefix, filenameSuffix) {
+        if (get().batch.status === "running") return;
+        set((s) => ({ batch: { ...s.batch, filenamePrefix, filenameSuffix, addedToWorkspace: false } }));
       },
       setBatchRun(status, currentIndex = null) {
         set((s) => ({ batch: { ...s.batch, status, currentIndex } }));

@@ -5,8 +5,9 @@
  */
 import { describe, expect, it } from "vitest";
 import { gradientLine, roundedRectPath } from "@/core/beautify/draw";
+import { backgroundFromPixels } from "@/core/beautify/auto-background";
 import { beautifyLayout, beautifySize, browserChrome, canvasFor, clampSettings, naturalComposition, phoneBezel, phoneOpening, withMode } from "@/core/beautify/layout";
-import { DEFAULT_BEAUTIFY, MAX_RADIUS_RATIO, PHONE_SCREEN_RATIO, SHADOW_BLUR } from "@/core/beautify/presets";
+import { autoLayout, DEFAULT_BEAUTIFY, MAX_RADIUS_RATIO, PHONE_SCREEN_RATIO, SHADOW_PRESETS } from "@/core/beautify/presets";
 import type { BeautifySettings } from "@/core/beautify/types";
 
 const PHONE = { width: 1170, height: 2532 };
@@ -76,7 +77,7 @@ describe("scale and position", () => {
   });
 
   it("clamps settings to their supported ranges", () => {
-    const c = clampSettings(s({ padding: 99, radius: -20, scale: 9, offsetX: -4, background: { kind: "solid", color: "red", color2: "#ABCDEF", angle: 45 } }));
+    const c = clampSettings(s({ padding: 99, radius: -20, scale: 9, offsetX: -4, background: { ...DEFAULT_BEAUTIFY.background, kind: "solid", color: "red", color2: "#ABCDEF", angle: 45 } }));
     expect(c).toMatchObject({ padding: 40, radius: 0, scale: 1, offsetX: -1 });
     expect(c.background).toMatchObject({ color: "#f7f1e3", color2: "#abcdef" });
     expect(clampSettings(s({ scale: 0.1 })).scale).toBe(0.4);
@@ -95,12 +96,18 @@ describe("corners and shadow", () => {
   });
 
   it("shadow scales with the composition and 'none' means none", () => {
-    const medium = beautifyLayout(s({ shadow: "medium", padding: 10 }), PHONE);
-    expect(medium.shadow).toEqual({ blur: Math.round(SHADOW_BLUR.medium * 1170), offsetY: Math.round(Math.round(SHADOW_BLUR.medium * 1170) * 0.35), color: expect.any(String) });
+    const floating = beautifyLayout(s({ shadow: "float", padding: 10 }), PHONE);
+    expect(floating.shadow).toEqual({
+      blur: Math.round((SHADOW_PRESETS.float.blur / 100) * 1170),
+      offsetX: 0,
+      offsetY: Math.round((SHADOW_PRESETS.float.y / 100) * 1170),
+      spread: Math.round((SHADOW_PRESETS.float.spread / 100) * 1170),
+      color: expect.any(String),
+    });
     expect(beautifyLayout(s({ shadow: "none" }), PHONE).shadow).toBeNull();
-    expect(beautifyLayout(s({ shadow: "strong" }), PHONE).shadow!.blur).toBeGreaterThan(medium.shadow!.blur);
+    expect(beautifyLayout(s({ shadow: "strong" }), PHONE).shadow!.blur).toBeGreaterThan(floating.shadow!.blur);
     // Shadow blur is proportional, so a half-size composition gets a half-size shadow.
-    expect(beautifyLayout(s({ shadow: "medium", padding: 10, scale: 0.5 }), PHONE).shadow!.blur).toBe(Math.round(SHADOW_BLUR.medium * 585));
+    expect(beautifyLayout(s({ shadow: "float", padding: 10, scale: 0.5 }), PHONE).shadow!.blur).toBe(Math.round((SHADOW_PRESETS.float.blur / 100) * 585));
   });
 
   it("radius can never exceed half the box", () => {
@@ -246,6 +253,16 @@ describe("output presets", () => {
     }
   });
 
+  it("adds the requested portrait, landscape and fixed output sizes without a second renderer", () => {
+    expect(aspect(beautifyLayout(s({ preset: "4:5" }), PHONE).canvas)).toBeCloseTo(4 / 5, 2);
+    expect(aspect(beautifyLayout(s({ preset: "9:16" }), DESKTOP).canvas)).toBeCloseTo(9 / 16, 2);
+    expect(aspect(beautifyLayout(s({ preset: "3:2" }), PHONE).canvas)).toBeCloseTo(3 / 2, 2);
+    expect(aspect(beautifyLayout(s({ preset: "1.91:1" }), PHONE).canvas)).toBeCloseTo(1.91, 2);
+    expect(beautifyLayout(s({ preset: "portrait-1080" }), DESKTOP).canvas).toEqual({ width: 1080, height: 1350 });
+    expect(beautifyLayout(s({ preset: "story-1080" }), DESKTOP).canvas).toEqual({ width: 1080, height: 1920 });
+    expect(beautifyLayout(s({ preset: "landscape-1600" }), PHONE).canvas).toEqual({ width: 1600, height: 900 });
+  });
+
   it("fixed presets produce exactly those dimensions, fitting the composition inside", () => {
     const square = beautifyLayout(s({ preset: "square-1080", padding: 10 }), PHONE);
     expect(square.canvas).toEqual({ width: 1080, height: 1080 });
@@ -262,9 +279,38 @@ describe("output presets", () => {
     const { pad } = canvasFor(s({ preset: "square-1080", padding: 10 }), { width: 4000, height: 3000 });
     expect(pad).toBe(108);
   });
+
+  it("supports a custom canvas and scales the final dimensions before allocation", () => {
+    const custom = s({ preset: "custom", customCanvas: { width: 1234, height: 777, lockAspect: true, aspectRatio: 1234 / 777 } });
+    expect(beautifySize(custom, PHONE)).toEqual({ width: 1234, height: 777 });
+    expect(beautifySize({ ...custom, exportScale: 4 }, PHONE)).toEqual({ width: 4936, height: 3108 });
+    const scaled = beautifyLayout({ ...custom, exportScale: 2 }, PHONE);
+    expect(scaled.canvas).toEqual({ width: 2468, height: 1554 });
+    expect(scaled.border).toBeNull();
+  });
+
+  it("reserves a deterministic caption band without overlapping the screenshot", () => {
+    const top = beautifyLayout(s({ text: { ...DEFAULT_BEAUTIFY.text, title: "Ship faster", subtitle: "All local", placement: "top" } }), DESKTOP);
+    expect(top.caption).not.toBeNull();
+    expect(top.caption!.rect.y).toBe(0);
+    expect(top.content.y).toBeGreaterThanOrEqual(top.caption!.rect.height);
+    const bottom = beautifyLayout(s({ text: { ...DEFAULT_BEAUTIFY.text, title: "Ship faster", subtitle: "", placement: "bottom" } }), DESKTOP);
+    expect(bottom.caption!.rect.y + bottom.caption!.rect.height).toBe(bottom.canvas.height);
+    expect(bottom.content.y + bottom.content.height).toBeLessThanOrEqual(bottom.caption!.rect.y);
+  });
 });
 
 describe("background and drawing helpers", () => {
+  it("derives stable related stops from local preview pixels without retaining the sample", () => {
+    const red = new Uint8ClampedArray([220, 60, 40, 255, 230, 50, 30, 255]);
+    expect(backgroundFromPixels(red)).toEqual({ color: "#f5bfb9", color2: "#832014" });
+    expect(backgroundFromPixels(new Uint8ClampedArray([0, 0, 0, 0]))).toEqual({ color: "#f7f1e3", color2: "#e8dcc4" });
+  });
+
+  it("chooses a compact, centred layout solely from source shape", () => {
+    expect(autoLayout(s(), PHONE)).toMatchObject({ preset: "9:16", padding: 10, scale: 0.9, offsetX: 0, offsetY: 0 });
+    expect(autoLayout(s(), DESKTOP)).toMatchObject({ preset: "16:9", padding: 14, scale: 0.92, offsetX: 0, offsetY: 0 });
+  });
   it("maps each gradient angle to a line across the canvas", () => {
     expect(gradientLine(0, 100, 50)).toEqual([0, 0, 0, 50]);
     expect(gradientLine(45, 100, 50)).toEqual([0, 0, 100, 50]);
@@ -273,8 +319,24 @@ describe("background and drawing helpers", () => {
   });
 
   it("carries the background through to the layout", () => {
-    const l = beautifyLayout(s({ background: { kind: "gradient", color: "#112233", color2: "#445566", angle: 90 } }), PHONE);
-    expect(l.background).toEqual({ kind: "gradient", color: "#112233", color2: "#445566", angle: 90 });
+    const background = { ...DEFAULT_BEAUTIFY.background, kind: "gradient" as const, color: "#112233", color2: "#445566", angle: 90 as const };
+    const l = beautifyLayout(s({ background }), PHONE);
+    expect(l.background).toEqual(background);
+  });
+
+  it("carries bounded screenshot-background and custom visual settings into one layout", () => {
+    const l = beautifyLayout(
+      s({
+        background: { ...DEFAULT_BEAUTIFY.background, kind: "screenshot", blur: 999, brightness: 1, saturation: 999 },
+        border: { kind: "glass", width: 4, opacity: 55, color: "#abcdef" },
+        shadow: "custom",
+        shadowAdvanced: { x: 2, y: 3, blur: 5, spread: 1, opacity: 44 },
+      }),
+      DESKTOP,
+    );
+    expect(l.background).toMatchObject({ kind: "screenshot", blur: 48, brightness: 35, saturation: 140 });
+    expect(l.border).toMatchObject({ kind: "glass", width: 4 });
+    expect(l.shadow).toMatchObject({ offsetX: expect.any(Number), offsetY: expect.any(Number), spread: expect.any(Number) });
   });
 
   it("draws a rounded rectangle without exceeding half the box", () => {
@@ -296,7 +358,7 @@ describe("modes", () => {
   it("switching mode applies that mode's frame defaults, and back again", () => {
     const clean = s({ radius: 10, shadow: "none" });
     const browser = withMode(clean, "browser");
-    expect(browser).toMatchObject({ mode: "browser", radius: 40, shadow: "medium" });
+    expect(browser).toMatchObject({ mode: "browser", radius: 40, shadow: "float" });
     expect(withMode(browser, "browser")).toBe(browser); // no change, no new object
     expect(withMode(browser, "phone")).toMatchObject({ mode: "phone", shadow: "strong" });
     // Everything else is kept.

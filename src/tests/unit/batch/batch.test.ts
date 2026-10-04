@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { unzipSync } from "fflate";
 import { createBatchZip } from "@/core/archive/zip";
-import { uniqueOutputNames } from "@/core/batch/naming";
+import { uniqueOutputNames, withAffixes } from "@/core/batch/naming";
 import { runSequential } from "@/core/batch/runner";
 import { batchFormat, batchOutputName, DEFAULT_BATCH_SETTINGS, resizeOutput, resizeTransform } from "@/core/batch/settings";
 import type { BatchResult, BatchSource } from "@/core/batch/types";
@@ -80,6 +80,10 @@ describe("batch result registry and ZIP", () => {
 
   it("resolves duplicate names deterministically", () => {
     expect(uniqueOutputNames(["image.png", "IMAGE.png", "image.png", "other"])).toEqual(["image.png", "IMAGE-2.png", "image-3.png", "other"]);
+  });
+
+  it("adds safe filename prefixes and suffixes before the extension", () => {
+    expect(withAffixes("screen.webp", "client:", "-dark?" )).toBe("client-screen-dark-.webp");
   });
 
   it("owns object URLs and releases them on reset", () => {

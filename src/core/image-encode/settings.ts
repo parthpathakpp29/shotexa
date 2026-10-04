@@ -2,7 +2,7 @@
  * Compress and Convert settings: defaults, which output format a setting means for a given
  * input, and result file names.
  */
-import { clampQuality, formatOfMime, withExtension, type OutputFormat } from "./formats";
+import { clampQuality, FORMAT_EXT, formatOfMime, withExtension, type OutputFormat } from "./formats";
 import { DEFAULT_BACKGROUND } from "./encode";
 import type { EncodeSettings, EncodeTool } from "./types";
 
@@ -32,12 +32,13 @@ export function autoTarget(input: OutputFormat): OutputFormat {
 
 /**
  * The output format a setting means for this input. Compress never changes the format unless
- * the user picked one; Convert never "converts" to the same format.
+ * the user picked one. Convert's auto choice changes format, while an explicit choice may
+ * re-encode the current format after the user measures all candidates.
  */
 export function resolveFormat(tool: EncodeTool, setting: EncodeSettings["format"], inputMime: string): OutputFormat {
   const input = formatOfMime(inputMime) ?? "png";
   if (tool === "compress") return setting === "same" || setting === "auto" ? input : setting;
-  return setting === "auto" || setting === "same" || setting === input ? autoTarget(input) : setting;
+  return setting === "auto" || setting === "same" ? autoTarget(input) : setting;
 }
 
 export function normaliseSettings(s: EncodeSettings): EncodeSettings {
@@ -49,4 +50,15 @@ export function normaliseSettings(s: EncodeSettings): EncodeSettings {
 export function encodedName(tool: EncodeTool, name: string, format: OutputFormat): string {
   const base = name.replace(/^compressed-/, "");
   return tool === "compress" ? `compressed-${withExtension(base, format)}` : withExtension(name, format);
+}
+
+/** Cross-platform-safe user filename. The selected encoder always owns the extension. */
+export function customOutputName(value: string, fallback: string, format: OutputFormat): string {
+  const stem = value
+    .replace(/\.[^.]+$/, "")
+    .replace(/[<>:"/\\|?*\u0000-\u001f]/g, "-")
+    .replace(/[. ]+$/g, "")
+    .trim()
+    .slice(0, 120);
+  return `${stem || fallback.replace(/\.[^.]+$/, "") || "image"}.${FORMAT_EXT[format]}`;
 }

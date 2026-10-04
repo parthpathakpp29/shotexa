@@ -30,7 +30,7 @@ import { BatchResultRegistry } from "./batch-result-registry";
 import type { BatchResult, BatchSource } from "@/core/batch/types";
 import { MAX_BATCH_FILES, MAX_BATCH_INPUT_BYTES } from "@/core/batch/types";
 import { batchFormat, batchOutputName, resizeOutput, resultMime } from "@/core/batch/settings";
-import { uniqueOutputNames } from "@/core/batch/naming";
+import { uniqueOutputNames, withAffixes } from "@/core/batch/naming";
 import { runSequential } from "@/core/batch/runner";
 import { detectCapabilities, timeSlicer, type Capabilities } from "./capabilities";
 import { createWorkspaceStore, pairKey, selectJoinKeys, selectOriginals, type WorkspaceStore } from "./store";
@@ -112,6 +112,12 @@ export interface EncodeRunResult {
   probe?: { format: OutputFormat; quality: number; bytes: number };
 }
 
+export interface FormatComparisonRun {
+  sourceId: FileId;
+  candidates: EncodeRunResult[];
+  ms: number;
+}
+
 export interface WorkspacePdfResult {
   id: string;
   blob: Blob;
@@ -163,6 +169,8 @@ export interface WorkspaceRuntime {
    * result is returned for comparison, not added — `saveEncoded` makes it an artifact.
    */
   encodeAsset(tool: EncodeTool, assetId?: FileId): Promise<EncodeRunResult>;
+  /** Measure PNG/JPEG/WebP from one bounded decode. Results are unsaved until selected. */
+  compareEncodeFormats(assetId?: FileId): Promise<FormatComparisonRun>;
   /** Add an encoded result to the workspace as a new, selected artifact. */
   saveEncoded(result: EncodeRunResult): FileId;
   /** Whether the asset has transparent pixels (checked on its preview); null until known. */
@@ -608,7 +616,8 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     const s = store.getState();
     const source = { width: file.width, height: file.height };
     const { defaultSplit, planSplit, pieceName } = await import("@/core/split/plan");
-    const pieces = planSplit(s.split.byAsset[sourceId] ?? defaultSplit(source), source);
+    const splitSettings = s.split.byAsset[sourceId] ?? defaultSplit(source);
+    const pieces = planSplit(splitSettings, source);
     const { format, quality } = s.exportSettings;
     const jobId = `split:${Date.now()}`;
     job(jobId, "split-export", "running", 0);
@@ -632,7 +641,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
         sourceId,
         strategy: result.strategy,
         ms: result.ms,
-        pieces: result.pieces.map((p, i) => ({ name: pieceName(i, pieces.length, EXT[mime]), type: mime, blob: p.blob, width: p.width, height: p.height, bytes: p.blob.size, y0: pieces[i].y0, y1: pieces[i].y1 })),
+        pieces: result.pieces.map((p, i) => ({ name: pieceName(i, pieces.length, EXT[mime], splitSettings.namingTemplate), type: mime, blob: p.blob, width: p.width, height: p.height, bytes: p.blob.size, y0: pieces[i].y0, y1: pieces[i].y1 })),
       };
     } catch (error) {
       const code = codeOf(error);
@@ -798,6 +807,48 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     }
   }
 
+  async function compareEncodeFormats(assetId?: FileId): Promise<FormatComparisonRun> {
+    const { id: sourceId, file, blob } = selected(assetId);
+    const { encodedName } = await import("@/core/image-encode/settings");
+    const settings = store.getState().encode.convert;
+    const source = { width: file.width, height: file.height };
+    const input = { source, quality: settings.quality, background: settings.background };
+    const jobId = `encode:${Date.now()}`;
+    job(jobId, "encode", "running", 0);
+    try {
+      const onProgress = (progress: number) => job(jobId, "encode", "running", progress);
+      const comparison = caps.offscreenCanvas
+        ? await broker.run("image", "image.compareFormats", { image: blob, ...input }, { onProgress })
+        : await (await import("@/core/image-encode/reencode")).compareFormats(blob, {
+            ...input,
+            createCanvas: (width, height) => Object.assign(document.createElement("canvas"), { width, height }),
+            yieldBetweenTiles: timeSlicer(),
+            onProgress,
+          });
+      job(jobId, "encode", "done", 1);
+      const candidates = comparison.candidates.map((candidate) => ({
+        tool: "convert" as const,
+        sourceId,
+        name: encodedName("convert", file.name, candidate.format),
+        type: (candidate.format === "png" ? "image/png" : candidate.format === "jpeg" ? "image/jpeg" : "image/webp") as ImageMime,
+        blob: candidate.blob,
+        width: candidate.width,
+        height: candidate.height,
+        bytes: candidate.bytes,
+        originalBytes: file.bytes,
+        format: candidate.format,
+        quality: candidate.quality,
+        background: settings.background,
+        ms: comparison.ms,
+      }));
+      return { sourceId, candidates, ms: comparison.ms };
+    } catch (error) {
+      const code = codeOf(error);
+      job(jobId, "encode", "failed", null, code);
+      throw Object.assign(new Error(code), { code });
+    }
+  }
+
   function saveEncoded(result: EncodeRunResult): FileId {
     const id = newId();
     registry.put(id, result.blob);
@@ -846,10 +897,11 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     }
     const settings = structuredClone(store.getState().batch.settings);
     const operation = store.getState().batch.operation;
+    const { filenamePrefix, filenameSuffix } = store.getState().batch;
     const allIds = store.getState().batch.selectedIds;
     const plannedNames = uniqueOutputNames(allIds.map((id) => {
       const file = store.getState().files[id] as BatchSource;
-      return batchOutputName(operation, file.name, batchFormat(operation, file, settings));
+      return withAffixes(batchOutputName(operation, file.name, batchFormat(operation, file, settings)), filenamePrefix, filenameSuffix);
     }));
     const names = new Map(allIds.map((id, i) => [id, plannedNames[i]]));
     const abort = new AbortController();
@@ -1363,6 +1415,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     exportBeautified,
     exportCompare,
     encodeAsset,
+    compareEncodeFormats,
     saveEncoded,
     hasTransparency,
     exportSafeShare,

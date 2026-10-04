@@ -89,6 +89,19 @@ test.describe("Phase 2N Batch + ZIP", () => {
     }
   });
 
+  test("filename affixes, aggregate savings and result filters stay consistent", async ({ page }) => {
+    await open(page, [image("one.png", 120, 80, [220, 40, 40, 255]), image("two.png", 90, 140, [40, 80, 200, 255])]);
+    await page.getByTestId("batch-filename-prefix").fill("client:");
+    await page.getByTestId("batch-filename-suffix").fill("-ready?");
+    await processBatch(page);
+    await expect(page.getByTestId("batch-summary")).toContainText("Original total");
+    await expect(page.getByTestId("batch-summary")).toContainText("Output total");
+    await page.getByRole("radiogroup", { name: "Batch result filter" }).getByRole("radio", { name: "Successful" }).click();
+    await expect(page.getByTestId("batch-result-list").locator("li")).toHaveCount(2);
+    const zip = await downloadZip(page);
+    expect(Object.keys(zip)).toEqual(["client-compressed-one-ready-.png", "client-compressed-two-ready-.png"]);
+  });
+
   test("transparent PNG → JPEG uses the selected cream background", async ({ page }) => {
     await open(page, [image("alpha-a.png", 80, 50, [0, 0, 0, 0]), image("alpha-b.png", 60, 60, [0, 0, 0, 0])]);
     await operation(page, "Convert").click();

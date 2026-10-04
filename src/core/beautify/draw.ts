@@ -40,9 +40,24 @@ export function gradientLine(angle: GradientAngle, width: number, height: number
   return [0, 0, 0, height];
 }
 
-function paintBackground(ctx: Ctx, layout: BeautifyLayout): void {
+function paintBackground(ctx: Ctx, layout: BeautifyLayout, image: CanvasImageSource | null, imageScale: number, scale: number): void {
   const { canvas, background } = layout;
-  if (background.kind === "gradient" && background.color2 !== background.color) {
+  if (background.kind === "screenshot") {
+    ctx.fillStyle = background.color;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (!image) return;
+    const sourceWidth = layout.source.width * imageScale;
+    const sourceHeight = layout.source.height * imageScale;
+    const cover = Math.max(canvas.width / sourceWidth, canvas.height / sourceHeight);
+    const width = sourceWidth * cover;
+    const height = sourceHeight * cover;
+    ctx.save();
+    ctx.filter = `blur(${background.blur * scale}px) brightness(${background.brightness}%) saturate(${background.saturation}%)`;
+    // Grow the draw under the canvas edge so blur never reveals an unpainted fringe.
+    const bleed = background.blur * 2;
+    ctx.drawImage(image, (canvas.width - width) / 2 - bleed, (canvas.height - height) / 2 - bleed, width + bleed * 2, height + bleed * 2);
+    ctx.restore();
+  } else if (background.kind === "gradient" && background.color2 !== background.color) {
     const g = ctx.createLinearGradient(...gradientLine(background.angle, canvas.width, canvas.height));
     g.addColorStop(0, background.color);
     g.addColorStop(1, background.color2);
@@ -58,16 +73,84 @@ function paintBackground(ctx: Ctx, layout: BeautifyLayout): void {
  * transparency in the screenshot, so a transparent PNG looks the same with and without a shadow.
  */
 function paintCard(ctx: Ctx, layout: BeautifyLayout, scale: number): void {
-  ctx.save();
   if (layout.shadow) {
+    const spread = layout.shadow.spread;
+    const shadowRect = {
+      x: layout.content.x - spread,
+      y: layout.content.y - spread,
+      width: layout.content.width + spread * 2,
+      height: layout.content.height + spread * 2,
+    };
+    ctx.save();
     ctx.shadowColor = layout.shadow.color;
     // Shadow geometry ignores the transform: scale it explicitly.
     ctx.shadowBlur = layout.shadow.blur * scale;
+    ctx.shadowOffsetX = layout.shadow.offsetX * scale;
     ctx.shadowOffsetY = layout.shadow.offsetY * scale;
+    ctx.fillStyle = layout.shadow.color;
+    const radius = layout.radius + spread;
+    roundedRectPath(ctx, shadowRect, [radius, radius, radius, radius]);
+    ctx.fill();
+    ctx.restore();
   }
+  ctx.save();
   ctx.fillStyle = layout.screenBackground;
   roundedRectPath(ctx, layout.content, [layout.radius, layout.radius, layout.radius, layout.radius]);
   ctx.fill();
+  ctx.restore();
+}
+
+function paintBorder(ctx: Ctx, layout: BeautifyLayout): void {
+  if (!layout.border) return;
+  ctx.save();
+  roundedRectPath(ctx, layout.content, [layout.radius, layout.radius, layout.radius, layout.radius]);
+  ctx.strokeStyle = layout.border.color;
+  ctx.lineWidth = layout.border.width;
+  ctx.stroke();
+  if (layout.border.kind === "glass" && layout.border.width >= 2) {
+    ctx.globalAlpha = 0.45;
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+    ctx.lineWidth = Math.max(1, layout.border.width * 0.35);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function fitText(ctx: Ctx, value: string, maxWidth: number): string {
+  if (ctx.measureText(value).width <= maxWidth) return value;
+  const suffix = "…";
+  let lo = 0;
+  let hi = value.length;
+  while (lo < hi) {
+    const mid = Math.ceil((lo + hi) / 2);
+    if (ctx.measureText(value.slice(0, mid) + suffix).width <= maxWidth) lo = mid;
+    else hi = mid - 1;
+  }
+  return value.slice(0, lo).trimEnd() + suffix;
+}
+
+function paintCaption(ctx: Ctx, layout: BeautifyLayout): void {
+  const caption = layout.caption;
+  if (!caption) return;
+  const title = caption.title.trim();
+  const subtitle = caption.subtitle.trim();
+  const total = (title ? caption.fontSize * 1.2 : 0) + (subtitle ? caption.subtitleSize * 1.3 : 0) + (title && subtitle ? caption.spacing : 0);
+  let y = caption.rect.y + (caption.rect.height - total) / 2;
+  const x = caption.align === "left" ? caption.rect.x : caption.align === "right" ? caption.rect.x + caption.rect.width : caption.rect.x + caption.rect.width / 2;
+  ctx.save();
+  ctx.fillStyle = caption.color;
+  ctx.textAlign = caption.align;
+  ctx.textBaseline = "top";
+  if (title) {
+    ctx.font = `${caption.weight} ${caption.fontSize}px ${BEAUTIFY_FONT}`;
+    ctx.fillText(fitText(ctx, title, caption.rect.width), x, y);
+    y += caption.fontSize * 1.2 + (subtitle ? caption.spacing : 0);
+  }
+  if (subtitle) {
+    ctx.globalAlpha = 0.78;
+    ctx.font = `400 ${caption.subtitleSize}px ${BEAUTIFY_FONT}`;
+    ctx.fillText(fitText(ctx, subtitle, caption.rect.width), x, y);
+  }
   ctx.restore();
 }
 
@@ -170,11 +253,13 @@ function paintNotch(ctx: Ctx, layout: BeautifyLayout): void {
 export function drawBeautified(ctx: Ctx, layout: BeautifyLayout, image: CanvasImageSource | null, imageScale = 1, scale = 1, offsetY = 0): void {
   ctx.save();
   ctx.setTransform(scale, 0, 0, scale, 0, -offsetY * scale);
-  paintBackground(ctx, layout);
+  paintBackground(ctx, layout, image, imageScale, scale);
   paintCard(ctx, layout, scale);
   if (layout.frame?.kind === "phone") paintPhoneShell(ctx, layout);
   paintScreen(ctx, layout, image, imageScale);
   paintBrowserChrome(ctx, layout);
   paintNotch(ctx, layout);
+  paintBorder(ctx, layout);
+  paintCaption(ctx, layout);
   ctx.restore();
 }

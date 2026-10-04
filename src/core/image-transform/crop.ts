@@ -14,10 +14,20 @@ export function aspectRatio(preset: AspectPreset, visible: Size): number | null 
       return visible.width / visible.height;
     case "1:1":
       return 1;
+    case "4:5":
+      return 4 / 5;
     case "4:3":
       return 4 / 3;
+    case "9:16":
+      return 9 / 16;
     case "16:9":
       return 16 / 9;
+    case "3:2":
+      return 3 / 2;
+    case "2:1":
+      return 2;
+    case "1.91:1":
+      return 1.91;
     default:
       return null;
   }

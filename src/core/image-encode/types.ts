@@ -49,6 +49,21 @@ export interface EncodeResult {
   probe?: { format: OutputFormat; quality: number; bytes: number };
 }
 
+export interface FormatCandidate {
+  blob: Blob;
+  width: number;
+  height: number;
+  format: OutputFormat;
+  quality: number;
+  bytes: number;
+  strategy: "single-canvas" | "tiled-png";
+}
+
+export interface FormatComparisonResult {
+  candidates: FormatCandidate[];
+  ms: number;
+}
+
 export type EncodeErrorCode =
   | "ENCODE_DECODE_FAILED"
   | "ENCODE_SOURCE_MISMATCH"

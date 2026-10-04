@@ -4,17 +4,29 @@
  * Real encoding (pixels, transparency, dimensions) is verified in the browser E2E suite.
  */
 import { describe, expect, it, vi } from "vitest";
-import { compareSize, suggest, SUGGESTED_QUALITY } from "@/core/image-encode/compare";
+import { compareSize, formatAdvice, suggest, SUGGESTED_QUALITY } from "@/core/image-encode/compare";
 import { DEFAULT_BACKGROUND, encodeCanvas, prepareBackground } from "@/core/image-encode/encode";
 import { clampQuality, encoderQuality, FORMAT_EXT, FORMAT_MIME, formatOfMime, supportsAlpha, supportsQuality, withExtension } from "@/core/image-encode/formats";
 import { encodeIssue } from "@/core/image-encode/limits";
 import { assertEncodable, toEncodeError } from "@/core/image-encode/reencode";
-import { autoTarget, DEFAULT_ENCODE_SETTINGS, encodedName, normaliseSettings, resolveFormat } from "@/core/image-encode/settings";
+import { autoTarget, customOutputName, DEFAULT_ENCODE_SETTINGS, encodedName, normaliseSettings, resolveFormat } from "@/core/image-encode/settings";
 import { scanAlpha } from "@/core/image-encode/alpha";
 import { EncodeError } from "@/core/image-encode/types";
 import { EditorError } from "@/core/image-transform/types";
+import { pictureMarkup } from "@/core/image-encode/web-pack";
 
 describe("formats", () => {
+  it("builds local picture markup with a WebP source and PNG fallback", () => {
+    expect(pictureMarkup("Hero <preview>")).toContain('<source srcset="image.webp" type="image/webp">');
+    expect(pictureMarkup("Hero <preview>")).toContain('<img src="image.png" alt="Hero preview"');
+  });
+
+  it("sanitises a custom name and enforces the encoder extension", () => {
+    expect(customOutputName("launch:hero.png", "fallback.png", "webp")).toBe("launch-hero.webp");
+    expect(customOutputName("launch:hero.final.png", "fallback.png", "webp")).toBe("launch-hero.final.webp");
+    expect(customOutputName("   ", "fallback.png", "jpeg")).toBe("fallback.jpg");
+  });
+
   it("maps formats, MIME types and extensions both ways", () => {
     expect(FORMAT_MIME).toEqual({ png: "image/png", jpeg: "image/jpeg", webp: "image/webp" });
     expect(FORMAT_EXT).toEqual({ png: "png", jpeg: "jpg", webp: "webp" });
@@ -142,6 +154,14 @@ describe("suggestions", () => {
   });
 });
 
+describe("format advice", () => {
+  it("only describes known capabilities and alpha facts", () => {
+    expect(formatAdvice({ source: "png", target: "jpeg", hasTransparency: true }).title).toBe("Transparency will be flattened");
+    expect(formatAdvice({ source: "png", target: "png", hasTransparency: false }).detail).toContain("exact raster values");
+    expect(formatAdvice({ source: "png", target: "webp", hasTransparency: true }).detail).toContain("preserve");
+  });
+});
+
 describe("settings", () => {
   it("Compress keeps the input format unless the user picks one", () => {
     expect(DEFAULT_ENCODE_SETTINGS.compress).toEqual({ format: "same", quality: 0.8, background: "#ffffff", targetBytes: null });
@@ -150,11 +170,11 @@ describe("settings", () => {
     expect(resolveFormat("compress", "webp", "image/png")).toBe("webp");
   });
 
-  it("Convert defaults to the natural target and never to the same format", () => {
+  it("Convert defaults to the natural target but honours an explicitly selected measured format", () => {
     expect([autoTarget("png"), autoTarget("jpeg"), autoTarget("webp")]).toEqual(["jpeg", "png", "png"]);
     expect(resolveFormat("convert", "auto", "image/webp")).toBe("png");
     expect(resolveFormat("convert", "webp", "image/png")).toBe("webp");
-    expect(resolveFormat("convert", "png", "image/png")).toBe("jpeg"); // same as input → the natural target
+    expect(resolveFormat("convert", "png", "image/png")).toBe("png");
   });
 
   it("normalises quality and background colours", () => {

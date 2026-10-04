@@ -17,7 +17,7 @@ import { continuationsFor, TOOLS } from "@/config/tools";
 import { IDENTITY_TRANSFORM, isIdentity, outputIssue, outputSize } from "@/core/image-transform/transform";
 import { messageFor } from "@/core/runtime/messages";
 import { downloadAsset } from "@/core/runtime/runtime";
-import { EditorCanvas, type EditorView } from "./editor-canvas";
+import { EditorCanvas, type EditorGuide, type EditorView } from "./editor-canvas";
 import { EditorInspector } from "./editor-inspector";
 
 export function EditorTool({ landing }: { landing: ReactNode }) {
@@ -33,6 +33,7 @@ function EditorWorkspace() {
   const job = useWorkspace((s) => Object.values(s.jobs).find((j) => j.kind === "editor-export" && j.status === "running"));
   const lastArtifact = useWorkspace((s) => (s.lastArtifactId ? s.files[s.lastArtifactId] : undefined));
   const [view, setView] = useState<EditorView>("crop");
+  const [guide, setGuide] = useState<EditorGuide>("none");
   const [completedId, setCompletedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const files = useWorkspace((s) => s.files);
@@ -97,10 +98,10 @@ function EditorWorkspace() {
               <Progress value={job.progress} label="Export progress" />
             </div>
           )}
-          <EditorCanvas key={selectedId} assetId={selectedId} view={view} onViewChange={setView} />
+          <EditorCanvas key={selectedId} assetId={selectedId} view={view} onViewChange={setView} guide={guide} />
         </>
       }
-      inspector={<EditorInspector key={selectedId} assetId={selectedId} source={source} />}
+      inspector={<EditorInspector key={selectedId} assetId={selectedId} source={source} guide={guide} onGuideChange={setGuide} />}
       below={
         result && (
           <div className="mt-6" data-testid="editor-result">

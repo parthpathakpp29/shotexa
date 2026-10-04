@@ -6,14 +6,33 @@
 import type { Rect, Size } from "@/core/image-transform/types";
 
 export type BeautifyMode = "clean" | "browser" | "phone";
-export type BackgroundKind = "solid" | "gradient";
+export type BackgroundKind = "solid" | "gradient" | "screenshot";
 /** Gradient direction, in degrees clockwise from "top to bottom". */
 export type GradientAngle = 0 | 45 | 90 | 135;
-export type ShadowPreset = "none" | "soft" | "medium" | "strong";
+export type ShadowPreset = "none" | "soft" | "float" | "strong" | "hard" | "glow" | "custom";
+export type BorderKind = "none" | "solid" | "glass";
+export type CaptionPlacement = "top" | "bottom";
+export type TextAlignment = "left" | "center" | "right";
+export type FontWeight = 400 | 500 | 600 | 700;
+export type ExportScale = 1 | 2 | 4;
 export type FrameTheme = "light" | "dark";
 /** How a screenshot that does not match the device opening is fitted. */
 export type ScreenFit = "contain" | "cover";
-export type OutputPreset = "auto" | "1:1" | "4:3" | "16:9" | "square-1080" | "landscape-1200";
+export type OutputPreset =
+  | "auto"
+  | "1:1"
+  | "4:5"
+  | "4:3"
+  | "9:16"
+  | "16:9"
+  | "3:2"
+  | "1.91:1"
+  | "square-1080"
+  | "portrait-1080"
+  | "story-1080"
+  | "landscape-1200"
+  | "landscape-1600"
+  | "custom";
 
 export interface BeautifyBackground {
   kind: BackgroundKind;
@@ -22,6 +41,49 @@ export interface BeautifyBackground {
   /** The gradient's second stop. */
   color2: string;
   angle: GradientAngle;
+  /** Screenshot-background blur in output pixels before export scaling. */
+  blur: number;
+  /** 100 is unchanged; lower values dim the screenshot. */
+  brightness: number;
+  /** 100 is unchanged. Kept deliberately subtle in the UI. */
+  saturation: number;
+}
+
+export interface BeautifyBorder {
+  kind: BorderKind;
+  width: number;
+  opacity: number;
+  color: string;
+}
+
+export interface BeautifyShadowAdvanced {
+  /** Percentages of the composition's short side. */
+  x: number;
+  y: number;
+  blur: number;
+  spread: number;
+  opacity: number;
+}
+
+export interface BeautifyText {
+  title: string;
+  subtitle: string;
+  placement: CaptionPlacement;
+  fontSize: number;
+  weight: FontWeight;
+  align: TextAlignment;
+  color: string;
+  spacing: number;
+  /** Width of the caption block as a percentage of the canvas. */
+  maxWidth: number;
+}
+
+export interface CustomCanvasSettings {
+  width: number;
+  height: number;
+  lockAspect: boolean;
+  /** Last locked width / height ratio, retained when either dimension changes. */
+  aspectRatio: number;
 }
 
 export interface BrowserFrameSettings {
@@ -44,6 +106,8 @@ export interface BeautifySettings {
   /** Corner rounding, 0–100 % of the mode's maximum sensible radius. */
   radius: number;
   shadow: ShadowPreset;
+  shadowAdvanced: BeautifyShadowAdvanced;
+  border: BeautifyBorder;
   /** Size of the composition inside the canvas, 0.4–1. */
   scale: number;
   /** Position inside the free space, −1 … 1 (0 = centred). */
@@ -52,6 +116,9 @@ export interface BeautifySettings {
   browser: BrowserFrameSettings;
   phone: PhoneFrameSettings;
   preset: OutputPreset;
+  customCanvas: CustomCanvasSettings;
+  exportScale: ExportScale;
+  text: BeautifyText;
 }
 
 export interface BackgroundPaint {
@@ -59,12 +126,28 @@ export interface BackgroundPaint {
   color: string;
   color2: string;
   angle: GradientAngle;
+  blur: number;
+  brightness: number;
+  saturation: number;
 }
 
 export interface ShadowPaint {
   blur: number;
+  offsetX: number;
   offsetY: number;
+  spread: number;
   color: string;
+}
+
+export interface BorderPaint {
+  kind: Exclude<BorderKind, "none">;
+  width: number;
+  color: string;
+}
+
+export interface CaptionLayout extends BeautifyText {
+  rect: Rect;
+  subtitleSize: number;
 }
 
 export interface BrowserFrameLayout {
@@ -95,6 +178,7 @@ export type FrameLayout = BrowserFrameLayout | PhoneFrameLayout;
  */
 export interface BeautifyLayout {
   canvas: Size;
+  source: Size;
   background: BackgroundPaint;
   /** The framed composition (screenshot plus any frame) inside the canvas. */
   content: Rect;
@@ -109,6 +193,8 @@ export interface BeautifyLayout {
   /** Corner radii applied to the screenshot: top-left, top-right, bottom-right, bottom-left. */
   screenRadii: readonly [number, number, number, number];
   shadow: ShadowPaint | null;
+  border: BorderPaint | null;
+  caption: CaptionLayout | null;
   frame: FrameLayout | null;
   /** Colour behind a letterboxed screenshot (contain fit). */
   screenBackground: string;

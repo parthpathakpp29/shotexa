@@ -192,6 +192,19 @@ test.describe("Phase 2I Split Long Screenshot", () => {
     await expect(page.getByTestId("annotate-stage")).toHaveAttribute("data-out-height", "750");
   });
 
+  test("overlap intentionally repeats rows and naming template is preserved", async ({ page }) => {
+    await openSplit(page, rowCoded("tall.png", 240, 3000));
+    await page.getByRole("radiogroup", { name: "Piece overlap" }).getByRole("radio", { name: "20 px" }).click();
+    await page.getByTestId("split-name-template").fill("screenshot-{n}.png");
+    await expect(page.getByText("20 px is intentionally repeated")).toBeVisible();
+    const { pngs, names } = await exportAll(page);
+    expect(names).toEqual(["screenshot-01.png", "screenshot-02.png"]);
+    expect(heights(pngs)).toEqual([1500, 1520]);
+    expect(rowOf(pngs[0], 0, 1499)).toBe(1499);
+    expect(rowOf(pngs[1], 0, 0)).toBe(1480);
+    expect(rowOf(pngs[1], 0, 1519)).toBe(2999);
+  });
+
   test("target height: every N px, the last piece takes the remainder", async ({ page }) => {
     await openSplit(page, rowCoded("tall.png", 300, 3500));
     await page.getByRole("radio", { name: "Height" }).click();
@@ -208,7 +221,7 @@ test.describe("Phase 2I Split Long Screenshot", () => {
 
   test("custom: click the image to add a split", async ({ page }) => {
     await openSplit(page, rowCoded("tall.png", 400, 3000));
-    await page.getByRole("radio", { name: "Custom" }).click();
+    await page.getByRole("radiogroup", { name: "Split method" }).getByRole("radio", { name: "Custom" }).click();
     await expect(stage(page)).toHaveAttribute("data-mode", "custom");
     expect(await lineYs(page)).toEqual([1500]); // starts from the equal split
     const p = await pointAt(page, 600);
