@@ -110,7 +110,7 @@ function BeautifyWorkspace() {
           {exporting && (
             <div className="mb-4 rounded-lg border border-accent-line bg-accent-soft p-4" aria-live="polite">
               <div className="mb-2 flex items-center justify-between gap-3 text-sm">
-                <span className="font-medium text-accent-ink">Composing at full resolution…</span>
+                <span className="font-medium text-accent-ink">Rendering {settings.exportScale}× image…</span>
                 <span className="t-mono text-accent-ink">{job.progress === null ? "" : `${Math.round(job.progress * 100)}%`}</span>
               </div>
               <Progress value={job.progress} label="Export progress" />

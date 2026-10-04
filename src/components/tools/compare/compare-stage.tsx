@@ -9,17 +9,19 @@
  * is down (so nothing re-renders the store on every move) and is committed once on release,
  * giving exactly one undo step.
  */
-import { Maximize2, Redo2, Undo2, ZoomIn, ZoomOut } from "lucide-react";
+import { Redo2, Undo2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { IconButton, Mono, Toolbar, ToolbarDivider } from "@/components/ui/primitives";
+import { IconButton, Mono, Toolbar } from "@/components/ui/primitives";
+import { ViewportToolbar } from "@/components/ui/viewport";
 import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
 import { drawCompare } from "@/core/compare/draw";
 import type { ChangedRegion, DifferenceAnalysis } from "@/core/compare/difference";
 import { compareLayout, dividerFromX } from "@/core/compare/layout";
-import { backingSize, displayWidth, zoomIn, zoomOut, type Zoom } from "@/lib/stage-size";
+import { backingSize, displayWidth, type Zoom } from "@/lib/stage-size";
 import { cn } from "@/lib/cn";
 import { useReleasingCanvas } from "@/lib/use-canvas-ref";
 import { useElementWidth } from "@/lib/use-element-width";
+import { useViewportInteraction } from "@/lib/use-viewport";
 
 const MAX_PREVIEW_HEIGHT = 560;
 const ARROW_STEP = 1;
@@ -75,14 +77,26 @@ export function CompareStage({ assetA, assetB }: { assetA: string; assetB: strin
     return () => window.clearInterval(timer);
   }, [settings.flicker, settings.flickerSpeed, reducedMotion]);
 
-  const cssWidth = useMemo(() => {
+  const fitWidth = useMemo(() => {
     if (!layout || frameWidth <= 0) return 0;
     const available = Math.max(1, frameWidth - 32);
-    if (zoom !== "fit") return displayWidth(layout.canvas, available, zoom);
     const byHeight = (MAX_PREVIEW_HEIGHT * layout.canvas.width) / layout.canvas.height;
     return Math.max(1, Math.floor(Math.min(displayWidth(layout.canvas, available, "fit"), byHeight)));
-  }, [layout, frameWidth, zoom]);
+  }, [layout, frameWidth]);
+  const fitScale = layout && fitWidth ? fitWidth / layout.canvas.width : 1;
+  const cssWidth = layout ? (zoom === "fit" ? fitWidth : displayWidth(layout.canvas, Math.max(1, frameWidth - 32), zoom)) : 0;
   const cssHeight = layout && cssWidth ? Math.max(1, Math.round((cssWidth * layout.canvas.height) / layout.canvas.width)) : 0;
+  const sliding = layout?.mode === "slider" && !settings.flicker;
+  const viewport = useViewportInteraction({
+    scrollRef,
+    contentRef: stageRef,
+    zoom,
+    setZoom,
+    fitScale,
+    allowDragPan: !sliding,
+    allowTouchPan: !sliding,
+    onEscape: () => setSelectedRegion(null),
+  });
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -110,8 +124,6 @@ export function CompareStage({ assetA, assetB }: { assetA: string; assetB: strin
   }, [runtime, assetA, assetB, versionA, versionB, layout, renderLayout, fileA, fileB, cssWidth, cssHeight]);
 
   if (!fileA || !fileB || !layout) return null;
-  const sliding = layout.mode === "slider" && !settings.flicker;
-
   function focusRegion(region: ChangedRegion) {
     setSelectedRegion(region.id);
     if (zoom === "fit") setZoom(1);
@@ -146,26 +158,7 @@ export function CompareStage({ assetA, assetB }: { assetA: string; assetB: strin
           {layout.canvas.width} × {layout.canvas.height} px
         </Mono>
         <Toolbar aria-label="View and history">
-          <IconButton label="Fit" active={zoom === "fit"} onClick={() => setZoom("fit")}>
-            <Maximize2 />
-          </IconButton>
-          <button
-            type="button"
-            aria-label="Actual size"
-            title="Actual size"
-            onClick={() => setZoom(1)}
-            className={cn("t-mono inline-flex h-9 items-center rounded-sm px-2 text-[12px] max-md:h-11", zoom === 1 ? "bg-surface-2 text-ink" : "text-ink-2 hover:text-ink")}
-          >
-            100%
-          </button>
-          <IconButton label="Zoom out" disabled={zoom === "fit"} onClick={() => setZoom(zoomOut(zoom))}>
-            <ZoomOut />
-          </IconButton>
-          <IconButton label="Zoom in" disabled={zoom === 2} onClick={() => setZoom(zoomIn(zoom))}>
-            <ZoomIn />
-          </IconButton>
           <span className="contents max-md:hidden">
-            <ToolbarDivider />
             <IconButton label="Undo" disabled={!canUndo} onClick={undo}>
               <Undo2 />
             </IconButton>
@@ -174,6 +167,7 @@ export function CompareStage({ assetA, assetB }: { assetA: string; assetB: strin
             </IconButton>
           </span>
         </Toolbar>
+        <ViewportToolbar zoom={zoom} fitScale={fitScale} onFit={viewport.fit} onActual={viewport.actual} onZoomIn={viewport.zoomIn} onZoomOut={viewport.zoomOut} label="Compare view" />
       </div>
 
       <div
@@ -181,7 +175,7 @@ export function CompareStage({ assetA, assetB }: { assetA: string; assetB: strin
           frameRef(element);
           scrollRef.current = element;
         }}
-        className="flex min-h-[420px] items-center justify-center overflow-auto rounded-lg border border-line bg-surface-2 p-4 max-md:min-h-[50dvh] max-md:p-2"
+        className={cn("min-h-[420px] overflow-auto rounded-lg border border-line bg-surface-2 p-4 max-md:min-h-[50dvh] max-md:p-2", (viewport.spaceHeld || viewport.isPanning) && "cursor-grab", viewport.isPanning && "cursor-grabbing")}
       >
         {cssWidth > 0 && (
           <div
@@ -191,6 +185,7 @@ export function CompareStage({ assetA, assetB }: { assetA: string; assetB: strin
             data-canvas-height={layout.canvas.height}
             data-mode={layout.mode}
             data-divider={divider}
+            data-viewport-pan
             className={cn("relative shrink-0 touch-none select-none rounded-xs shadow-sm", sliding && "cursor-ew-resize")}
             style={{ width: cssWidth, height: cssHeight }}
             onPointerDown={(e) => {

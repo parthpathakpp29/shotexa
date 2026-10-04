@@ -22,6 +22,7 @@ export function FileTray({ hint, className, onAfterSelect }: { hint?: string; cl
   const reorder = useWorkspace((s) => s.reorder);
   const select = useWorkspace((s) => s.select);
   const [dragFrom, setDragFrom] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const drop = useDropTarget();
   const small = "inline-flex size-7 shrink-0 items-center justify-center rounded-xs text-ink-3 hover:bg-surface-2 hover:text-ink disabled:opacity-30 max-md:size-11";
 
@@ -43,15 +44,12 @@ export function FileTray({ hint, className, onAfterSelect }: { hint?: string; cl
           return (
             <li
               key={id}
-              draggable
               data-testid="file-item"
-              onDragStart={(e) => {
-                setDragFrom(i);
-                e.dataTransfer.effectAllowed = "move";
-                e.dataTransfer.setData("text/plain", id);
-              }}
               onDragOver={(e) => {
-                if (dragFrom !== null) e.preventDefault();
+                if (dragFrom !== null) {
+                  e.preventDefault();
+                  if (dragOverIndex !== i) setDragOverIndex(i);
+                }
               }}
               onDrop={(e) => {
                 if (dragFrom === null) return;
@@ -59,12 +57,14 @@ export function FileTray({ hint, className, onAfterSelect }: { hint?: string; cl
                 e.stopPropagation();
                 reorder(dragFrom, i);
                 setDragFrom(null);
+                setDragOverIndex(null);
               }}
-              onDragEnd={() => setDragFrom(null)}
+              onDragLeave={() => { if (dragOverIndex === i) setDragOverIndex(null); }}
               className={cn(
                 "shrink-0 overflow-hidden rounded-md border bg-surface-3 transition-[border-color,box-shadow]",
                 selected ? "border-accent-line ring-1 ring-accent-line" : "border-line hover:border-line-strong",
                 dragFrom === i && "opacity-50",
+                dragFrom !== null && dragOverIndex === i && dragFrom !== i && (i > dragFrom ? "border-b-2 border-b-accent" : "border-t-2 border-t-accent"),
               )}
             >
               <button
@@ -85,7 +85,23 @@ export function FileTray({ hint, className, onAfterSelect }: { hint?: string; cl
                 {f.kind === "artifact" && <span className="t-micro absolute right-2 top-2 rounded-xs bg-accent px-1.5 py-0.5 text-[9.5px] text-white">Result</span>}
               </button>
               <div className="flex items-center gap-1 py-1.5 pl-2 pr-1">
-                <GripVertical aria-hidden className="size-3.5 shrink-0 cursor-grab text-ink-3 max-md:hidden" />
+                <span
+                  draggable
+                  title="Drag to reorder"
+                  data-drag-handle
+                  onDragStart={(event) => {
+                    setDragFrom(i);
+                    event.dataTransfer.effectAllowed = "move";
+                    event.dataTransfer.setData("text/plain", id);
+                  }}
+                  onDragEnd={() => {
+                    setDragFrom(null);
+                    setDragOverIndex(null);
+                  }}
+                  className="inline-flex size-7 shrink-0 cursor-grab items-center justify-center rounded-xs text-ink-3 active:cursor-grabbing max-md:hidden"
+                >
+                  <GripVertical aria-hidden className="size-3.5" />
+                </span>
                 <span className="min-w-0 flex-1">
                   <span className="t-mono block truncate text-[12px] text-ink" title={f.name}>{f.name}</span>
                   <span className="t-mono block truncate text-[10.5px] text-ink-3">{imageTypeLabel(f.type)} · {formatBytes(f.bytes)}</span>

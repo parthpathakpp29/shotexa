@@ -157,7 +157,14 @@ export function EditorInspector({ assetId, source, guide, onGuideChange }: { ass
         </div>
       </InspectorSection>
 
-      <InspectorSection title="Rotate & flip">
+      <InspectorSection
+        title="Transform"
+        action={
+          <button type="button" onClick={() => apply({ ...t, rotation: 0, flipH: false, flipV: false, straighten: 0 })} disabled={t.rotation === 0 && !t.flipH && !t.flipV && t.straighten === 0} className="t-mono inline-flex min-h-8 items-center gap-1.5 rounded-sm px-1.5 text-[12px] text-ink-2 hover:text-ink disabled:opacity-40 max-md:min-h-11">
+            <RotateCcw aria-hidden className="size-3.5" /> Reset rotation
+          </button>
+        }
+      >
         <div className="grid grid-cols-2 gap-2">
           <Button variant="secondary" size="sm" className="max-md:h-11" onClick={() => apply(rotateTransform(t, "ccw"))}>
             <RotateCcwSquare /> Rotate left

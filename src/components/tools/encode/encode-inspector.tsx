@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Gauge } from "lucide-react";
+import { Check, Gauge, RotateCcw } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SegmentedControl, Slider } from "@/components/ui/controls";
@@ -9,7 +9,7 @@ import { NumberField } from "@/components/ui/number-field";
 import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
 import { FORMAT_LABEL, formatOfMime, OUTPUT_FORMATS, supportsQuality, type OutputFormat } from "@/core/image-encode/formats";
 import { encodeIssue, formatMaxSide } from "@/core/image-encode/limits";
-import { BACKGROUND_PRESETS, TARGET_SIZE_PRESETS } from "@/core/image-encode/settings";
+import { BACKGROUND_PRESETS, DEFAULT_ENCODE_SETTINGS, TARGET_SIZE_PRESETS } from "@/core/image-encode/settings";
 import { formatAdvice } from "@/core/image-encode/compare";
 import type { EncodeTool } from "@/core/image-encode/types";
 import { cn } from "@/lib/cn";
@@ -50,7 +50,7 @@ export function EncodeInspector({ tool, assetId, format, busy, outputName, onOut
 
   return (
     <div data-testid="encode-inspector">
-      <InspectorSection title="Output format">
+      <InspectorSection title="Output format" action={<button type="button" onClick={() => setSettings(tool, { ...DEFAULT_ENCODE_SETTINGS[tool] })} className="inline-flex min-h-9 items-center gap-1 text-xs font-medium text-ink-2 hover:text-ink max-md:min-h-11"><RotateCcw className="size-3.5" /> Reset settings</button>}>
         <SegmentedControl<OutputFormat>
           label="Output format"
           value={format}
