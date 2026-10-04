@@ -4,6 +4,23 @@
  */
 import { FORMAT_LABEL, type OutputFormat } from "./formats";
 
+export interface FormatAdvice {
+  title: string;
+  detail: string;
+}
+
+/**
+ * Factual conversion guidance. This deliberately answers from known format capabilities and
+ * the source's measured alpha state; it never says a format is universally best.
+ */
+export function formatAdvice(input: { source: OutputFormat; target: OutputFormat; hasTransparency: boolean | null }): FormatAdvice {
+  const { source, target, hasTransparency } = input;
+  if (target === "jpeg" && hasTransparency === true) return { title: "Transparency will be flattened", detail: "JPEG cannot store transparent pixels. Shotexa fills them with the background you choose below." };
+  if (target === "png") return { title: "Lossless PNG output", detail: hasTransparency === true ? "PNG preserves this screenshot's transparent pixels and its exact raster values." : "PNG keeps exact raster values. It can be larger than lossy JPEG or WebP." };
+  if (target === "webp") return { title: "WebP is a measured option", detail: hasTransparency === true ? "WebP can preserve this screenshot's transparency. Check file size to see the exact result this browser produced." : "WebP uses lossy compression at the selected quality. Check file size to compare this browser's exact result." };
+  return { title: `${FORMAT_LABEL[source]} to JPEG`, detail: "JPEG is lossy and has no transparency. Check file size to measure the output before downloading." };
+}
+
 export interface SizeComparison {
   original: number;
   output: number;

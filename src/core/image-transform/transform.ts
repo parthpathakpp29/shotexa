@@ -14,6 +14,8 @@ export const IDENTITY_TRANSFORM: ImageTransform = {
   resize: null,
   lockAspect: true,
   cropAspect: "free",
+  straighten: 0,
+  adjustments: { brightness: 0, contrast: 0, saturation: 0, warmth: 0, grayscale: 0, exposure: 0 },
 };
 
 /**
@@ -31,7 +33,7 @@ export const EDITOR_LIMITS = {
 
 /** True when exporting would reproduce the source pixel-for-pixel (nothing to export). */
 export function isIdentity(t: ImageTransform): boolean {
-  return t.crop === null && t.rotation === 0 && !t.flipH && !t.flipV && t.resize === null;
+  return t.crop === null && t.rotation === 0 && !t.flipH && !t.flipV && t.resize === null && t.straighten === 0 && Object.values(t.adjustments).every((value) => value === 0);
 }
 
 export const sameTransform = (a: ImageTransform, b: ImageTransform) => JSON.stringify(a) === JSON.stringify(b);
@@ -58,7 +60,34 @@ export function withVisibleCrop(t: ImageTransform, source: Size, rect: Rect): Im
 /** Natural output size: the crop after rotation, before any resize. */
 export function naturalSize(t: ImageTransform, source: Size): Size {
   const crop = sourceCrop(t, source);
-  return orientedSize({ width: crop.width, height: crop.height }, t.rotation);
+  return straightenedSize(orientedSize({ width: crop.width, height: crop.height }, t.rotation), t.straighten);
+}
+
+export function straightenedSize(size: Size, degrees: number): Size {
+  const angle = (Math.max(-15, Math.min(15, degrees)) * Math.PI) / 180;
+  if (Math.abs(angle) < 1e-9) return size;
+  const cos = Math.abs(Math.cos(angle));
+  const sin = Math.abs(Math.sin(angle));
+  return { width: Math.max(1, Math.ceil(size.width * cos + size.height * sin)), height: Math.max(1, Math.ceil(size.width * sin + size.height * cos)) };
+}
+
+export function withStraighten(t: ImageTransform, degrees: number): ImageTransform {
+  return { ...t, straighten: Math.round(Math.max(-15, Math.min(15, Number.isFinite(degrees) ? degrees : 0)) * 10) / 10 };
+}
+
+export function withAdjustments(t: ImageTransform, patch: Partial<ImageTransform["adjustments"]>): ImageTransform {
+  const next = { ...t.adjustments, ...patch };
+  return {
+    ...t,
+    adjustments: {
+      brightness: Math.round(Math.max(-100, Math.min(100, next.brightness))),
+      contrast: Math.round(Math.max(-100, Math.min(100, next.contrast))),
+      saturation: Math.round(Math.max(-100, Math.min(100, next.saturation))),
+      warmth: Math.round(Math.max(-100, Math.min(100, next.warmth))),
+      grayscale: Math.round(Math.max(0, Math.min(100, next.grayscale))),
+      exposure: Math.round(Math.max(-2, Math.min(2, next.exposure)) * 10) / 10,
+    },
+  };
 }
 
 /** Final output size in pixels. Never below 1 px on either side. */
@@ -75,7 +104,7 @@ export function outputSize(t: ImageTransform, source: Size): Size {
 export function rotateTransform(t: ImageTransform, direction: "cw" | "ccw"): ImageTransform {
   const orientation = rotateOrientation(t, direction);
   // A fixed landscape ratio would snap a now-portrait crop back on the next drag.
-  const cropAspect: AspectPreset = t.cropAspect === "4:3" || t.cropAspect === "16:9" ? "free" : t.cropAspect;
+  const cropAspect: AspectPreset = t.cropAspect !== "free" && t.cropAspect !== "original" && t.cropAspect !== "1:1" ? "free" : t.cropAspect;
   // Width and height swap, so their scales swap with them.
   const resize = t.resize ? { scaleX: t.resize.scaleY, scaleY: t.resize.scaleX } : null;
   return { ...t, ...orientation, cropAspect, resize };
@@ -188,6 +217,8 @@ export function outputIssue(size: Size): OutputIssue | null {
 export function isValidTransform(t: ImageTransform, source: Size): boolean {
   if (![0, 90, 180, 270].includes(t.rotation)) return false;
   if (t.resize && !(t.resize.scaleX > 0 && t.resize.scaleY > 0 && Number.isFinite(t.resize.scaleX) && Number.isFinite(t.resize.scaleY))) return false;
+  if (!Number.isFinite(t.straighten) || t.straighten < -15 || t.straighten > 15) return false;
+  if (Object.values(t.adjustments).some((value) => !Number.isFinite(value))) return false;
   if (!t.crop) return true;
   const c = t.crop;
   const ints = [c.x, c.y, c.width, c.height].every(Number.isInteger);
@@ -204,10 +235,11 @@ const ROTATION_LABEL: Record<number, string> = { 90: "Rotated 90° right", 180: 
  * the user may not have chosen; every other state has exactly one natural description.
  */
 export function describeOrientation(t: ImageTransform): string[] {
-  if (!t.flipH) return t.rotation ? [ROTATION_LABEL[t.rotation]] : [];
-  if (t.rotation === 0) return ["Flipped horizontally"];
-  if (t.rotation === 180) return ["Flipped vertically"];
-  return ["Rotated 90°", "Mirrored"];
+  const straightened = t.straighten ? [`Straightened ${t.straighten > 0 ? "+" : ""}${t.straighten}°`] : [];
+  if (!t.flipH) return [...(t.rotation ? [ROTATION_LABEL[t.rotation]] : []), ...straightened];
+  if (t.rotation === 0) return ["Flipped horizontally", ...straightened];
+  if (t.rotation === 180) return ["Flipped vertically", ...straightened];
+  return ["Rotated 90°", "Mirrored", ...straightened];
 }
 
 export { isQuarterTurn };

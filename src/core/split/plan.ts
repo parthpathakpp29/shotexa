@@ -45,7 +45,7 @@ export const clampHeight = (h: number, height: number) => {
 export const defaultTargetHeight = (source: Size) => clampHeight(Math.round((source.width * 16) / 9), source.height);
 
 export function defaultSplit(source: Size): SplitSettings {
-  return { mode: "equal", by: "count", count: 2, height: defaultTargetHeight(source), lines: [] };
+  return { mode: "equal", by: "count", count: 2, height: defaultTargetHeight(source), lines: [], overlap: 0, namingTemplate: "shotexa-split-{n}" };
 }
 
 /** `count` near-equal pieces: cut i at round(i · H / n). Heights differ by at most 1 px. */
@@ -77,18 +77,24 @@ export function piecesFor(cuts: number[], height: number): SplitPiece[] {
   return edges.slice(1).map((y1, index) => ({ index, y0: edges[index], y1 }));
 }
 
-export const planSplit = (s: SplitSettings, source: Size): SplitPiece[] => piecesFor(cutsFor(s, source.height), source.height);
+export function planSplit(s: SplitSettings, source: Size): SplitPiece[] {
+  const pieces = piecesFor(cutsFor(s, source.height), source.height);
+  const overlap = Math.max(0, Math.min(1000, Math.round(s.overlap ?? 0)));
+  if (!overlap) return pieces;
+  return pieces.map((piece, index) => index === 0 ? piece : { ...piece, y0: Math.max(0, piece.y0 - overlap) });
+}
 
 export type SplitIssue = "OUT_OF_RANGE" | "TOO_CLOSE" | "UNSORTED" | "NOTHING_TO_SPLIT" | "TOO_MANY";
 
 /** Everything that would make an export wrong; an empty list means the pieces are safe to render. */
-export function validatePieces(pieces: SplitPiece[], height: number): SplitIssue[] {
+export function validatePieces(pieces: SplitPiece[], height: number, allowOverlap = false): SplitIssue[] {
   const issues = new Set<SplitIssue>();
   if (pieces.length < 2) issues.add("NOTHING_TO_SPLIT");
   if (pieces.length > MAX_PIECES) issues.add("TOO_MANY");
   let expected = 0;
   for (const p of pieces) {
-    if (p.y0 !== expected || !Number.isInteger(p.y0) || !Number.isInteger(p.y1)) issues.add("UNSORTED");
+    const ordered = allowOverlap ? p.y0 <= expected && p.y1 > expected : p.y0 === expected;
+    if (!ordered || !Number.isInteger(p.y0) || !Number.isInteger(p.y1)) issues.add("UNSORTED");
     if (p.y1 - p.y0 < MIN_SLICE_PX) issues.add("TOO_CLOSE");
     if (p.y0 < 0 || p.y1 > height) issues.add("OUT_OF_RANGE");
     expected = p.y1;
@@ -145,8 +151,16 @@ export function removeLine(s: SplitSettings, id: string): SplitSettings {
 
 export const linesValid = (lines: SplitLine[], height: number) => validateBreaks(sortBreaks(lines), splitLimits(height)).length === 0;
 
-/** `shotexa-split-01.png` … — zero-padded so the files sort in order. */
-export function pieceName(index: number, total: number, ext: string): string {
+/** User template with `{n}`; names are path-safe, extension-safe and sort in order. */
+export function pieceName(index: number, total: number, ext: string, template = "shotexa-split-{n}"): string {
   const width = Math.max(2, String(total).length);
-  return `shotexa-split-${String(index + 1).padStart(width, "0")}.${ext}`;
+  const number = String(index + 1).padStart(width, "0");
+  const base = template
+    .replace(/\.[^.]+$/, "")
+    .replaceAll("{n}", number)
+    .replace(/[<>:"/\\|?*\u0000-\u001f]/g, "-")
+    .replace(/[. ]+$/g, "")
+    .trim()
+    .slice(0, 120);
+  return `${base || `shotexa-split-${number}`}.${ext}`;
 }

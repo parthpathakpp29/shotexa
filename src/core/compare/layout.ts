@@ -25,6 +25,9 @@ export function clampSettings(s: CompareSettings): CompareSettings {
     divider: clamp(Math.round(s.divider), 0, 100),
     opacity: clamp(Math.round(s.opacity * 100) / 100, 0, 1),
     threshold: clamp(Math.round(s.threshold), 0, 120),
+    minRegionSize: clamp(Math.round(s.minRegionSize), 1, 50_000),
+    mergeDistance: clamp(Math.round(s.mergeDistance), 0, 100),
+    flickerSpeed: s.flickerSpeed === 250 || s.flickerSpeed === 1000 ? s.flickerSpeed : 500,
     gap: clamp(Math.round(s.gap), 0, 20),
     background: /^#[0-9a-f]{6}$/i.test(s.background) ? s.background.toLowerCase() : DEFAULT_BACKGROUND,
   };
@@ -93,6 +96,9 @@ export function compareLayout(settings: CompareSettings, a: CompareInput, b: Com
     divider: Math.round((canvas.width * s.divider) / 100),
     opacity: s.opacity,
     threshold: s.threshold,
+    minRegionSize: s.minRegionSize,
+    mergeDistance: s.mergeDistance,
+    ignoreTiny: s.ignoreTiny,
     background: s.background,
     labels: s.labels ? { a: "Before", b: "After" } : null,
   };

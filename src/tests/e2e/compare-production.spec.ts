@@ -16,8 +16,8 @@ const RED: RGB = [220, 40, 40];
 const GREEN: RGB = [40, 170, 70];
 const PAPER: RGB = [243, 241, 238];
 
-const capture = !!process.env.CAPTURE_PHASE2M;
-const SCREENSHOTS = join(process.cwd(), "docs/phase-2m/screenshots");
+const capture = !!process.env.CAPTURE_PHASE2M || !!process.env.CAPTURE_PHASE3C || !!process.env.CAPTURE_PHASE3D;
+const SCREENSHOTS = join(process.cwd(), process.env.CAPTURE_PHASE3D ? "docs/phase-3d/screenshots" : process.env.CAPTURE_PHASE3C ? "docs/phase-3c/screenshots" : "docs/phase-2m/screenshots");
 /** The known change: a rectangle that exists in B but not in A. */
 const CHANGE = { x: 100, y: 60, width: 80, height: 50 };
 
@@ -249,6 +249,8 @@ test.describe("Phase 2M Compare Screenshots", () => {
     await open(page, [panel("before.png", 400, 300, false), panel("after.png", 400, 300, true)]);
     await mode(page, "Difference").click();
     await hideLabels(page);
+    await expect(page.getByTestId("compare-difference-stats")).toContainText("changed");
+    await expect(page.getByTestId("compare-difference-stats")).toContainText("unchanged");
     await shot(page, "05-difference.png");
 
     const { name, png: out } = await exportCompare(page);
@@ -262,6 +264,32 @@ test.describe("Phase 2M Compare Screenshots", () => {
     const quiet = at(out, 20, 20);
     expect(highlighted(quiet)).toBe(false);
     expect(Math.max(...quiet)).toBeLessThan(110);
+  });
+
+  test("heatmap, changed regions, flicker and synchronized zoom stay local and explicit", async ({ page }) => {
+    const { errors, outbound } = watch(page);
+    await open(page, [panel("before.png", 400, 300, false), panel("after.png", 400, 300, true)]);
+    await mode(page, "Heatmap").click();
+    await hideLabels(page);
+    await expect(page.getByTestId("compare-difference-stats")).toContainText("1 changed regions");
+    await expect(page.getByTestId("compare-file-details")).toContainText("PNG");
+    await shot(page, "02-compare-heatmap.png");
+    await page.getByRole("button", { name: /Region 1 ·/ }).click();
+    await expect(page.getByRole("button", { name: "Actual size" })).toHaveClass(/bg-surface-2/);
+    await page.getByRole("button", { name: "Zoom in" }).click();
+    await page.getByRole("button", { name: "Zoom out" }).click();
+    await page.getByRole("button", { name: "Fit" }).click();
+
+    await page.getByRole("switch", { name: "Flicker paused" }).click();
+    await expect(page.getByTestId("compare-hint")).toContainText("Flicker is playing");
+    await page.getByRole("switch", { name: "Flicker playing" }).click();
+
+    const { name, png: out } = await exportCompare(page);
+    expect(name).toBe("compare-heatmap.png");
+    expect(highlighted(at(out, CHANGE.x + 10, CHANGE.y + 10))).toBe(true);
+    expect(highlighted(at(out, 20, 20))).toBe(false);
+    expect(outbound).toEqual([]);
+    expect(errors).toEqual([]);
   });
 
   test("identical screenshots show no difference at all", async ({ page }) => {

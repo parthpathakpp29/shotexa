@@ -5,7 +5,7 @@
 import type { Rect, Size } from "@/core/image-transform/types";
 import type { FileId } from "@/core/runtime/types";
 
-export type CompareMode = "side-by-side" | "slider" | "overlay" | "difference";
+export type CompareMode = "side-by-side" | "slider" | "overlay" | "difference" | "heatmap";
 /** How each screenshot is fitted into the shared comparison cell. */
 export type CompareFit = "contain" | "cover" | "actual";
 export type CompareAlign = "center" | "top" | "bottom" | "left" | "right";
@@ -24,6 +24,14 @@ export interface CompareSettings {
   opacity: number;
   /** Difference sensitivity: channel differences at or below this count as unchanged (0–120). */
   threshold: number;
+  /** Small connected components below this pixel count are omitted from the region list. */
+  minRegionSize: number;
+  /** Nearby region boxes are merged when their edges are within this preview-pixel distance. */
+  mergeDistance: number;
+  ignoreTiny: boolean;
+  /** Preview-only A/B alternation. Still exports keep the selected comparison mode. */
+  flicker: boolean;
+  flickerSpeed: 250 | 500 | 1000;
   /** Side-by-side gap, as a percentage of the cell's short side. */
   gap: number;
   labels: boolean;
@@ -54,6 +62,9 @@ export interface CompareLayout {
   divider: number;
   opacity: number;
   threshold: number;
+  minRegionSize: number;
+  mergeDistance: number;
+  ignoreTiny: boolean;
   background: string;
   labels: { a: string; b: string } | null;
 }

@@ -226,5 +226,18 @@ describe("output geometry", () => {
     expect(pieceName(2, 3, "jpg")).toBe("shotexa-split-03.jpg");
     expect(pieceName(99, 100, "webp")).toBe("shotexa-split-100.webp");
     expect(pieceName(4, 100, "png")).toBe("shotexa-split-005.png");
+    expect(pieceName(1, 12, "webp", "screenshot-{n}.png")).toBe("screenshot-02.webp");
+    expect(pieceName(0, 2, "jpg", "client:review-{n}")).toBe("client-review-01.jpg");
+  });
+
+  it("intentionally overlaps every piece after the first", () => {
+    const pieces = planSplit(equal({ count: 3, overlap: 20 }), { width: 100, height: 300 });
+    expect(pieces).toEqual([
+      { index: 0, y0: 0, y1: 100 },
+      { index: 1, y0: 80, y1: 200 },
+      { index: 2, y0: 180, y1: 300 },
+    ]);
+    expect(validatePieces(pieces, 300, true)).toEqual([]);
+    expect(validatePieces(pieces, 300)).toContain("UNSORTED");
   });
 });

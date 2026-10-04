@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { SegmentedControl, Slider } from "@/components/ui/controls";
 import { FieldLabel, InspectorSection } from "@/components/ui/primitives";
+import { NumberField } from "@/components/ui/number-field";
 import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
 import { FORMAT_LABEL, formatOfMime, OUTPUT_FORMATS, supportsQuality, type OutputFormat } from "@/core/image-encode/formats";
 import { encodeIssue, formatMaxSide } from "@/core/image-encode/limits";
-import { BACKGROUND_PRESETS } from "@/core/image-encode/settings";
+import { BACKGROUND_PRESETS, TARGET_SIZE_PRESETS } from "@/core/image-encode/settings";
+import { formatAdvice } from "@/core/image-encode/compare";
 import type { EncodeTool } from "@/core/image-encode/types";
 import { cn } from "@/lib/cn";
 
@@ -19,7 +21,7 @@ export function issueText(issue: ReturnType<typeof encodeIssue>, format: OutputF
   return `This image is too large to encode as ${FORMAT_LABEL[format]} in a browser. Choose PNG, or split it first.`;
 }
 
-export function EncodeInspector({ tool, assetId, format, busy, onRun }: { tool: EncodeTool; assetId: string; format: OutputFormat; busy: boolean; onRun(): void }) {
+export function EncodeInspector({ tool, assetId, format, busy, outputName, onOutputName, onRun }: { tool: EncodeTool; assetId: string; format: OutputFormat; busy: boolean; outputName?: string; onOutputName?(value: string): void; onRun(): void }) {
   const { runtime } = useWorkspaceContext();
   const file = useWorkspace((s) => s.files[assetId]);
   const settings = useWorkspace((s) => s.encode[tool]);
@@ -40,9 +42,10 @@ export function EncodeInspector({ tool, assetId, format, busy, onRun }: { tool: 
 
   if (!file) return null;
   const hasAlpha = transparent?.id === assetId ? transparent.value : null;
+  const advisor = tool === "convert" ? formatAdvice({ source: input, target: format, hasTransparency: hasAlpha }) : null;
   const issue = encodeIssue(file, format);
-  // Compress offers every format (the original's is the default); Convert offers the other two.
-  const choices = tool === "compress" ? OUTPUT_FORMATS : OUTPUT_FORMATS.filter((f) => f !== input);
+  // Explicit same-format Convert is useful after measuring candidates; Auto still changes format.
+  const choices = OUTPUT_FORMATS;
   const custom = !BACKGROUND_PRESETS.some((p) => p.value === settings.background);
 
   return (
@@ -76,6 +79,14 @@ export function EncodeInspector({ tool, assetId, format, busy, onRun }: { tool: 
         )}
       </InspectorSection>
 
+      {advisor && (
+        <InspectorSection title="Which format should I use?">
+          <p className="text-sm font-medium text-ink" data-testid="convert-format-advice-title">{advisor.title}</p>
+          <p className="t-body-sm mt-2 text-ink-2" data-testid="convert-format-advice">{advisor.detail}</p>
+          <p className="t-body-sm mt-2 text-ink-3">Source: {FORMAT_LABEL[input]} · {file.width} × {file.height} px · {Math.round(file.bytes / 1024).toLocaleString()} KB.</p>
+        </InspectorSection>
+      )}
+
       <InspectorSection title="Quality">
         {supportsQuality(format) ? (
           <>
@@ -89,6 +100,27 @@ export function EncodeInspector({ tool, assetId, format, busy, onRun }: { tool: 
           </p>
         )}
       </InspectorSection>
+
+      {tool === "compress" && (
+        <InspectorSection title="Target file size">
+          {supportsQuality(format) ? (
+            <>
+              <div role="radiogroup" aria-label="Target file size" className="grid grid-cols-2 gap-2">
+                <button type="button" role="radio" aria-checked={settings.targetBytes === null} onClick={() => setSettings(tool, { targetBytes: null })} className={cn("min-h-10 rounded-sm border px-2 text-sm max-md:min-h-11", settings.targetBytes === null ? "border-accent bg-accent-soft text-accent-ink" : "border-line text-ink-2 hover:border-line-strong")}>Manual</button>
+                {TARGET_SIZE_PRESETS.map((preset) => (
+                  <button key={preset.bytes} type="button" role="radio" aria-checked={settings.targetBytes === preset.bytes} onClick={() => setSettings(tool, { targetBytes: preset.bytes })} className={cn("min-h-10 rounded-sm border px-2 text-sm max-md:min-h-11", settings.targetBytes === preset.bytes ? "border-accent bg-accent-soft text-accent-ink" : "border-line text-ink-2 hover:border-line-strong")}>{preset.label}</button>
+                ))}
+              </div>
+              <div className="mt-3">
+                <NumberField label="Custom target" ariaLabel="Custom target in KB" testId="encode-target-custom" value={Math.max(1, Math.round((settings.targetBytes ?? 500 * 1024) / 1024))} min={1} max={1024 * 1024} unit="KB" onCommit={(kb) => setSettings(tool, { targetBytes: kb * 1024 })} />
+              </div>
+              <p className="t-body-sm mt-3 text-ink-3">Shotexa makes up to seven local JPEG/WebP encodes to find the highest measured quality at or below this target. It never resizes or changes the format. If 50% is still larger, it reports the closest result.</p>
+            </>
+          ) : (
+            <p className="t-body-sm text-ink-2">PNG is lossless and has no quality setting, so it cannot honestly target an exact file size. Choose JPEG or WebP to use a target.</p>
+          )}
+        </InspectorSection>
+      )}
 
       {needsBackground && (
         <InspectorSection title="Background">
@@ -131,6 +163,22 @@ export function EncodeInspector({ tool, assetId, format, busy, onRun }: { tool: 
               />
             </label>
           </div>
+        </InspectorSection>
+      )}
+
+      {tool === "convert" && outputName !== undefined && onOutputName && (
+        <InspectorSection title="Filename">
+          <label className="block text-sm font-medium text-ink" htmlFor="convert-filename">Output filename</label>
+          <input
+            id="convert-filename"
+            data-testid="convert-filename"
+            value={outputName}
+            onChange={(event) => onOutputName(event.target.value)}
+            className="mt-2 h-10 w-full rounded-sm border border-line-strong bg-surface px-3 text-sm text-ink outline-none focus-visible:border-accent focus-visible:ring-2 focus-visible:ring-accent/30 max-md:h-11"
+            autoComplete="off"
+            spellCheck={false}
+          />
+          <p className="t-body-sm mt-2 text-ink-3">Invalid filename characters are replaced. The correct .{format === "jpeg" ? "jpg" : format} extension is added automatically.</p>
         </InspectorSection>
       )}
 

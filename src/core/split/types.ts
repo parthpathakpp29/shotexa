@@ -24,6 +24,10 @@ export interface SplitSettings {
   height: number;
   /** Custom split lines, sorted by y, in source px. */
   lines: SplitLine[];
+  /** Rows intentionally repeated at the start of every piece after the first. */
+  overlap?: number;
+  /** Local filename pattern. `{n}` is replaced with the zero-padded piece number. */
+  namingTemplate?: string;
 }
 
 /** One output image: source rows [y0, y1) at full width. */

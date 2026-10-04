@@ -9,7 +9,7 @@ import type { CombineErrorCode } from "@/core/combine/errors";
 import type { EditorErrorCode, ImageTransform, TransformExportResult } from "@/core/image-transform/types";
 import type { AnnotationErrorCode, AnnotationObject } from "@/core/annotation/types";
 import type { SplitErrorCode, SplitExportResult, SplitPiece } from "@/core/split/types";
-import type { EncodeErrorCode, EncodeResult } from "@/core/image-encode/types";
+import type { EncodeErrorCode, EncodeResult, FormatComparisonResult } from "@/core/image-encode/types";
 import type { BeautifyErrorCode, BeautifySettings } from "@/core/beautify/types";
 import type { BeautifyRenderResult } from "@/core/beautify/render";
 import type { CompareErrorCode, CompareSettings } from "@/core/compare/types";
@@ -75,8 +75,13 @@ export interface WorkerOps {
   };
   /** Compress / Convert: decode once, re-encode at the same size (JPEG on a chosen background), verify. */
   "image.encode": {
-    input: { image: Blob; source: { width: number; height: number }; format: "png" | "jpeg" | "webp"; quality: number; background: string; probe?: { format: "png" | "jpeg" | "webp"; quality: number } };
+    input: { image: Blob; source: { width: number; height: number }; format: "png" | "jpeg" | "webp"; quality: number; background: string; probe?: { format: "png" | "jpeg" | "webp"; quality: number }; targetBytes?: number | null };
     output: EncodeResult;
+  };
+  /** Convert: bounded PNG/JPEG/WebP measurement from one decode, sequentially rendered. */
+  "image.compareFormats": {
+    input: { image: Blob; source: { width: number; height: number }; quality: number; background: string };
+    output: FormatComparisonResult;
   };
   /** Beautifier: decode once, compose background/frame/screenshot at full size, encode, verify. */
   "beautify.export": {

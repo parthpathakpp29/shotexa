@@ -8,6 +8,7 @@ export const COMPARE_MODES: { value: CompareMode; label: string; hint: string }[
   { value: "slider", label: "Before / after", hint: "Drag the divider to wipe between them." },
   { value: "overlay", label: "Overlay", hint: "After on top of before — good for spotting things that moved." },
   { value: "difference", label: "Difference", hint: "Highlights the pixels that changed. Nothing is interpreted for you." },
+  { value: "heatmap", label: "Heatmap", hint: "Maps larger deterministic pixel differences from cool to hot colours." },
 ];
 
 export const FIT_OPTIONS: { value: CompareFit; label: string }[] = [
@@ -47,6 +48,11 @@ export const DEFAULT_COMPARE: CompareSettings = {
   divider: 50,
   opacity: 0.5,
   threshold: 12,
+  minRegionSize: 24,
+  mergeDistance: 6,
+  ignoreTiny: true,
+  flicker: false,
+  flickerSpeed: 500,
   gap: 2,
   labels: true,
   background: DEFAULT_BACKGROUND,
@@ -58,4 +64,5 @@ export const COMPARE_NAMES: Record<CompareMode, string> = {
   slider: "compare-before-after",
   overlay: "compare-overlay",
   difference: "compare-difference",
+  heatmap: "compare-heatmap",
 };

@@ -17,7 +17,7 @@ import { WorkspaceShell } from "@/components/workspace/workspace-shell";
 import { continuationsFor, TOOLS } from "@/config/tools";
 import { messageFor } from "@/core/runtime/messages";
 import { downloadBlob, downloadBlobs, type SplitRunResult } from "@/core/runtime/runtime";
-import { cutsFor, defaultSplit, piecesFor, validatePieces } from "@/core/split/plan";
+import { defaultSplit, planSplit, validatePieces } from "@/core/split/plan";
 import { SplitInspector } from "./split-inspector";
 import { SplitStage } from "./split-stage";
 
@@ -41,8 +41,8 @@ function SplitWorkspace() {
 
   if (!selectedId || !file) return null;
   const H = file.height;
-  const pieces = piecesFor(cutsFor(stored ?? defaultSplit({ width: file.width, height: H }), H), H);
-  const valid = validatePieces(pieces, H).length === 0;
+  const pieces = planSplit(stored ?? defaultSplit({ width: file.width, height: H }), { width: file.width, height: H });
+  const valid = validatePieces(pieces, H, true).length === 0;
   const exporting = !!job;
 
   async function exportSplit() {

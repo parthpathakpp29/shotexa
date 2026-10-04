@@ -10,8 +10,13 @@ describe("aspect presets", () => {
     expect(aspectRatio("free", B)).toBeNull();
     expect(aspectRatio("original", B)).toBeCloseTo(1000 / 600);
     expect(aspectRatio("1:1", B)).toBe(1);
+    expect(aspectRatio("4:5", B)).toBeCloseTo(4 / 5);
     expect(aspectRatio("4:3", B)).toBeCloseTo(4 / 3);
+    expect(aspectRatio("9:16", B)).toBeCloseTo(9 / 16);
     expect(aspectRatio("16:9", B)).toBeCloseTo(16 / 9);
+    expect(aspectRatio("3:2", B)).toBeCloseTo(3 / 2);
+    expect(aspectRatio("2:1", B)).toBe(2);
+    expect(aspectRatio("1.91:1", B)).toBe(1.91);
   });
 
   it("fits the largest centred box of the ratio", () => {

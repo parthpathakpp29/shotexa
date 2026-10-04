@@ -17,8 +17,8 @@ const BLUE: RGB = [40, 80, 200];
 const CREAM: RGB = [247, 241, 227];
 const WHITE: RGB = [255, 255, 255];
 
-const capture = !!process.env.CAPTURE_PHASE2L;
-const SCREENSHOTS = join(process.cwd(), "docs/phase-2l/screenshots");
+const capture = !!process.env.CAPTURE_PHASE2L || !!process.env.CAPTURE_PHASE3C || !!process.env.CAPTURE_PHASE3D;
+const SCREENSHOTS = join(process.cwd(), process.env.CAPTURE_PHASE3D ? "docs/phase-3d/screenshots" : process.env.CAPTURE_PHASE3C ? "docs/phase-3c/screenshots" : "docs/phase-2l/screenshots");
 
 function png(name: string, width: number, height: number, pixel: (x: number, y: number) => [number, number, number, number]) {
   const p = new PNG({ width, height });
@@ -310,6 +310,41 @@ test.describe("Phase 2L Screenshot Beautifier", () => {
     const inLandscape = boundsOf(landscape, RED);
     expect(inLandscape.height).toBeLessThanOrEqual(630);
     expect(inLandscape.width / inLandscape.height).toBeCloseTo(1170 / 2532, 1); // not distorted
+  });
+
+  test("style recipes, auto layout and local screenshot-colour sampling keep the normal renderer", async ({ page }) => {
+    const { errors, outbound } = watch(page);
+    await open(page, solid("shot.png", 600, 400, RED));
+    await page.getByTestId("beautify-style-launch").click();
+    await expect(stage(page)).toHaveAttribute("data-mode", "browser");
+    await page.getByTestId("beautify-auto-layout").click();
+    expect((await outputSize(page)).width / (await outputSize(page)).height).toBeCloseTo(16 / 9, 2);
+    await page.getByTestId("beautify-auto-background").click();
+    await page.getByRole("radiogroup", { name: "Background type" }).getByRole("radio", { name: "Gradient" }).click();
+    await shot(page, "10-power-tools.png");
+    const expected = await outputSize(page);
+    const out = (await exportImage(page)).png;
+    expect([out.width, out.height]).toEqual([expected.width, expected.height]);
+    expect(outbound).toEqual([]);
+    expect(errors).toEqual([]);
+  });
+
+  test("blurred screenshot, title, glass border, custom canvas and 2× export share one renderer", async ({ page }) => {
+    await open(page, halves("hero.png", 640, 400));
+    await page.getByRole("radiogroup", { name: "Background type" }).getByRole("radio", { name: "Blurred shot" }).click();
+    await page.getByRole("slider", { name: "Background blur" }).fill("28");
+    await page.getByTestId("beautify-title").fill("Launch faster");
+    await page.getByTestId("beautify-subtitle").fill("Polished locally in your browser");
+    await page.getByRole("radiogroup", { name: "Border style" }).getByRole("radio", { name: "Glass" }).click();
+    await page.getByRole("radiogroup", { name: "Output size" }).getByRole("radio", { name: "Custom" }).click();
+    await page.getByTestId("beautify-custom-width").fill("1000");
+    await page.getByTestId("beautify-custom-width").press("Enter");
+    await page.getByRole("radiogroup", { name: "Export resolution scale" }).getByRole("radio", { name: "2×" }).click();
+    await expect(page.getByTestId("beautify-final-dimensions")).toContainText("2000 ×");
+    await shot(page, "01-beautifier-wow.png");
+    const expected = await outputSize(page);
+    const out = (await exportImage(page)).png;
+    expect([out.width, out.height]).toEqual([expected.width, expected.height]);
   });
 
   test("the preview shows the same composition as the exported file", async ({ page }) => {

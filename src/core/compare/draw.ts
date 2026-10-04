@@ -4,7 +4,7 @@
  * code — so what is on screen is what gets saved.
  */
 import type { Rect } from "@/core/image-transform/types";
-import { differencePixels } from "./difference";
+import { changedRegions, differencePixels, differenceStats, type DifferenceAnalysis } from "./difference";
 import type { CompareLayout, ComparePlacement } from "./types";
 
 type Canvas = OffscreenCanvas | HTMLCanvasElement;
@@ -71,7 +71,7 @@ function label(ctx: Ctx, text: string, box: Rect, cell: { width: number; height:
 }
 
 /** Difference mode: rasterise both sides on the same background, then compare pixel by pixel. */
-function drawDifference(ctx: Ctx, layout: CompareLayout, a: CompareSource, b: CompareSource, width: number, height: number, scale: number, make: (w: number, h: number) => Canvas): void {
+function drawDifference(ctx: Ctx, layout: CompareLayout, a: CompareSource, b: CompareSource, width: number, height: number, scale: number, make: (w: number, h: number) => Canvas): DifferenceAnalysis | null {
   let left: Canvas | null = null;
   let right: Canvas | null = null;
   try {
@@ -79,7 +79,7 @@ function drawDifference(ctx: Ctx, layout: CompareLayout, a: CompareSource, b: Co
     right = make(width, height);
     const lc = left.getContext("2d", { willReadFrequently: true }) as Ctx | null;
     const rc = right.getContext("2d", { willReadFrequently: true }) as Ctx | null;
-    if (!lc || !rc) return;
+    if (!lc || !rc) return null;
     for (const [c, placement, source] of [
       [lc, layout.a, a],
       [rc, layout.b, b],
@@ -92,11 +92,18 @@ function drawDifference(ctx: Ctx, layout: CompareLayout, a: CompareSource, b: Co
     }
     const la = lc.getImageData(0, 0, width, height);
     const rb = rc.getImageData(0, 0, width, height);
-    differencePixels(la.data, rb.data, la.data, layout.threshold);
+    const mask = new Uint8Array(width * height);
+    const changed = differencePixels(la.data, rb.data, la.data, layout.threshold, mask, layout.mode === "heatmap" ? "heatmap" : "difference");
+    const grouped = changedRegions(mask, width, height, {
+      minRegionSize: layout.minRegionSize,
+      mergeDistance: layout.mergeDistance,
+      ignoreTiny: layout.ignoreTiny,
+    });
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.putImageData(la, 0, 0);
     ctx.restore();
+    return { ...differenceStats(changed, width * height), width, height, regions: grouped.regions, regionsTruncated: grouped.truncated };
   } finally {
     for (const c of [left, right]) {
       if (!c) continue;
@@ -104,17 +111,26 @@ function drawDifference(ctx: Ctx, layout: CompareLayout, a: CompareSource, b: Co
       c.height = 0;
     }
   }
+  return null;
 }
 
 /**
  * Draw the comparison. `width`/`height` are the target canvas's device pixels; everything else
  * comes from the layout, so the preview and the export place things identically.
  */
-export function drawCompare(ctx: Ctx, layout: CompareLayout, a: CompareSource, b: CompareSource, width: number, height: number, o: DrawCompareOptions = {}): void {
+export function drawCompare(ctx: Ctx, layout: CompareLayout, a: CompareSource, b: CompareSource, width: number, height: number, o: DrawCompareOptions = {}): DifferenceAnalysis | null {
   const scale = o.scale ?? width / layout.canvas.width;
-  if (layout.mode === "difference") {
+  if (layout.mode === "difference" || layout.mode === "heatmap") {
     const make = o.createCanvas ?? ((w: number, h: number) => new OffscreenCanvas(w, h));
-    drawDifference(ctx, layout, a, b, width, height, scale, make);
+    const stats = drawDifference(ctx, layout, a, b, width, height, scale, make);
+    if (layout.labels) {
+      ctx.save();
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+      label(ctx, layout.labels.a, layout.cellA, layout.cell, "left");
+      label(ctx, layout.labels.b, layout.cellB, layout.cell, "right");
+      ctx.restore();
+    }
+    return stats;
   } else {
     ctx.save();
     ctx.setTransform(scale, 0, 0, scale, 0, 0);
@@ -143,10 +159,11 @@ export function drawCompare(ctx: Ctx, layout: CompareLayout, a: CompareSource, b
     }
     ctx.restore();
   }
-  if (!layout.labels) return;
+  if (!layout.labels) return null;
   ctx.save();
   ctx.setTransform(scale, 0, 0, scale, 0, 0);
   label(ctx, layout.labels.a, layout.cellA, layout.cell, "left");
   label(ctx, layout.labels.b, layout.cellB, layout.cell, layout.mode === "side-by-side" ? "left" : "right");
   ctx.restore();
+  return null;
 }

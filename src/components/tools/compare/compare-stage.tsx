@@ -9,13 +9,14 @@
  * is down (so nothing re-renders the store on every move) and is committed once on release,
  * giving exactly one undo step.
  */
-import { Maximize2, Redo2, Undo2 } from "lucide-react";
+import { Maximize2, Redo2, Undo2, ZoomIn, ZoomOut } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { IconButton, Mono, Toolbar, ToolbarDivider } from "@/components/ui/primitives";
 import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
 import { drawCompare } from "@/core/compare/draw";
+import type { ChangedRegion, DifferenceAnalysis } from "@/core/compare/difference";
 import { compareLayout, dividerFromX } from "@/core/compare/layout";
-import { backingSize } from "@/lib/stage-size";
+import { backingSize, displayWidth, zoomIn, zoomOut, type Zoom } from "@/lib/stage-size";
 import { cn } from "@/lib/cn";
 import { useReleasingCanvas } from "@/lib/use-canvas-ref";
 import { useElementWidth } from "@/lib/use-element-width";
@@ -40,51 +41,89 @@ export function CompareStage({ assetA, assetB }: { assetA: string; assetB: strin
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const attachCanvas = useReleasingCanvas(canvasRef);
   const stageRef = useRef<HTMLDivElement>(null);
-  const [zoom, setZoom] = useState<"fit" | 1>("fit");
+  const [zoom, setZoom] = useState<Zoom>("fit");
   /** The divider while the pointer is down; null when it is not being dragged. */
   const [draft, setDraft] = useState<number | null>(null);
+  const [stats, setStats] = useState<DifferenceAnalysis | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<number | null>(null);
+  const [flickerFrame, setFlickerFrame] = useState<"a" | "b">("a");
+  const [reducedMotion, setReducedMotion] = useState(false);
   const latest = useRef(settings.divider);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const divider = draft ?? settings.divider;
   const layout = useMemo(
     () => (fileA && fileB ? compareLayout({ ...settings, divider }, { size: { width: fileA.width, height: fileA.height }, name: fileA.name }, { size: { width: fileB.width, height: fileB.height }, name: fileB.name }) : null),
     [settings, divider, fileA, fileB],
   );
+  const renderLayout = useMemo(() => {
+    if (!layout || !settings.flicker || reducedMotion) return layout;
+    return { ...layout, mode: "slider" as const, divider: flickerFrame === "a" ? layout.canvas.width : 0, labels: null };
+  }, [layout, settings.flicker, reducedMotion, flickerFrame]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(media.matches);
+    update();
+    media.addEventListener?.("change", update);
+    return () => media.removeEventListener?.("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (!settings.flicker || reducedMotion) return;
+    const timer = window.setInterval(() => setFlickerFrame((current) => (current === "a" ? "b" : "a")), settings.flickerSpeed);
+    return () => window.clearInterval(timer);
+  }, [settings.flicker, settings.flickerSpeed, reducedMotion]);
 
   const cssWidth = useMemo(() => {
     if (!layout || frameWidth <= 0) return 0;
     const available = Math.max(1, frameWidth - 32);
-    if (zoom === 1) return Math.max(1, Math.min(layout.canvas.width, available * 4));
+    if (zoom !== "fit") return displayWidth(layout.canvas, available, zoom);
     const byHeight = (MAX_PREVIEW_HEIGHT * layout.canvas.width) / layout.canvas.height;
-    return Math.max(1, Math.floor(Math.min(available, byHeight, layout.canvas.width)));
+    return Math.max(1, Math.floor(Math.min(displayWidth(layout.canvas, available, "fit"), byHeight)));
   }, [layout, frameWidth, zoom]);
   const cssHeight = layout && cssWidth ? Math.max(1, Math.round((cssWidth * layout.canvas.height) / layout.canvas.width)) : 0;
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !layout || !fileA || !fileB || !cssWidth) return;
-    const size = backingSize({ width: cssWidth, height: cssHeight }, Infinity);
-    canvas.width = size.width;
-    canvas.height = size.height;
-    const ctx = canvas.getContext("2d", { willReadFrequently: layout.mode === "difference" });
-    if (!ctx) return;
-    ctx.clearRect(0, 0, size.width, size.height);
+    if (!canvas || !layout || !renderLayout || !fileA || !fileB || !cssWidth) return;
     const bitmapA = runtime.registry.preview(assetA);
     const bitmapB = runtime.registry.preview(assetB);
+    const detailScale = Math.max(bitmapA ? bitmapA.width / fileA.width : 1, bitmapB ? bitmapB.width / fileB.width : 1);
+    const size = backingSize({ width: cssWidth, height: cssHeight }, layout.canvas.width * detailScale);
+    canvas.width = size.width;
+    canvas.height = size.height;
+    const ctx = canvas.getContext("2d", { willReadFrequently: layout.mode === "difference" || layout.mode === "heatmap" });
+    if (!ctx) return;
+    ctx.clearRect(0, 0, size.width, size.height);
     // One renderer, one layout: the preview is the export at a smaller scale.
-    drawCompare(
+    const nextStats = drawCompare(
       ctx,
-      layout,
+      renderLayout,
       { image: bitmapA ?? null, imageScale: bitmapA ? bitmapA.width / fileA.width : 1 },
       { image: bitmapB ?? null, imageScale: bitmapB ? bitmapB.width / fileB.width : 1 },
       size.width,
       size.height,
       { createCanvas: (w, h) => Object.assign(document.createElement("canvas"), { width: w, height: h }) },
     );
-  }, [runtime, assetA, assetB, versionA, versionB, layout, fileA, fileB, cssWidth, cssHeight]);
+    setStats((current) => (current?.changedPixels === nextStats?.changedPixels && current?.totalPixels === nextStats?.totalPixels ? current : nextStats));
+  }, [runtime, assetA, assetB, versionA, versionB, layout, renderLayout, fileA, fileB, cssWidth, cssHeight]);
 
   if (!fileA || !fileB || !layout) return null;
-  const sliding = layout.mode === "slider";
+  const sliding = layout.mode === "slider" && !settings.flicker;
+
+  function focusRegion(region: ChangedRegion) {
+    setSelectedRegion(region.id);
+    if (zoom === "fit") setZoom(1);
+    requestAnimationFrame(() => {
+      const frame = scrollRef.current;
+      const stage = stageRef.current;
+      if (!frame || !stage) return;
+      const x = ((region.x + region.width / 2) / Math.max(1, stats?.width ?? 1)) * stage.offsetWidth;
+      const y = ((region.y + region.height / 2) / Math.max(1, stats?.height ?? 1)) * stage.offsetHeight;
+      frame.scrollTo({ left: Math.max(0, x - frame.clientWidth / 2), top: Math.max(0, y - frame.clientHeight / 2), behavior: reducedMotion ? "auto" : "smooth" });
+    });
+  }
 
   function moveTo(clientX: number) {
     const box = stageRef.current?.getBoundingClientRect();
@@ -119,6 +158,12 @@ export function CompareStage({ assetA, assetB }: { assetA: string; assetB: strin
           >
             100%
           </button>
+          <IconButton label="Zoom out" disabled={zoom === "fit"} onClick={() => setZoom(zoomOut(zoom))}>
+            <ZoomOut />
+          </IconButton>
+          <IconButton label="Zoom in" disabled={zoom === 2} onClick={() => setZoom(zoomIn(zoom))}>
+            <ZoomIn />
+          </IconButton>
           <span className="contents max-md:hidden">
             <ToolbarDivider />
             <IconButton label="Undo" disabled={!canUndo} onClick={undo}>
@@ -131,7 +176,13 @@ export function CompareStage({ assetA, assetB }: { assetA: string; assetB: strin
         </Toolbar>
       </div>
 
-      <div ref={frameRef} className="flex min-h-[420px] items-center justify-center overflow-auto rounded-lg border border-line bg-surface-2 p-4 max-md:min-h-[50dvh] max-md:p-2">
+      <div
+        ref={(element) => {
+          frameRef(element);
+          scrollRef.current = element;
+        }}
+        className="flex min-h-[420px] items-center justify-center overflow-auto rounded-lg border border-line bg-surface-2 p-4 max-md:min-h-[50dvh] max-md:p-2"
+      >
         {cssWidth > 0 && (
           <div
             ref={stageRef}
@@ -164,6 +215,22 @@ export function CompareStage({ assetA, assetB }: { assetA: string; assetB: strin
             onPointerCancel={() => sliding && commit()}
           >
             <canvas ref={attachCanvas} aria-label={`Comparison of ${fileA.name} and ${fileB.name}`} role="img" data-testid="compare-canvas" className="block h-full w-full rounded-xs" />
+            {(layout.mode === "difference" || layout.mode === "heatmap") && stats?.regions.map((region) => (
+              <button
+                key={region.id}
+                type="button"
+                aria-label={`Focus changed region ${region.id}`}
+                title={`Region ${region.id}: ${region.pixels.toLocaleString()} changed pixels`}
+                onClick={() => focusRegion(region)}
+                className={cn("absolute z-10 border-2 outline-none focus-visible:ring-2 focus-visible:ring-accent", selectedRegion === region.id ? "border-white bg-accent/15" : "border-white/60 hover:border-white")}
+                style={{
+                  left: `${(region.x / Math.max(1, stats.width)) * 100}%`,
+                  top: `${(region.y / Math.max(1, stats.height)) * 100}%`,
+                  width: `${(region.width / Math.max(1, stats.width)) * 100}%`,
+                  height: `${(region.height / Math.max(1, stats.height)) * 100}%`,
+                }}
+              />
+            ))}
             {sliding && (
               <button
                 type="button"
@@ -192,10 +259,31 @@ export function CompareStage({ assetA, assetB }: { assetA: string; assetB: strin
         )}
       </div>
       <p className="t-body-sm mt-3 text-ink-2" data-testid="compare-hint">
-        {sliding
+        {settings.flicker
+          ? reducedMotion
+            ? "Flicker is paused because reduced motion is enabled in your system settings."
+            : `Flicker is playing ${flickerFrame.toUpperCase()} at ${settings.flickerSpeed} ms. This animation is preview-only.`
+          : sliding
           ? "Drag the divider, or focus it and use ← →. Before is on the left, after on the right."
           : "The preview shows exactly what will be exported, at a smaller size."}
       </p>
+      {(layout.mode === "difference" || layout.mode === "heatmap") && stats && (
+        <div className="t-body-sm mt-2 rounded-md border border-line bg-surface-3 px-3 py-2 text-ink-2" data-testid="compare-difference-stats" aria-live="polite">
+          <p>
+            <strong className="text-ink">{stats.changedPercent.toFixed(1)}% changed</strong> · {stats.unchangedPercent.toFixed(1)}% unchanged · {stats.changedPixels.toLocaleString()} changed pixels · {stats.regions.length.toLocaleString()}{stats.regionsTruncated ? "+" : ""} changed regions.
+          </p>
+          <p className="mt-1 text-ink-3">Analysis resolution: {stats.width} × {stats.height} preview pixels. This is deterministic pixel difference, not semantic similarity.</p>
+          {stats.regions.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2" aria-label="Changed regions">
+              {stats.regions.slice(0, 12).map((region) => (
+                <button key={region.id} type="button" onClick={() => focusRegion(region)} className={cn("min-h-9 rounded-sm border px-2 text-xs focus-visible:ring-2 focus-visible:ring-accent max-md:min-h-11", selectedRegion === region.id ? "border-accent bg-accent-soft text-accent-ink" : "border-line bg-surface text-ink-2")}>
+                  Region {region.id} · {region.pixels.toLocaleString()} px · {region.percent.toFixed(2)}%
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </section>
   );
 }

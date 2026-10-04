@@ -18,8 +18,8 @@ const BLUE: RGB = [40, 80, 200];
 const YELLOW: RGB = [230, 200, 40];
 const BLACK: RGB = [0, 0, 0];
 
-const capture = !!process.env.CAPTURE_PHASE2G;
-const SCREENSHOTS = join(process.cwd(), "docs/phase-2g/screenshots");
+const capture = !!process.env.CAPTURE_PHASE2G || !!process.env.CAPTURE_PHASE3C || !!process.env.CAPTURE_PHASE3D;
+const SCREENSHOTS = join(process.cwd(), process.env.CAPTURE_PHASE3D ? "docs/phase-3d/screenshots" : process.env.CAPTURE_PHASE3C ? "docs/phase-3c/screenshots" : "docs/phase-2g/screenshots");
 
 /** Default 120×80: red TL, green TR, blue BL, yellow BR — four equal quadrants. */
 function quadrants(name = "quad.png", width = 120, height = 80) {
@@ -36,6 +36,12 @@ function quadrants(name = "quad.png", width = 120, height = 80) {
 function solid(name: string, width: number, height: number, c: RGB) {
   const png = new PNG({ width, height });
   for (let i = 0; i < png.data.length; i += 4) png.data.set([...c, 255], i);
+  return { name, mimeType: "image/png", buffer: PNG.sync.write(png) };
+}
+
+function transparentPanel(name = "transparent.png") {
+  const png = new PNG({ width: 100, height: 80 });
+  for (let y = 20; y < 60; y++) for (let x = 10; x < 70; x++) png.data.set([...RED, 255], (y * png.width + x) * 4);
   return { name, mimeType: "image/png", buffer: PNG.sync.write(png) };
 }
 
@@ -163,6 +169,16 @@ test.describe("Phase 2G Screenshot Editor", () => {
     await expect(page.getByText("Enlarging adds pixels but not detail")).toBeVisible();
   });
 
+  test("additional crop ratios are applied through the canonical crop transform", async ({ page }) => {
+    await openEditor(page);
+    const ratios = page.getByRole("radiogroup", { name: "Crop aspect ratio" });
+    await ratios.getByRole("radio", { name: "9:16", exact: true }).click();
+    await expect(outputSize(page)).toHaveText("45 × 80 px");
+    await ratios.getByRole("radio", { name: "2:1", exact: true }).click();
+    await expect(outputSize(page)).toHaveText("120 × 60 px");
+    await shot(page, "07-editor-ratios.png");
+  });
+
   test("rotate right swaps dimensions and turns the picture clockwise", async ({ page }) => {
     await openEditor(page);
     await page.getByRole("button", { name: "Rotate right" }).click();
@@ -180,6 +196,37 @@ test.describe("Phase 2G Screenshot Editor", () => {
       [20, 90, YELLOW],
       [60, 90, GREEN],
     ]);
+  });
+
+  test("straighten, adjustments, before/after, guides and transparent trim share the canonical renderer", async ({ page }) => {
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    await openEditor(page, transparentPanel());
+    await expect(page.getByTestId("editor-auto-trim")).toBeEnabled();
+    await page.getByTestId("editor-auto-trim").click();
+    await expect(outputSize(page)).toHaveText("62 × 42 px");
+    await page.getByRole("radiogroup", { name: "Preview guides" }).getByRole("radio", { name: "Thirds" }).click();
+    await expect(page.getByTestId("editor-guides-thirds")).toBeVisible();
+
+    await page.getByRole("slider", { name: "Straighten angle" }).fill("10");
+    await expect(page.getByTestId("orientation-status")).toContainText("Straightened +10°");
+    await page.getByRole("radiogroup", { name: "Filter preset" }).getByRole("radio", { name: "Warm", exact: true }).click();
+    await page.getByRole("radio", { name: "Result" }).click();
+    const editedText = await outputSize(page).textContent();
+    await expect(page.getByTestId("editor-before-after")).toHaveText("Edited");
+    await page.getByTestId("editor-before-after").click();
+    await expect(page.getByTestId("editor-before-after")).toHaveText("Original");
+    await expect(page.getByText(/Showing the untouched original/)).toBeVisible();
+    await page.getByTestId("editor-before-after").click();
+    await shot(page, "03-editor-straighten.png");
+
+    const png = await exportEdited(page);
+    expect(`${png.width} × ${png.height} px`).toBe(editedText);
+    expect(png.width).toBeGreaterThan(62);
+    expect(png.height).toBeGreaterThan(42);
+    // Guides are DOM-only and never flattened into the exported transparent corner.
+    expect(png.data[3]).toBe(0);
+    expect(errors).toEqual([]);
   });
 
   test("flip horizontal and vertical mirror the exported pixels", async ({ page }) => {

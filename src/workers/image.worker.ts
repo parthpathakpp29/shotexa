@@ -17,7 +17,7 @@ import { renderAnnotated } from "@/core/annotation/export";
 import { AnnotationError } from "@/core/annotation/types";
 import { renderSplit } from "@/core/split/render";
 import { SplitError } from "@/core/split/types";
-import { encodeImage } from "@/core/image-encode/reencode";
+import { compareFormats, encodeImage } from "@/core/image-encode/reencode";
 import { EncodeError } from "@/core/image-encode/types";
 import { renderBeautified } from "@/core/beautify/render";
 import { BeautifyError } from "@/core/beautify/types";
@@ -60,8 +60,10 @@ serveWorker(
       renderAnnotated(image, transform, annotations, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "render") }),
     "split.export": async ({ image, pieces, source, format, quality }, ctx) =>
       renderSplit(image, pieces, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "render") }),
-    "image.encode": async ({ image, source, format, quality, background, probe }, ctx) =>
-      encodeImage(image, { source, format, quality, background, probe, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "encode") }),
+    "image.encode": async ({ image, source, format, quality, background, probe, targetBytes }, ctx) =>
+      encodeImage(image, { source, format, quality, background, probe, targetBytes, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "encode") }),
+    "image.compareFormats": async ({ image, source, quality, background }, ctx) =>
+      compareFormats(image, { source, quality, background, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compare formats") }),
     "beautify.export": async ({ image, settings, source, format, quality }, ctx) =>
       renderBeautified(image, settings, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
     "compare.export": async ({ imageA, imageB, settings, a, b, format, quality }, ctx) =>

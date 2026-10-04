@@ -13,3 +13,11 @@ export function uniqueOutputNames(names: string[]): string[] {
   });
 }
 
+const cleanAffix = (value: string) => value.replace(/[<>:"/\\|?*\u0000-\u001f]/g, "-").trim().slice(0, 48);
+
+export function withAffixes(name: string, prefix: string, suffix: string): string {
+  const dot = name.lastIndexOf(".");
+  const base = dot > 0 ? name.slice(0, dot) : name;
+  const ext = dot > 0 ? name.slice(dot) : "";
+  return `${cleanAffix(prefix)}${base}${cleanAffix(suffix)}${ext}`;
+}

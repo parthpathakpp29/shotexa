@@ -6,7 +6,7 @@
  *   rotate (clockwise) → flip (visible frame) → scale to the output size.
  */
 import { orientedSize } from "./orientation";
-import { outputSize, sourceCrop } from "./transform";
+import { outputSize, sourceCrop, straightenedSize } from "./transform";
 import type { ImageTransform, Orientation, Point, Size } from "./types";
 
 /** Canvas affine [a, b, c, d, e, f]: x' = a·x + c·y + e, y' = b·x + d·y + f. */
@@ -40,12 +40,24 @@ function rotationMatrix(rotation: Orientation["rotation"], w: number, h: number)
 }
 
 /** Crop-local → output pixels for a crop of `crop` size shown at `out` size. */
-export function transformMatrix(crop: Size, o: Orientation, out: Size): Matrix {
+export function transformMatrix(crop: Size, o: Orientation & { straighten?: number }, out: Size): Matrix {
   const oriented = orientedSize(crop, o.rotation);
   const rotate = rotationMatrix(o.rotation, crop.width, crop.height);
   const flip: Matrix = [o.flipH ? -1 : 1, 0, 0, o.flipV ? -1 : 1, o.flipH ? oriented.width : 0, o.flipV ? oriented.height : 0];
-  const scale: Matrix = [out.width / oriented.width, 0, 0, out.height / oriented.height, 0, 0];
-  return multiply(scale, multiply(flip, rotate));
+  const angle = ((o.straighten ?? 0) * Math.PI) / 180;
+  const natural = straightenedSize(oriented, o.straighten ?? 0);
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+  const freeRotate: Matrix = [
+    cos,
+    sin,
+    -sin,
+    cos,
+    natural.width / 2 - cos * oriented.width / 2 + sin * oriented.height / 2,
+    natural.height / 2 - sin * oriented.width / 2 - cos * oriented.height / 2,
+  ];
+  const scale: Matrix = [out.width / natural.width, 0, 0, out.height / natural.height, 0, 0];
+  return multiply(scale, multiply(freeRotate, multiply(flip, rotate)));
 }
 
 type Ctx = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
@@ -68,8 +80,20 @@ export function drawTransformed(ctx: Ctx, image: CanvasImageSource, imageScale: 
   ctx.setTransform(m[0], m[1], m[2], m[3], m[4], m[5] - offsetY);
   ctx.imageSmoothingEnabled = !exact;
   if (!exact) ctx.imageSmoothingQuality = "high";
+  ctx.filter = adjustmentFilter(t.adjustments);
   ctx.drawImage(image, crop.x * imageScale, crop.y * imageScale, crop.width * imageScale, crop.height * imageScale, 0, 0, crop.width, crop.height);
   ctx.restore();
+}
+
+/** One Canvas 2D filter string shared by interaction previews and final exports. */
+export function adjustmentFilter(a: ImageTransform["adjustments"]): string {
+  const brightness = Math.max(0, 100 + a.brightness + a.exposure * 25);
+  const contrast = Math.max(0, 100 + a.contrast);
+  const saturation = Math.max(0, 100 + a.saturation);
+  const warmth = Math.abs(a.warmth);
+  const sepia = Math.round(warmth * 0.35);
+  const hue = a.warmth >= 0 ? -Math.round(warmth * 0.12) : Math.round(warmth * 1.8);
+  return `brightness(${brightness}%) contrast(${contrast}%) saturate(${saturation}%) grayscale(${a.grayscale}%) sepia(${sepia}%) hue-rotate(${hue}deg)`;
 }
 
 /** Inverse of an invertible affine (every editor transform is: scales are always > 0). */

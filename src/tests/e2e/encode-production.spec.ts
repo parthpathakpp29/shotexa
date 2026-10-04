@@ -9,12 +9,13 @@ import { expect, test, type Page } from "@playwright/test";
 import { mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { PNG } from "pngjs";
+import { unzipSync } from "fflate";
 
 type RGBA = [number, number, number, number];
 type Kind = "noise" | "halves" | "gradient";
 
-const capture = !!process.env.CAPTURE_PHASE2J;
-const SCREENSHOTS = join(process.cwd(), "docs/phase-2j/screenshots");
+const capture = !!process.env.CAPTURE_PHASE2J || !!process.env.CAPTURE_PHASE3C || !!process.env.CAPTURE_PHASE3D;
+const SCREENSHOTS = join(process.cwd(), process.env.CAPTURE_PHASE3D ? "docs/phase-3d/screenshots" : process.env.CAPTURE_PHASE3C ? "docs/phase-3c/screenshots" : "docs/phase-2j/screenshots");
 
 async function shot(page: Page, name: string) {
   if (!capture) return;
@@ -176,12 +177,32 @@ test.describe("Phase 2J Compress + Convert", () => {
     expect(near(d.samples[0], [29, 78, 216, 255], 30)).toBe(true); // gradient starts blue
   });
 
+  test("Compress target size searches locally and reports the measured outcome", async ({ page }) => {
+    const { errors, outbound } = watch(page);
+    const input = await makeImage(page, "target.jpg", { width: 800, height: 600, type: "image/jpeg", quality: 1, kind: "noise" });
+    await open(page, "/compress-screenshot", input);
+    await format(page, "WebP").click();
+    await page.getByRole("radiogroup", { name: "Target file size" }).getByRole("radio", { name: "200 KB" }).click();
+    const cmp = await checkSize(page);
+    const target = page.getByTestId("encode-target-result");
+    await expect(target).toBeVisible();
+    const measured = Number(await cmp.getAttribute("data-output"));
+    if (await target.innerText().then((text) => text.includes("met"))) expect(measured).toBeLessThanOrEqual(200 * 1024);
+    else await expect(target).toContainText("could not be reached");
+    const out = await exportFile(page);
+    expect(out.buffer.length).toBe(measured);
+    expect(signature(out.buffer)).toBe("webp");
+    expect(outbound).toEqual([]);
+    expect(errors).toEqual([]);
+  });
+
   test("transparent PNG → JPEG on the default white background", async ({ page }) => {
     await page.goto("/convert-screenshot");
     const input = await makeImage(page, "logo.png", { width: 400, height: 300, type: "image/png", kind: "halves" });
     await open(page, "/convert-screenshot", input);
     await expect(format(page, "JPEG")).toHaveAttribute("aria-checked", "true"); // PNG → JPEG by default
     await expect(page.getByTestId("encode-alpha-note")).toContainText("has transparent areas");
+    await expect(page.getByTestId("convert-format-advice")).toContainText("JPEG cannot store transparent pixels");
     await expect(page.getByRole("radiogroup", { name: "JPEG background" }).getByRole("radio", { name: "White" })).toHaveAttribute("aria-checked", "true");
     await shot(page, "02-convert-transparent-to-jpeg.png");
     const out = await exportFile(page);
@@ -226,6 +247,36 @@ test.describe("Phase 2J Compress + Convert", () => {
     expect([d.width, d.height]).toEqual([400, 300]);
     expect(d.samples[0][3]).toBeLessThanOrEqual(10); // still transparent
     expect(near(d.samples[1], [220, 40, 40, 255])).toBe(true);
+  });
+
+  test("Convert measures all formats from one run, selects a candidate and sanitises the filename", async ({ page }) => {
+    const { errors, outbound } = watch(page);
+    const input = await makeImage(page, "hero.png", { width: 480, height: 320, type: "image/png", kind: "gradient" });
+    await open(page, "/convert-screenshot", input);
+    await page.getByTestId("compare-formats").click();
+    const table = page.getByTestId("format-comparison");
+    await expect(table).toBeVisible({ timeout: 120_000 });
+    await expect(table.getByTestId("format-candidate-png")).toContainText("Lossless");
+    await expect(table.getByTestId("format-candidate-jpeg")).toContainText("Flattened");
+    await expect(table.getByTestId("format-candidate-webp")).toContainText("Supported");
+    await expect(page.getByTestId("format-comparison-summary")).toContainText("smallest measured file");
+    const [packDownload] = await Promise.all([page.waitForEvent("download", { timeout: 120_000 }), page.getByTestId("export-web-pack").click()]);
+    const packed = unzipSync(new Uint8Array(readFileSync((await packDownload.path())!)));
+    expect(Object.keys(packed)).toEqual(["image.webp", "image.png", "picture-snippet.html"]);
+    expect(Buffer.from(packed["picture-snippet.html"]).toString("utf8")).toContain("<picture>");
+    await shot(page, "04-convert-formats.png");
+
+    await table.getByRole("button", { name: "Use measured WebP" }).click();
+    await expect(format(page, "WebP")).toHaveAttribute("aria-checked", "true");
+    await page.getByTestId("convert-filename").fill("launch:hero");
+    const measured = page.getByTestId("format-candidate-webp");
+    const displayedSize = await measured.locator("td").nth(1).innerText();
+    const out = await exportFile(page);
+    expect(out.name).toBe("launch-hero.webp");
+    expect(signature(out.buffer)).toBe("webp");
+    expect(displayedSize.length).toBeGreaterThan(0);
+    expect(outbound).toEqual([]);
+    expect(errors).toEqual([]);
   });
 
   test("WebP → PNG, and WebP's size limit is explained before encoding", async ({ page }) => {
