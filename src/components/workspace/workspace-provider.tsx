@@ -13,6 +13,7 @@ import { useStore } from "zustand";
 import { usePathname } from "next/navigation";
 import { acceptsScreenshotInput } from "@/config/routes";
 import { createWorkspaceRuntime, type WorkspaceRuntime } from "@/core/runtime/runtime";
+import { dedupeDroppedFiles } from "@/core/runtime/drop-files";
 import { messageFor } from "@/core/runtime/messages";
 import type { WorkspaceActions, WorkspaceState } from "@/core/runtime/store";
 import type { FileSource } from "@/core/runtime/types";
@@ -36,6 +37,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [notices, setNotices] = useState<{ id: number; text: string }[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const pendingDispose = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const noticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Dispose when the workspace unmounts (leaving the group); survives StrictMode's double mount.
   useEffect(() => {
@@ -48,15 +50,23 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
 
   const notify = useCallback((text: string) => {
     const id = Date.now() + Math.random();
-    setNotices((n) => [...n.slice(-2), { id, text }]);
-    setTimeout(() => setNotices((n) => n.filter((x) => x.id !== id)), 6000);
+    if (noticeTimer.current) clearTimeout(noticeTimer.current);
+    setNotices([{ id, text }]);
+    noticeTimer.current = setTimeout(() => setNotices((current) => current[0]?.id === id ? [] : current), 4200);
+  }, []);
+
+  useEffect(() => () => {
+    if (noticeTimer.current) clearTimeout(noticeTimer.current);
   }, []);
 
   const addFiles = useCallback(
     async (files: File[], source: FileSource) => {
-      if (!files.length) return;
-      const r = await runtime.ingest(files, source);
-      for (const x of r.rejected) notify(`${x.name} ${messageFor(x.code)}`);
+      const unique = dedupeDroppedFiles(files);
+      if (!unique.length) return;
+      const r = await runtime.ingest(unique, source);
+      const feedback = r.rejected.map((x) => `${x.name} ${messageFor(x.code)}`);
+      if (r.added.length) feedback.unshift(`${r.added.length} screenshot${r.added.length === 1 ? "" : "s"} added to workspace`);
+      if (feedback.length) notify(feedback.join(". "));
     },
     [runtime, notify],
   );
@@ -155,18 +165,26 @@ export function useDropTarget() {
     props: {
       onDragEnter: (e: React.DragEvent) => {
         if (!e.dataTransfer.types.includes("Files")) return;
+        e.preventDefault();
+        e.stopPropagation();
         depth.current++;
         setOver(true);
       },
       onDragOver: (e: React.DragEvent) => {
-        if (e.dataTransfer.types.includes("Files")) e.preventDefault();
+        if (!e.dataTransfer.types.includes("Files")) return;
+        e.preventDefault();
+        e.stopPropagation();
+        e.dataTransfer.dropEffect = "copy";
       },
-      onDragLeave: () => {
+      onDragLeave: (e: React.DragEvent) => {
+        e.stopPropagation();
         depth.current = Math.max(0, depth.current - 1);
         if (!depth.current) setOver(false);
       },
       onDrop: (e: React.DragEvent) => {
+        if (!e.dataTransfer.types.includes("Files")) return;
         e.preventDefault();
+        e.stopPropagation();
         depth.current = 0;
         setOver(false);
         void addFiles(Array.from(e.dataTransfer.files), "drop");

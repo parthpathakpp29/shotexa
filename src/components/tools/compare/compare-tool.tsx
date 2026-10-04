@@ -118,8 +118,8 @@ function CompareWorkspace() {
           )}
           {order.length < 2 ? (
             <div data-testid="compare-needs-two">
-              <EmptyState icon={<Images />} title="Add a second screenshot">
-                Comparing needs two images. Add another screenshot — or open a result from any other Shotexa tool — and it will appear in the list.
+              <EmptyState icon={<Images />} title="Drop or choose 2 screenshots to compare">
+                Drop another screenshot anywhere in this workspace, paste it, or use Add in the Files panel.
               </EmptyState>
             </div>
           ) : ready ? (

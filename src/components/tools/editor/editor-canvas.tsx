@@ -10,20 +10,23 @@
  * export uses. While the crop box is dragged only the overlay re-renders — the bitmap is
  * redrawn when orientation, zoom or the preview itself changes.
  */
-import { Maximize2, Minus, Plus, Redo2, Undo2 } from "lucide-react";
+import { Redo2, Undo2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { SegmentedControl } from "@/components/ui/controls";
-import { IconButton, Mono, Toolbar, ToolbarDivider } from "@/components/ui/primitives";
+import { ViewportToolbar } from "@/components/ui/viewport";
+import { IconButton, Toolbar } from "@/components/ui/primitives";
 import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
 import { aspectRatio, moveCrop, resizeCrop } from "@/core/image-transform/crop";
 import { drawTransformed } from "@/core/image-transform/matrix";
 import { orientedSize } from "@/core/image-transform/orientation";
 import { IDENTITY_TRANSFORM, isIdentity, outputSize, visibleCrop, visibleSize, withVisibleCrop } from "@/core/image-transform/transform";
 import type { CropHandle, Point, Rect, Size } from "@/core/image-transform/types";
+import type { ViewportZoom } from "@/core/viewport/viewport";
 import { cn } from "@/lib/cn";
 import { useReleasingCanvas } from "@/lib/use-canvas-ref";
 import { useElementWidth } from "@/lib/use-element-width";
-import { backingSize, displayWidth, zoomIn as nextZoomIn, zoomOut as nextZoomOut, type Zoom } from "@/lib/stage-size";
+import { backingSize, displayWidth } from "@/lib/stage-size";
+import { useViewportInteraction } from "@/lib/use-viewport";
 
 export type EditorView = "crop" | "result";
 export type EditorGuide = "none" | "thirds" | "center";
@@ -58,7 +61,7 @@ export function EditorCanvas({ assetId, view, onViewChange, guide }: { assetId: 
   const redo = useWorkspace((s) => s.redo);
   const canUndo = useWorkspace((s) => s.history.past.length > 0);
   const canRedo = useWorkspace((s) => s.history.future.length > 0);
-  const [zoom, setZoom] = useState<Zoom>("fit");
+  const [zoom, setZoom] = useState<ViewportZoom>("fit");
   const [showOriginal, setShowOriginal] = useState(false);
   const [frameRef, frameWidth] = useElementWidth<HTMLDivElement>();
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -83,8 +86,21 @@ export function EditorCanvas({ assetId, view, onViewChange, guide }: { assetId: 
   const shown = view === "crop" ? visible : output;
   const inner = Math.max(1, frameWidth - 32);
   // Nothing until the frame is measured: a first render at width 0 would show (and accept input on) a 1 px stage.
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const fitScale = shown && frameWidth > 0 ? displayWidth(shown, inner, "fit") / shown.width : 1;
   const cssWidth = shown && frameWidth > 0 ? displayWidth(shown, inner, zoom) : 0;
   const cssHeight = shown ? (cssWidth * shown.height) / shown.width : 0;
+  const viewport = useViewportInteraction({
+    scrollRef,
+    contentRef: stageRef,
+    zoom,
+    setZoom,
+    fitScale,
+    onEscape: () => {
+      interaction.current = null;
+      setDraft(null);
+    },
+  });
   // CSS pixels per visible-image pixel (crop view only).
   const scale = visible ? cssWidth / visible.width : 1;
   const committedCrop = source ? visibleCrop(t, source) : null;
@@ -192,8 +208,6 @@ export function EditorCanvas({ assetId, view, onViewChange, guide }: { assetId: 
     setTransform(assetId, withVisibleCrop(t, source, moveCrop(committedCrop, delta[0], delta[1], visible)), { coalesce: true });
   }
 
-  const zoomOut = () => setZoom(nextZoomOut(zoom));
-  const zoomIn = () => setZoom(nextZoomIn(zoom));
   const dragging = !!draft;
   const box = crop ? { left: crop.x * scale, top: crop.y * scale, width: crop.width * scale, height: crop.height * scale } : null;
 
@@ -209,19 +223,9 @@ export function EditorCanvas({ assetId, view, onViewChange, guide }: { assetId: 
             <IconButton label="Redo" disabled={!canRedo} onClick={redo}>
               <Redo2 />
             </IconButton>
-            <ToolbarDivider />
           </span>
-          <IconButton label="Zoom out" onClick={zoomOut} disabled={zoom === "fit"}>
-            <Minus />
-          </IconButton>
-          <Mono className="w-12 text-center text-[12px]">{zoom === "fit" ? "FIT" : `${zoom * 100}%`}</Mono>
-          <IconButton label="Zoom in" onClick={zoomIn} disabled={zoom === 2}>
-            <Plus />
-          </IconButton>
-          <IconButton label="Fit image" active={zoom === "fit"} onClick={() => setZoom("fit")}>
-            <Maximize2 />
-          </IconButton>
         </Toolbar>
+        <ViewportToolbar zoom={zoom} fitScale={fitScale} onFit={viewport.fit} onActual={viewport.actual} onZoomIn={viewport.zoomIn} onZoomOut={viewport.zoomOut} label="Editor view" />
         <div className="flex flex-wrap items-center gap-2">
           {view === "result" && !isIdentity(t) && (
             <button
@@ -251,7 +255,7 @@ export function EditorCanvas({ assetId, view, onViewChange, guide }: { assetId: 
         </div>
       </div>
 
-      <div ref={frameRef} className="max-h-[calc(100dvh-12rem)] min-h-[420px] overflow-auto rounded-lg border border-line bg-surface-2 p-4 max-md:min-h-[55dvh] max-md:p-2">
+      <div data-testid="editor-viewport" ref={(element) => { frameRef(element); scrollRef.current = element; }} className={cn("max-h-[calc(100dvh-12rem)] min-h-[420px] overflow-auto rounded-lg border border-line bg-surface-2 p-4 max-md:min-h-[55dvh] max-md:p-2", (viewport.spaceHeld || viewport.isPanning) && "cursor-grab", viewport.isPanning && "cursor-grabbing")}>
         {source && shown && cssWidth > 0 && (
           <div
             ref={stageRef}
@@ -261,9 +265,10 @@ export function EditorCanvas({ assetId, view, onViewChange, guide }: { assetId: 
             aria-roledescription="image editor"
             data-testid="editor-stage"
             data-view={view}
+            data-viewport-pan
             className={cn(
               "relative mx-auto touch-none select-none bg-checker shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-accent",
-              view === "crop" && "cursor-crosshair",
+              viewport.spaceHeld || viewport.isPanning ? "cursor-grab" : view === "crop" && "cursor-crosshair",
             )}
             style={{ width: cssWidth, height: cssHeight }}
             onPointerDown={onStageDown}

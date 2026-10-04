@@ -28,7 +28,6 @@ export function BatchTool({ landing }: { landing: ReactNode }) {
   const count = useWorkspace((s) => s.order.length);
   return count === 0 ? <>{landing}</> : <BatchWorkspace />;
 }
-
 function BatchWorkspace() {
   const { runtime } = useWorkspaceContext();
   const order = useWorkspace((s) => s.order);
@@ -36,7 +35,6 @@ function BatchWorkspace() {
   const batch = useWorkspace((s) => s.batch);
   const selectedId = useWorkspace((s) => s.selectedId);
   const setSelection = useWorkspace((s) => s.setBatchSelection);
-  const toggle = useWorkspace((s) => s.toggleBatchSelection);
   const [error, setError] = useState<string | null>(null);
   const [zipNames, setZipNames] = useState<string[]>([]);
   const [resultFilter, setResultFilter] = useState<"all" | "successful" | "failed">("all");
@@ -86,7 +84,7 @@ function BatchWorkspace() {
         <h1 className="sr-only">{TOOLS.batch.seo.h1}</h1>
         {error && <Notice tone="error" icon={<AlertTriangle />} title="Batch action didn’t finish" className="mb-4">{batchError(error)}</Notice>}
         {running && <div className="mb-4 rounded-lg border border-accent-line bg-accent-soft p-4" aria-live="polite"><div className="mb-2 flex items-center justify-between gap-3"><span className="text-sm font-medium text-accent-ink">{batch.currentIndex! + 1} of {items.length} files · Processing {current?.name}</span><span className="t-mono text-[12px] text-accent-ink">{Math.round(progress * 100)}%</span></div><Progress value={progress} label="Batch progress" /><Button variant="secondary" size="sm" className="mt-3" onClick={() => runtime.cancelBatch()}><Square /> Cancel</Button></div>}
-        {order.length < 2 ? <EmptyState icon={<Files />} title="Add at least two screenshots">Batch processing needs two or more workspace images.</EmptyState> : <BatchFileList onSelection={alterSelection} onToggle={toggle} />}
+        {order.length < 2 ? <EmptyState icon={<Files />} title="Select multiple screenshots to process together">Add at least two screenshots with Drop, Paste or Browse.</EmptyState> : <BatchFileList onSelection={alterSelection} />}
       </>}
       inspector={<BatchInspector disabled={running} onReset={() => { runtime.resetBatch(); setZipNames([]); }} />}
       below={(complete.length > 0 || failed.length > 0) && <div className="mt-6 space-y-4" data-testid="batch-results"><Notice tone={failed.length ? "warning" : "success"} icon={failed.length ? <AlertTriangle /> : <Check />} title={failed.length ? `${complete.length} completed · ${failed.length} failed` : `${complete.length} files ready`} actions={<div className="flex flex-wrap gap-2"><Button variant="primary" onClick={zip} disabled={!complete.length}><PackageOpen /> Download ZIP</Button>{failed.length > 0 && <Button variant="secondary" onClick={retry}><RefreshCw /> Retry failed</Button>}<Button variant="secondary" disabled={batch.addedToWorkspace || !complete.length} onClick={() => runtime.addBatchResults()}><Files /> {batch.addedToWorkspace ? "Added" : "Add results to workspace"}</Button></div>}>Only successful outputs are included. Completed files remain available if another item fails or the batch is cancelled.{zipNames.length > 0 && <span className="mt-1 block t-mono text-[11px]">ZIP: {zipNames.join(", ")}</span>}</Notice><div className="grid grid-cols-2 gap-2 sm:grid-cols-4" data-testid="batch-summary"><SummaryStat label="Original total" value={formatBytes(originalTotal)} /><SummaryStat label="Output total" value={formatBytes(outputTotal)} /><SummaryStat label="Bytes saved" value={`${bytesSaved < 0 ? "+" : ""}${formatBytes(Math.abs(bytesSaved))}`} warn={bytesSaved < 0} /><SummaryStat label="Savings" value={`${bytesSaved < 0 ? "+" : ""}${Math.abs(savingsPercent)}%`} warn={bytesSaved < 0} /></div><SegmentedControl value={resultFilter} onChange={setResultFilter} options={[{ value: "all", label: "All" }, { value: "successful", label: "Successful" }, { value: "failed", label: "Failed" }]} label="Batch result filter" className="max-w-md" /><ResultList filter={resultFilter} />{batch.addedToWorkspace && <ContinueWith tools={continuationsFor("batch")} fileId={selectedId} />}</div>}
@@ -94,12 +92,32 @@ function BatchWorkspace() {
   );
 }
 
-function BatchFileList({ onSelection, onToggle }: { onSelection(ids: string[]): void; onToggle(id: string): void }) {
+function BatchFileList({ onSelection }: { onSelection(ids: string[]): void }) {
   const order = useWorkspace((s) => s.order);
   const files = useWorkspace((s) => s.files);
   const batch = useWorkspace((s) => s.batch);
   const selected = new Set(batch.selectedIds);
-  return <section className="rounded-xl border border-line bg-surface shadow-xs"><div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3"><div><h2 className="font-display text-xl">Batch files</h2><p className="t-mono text-[11px] text-ink-3">{batch.selectedIds.length} selected · maximum {MAX_BATCH_FILES}</p></div><div className="flex gap-2"><Button size="sm" variant="secondary" disabled={batch.status === "running"} onClick={() => onSelection(order.slice(0, MAX_BATCH_FILES))}>Select all</Button><Button size="sm" variant="ghost" disabled={batch.status === "running"} onClick={() => onSelection([])}>Clear all</Button></div></div><ul className="divide-y divide-line" data-testid="batch-file-list">{order.map((id) => { const file = files[id]; const state = batch.items[id]; return <li key={id} className="flex items-center gap-3 p-3 sm:p-4"><input type="checkbox" className="size-5 accent-[var(--accent)]" checked={selected.has(id)} disabled={batch.status === "running" || (!selected.has(id) && selected.size >= MAX_BATCH_FILES)} onChange={() => onToggle(id)} aria-label={`Include ${file.name}`} /><div className="h-14 w-20 shrink-0 overflow-hidden rounded-sm border border-line bg-surface-2"><BitmapCanvas id={id} width={160} label="" className="pointer-events-none" /></div><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{file.name}</p><p className="t-mono mt-1 text-[10.5px] text-ink-3">{file.width} × {file.height} · {formatBytes(file.bytes)} · {file.type.replace("image/", "").toUpperCase()}</p></div><ItemStatus status={state?.status} error={state?.error} /></li>; })}</ul></section>;
+  const lastClicked = useRef<number | null>(null);
+  const choose = (index: number, shift: boolean) => {
+    const id = order[index];
+    if (shift && lastClicked.current !== null) {
+      const from = Math.min(lastClicked.current, index);
+      const to = Math.max(lastClicked.current, index);
+      const next = new Set(batch.selectedIds);
+      const shouldSelect = !selected.has(id);
+      for (const rangeId of order.slice(from, to + 1)) {
+        if (shouldSelect) next.add(rangeId);
+        else next.delete(rangeId);
+      }
+      onSelection(order.filter((item) => next.has(item)).slice(0, MAX_BATCH_FILES));
+    } else {
+      onSelection(selected.has(id) ? batch.selectedIds.filter((item) => item !== id) : [...batch.selectedIds, id].slice(0, MAX_BATCH_FILES));
+    }
+    lastClicked.current = index;
+  };
+  return <section className="rounded-xl border border-line bg-surface shadow-xs"><div className="flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3"><div><h2 className="font-display text-xl">Batch files</h2><p className="t-mono text-[11px] text-ink-3">{batch.selectedIds.length} selected · maximum {MAX_BATCH_FILES}</p></div><div className="flex flex-wrap gap-2"><Button size="sm" variant="secondary" disabled={batch.status === "running"} onClick={() => onSelection(order.slice(0, MAX_BATCH_FILES))}>Select all</Button>
+            {order.some(id => batch.items[id]?.status === "failed") && <Button size="sm" variant="secondary" disabled={batch.status === "running"} onClick={() => onSelection(order.filter(id => batch.items[id]?.status === "failed").slice(0, MAX_BATCH_FILES))}>Select failed</Button>}
+            {order.some(id => batch.items[id]?.status === "completed") && <Button size="sm" variant="secondary" disabled={batch.status === "running"} onClick={() => onSelection(order.filter(id => batch.items[id]?.status === "completed").slice(0, MAX_BATCH_FILES))}>Select successful</Button>}<Button size="sm" variant="ghost" disabled={batch.status === "running"} onClick={() => onSelection([])}>Clear selection</Button></div></div><ul className="divide-y divide-line" data-testid="batch-file-list">{order.map((id, index) => { const file = files[id]; const state = batch.items[id]; return <li key={id} className="flex items-center gap-3 p-3 sm:p-4"><input type="checkbox" className="size-5 accent-[var(--accent)]" checked={selected.has(id)} disabled={batch.status === "running" || (!selected.has(id) && selected.size >= MAX_BATCH_FILES)} onClick={(event) => { event.preventDefault(); choose(index, event.shiftKey); }} onChange={() => undefined} aria-label={`Include ${file.name}`} /><div className="h-14 w-20 shrink-0 overflow-hidden rounded-sm border border-line bg-surface-2"><BitmapCanvas id={id} width={160} label="" className="pointer-events-none" /></div><div className="min-w-0 flex-1"><p className="truncate text-sm font-medium">{file.name}</p><p className="t-mono mt-1 text-[10.5px] text-ink-3">{file.width} × {file.height} · {formatBytes(file.bytes)} · {file.type.replace("image/", "").toUpperCase()}</p></div><ItemStatus status={state?.status} error={state?.error} /></li>; })}</ul></section>;
 }
 
 function ItemStatus({ status, error }: { status?: string; error?: string }) {

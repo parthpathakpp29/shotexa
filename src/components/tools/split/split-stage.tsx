@@ -12,13 +12,16 @@
 import { ArrowDown, ArrowUp, Plus, Redo2, Trash2, Undo2 } from "lucide-react";
 import { useRef, useState } from "react";
 import { IconButton, Mono, Toolbar, ToolbarDivider } from "@/components/ui/primitives";
+import { ViewportToolbar } from "@/components/ui/viewport";
 import { BitmapCanvas } from "@/components/workspace/bitmap-canvas";
 import { useWorkspace } from "@/components/workspace/workspace-provider";
 import { DragSession } from "@/core/annotation/objects";
 import { addLine, addLineInTallest, asCustom, cutsFor, defaultSplit, moveLine, piecesFor, removeLine } from "@/core/split/plan";
 import type { SplitSettings } from "@/core/split/types";
+import type { ViewportZoom } from "@/core/viewport/viewport";
 import { cn } from "@/lib/cn";
 import { useElementWidth } from "@/lib/use-element-width";
+import { useViewportInteraction } from "@/lib/use-viewport";
 
 const MAX_PREVIEW_WIDTH = 560;
 const NUDGE = 1;
@@ -52,10 +55,28 @@ export function SplitStage({ assetId, active, onActive }: Props) {
   const redo = useWorkspace((s) => s.redo);
   const canUndo = useWorkspace((s) => s.history.past.length > 0);
   const canRedo = useWorkspace((s) => s.history.future.length > 0);
+  const [zoom, setZoom] = useState<ViewportZoom>("fit");
   const [measureRef, available] = useElementWidth<HTMLDivElement>();
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const drag = useRef(new DragSession<Drag>());
   const [draft, setDraft] = useState<SplitSettings | null>(null);
   const lineRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  const measuredFitWidth = file ? Math.max(1, Math.min(MAX_PREVIEW_WIDTH, (available || MAX_PREVIEW_WIDTH) - 32, file.width)) : 1;
+  const fitScale = file ? measuredFitWidth / file.width : 1;
+  const viewport = useViewportInteraction({
+    scrollRef,
+    contentRef: stageRef,
+    zoom,
+    setZoom,
+    fitScale,
+    onEscape: () => {
+      drag.current.cancel();
+      setDraft(null);
+      onActive(null);
+    },
+  });
 
   if (!file) return null;
   const H = file.height;
@@ -63,10 +84,10 @@ export function SplitStage({ assetId, active, onActive }: Props) {
   const shown = draft ?? settings;
   const cuts = cutsFor(shown, H);
   const pieces = piecesFor(cuts, H);
-  const width = Math.max(1, Math.min(MAX_PREVIEW_WIDTH, (available || MAX_PREVIEW_WIDTH) - 32, file.width));
+  const fitWidth = measuredFitWidth;
+  const width = zoom === "fit" ? fitWidth : Math.max(1, Math.round(file.width * zoom));
   const scale = width / file.width;
   const custom = shown.mode === "custom";
-
   /** Commit a change, unless it only converts Equal → Custom without moving anything. */
   function commit(next: SplitSettings, coalesce?: string) {
     const same = JSON.stringify(cutsFor(next, H)) === JSON.stringify(cutsFor(settings, H));
@@ -133,10 +154,13 @@ export function SplitStage({ assetId, active, onActive }: Props) {
             <Redo2 />
           </IconButton>
         </Toolbar>
+        <ViewportToolbar zoom={zoom} fitScale={fitScale} onFit={viewport.fit} onActual={viewport.actual} onZoomIn={viewport.zoomIn} onZoomOut={viewport.zoomOut} label="Split view" />
       </div>
 
-      <div ref={measureRef} className="max-h-[calc(100dvh-12rem)] min-h-[420px] overflow-auto rounded-lg border border-line bg-surface-2 px-4 py-6 max-md:max-h-[70dvh] max-md:px-2">
+      <div ref={(element) => { measureRef(element); scrollRef.current = element; }} className={cn("max-h-[calc(100dvh-12rem)] min-h-[420px] overflow-auto rounded-lg border border-line bg-surface-2 px-4 py-6 max-md:max-h-[70dvh] max-md:px-2", (viewport.spaceHeld || viewport.isPanning) && "cursor-grab", viewport.isPanning && "cursor-grabbing")}>
         <div
+          ref={stageRef}
+          data-viewport-edit
           data-testid="split-stage"
           data-width={file.width}
           data-height={H}

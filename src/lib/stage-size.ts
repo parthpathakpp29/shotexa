@@ -4,7 +4,7 @@
  */
 import type { Size } from "@/core/image-transform/types";
 
-export type Zoom = "fit" | 0.5 | 1 | 2;
+export type Zoom = "fit" | number;
 
 const FIT_HEIGHT = 640;
 /** Tall images still get a usable working width in Fit; the frame scrolls instead. */
@@ -29,5 +29,5 @@ export function backingSize(css: Size, detailWidth: number): Size {
   return { width, height };
 }
 
-export const zoomIn = (z: Zoom): Zoom => (z === "fit" ? 0.5 : z === 0.5 ? 1 : 2);
-export const zoomOut = (z: Zoom): Zoom => (z === 2 ? 1 : z === 1 ? 0.5 : "fit");
+export const zoomIn = (z: Zoom): Zoom => (z === "fit" ? 0.5 : z === 0.5 ? 1 : z === 1 ? 2 : Math.min(8, z * 1.5));
+export const zoomOut = (z: Zoom): Zoom => (z === "fit" ? "fit" : z <= 0.5 ? "fit" : z <= 1 ? 0.5 : z <= 2 ? 1 : Math.max(0.1, z / 1.5));

@@ -113,7 +113,14 @@ export function CompareInspector() {
         )}
       </InspectorSection>
 
-      <InspectorSection title="Comparison">
+      <InspectorSection
+        title="Comparison"
+        action={
+          <button type="button" onClick={() => apply({ threshold: DEFAULT_COMPARE.threshold, minRegionSize: DEFAULT_COMPARE.minRegionSize, mergeDistance: DEFAULT_COMPARE.mergeDistance, ignoreTiny: DEFAULT_COMPARE.ignoreTiny, flicker: false })} className="t-mono inline-flex min-h-8 items-center gap-1.5 rounded-sm px-1.5 text-[12px] text-ink-2 hover:text-ink max-md:min-h-11">
+            <RotateCcw className="size-3.5" /> Reset analysis
+          </button>
+        }
+      >
         <SegmentedControl<CompareMode>
           label="Comparison mode"
           value={settings.mode}

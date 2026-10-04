@@ -5,9 +5,10 @@
  * analysis in the Vision Worker, pair planner) chained over N screenshots, previews from
  * downscaled bitmaps, and the Spike B export pipeline (single canvas or tiled PNG stream).
  */
-import { AlertTriangle, Check, Crosshair, Download, Loader2, Maximize, Minus, Plus, Redo2, Undo2 } from "lucide-react";
+import { AlertTriangle, Check, Crosshair, Download, Loader2, Plus, Redo2, Undo2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ViewportToolbar } from "@/components/ui/viewport";
 import { Badge, EmptyState, IconButton, Mono, Notice, Progress, Toolbar, ToolbarDivider } from "@/components/ui/primitives";
 import { ContinueWith } from "@/components/workspace/continue-with";
 import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
@@ -19,11 +20,13 @@ import { pairKey } from "@/core/runtime/store";
 import type { StitchPair } from "@/core/runtime/types";
 import { planStitchChain } from "@/core/stitch/chain";
 import { offsetRange } from "@/core/stitch/plan";
+import type { ViewportZoom } from "@/core/viewport/viewport";
+import { cn } from "@/lib/cn";
 import { useElementWidth } from "@/lib/use-element-width";
+import { useViewportInteraction } from "@/lib/use-viewport";
 import { StitchCanvas, type SeamChange } from "./stitch-canvas";
 import { StitchInspector } from "./stitch-inspector";
 
-const ZOOMS = [0.25, 0.5, 0.75, 1, 1.5, 2];
 const NO_BANDS = { top: 0, bottom: 0 };
 /** "Fit" never goes wider than a comfortable reading width (tall phone captures stay reviewable). */
 const FIT_MAX_WIDTH = 560;
@@ -87,17 +90,22 @@ function StitchWorkspace() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [originals, pairMap, joinSig]);
 
-  const [zoom, setZoom] = useState<number | "fit">("fit");
+  const [zoom, setZoom] = useState<ViewportZoom>("fit");
   const [boxRef, boxWidth] = useElementWidth<HTMLDivElement>();
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
   const fitWidth = plan ? Math.min(boxWidth, plan.width, FIT_MAX_WIDTH) : 0;
   const cssWidth = plan ? (zoom === "fit" ? fitWidth : Math.round(plan.width * zoom)) : 0;
-  const zoomPct = plan && plan.width ? Math.round((cssWidth / plan.width) * 100) : 100;
-  const stepZoom = (dir: 1 | -1) => {
-    const cur = cssWidth / (plan?.width || 1);
-    const next = dir > 0 ? ZOOMS.find((z) => z > cur + 0.001) : [...ZOOMS].reverse().find((z) => z < cur - 0.001);
-    if (next) setZoom(next);
-  };
+  const fitScale = plan && fitWidth ? fitWidth / plan.width : 1;
+  const viewport = useViewportInteraction({
+    scrollRef,
+    contentRef,
+    zoom,
+    setZoom,
+    fitScale,
+    allowDragPan: true,
+    allowTouchPan: true,
+  });
   const centerSeam = (behavior: ScrollBehavior = "smooth") => {
     const el = scrollRef.current;
     if (!el || !plan || plan.seams[join] === undefined) return;
@@ -158,14 +166,14 @@ function StitchWorkspace() {
       <div className="rounded-lg border border-line bg-surface p-4 shadow-xs">
         <EmptyState
           icon={<Plus />}
-          title="Add one more screenshot"
+          title="Add overlapping screenshots in scroll order"
           action={
             <Button variant="primary" onClick={openPicker}>
               Add screenshot
             </Button>
           }
         >
-          Smart Stitch joins two or more overlapping screenshots — for example a long chat or web page captured in parts. Add the next part to continue.
+          Drop, paste or browse for the next screenshot. Drag the file handles to put every part in top-to-bottom order.
         </EmptyState>
       </div>
     ) : (
@@ -193,23 +201,11 @@ function StitchWorkspace() {
               <Redo2 />
             </IconButton>
             <ToolbarDivider />
-            <IconButton label="Zoom out" onClick={() => stepZoom(-1)}>
-              <Minus />
-            </IconButton>
-            <Mono className="w-12 text-center text-[13px] text-ink" aria-live="polite">
-              {zoomPct}%
-            </Mono>
-            <IconButton label="Zoom in" onClick={() => stepZoom(1)}>
-              <Plus />
-            </IconButton>
-            <IconButton label="Fit" active={zoom === "fit"} onClick={() => setZoom("fit")}>
-              <Maximize />
-            </IconButton>
-            <ToolbarDivider />
             <Button variant="ghost" size="sm" onClick={() => centerSeam()} aria-label="Center seam" className="px-2.5 font-mono text-[12px] max-md:h-11">
               <Crosshair /> <span className="max-xl:hidden">Center seam</span>
             </Button>
           </Toolbar>
+          <ViewportToolbar zoom={zoom} fitScale={fitScale} onFit={viewport.fit} onActual={viewport.actual} onZoomIn={viewport.zoomIn} onZoomOut={viewport.zoomOut} label="Stitch view" />
         </div>
 
         {failed && (
@@ -229,23 +225,25 @@ function StitchWorkspace() {
         )}
 
         <div className="rounded-lg border border-line bg-surface p-2 shadow-xs sm:p-3">
-          <div ref={scrollRef} className="relative max-h-[calc(100dvh-15rem)] min-h-[320px] overflow-auto rounded-md bg-surface-2 p-3 sm:p-5 max-md:max-h-[calc(100dvh-13rem)]">
+          <div ref={scrollRef} className={cn("relative max-h-[calc(100dvh-15rem)] min-h-[320px] overflow-auto rounded-md bg-surface-2 p-3 sm:p-5 max-md:max-h-[calc(100dvh-13rem)]", (viewport.spaceHeld || viewport.isPanning) && "cursor-grab", viewport.isPanning && "cursor-grabbing")}>
             <div ref={boxRef} className="w-full">
               {plan && cssWidth > 0 && (
-                <StitchCanvas
-                  plan={plan}
-                  images={originals}
-                  versions={versions}
-                  cssWidth={cssWidth}
-                  viewMode={viewMode}
-                  activeJoin={join}
-                  offsets={pairs.map((p, i) => p?.offset ?? originals[i].height)}
-                  offsetMax={maxOffsets}
-                  interactive={ready}
-                  onSeamChange={onSeamChange}
-                  onSelectJoin={setActiveJoin}
-                  dimmed={analysing || exporting}
-                />
+                <div ref={contentRef} data-viewport-pan className="mx-auto" style={{ width: cssWidth }}>
+                  <StitchCanvas
+                    plan={plan}
+                    images={originals}
+                    versions={versions}
+                    cssWidth={cssWidth}
+                    viewMode={viewMode}
+                    activeJoin={join}
+                    offsets={pairs.map((p, i) => p?.offset ?? originals[i].height)}
+                    offsetMax={maxOffsets}
+                    interactive={ready}
+                    onSeamChange={onSeamChange}
+                    onSelectJoin={setActiveJoin}
+                    dimmed={analysing || exporting}
+                  />
+                </div>
               )}
             </div>
             {(analysing || exporting) && (

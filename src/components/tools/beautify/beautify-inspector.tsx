@@ -62,6 +62,11 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
   const freeY = layout.canvas.height - (layout.caption?.rect.height ?? 0) - layout.content.height;
   const gradient = settings.background.kind === "gradient";
   const activePreset = BACKGROUND_PRESETS.find((p) => p.color === settings.background.color && (!gradient || p.color2 === settings.background.color2));
+  const resetAction = (label: string, onClick: () => void) => (
+    <button type="button" onClick={onClick} className="inline-flex min-h-9 items-center gap-1 text-xs font-medium text-ink-2 hover:text-ink max-md:min-h-11">
+      <RotateCcw className="size-3.5" /> {label}
+    </button>
+  );
 
   function sampleScreenshotColours() {
     const bitmap = runtime.registry.preview(assetId);
@@ -113,7 +118,7 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
         </div>
       </InspectorSection>
 
-      <InspectorSection title="Background">
+      <InspectorSection title="Background" action={resetAction("Reset", () => apply({ background: DEFAULT_BEAUTIFY.background }))}>
         <div role="radiogroup" aria-label="Background preset" className="flex flex-wrap gap-2">
           {BACKGROUND_PRESETS.map((p) => {
             const active = activePreset?.id === p.id;
@@ -187,7 +192,7 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
         )}
       </InspectorSection>
 
-      <InspectorSection title="Frame and shadow">
+      <InspectorSection title="Border and shadow" action={resetAction("Reset", () => apply({ padding: DEFAULT_BEAUTIFY.padding, radius: DEFAULT_BEAUTIFY.radius, shadow: DEFAULT_BEAUTIFY.shadow, shadowAdvanced: DEFAULT_BEAUTIFY.shadowAdvanced, border: DEFAULT_BEAUTIFY.border }))}>
         <FieldLabel value={`${settings.padding}%`}>Padding</FieldLabel>
         <SegmentedControl<string>
           label="Padding"
@@ -266,7 +271,7 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
         </div>
       </InspectorSection>
 
-      <InspectorSection title="Size and position">
+      <InspectorSection title="Screenshot" action={resetAction("Reset position", () => apply({ scale: DEFAULT_BEAUTIFY.scale, offsetX: 0, offsetY: 0 }))}>
         <Button variant="secondary" size="sm" className="mb-4 w-full max-md:h-11" data-testid="beautify-auto-layout" onClick={() => apply(autoLayout(settings, { width: file.width, height: file.height }))}>
           <WandSparkles /> Auto layout
         </Button>
@@ -283,10 +288,14 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
             <Slider label="Vertical position" value={Math.round(settings.offsetY * 100)} min={-100} max={100} onChange={(v) => apply({ offsetY: v / 100 }, "offset-y")} className={cn(freeY <= 0 && "opacity-40")} />
           </div>
         </div>
+        <div className="mt-3 grid grid-cols-3 gap-2" aria-label="Snap screenshot position">
+          {([[-1, "Left"], [0, "Centre X"], [1, "Right"]] as const).map(([offsetX, label]) => <Button key={label} type="button" size="sm" variant="secondary" onClick={() => { apply({ offsetX }); window.dispatchEvent(new CustomEvent("shotexa:beautify-guide", { detail: "x" })); }}>{label}</Button>)}
+          {([[-1, "Top"], [0, "Centre Y"], [1, "Bottom"]] as const).map(([offsetY, label]) => <Button key={label} type="button" size="sm" variant="secondary" onClick={() => { apply({ offsetY }); window.dispatchEvent(new CustomEvent("shotexa:beautify-guide", { detail: "y" })); }}>{label}</Button>)}
+        </div>
         {freeX <= 0 && freeY <= 0 && <p className="t-body-sm mt-2 text-ink-3">Add padding or lower the scale to move the screenshot around.</p>}
       </InspectorSection>
 
-      <InspectorSection title="Title and subtitle">
+      <InspectorSection title="Text" action={resetAction("Reset text", () => apply({ text: DEFAULT_BEAUTIFY.text }))}>
         <label className="block">
           <span className="t-micro mb-1.5 block text-ink-3">Title</span>
           <input

@@ -9,9 +9,10 @@
  * goes through a `DragSession`, so pointer-up commits the latest pointer position (never a
  * stale rendered frame), and each gesture is exactly one undo step.
  */
-import { ArrowUpRight, Highlighter, ListOrdered, Maximize2, Minus, MousePointer2, Pencil, Plus, Redo2, Square, Type, Undo2 } from "lucide-react";
+import { ArrowUpRight, Highlighter, ListOrdered, MousePointer2, Pencil, Redo2, Square, Type, Undo2 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { IconButton, Mono, Toolbar, ToolbarDivider } from "@/components/ui/primitives";
+import { IconButton, Toolbar } from "@/components/ui/primitives";
+import { ViewportToolbar } from "@/components/ui/viewport";
 import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
 import {
   annotationFrame,
@@ -34,13 +35,15 @@ import {
 import { addObject, autoSizes, DragSession, newAnnotationId, nextStepNumber, removeObject, simplifyPath, updateObject } from "@/core/annotation/objects";
 import { ANNOTATION_FONT_FAMILY, canvasMeasure, drawAnnotations } from "@/core/annotation/render";
 import type { AnnotationObject, AnnotationTool, Point, TextAnnotation } from "@/core/annotation/types";
+import { effectiveScale, type ViewportZoom } from "@/core/viewport/viewport";
 import { drawTransformed } from "@/core/image-transform/matrix";
 import { IDENTITY_TRANSFORM } from "@/core/image-transform/transform";
 import type { CropHandle, Size } from "@/core/image-transform/types";
 import { cn } from "@/lib/cn";
 import { useReleasingCanvas } from "@/lib/use-canvas-ref";
-import { backingSize, displayWidth, zoomIn, zoomOut, type Zoom } from "@/lib/stage-size";
+import { backingSize, displayWidth } from "@/lib/stage-size";
 import { useElementWidth } from "@/lib/use-element-width";
+import { useViewportInteraction } from "@/lib/use-viewport";
 
 const EMPTY: AnnotationObject[] = [];
 
@@ -85,8 +88,9 @@ export function AnnotateCanvas({ assetId }: { assetId: string }) {
   const canUndo = useWorkspace((s) => s.history.past.length > 0);
   const canRedo = useWorkspace((s) => s.history.future.length > 0);
 
-  const [zoom, setZoom] = useState<Zoom>("fit");
+  const [zoom, setZoom] = useState<ViewportZoom>("fit");
   const [frameRef, frameWidth] = useElementWidth<HTMLDivElement>();
+  const scrollRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const attachCanvas = useReleasingCanvas(canvasRef);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -113,7 +117,10 @@ export function AnnotateCanvas({ assetId }: { assetId: string }) {
   const frame = useMemo(() => (source ? annotationFrame(t, source) : null), [t, source]);
   const out = frame?.out ?? null;
   // Nothing until the frame is measured: a first render at width 0 would show (and accept input on) a 1 px stage.
-  const cssWidth = out && frameWidth > 0 ? displayWidth(out, Math.max(1, frameWidth - 32), zoom) : 0;
+  const availableWidth = Math.max(1, frameWidth - 32);
+  const fitWidth = out ? displayWidth(out, availableWidth, "fit") : 0;
+  const fitScale = out ? fitWidth / out.width : 1;
+  const cssWidth = out && frameWidth > 0 ? Math.round(out.width * effectiveScale(zoom, fitScale)) : 0;
   const cssHeight = out ? (cssWidth * out.height) / out.width : 0;
   /** CSS pixels per output pixel. */
   const s = out ? cssWidth / out.width : 1;
@@ -128,6 +135,20 @@ export function AnnotateCanvas({ assetId }: { assetId: string }) {
   const auto = out ? autoSizes(out) : null;
   const strokeOut = style.strokeWidth ?? auto?.stroke ?? 4;
   const fontOut = style.fontSize ?? auto?.font ?? 24;
+  const viewport = useViewportInteraction({
+    scrollRef,
+    contentRef: stageRef,
+    zoom,
+    setZoom,
+    fitScale,
+    onEscape: () => {
+      if (editingRef.current) setEditing(null);
+      select(null);
+      drag.current.cancel();
+      pointerId.current = null;
+      setDraft(null);
+    },
+  });
 
   // 1) The transformed image, cached — rebuilt only when the image, its transform or zoom change.
   useEffect(() => {
@@ -394,7 +415,7 @@ export function AnnotateCanvas({ assetId }: { assetId: string }) {
             );
           })}
         </div>
-        <Toolbar aria-label="History and zoom">
+        <Toolbar aria-label="Annotation history">
           <span className="contents max-md:hidden">
             <IconButton label="Undo" disabled={!canUndo} onClick={undo}>
               <Undo2 />
@@ -402,22 +423,12 @@ export function AnnotateCanvas({ assetId }: { assetId: string }) {
             <IconButton label="Redo" disabled={!canRedo} onClick={redo}>
               <Redo2 />
             </IconButton>
-            <ToolbarDivider />
           </span>
-          <IconButton label="Zoom out" onClick={() => setZoom(zoomOut(zoom))} disabled={zoom === "fit"}>
-            <Minus />
-          </IconButton>
-          <Mono className="w-12 text-center text-[12px]">{zoom === "fit" ? "FIT" : `${zoom * 100}%`}</Mono>
-          <IconButton label="Zoom in" onClick={() => setZoom(zoomIn(zoom))} disabled={zoom === 2}>
-            <Plus />
-          </IconButton>
-          <IconButton label="Fit image" active={zoom === "fit"} onClick={() => setZoom("fit")}>
-            <Maximize2 />
-          </IconButton>
         </Toolbar>
+        <ViewportToolbar zoom={zoom} fitScale={fitScale} onFit={viewport.fit} onActual={viewport.actual} onZoomIn={viewport.zoomIn} onZoomOut={viewport.zoomOut} label="Annotation view" />
       </div>
 
-      <div ref={frameRef} className="max-h-[calc(100dvh-12rem)] min-h-[420px] overflow-auto rounded-lg border border-line bg-surface-2 p-4 max-md:min-h-[55dvh] max-md:p-2">
+      <div ref={(element) => { frameRef(element); scrollRef.current = element; }} className={cn("max-h-[calc(100dvh-12rem)] min-h-[420px] overflow-auto rounded-lg border border-line bg-surface-2 p-4 max-md:min-h-[55dvh] max-md:p-2", (viewport.spaceHeld || viewport.isPanning) && "cursor-grab", viewport.isPanning && "cursor-grabbing")}>
         {out && cssWidth > 0 && (
           <div
             ref={stageRef}
@@ -429,6 +440,7 @@ export function AnnotateCanvas({ assetId }: { assetId: string }) {
             data-out-width={out.width}
             data-out-height={out.height}
             data-count={objects.length}
+            data-viewport-edit
             className={cn(
               "relative mx-auto touch-none select-none overflow-hidden bg-checker shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-accent",
               tool === "select" ? "cursor-default" : tool === "text" ? "cursor-text" : "cursor-crosshair",

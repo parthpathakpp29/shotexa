@@ -17,7 +17,7 @@ import { TOOL_GROUPS, TOOLS, UPCOMING_TOOLS, type ToolId } from "@/config/tools"
 import { cn } from "@/lib/cn";
 import { useShortcutLabel } from "@/lib/use-shortcut-label";
 import { FileTray } from "./file-tray";
-import { useWorkspace } from "./workspace-provider";
+import { useDropTarget, useWorkspace } from "./workspace-provider";
 
 export interface ExportAction {
   label: string;
@@ -25,7 +25,6 @@ export interface ExportAction {
   disabled?: boolean;
   busy?: boolean;
 }
-
 export function ToolSwitcher({ tool }: { tool: ToolId }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -190,11 +189,25 @@ export function WorkspaceShell({
   const undo = useWorkspace((s) => s.undo);
   const redo = useWorkspace((s) => s.redo);
   const setActiveTool = useWorkspace((s) => s.setActiveTool);
+  const { over, props: dropProps } = useDropTarget();
   useToolShortcuts(exportAction);
   useEffect(() => setActiveTool(tool), [tool, setActiveTool]);
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div data-testid="workspace-drop-zone" className="flex min-h-dvh flex-col" {...dropProps}>
+      {over && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-page/80 backdrop-blur-sm">
+          <div className="rounded-2xl border-2 border-dashed border-accent bg-surface p-12 text-center shadow-xl">
+            {(() => {
+              if (tool === "compare") return <p className="t-h3 text-accent-ink">Drop 2 screenshots to compare</p>;
+              if (tool === "stitch") return <p className="t-h3 text-accent-ink">Drop screenshots to stitch</p>;
+              if (tool === "combine") return <p className="t-h3 text-accent-ink">Drop images to combine</p>;
+              return <p className="t-h3 text-accent-ink">Drop screenshots here</p>;
+            })()}
+            <p className="t-body mt-2 text-ink-2">They will be added to your workspace</p>
+          </div>
+        </div>
+      )}
       <WorkspaceHeader tool={tool} status={status} exportAction={exportAction} />
       <div className="mx-auto grid w-full max-w-[1480px] flex-1 grid-cols-1 gap-5 px-3 py-4 md:grid-cols-[232px_minmax(0,1fr)] md:px-5 md:py-6 lg:grid-cols-[232px_minmax(0,1fr)_264px] lg:gap-5 xl:grid-cols-[272px_minmax(0,1fr)_300px] xl:gap-6 max-md:pb-28">
         <aside className="hidden md:block">
