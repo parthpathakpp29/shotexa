@@ -32,12 +32,18 @@ export function SiteFooter() {
             </ul>
           </nav>
         ))}
+
         <nav aria-label="More">
           <p className="t-micro mb-4 text-ink">More</p>
           <ul className="space-y-2.5">
             <li>
               <Link href="/tools" className="t-body-sm text-ink-2 hover:text-ink">
                 All tools
+              </Link>
+            </li>
+            <li>
+              <Link href="/alternatives" className="t-body-sm text-ink-2 hover:text-ink">
+                Alternatives
               </Link>
             </li>
             <li>

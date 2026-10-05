@@ -16,6 +16,7 @@ import { useShortcutLabel } from "@/lib/use-shortcut-label";
  * grouped Tools menu (built from the registry) rather than a widening row of links.
  */
 const NAV = [
+  { href: "/alternatives", label: "Alternatives" },
   { href: "/privacy", label: "Privacy" },
   { href: "/tools", label: "All tools" },
 ];

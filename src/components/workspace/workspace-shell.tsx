@@ -230,7 +230,7 @@ export function WorkspaceShell({
           <MobileBarButton label={`Files (${count})`} onClick={() => setSheet("files")}>
             <Images />
           </MobileBarButton>
-          <MobileBarButton label={inspectorTitle} onClick={() => setSheet("settings")}>
+          <MobileBarButton label={inspectorTitle} visibleLabel="Settings" onClick={() => setSheet("settings")} testId="mobile-inspector-trigger">
             <SlidersHorizontal />
           </MobileBarButton>
           <MobileBarButton label="Undo" onClick={undo} disabled={!canUndo}>
@@ -250,17 +250,28 @@ export function WorkspaceShell({
       <BottomSheet open={sheet === "files"} onOpenChange={(v) => setSheet(v ? "files" : null)} title="Screenshots">
         <FileTray hint={fileHint} onAfterSelect={() => setSheet(null)} />
       </BottomSheet>
-      <BottomSheet open={sheet === "settings"} onOpenChange={(v) => setSheet(v ? "settings" : null)} title={inspectorTitle}>
+      <BottomSheet
+        open={sheet === "settings"}
+        onOpenChange={(v) => setSheet(v ? "settings" : null)}
+        title={inspectorTitle}
+        footer={exportAction && (
+          <Button variant="primary" size="lg" className="w-full" data-testid="mobile-sheet-export" onClick={exportAction.onClick} disabled={exportAction.disabled || exportAction.busy}>
+            {exportAction.busy ? <Loader2 className="animate-spin" /> : <Download />}
+            {exportAction.label}
+          </Button>
+        )}
+      >
         {inspector}
       </BottomSheet>
     </div>
   );
 }
 
-function MobileBarButton({ label, children, onClick, disabled }: { label: string; children: ReactNode; onClick(): void; disabled?: boolean }) {
+function MobileBarButton({ label, visibleLabel, children, onClick, disabled, testId }: { label: string; visibleLabel?: string; children: ReactNode; onClick(): void; disabled?: boolean; testId?: string }) {
   return (
-    <button type="button" aria-label={label} title={label} onClick={onClick} disabled={disabled} className="inline-flex size-11 items-center justify-center rounded-md text-ink-2 hover:bg-surface-2 disabled:opacity-35 [&_svg]:size-5">
+    <button type="button" aria-label={label} title={label} data-testid={testId} onClick={onClick} disabled={disabled} className={visibleLabel ? "inline-flex size-11 flex-col items-center justify-center gap-0.5 rounded-md text-ink-2 hover:bg-surface-2 disabled:opacity-35 [&_svg]:size-4" : "inline-flex size-11 items-center justify-center rounded-md text-ink-2 hover:bg-surface-2 disabled:opacity-35 [&_svg]:size-5"}>
       {children}
+      {visibleLabel && <span className="max-w-full truncate text-[9px] leading-none">{visibleLabel}</span>}
     </button>
   );
 }

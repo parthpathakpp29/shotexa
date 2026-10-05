@@ -148,12 +148,14 @@
     background: var(--page);
     color: var(--ink);
     -webkit-text-size-adjust: 100%;
+    overflow-x: clip;
   }
   body {
     background: var(--page);
     color: var(--ink);
     font-family: var(--font-sans);
     font-feature-settings: "cv11", "ss01";
+    overflow-x: clip;
     text-rendering: optimizeLegibility;
   }
   ::selection {

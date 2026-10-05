@@ -48,7 +48,7 @@ export default function PikaAlternativePage() {
           </p>
 
           <h2 className="t-h2 mt-12 mb-6">Feature Comparison</h2>
-          <div className="overflow-x-auto">
+          <div className="w-full min-w-0 max-w-full overflow-x-auto">
             <table className="w-full text-left text-sm border-collapse">
               <thead>
                 <tr className="border-b border-line bg-surface-2">
@@ -134,6 +134,22 @@ export default function PikaAlternativePage() {
           <p className="t-body-sm mt-12 text-center text-ink-3">
             Last checked: October 2026. Competitor features and pricing were reviewed against publicly available official product and pricing pages.
           </p>
+
+          <div className="mt-6 rounded-lg border border-line bg-surface p-5">
+            <h3 className="t-micro mb-3 text-ink">Official Pika Sources</h3>
+            <ul className="space-y-1.5 t-body-sm text-ink-2">
+              <li>
+                <a href="https://pika.style" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
+                  Pika — Official Website ↗
+                </a>
+              </li>
+              <li>
+                <a href="https://pika.style/pricing" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
+                  Pika Pricing ↗
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </main>
       <SiteFooter />
