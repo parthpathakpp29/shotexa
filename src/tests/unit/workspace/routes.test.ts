@@ -168,14 +168,14 @@ describe("tool registry", () => {
 
 describe("SEO config", () => {
   it("sitemap lists indexable static pages and live tools only", () => {
-    expect(sitemapPaths()).toEqual(["/", "/tools", "/privacy", "/stitch-screenshots", "/combine-screenshots", "/screenshot-beautifier", "/compare-screenshots", "/redact-screenshot", "/blur-screenshot", "/screenshot-to-text", "/screenshot-to-pdf", "/screenshot-to-searchable-pdf", "/screenshot-editor", "/annotate-screenshot", "/split-long-screenshot", "/compress-screenshot", "/convert-screenshot", "/remove-image-metadata", "/batch-screenshots"]);
+    expect(sitemapPaths()).toEqual(["/", "/tools", "/privacy", "/alternatives", "/alternatives/xnapper", "/alternatives/cleanshot-x", "/alternatives/snagit", "/alternatives/pika", "/alternatives/shots-so", "/stitch-screenshots", "/combine-screenshots", "/screenshot-beautifier", "/compare-screenshots", "/redact-screenshot", "/blur-screenshot", "/screenshot-to-text", "/screenshot-to-pdf", "/screenshot-to-searchable-pdf", "/screenshot-editor", "/annotate-screenshot", "/split-long-screenshot", "/compress-screenshot", "/convert-screenshot", "/remove-image-metadata", "/batch-screenshots"]);
     expect(sitemapPaths().some((p) => p.startsWith("/spikes"))).toBe(false);
   });
 
   it("sitemap.xml uses absolute URLs on the site origin", () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
     const entries = sitemap();
-    expect(entries.length).toBe(19);
+    expect(entries.length).toBe(25);
     for (const e of entries) expect(e.url).toMatch(/^https:\/\/[^/]+(\/|$)/);
   });
 

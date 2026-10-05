@@ -47,7 +47,7 @@ export default function XnapperAlternativePage() {
           </p>
 
           <h2 className="t-h2 mt-12 mb-6">Feature Comparison</h2>
-          <div className="overflow-x-auto">
+          <div className="w-full min-w-0 max-w-full overflow-x-auto">
             <table className="w-full text-left text-sm border-collapse">
               <thead>
                 <tr className="border-b border-line bg-surface-2">

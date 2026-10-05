@@ -173,7 +173,7 @@ export function PrivacySection() {
     <section className="py-20 sm:py-24">
       <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
         <SectionHeading eyebrow="Privacy & security" title="Built to Protect" accent="Your Private Data" lead="Many online image tools upload your screenshots to a server to process them. Shotexa does the work inside your browser instead." />
-        <div className="mt-12 overflow-x-auto rounded-xl border border-line bg-surface shadow-xs">
+        <div className="mt-12 w-full min-w-0 max-w-full overflow-x-auto rounded-xl border border-line bg-surface shadow-xs">
           <table className="w-full min-w-[640px] border-collapse text-left text-sm">
             <caption className="sr-only">How Shotexa compares with upload-based image tools</caption>
             <thead>

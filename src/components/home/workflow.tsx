@@ -71,26 +71,26 @@ export function WorkflowSection() {
   const step = STEPS[active];
   const tool = step.tool ? TOOLS[step.tool] : undefined;
   return (
-    <section className="border-t border-line bg-surface-3/60 py-20 sm:py-24">
+    <section className="overflow-x-hidden border-t border-line bg-surface-3/60 py-20 sm:py-24">
       <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
         <SectionHeading eyebrow="Connected workflow" title="Upload Once." accent="Execute Any Tool." lead="Your screenshots stay loaded in this browser tab, so you can move from one tool to the next without adding them again." />
-        <div role="tablist" aria-label="Workflow steps" className="mx-auto mt-10 flex max-w-3xl items-center justify-between gap-1 overflow-x-auto pb-1">
+        <div role="tablist" aria-label="Workflow steps" className="mx-auto mt-10 grid w-full max-w-3xl grid-cols-2 gap-1 sm:flex sm:items-center sm:justify-between sm:gap-1">
           {STEPS.map((s, i) => (
-            <div key={s.key} className="flex flex-1 items-center gap-1 last:flex-none">
-              <button
-                role="tab"
-                type="button"
-                id={`wf-tab-${s.key}`}
-                aria-selected={i === active}
-                aria-controls="wf-panel"
-                onClick={() => setActive(i)}
-                className={cn("inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full px-3 text-sm transition-colors", i === active ? "bg-dark text-white" : "text-ink-2 hover:bg-surface-2 hover:text-ink")}
-              >
-                <span className={cn("t-mono inline-flex size-5 items-center justify-center rounded-full text-[11px]", i === active ? "bg-accent text-white" : "border border-line-strong")}>{i + 1}</span>
-                {s.label}
-              </button>
-              {i < STEPS.length - 1 && <span aria-hidden className="h-px min-w-3 flex-1 bg-line-strong max-sm:hidden" />}
-            </div>
+              <div key={s.key} className={cn("flex min-w-0 items-center gap-1 sm:flex-1", i === STEPS.length - 1 && "col-span-2 sm:col-span-1 sm:flex-none")}>
+                <button
+                  role="tab"
+                  type="button"
+                  id={`wf-tab-${s.key}`}
+                  aria-selected={i === active}
+                  aria-controls="wf-panel"
+                  onClick={() => setActive(i)}
+                  className={cn("inline-flex min-h-11 w-full items-center justify-start gap-2 rounded-full px-3 text-sm transition-colors sm:w-auto sm:shrink-0", i === active ? "bg-dark text-white" : "text-ink-2 hover:bg-surface-2 hover:text-ink")}
+                >
+                  <span className={cn("t-mono inline-flex size-5 items-center justify-center rounded-full text-[11px]", i === active ? "bg-accent text-white" : "border border-line-strong")}>{i + 1}</span>
+                  {s.label}
+                </button>
+                {i < STEPS.length - 1 && <span aria-hidden className="hidden h-px min-w-3 flex-1 bg-line-strong sm:block" />}
+              </div>
           ))}
         </div>
         <div id="wf-panel" role="tabpanel" aria-labelledby={`wf-tab-${step.key}`} className="mt-8 grid items-center gap-8 rounded-xl border border-line bg-surface p-6 shadow-sm md:grid-cols-2 md:p-10">
