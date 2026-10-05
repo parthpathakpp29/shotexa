@@ -134,6 +134,27 @@ export default function CleanShotXAlternativePage() {
           <p className="t-body-sm mt-12 text-center text-ink-3">
             Last checked: October 2026. Competitor features and pricing were reviewed against publicly available official product and pricing pages.
           </p>
+
+          <div className="mt-6 rounded-lg border border-line bg-surface p-5">
+            <h3 className="t-micro mb-3 text-ink">Official CleanShot X Sources</h3>
+            <ul className="space-y-1.5 t-body-sm text-ink-2">
+              <li>
+                <a href="https://cleanshot.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
+                  CleanShot X — Official Website ↗
+                </a>
+              </li>
+              <li>
+                <a href="https://cleanshot.com/pricing" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
+                  CleanShot X Pricing ↗
+                </a>
+              </li>
+              <li>
+                <a href="https://cleanshot.com/features" target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
+                  CleanShot X Features ↗
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
       </main>
       <SiteFooter />
