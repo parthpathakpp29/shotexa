@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { isIndexable, SITE, SOCIAL_IMAGE } from "@/config/site";
 import { Toaster } from "@/components/ui/toaster";
+import { AnalyticsConsent } from "@/components/site/analytics-consent";
 import "./globals.css";
 
 // Self-host the original visual system so builds never depend on a font CDN.
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-dvh bg-page text-ink">
         {children}
         <Toaster />
+        <AnalyticsConsent enabled={isIndexable()} />
       </body>
     </html>
   );

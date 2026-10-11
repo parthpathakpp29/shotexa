@@ -18,6 +18,7 @@ import { messageFor } from "@/core/runtime/messages";
 import type { WorkspaceActions, WorkspaceState } from "@/core/runtime/store";
 import type { FileId, FileSource } from "@/core/runtime/types";
 import { releaseWorkflowOutputs } from "@/core/workflows/output-registry";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 
 interface WorkspaceContextValue {
   runtime: WorkspaceRuntime;
@@ -80,6 +81,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       }
       const feedback = r.rejected.map((x) => `${x.name} ${messageFor(x.code)}`);
       if (r.added.length) feedback.unshift(`${r.added.length} screenshot${r.added.length === 1 ? "" : "s"} added to workspace`);
+      if (r.added.length && source !== "sample" && source !== "artifact") trackAnalyticsEvent("upload_completed");
       if (feedback.length) notify(feedback.join(". "));
       return r.added;
     },

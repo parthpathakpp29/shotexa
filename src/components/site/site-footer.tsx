@@ -3,7 +3,8 @@ import { Logo } from "@/components/brand";
 import { Kbd } from "@/components/ui/kbd";
 import { Badge } from "@/components/ui/primitives";
 import { TOOL_GROUPS, TOOLS } from "@/config/tools";
-import { SITE } from "@/config/site";
+import { isIndexable, SITE } from "@/config/site";
+import { AnalyticsPreferencesButton } from "./analytics-consent";
 
 export function SiteFooter() {
   return (
@@ -51,6 +52,7 @@ export function SiteFooter() {
                 How local processing works
               </Link>
             </li>
+            {isIndexable() && <li><AnalyticsPreferencesButton /></li>}
           </ul>
         </nav>
         <div className="max-md:hidden">
