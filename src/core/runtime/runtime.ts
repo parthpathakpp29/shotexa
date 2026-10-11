@@ -2238,6 +2238,7 @@ export function downloadAsset(runtime: WorkspaceRuntime, id: FileId, silent = fa
   const a = document.createElement("a");
   a.href = url;
   a.download = f.name;
+  if ("kind" in f && f.kind === "original") a.dataset.analyticsIgnore = "true";
   document.body.appendChild(a);
   a.click();
   a.remove();

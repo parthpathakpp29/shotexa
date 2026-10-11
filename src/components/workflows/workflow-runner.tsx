@@ -26,6 +26,7 @@ import { PRODUCT_QUICK_PRESETS, WEB_READY_PRESETS } from "@/core/workflows/recip
 import { workflowOutputsFor } from "@/core/workflows/output-registry";
 import type { WorkflowAction, WorkflowRecipe, WorkflowStepDefinition } from "@/core/workflows/types";
 import { cn } from "@/lib/cn";
+import { trackAnalyticsEvent } from "@/lib/analytics";
 import { StepConfig } from "./step-config";
 import { WorkflowInputs } from "./workflow-inputs";
 import { WorkflowIntro, WorkflowPlan, runningCopy } from "./workflow-overview";
@@ -100,8 +101,13 @@ export function WorkflowRunner({ recipe: initialRecipe, onExit }: { recipe: Work
   const [hideLow, setHideLow] = useState(false);
   const [privacyAppliedSubtypes, setPrivacyAppliedSubtypes] = useState<string[]>([]);
   const prepared = useRef<string | null>(null);
+  const previousAnalyticsStatus = useRef(snapshot.state.status);
   useEffect(() => engine.subscribe(setSnapshot), [engine]);
   useEffect(() => { const session = engine.toSession(); if (session) outputs.saveSession(session); }, [engine, outputs, snapshot.state.status]);
+  useEffect(() => {
+    if (snapshot.state.status === "completed" && previousAnalyticsStatus.current !== "completed") trackAnalyticsEvent("workflow_completed");
+    previousAnalyticsStatus.current = snapshot.state.status;
+  }, [snapshot.state.status]);
 
   const status = snapshot.state.status;
   const idle = status === "idle";
