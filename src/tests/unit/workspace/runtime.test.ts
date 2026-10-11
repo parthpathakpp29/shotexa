@@ -38,6 +38,50 @@ function fakeBroker(handlers: Record<string, (input: unknown) => unknown>) {
 const CAPS = { offscreenCanvas: true, compressionStream: true, createImageBitmapResize: true };
 
 describe("WorkspaceRuntime", () => {
+  it("keeps segmentation behind the mocked worker boundary, exports an artifact and cleans mask resources", async () => {
+    let exportInput: { mask?: { data: Uint8ClampedArray } } | undefined;
+    const { broker, calls } = fakeBroker({
+      "background.remove": () => ({ mask: Uint8ClampedArray.from([0, 255, 255, 0]), width: 2, height: 2, provider: "wasm", model: "u2netp", modelBytes: 4_574_861, modelLoadMs: 9, inferenceMs: 11, sessionReused: false }),
+      "background.export": (input) => {
+        exportInput = input as typeof exportInput;
+        return { blob: new Blob([Uint8Array.from([1, 2, 3])], { type: "image/png" }), width: 1170, height: 2532, bytes: 3 };
+      },
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const { added } = await rt.ingest([png("chat-light/a.png")], "picker");
+    const scan = await rt.removeBackground(added[0], undefined, true);
+    expect(scan).toMatchObject({ provider: "wasm", model: "u2netp" });
+    expect(rt.backgroundMasks.stats()).toEqual({ entries: 1, bytes: 4, strokes: 0 });
+    const output = await rt.exportRemovedBackground(added[0]);
+    expect(calls).toContain("background:background.remove");
+    expect(calls).toContain("background:background.export");
+    expect(exportInput?.mask?.data).toEqual(Uint8ClampedArray.from([0, 255, 255, 0]));
+    expect(rt.store.getState().files[output.id]).toMatchObject({ producedBy: "remove-background", derivedFrom: [added[0]], type: "image/png" });
+    expect(rt.store.getState().selectedId).toBe(added[0]);
+    rt.removeFile(added[0]);
+    expect(rt.backgroundMasks.stats()).toEqual({ entries: 0, bytes: 0, strokes: 0 });
+    rt.dispose();
+  });
+
+  it("runs background-removal Batch items sequentially and retains completed results", async () => {
+    let active = 0, peak = 0;
+    const { broker } = fakeBroker({
+      "background.remove": async () => { active++; peak = Math.max(peak, active); await Promise.resolve(); active--; return { mask: Uint8ClampedArray.from([255]), width: 1, height: 1, provider: "wasm", model: "u2netp", modelBytes: 4_574_861, modelLoadMs: 1, inferenceMs: 1, sessionReused: false }; },
+      "background.export": () => ({ blob: new Blob([Uint8Array.from([9])], { type: "image/png" }), width: 1170, height: 2532, bytes: 1 }),
+    });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const { added } = await rt.ingest([png("chat-light/a.png"), png("chat-light/b.png")], "drop");
+    rt.store.getState().setBatchSelection(added);
+    rt.store.getState().setBatchOperation("background");
+    expect(await rt.runBatch()).toEqual({ completed: 2, failed: 0, cancelled: 0 });
+    expect(peak).toBe(1);
+    expect(rt.batchResults.list().map((item) => [item.operation, item.type, item.outputName])).toEqual([
+      ["background", "image/png", "background-removed-a.png"], ["background", "image/png", "background-removed-b.png"],
+    ]);
+    expect(rt.backgroundMasks.stats()).toEqual({ entries: 0, bytes: 0, strokes: 0 });
+    rt.dispose();
+  });
+
   it("runs batch jobs sequentially, isolates failures and adds successful results only on request", async () => {
     let encodeCalls = 0;
     let active = 0;

@@ -7,7 +7,7 @@
  * user asks — a long screenshot can make dozens of files.
  */
 import { AlertTriangle, Check, Download, FolderPlus } from "lucide-react";
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { formatBytes } from "@/components/tools/stitch/stitch-tool";
 import { Button } from "@/components/ui/button";
 import { Badge, Notice, Progress } from "@/components/ui/primitives";
@@ -20,6 +20,7 @@ import { downloadBlob, downloadBlobs, type SplitRunResult } from "@/core/runtime
 import { defaultSplit, planSplit, validatePieces } from "@/core/split/plan";
 import { SplitInspector } from "./split-inspector";
 import { SplitStage } from "./split-stage";
+import { useObjectUrls } from "@/lib/object-url";
 
 export function SplitTool({ landing }: { landing: ReactNode }) {
   const count = useWorkspace((s) => s.order.length);
@@ -104,8 +105,8 @@ function SplitResult({ result, addedIds, onAdd }: { result: SplitRunResult; adde
   const source = useWorkspace((s) => s.files[result.sourceId]);
   const [downloading, setDownloading] = useState(false);
   // Thumbnails straight from the rendered Blobs; released when the result goes away.
-  const urls = useMemo(() => result.pieces.map((p) => URL.createObjectURL(p.blob)), [result]);
-  useEffect(() => () => urls.forEach((u) => URL.revokeObjectURL(u)), [urls]);
+  const blobs = useMemo(() => result.pieces.map((p) => p.blob), [result]);
+  const urls = useObjectUrls(blobs);
   const total = result.pieces.reduce((n, p) => n + p.bytes, 0);
 
   async function downloadAll() {
@@ -150,7 +151,7 @@ function SplitResult({ result, addedIds, onAdd }: { result: SplitRunResult; adde
           <li key={p.name} className="flex flex-col overflow-hidden rounded-lg border border-line bg-surface shadow-xs" data-testid="split-piece" data-width={p.width} data-height={p.height} data-y0={p.y0} data-y1={p.y1}>
             <div className="flex h-36 items-start justify-center overflow-hidden bg-checker p-2">
               {/* eslint-disable-next-line @next/next/no-img-element -- local Blob preview */}
-              <img src={urls[i]} alt={`Piece ${i + 1}`} loading="lazy" className="max-h-full w-auto max-w-full object-contain object-top shadow-xs" />
+              {urls[i] && <img src={urls[i]!} alt={`Piece ${i + 1}`} loading="lazy" className="max-h-full w-auto max-w-full object-contain object-top shadow-xs" />}
             </div>
             <div className="flex flex-1 flex-col gap-1 p-2.5">
               <span className="truncate font-mono text-[11px] text-ink" title={p.name}>

@@ -16,12 +16,14 @@ import { createWorkspaceRuntime, type WorkspaceRuntime } from "@/core/runtime/ru
 import { dedupeDroppedFiles } from "@/core/runtime/drop-files";
 import { messageFor } from "@/core/runtime/messages";
 import type { WorkspaceActions, WorkspaceState } from "@/core/runtime/store";
-import type { FileSource } from "@/core/runtime/types";
+import type { FileId, FileSource } from "@/core/runtime/types";
+import { releaseWorkflowOutputs } from "@/core/workflows/output-registry";
 
 interface WorkspaceContextValue {
   runtime: WorkspaceRuntime;
   openPicker(): void;
-  addFiles(files: File[], source: FileSource): Promise<void>;
+  /** Resolves with the ids of the screenshots actually added (rejected files are reported). */
+  addFiles(files: File[], source: FileSource): Promise<FileId[]>;
   loadSample(): Promise<void>;
 }
 
@@ -44,7 +46,10 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     if (pendingDispose.current) clearTimeout(pendingDispose.current);
     pendingDispose.current = null;
     return () => {
-      pendingDispose.current = setTimeout(() => runtime.dispose(), 0);
+      pendingDispose.current = setTimeout(() => {
+        releaseWorkflowOutputs(runtime);
+        runtime.dispose();
+      }, 0);
     };
   }, [runtime]);
 
@@ -52,7 +57,9 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     const id = Date.now() + Math.random();
     if (noticeTimer.current) clearTimeout(noticeTimer.current);
     setNotices([{ id, text }]);
-    noticeTimer.current = setTimeout(() => setNotices((current) => current[0]?.id === id ? [] : current), 4200);
+    // A WebKit decode/preview can take longer than Chromium. Keep the single ingestion
+    // summary visible long enough to be read after that work completes.
+    noticeTimer.current = setTimeout(() => setNotices((current) => current[0]?.id === id ? [] : current), 8_000);
   }, []);
 
   useEffect(() => () => {
@@ -62,11 +69,19 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const addFiles = useCallback(
     async (files: File[], source: FileSource) => {
       const unique = dedupeDroppedFiles(files);
-      if (!unique.length) return;
-      const r = await runtime.ingest(unique, source);
+      if (!unique.length) return [];
+      // Callers fire and forget (paste, drop, the picker), so nothing may reject from here.
+      let r: Awaited<ReturnType<typeof runtime.ingest>>;
+      try {
+        r = await runtime.ingest(unique, source);
+      } catch {
+        if (document.visibilityState === "visible") notify(`${unique.length === 1 ? (unique[0].name || "The image") : "These images"} ${messageFor("UNREADABLE")}`);
+        return [];
+      }
       const feedback = r.rejected.map((x) => `${x.name} ${messageFor(x.code)}`);
       if (r.added.length) feedback.unshift(`${r.added.length} screenshot${r.added.length === 1 ? "" : "s"} added to workspace`);
       if (feedback.length) notify(feedback.join(". "));
+      return r.added;
     },
     [runtime, notify],
   );
@@ -74,14 +89,21 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const openPicker = useCallback(() => inputRef.current?.click(), []);
 
   const loadSample = useCallback(async () => {
-    const files = await Promise.all(
-      SAMPLE_FILES.map(async (u) => {
-        const b = await (await fetch(u)).blob();
-        return new File([b], u.split("/").pop()!, { type: b.type || "image/png" });
-      }),
-    );
+    let files: File[];
+    try {
+      files = await Promise.all(
+        SAMPLE_FILES.map(async (u) => {
+          const b = await (await fetch(u)).blob();
+          return new File([b], u.split("/").pop()!, { type: b.type || "image/png" });
+        }),
+      );
+    } catch {
+      // Offline, or the page is being left mid-download: say so only if someone is looking.
+      if (document.visibilityState === "visible") notify("The sample screenshots couldn't be loaded.");
+      return;
+    }
     await addFiles(files, "sample");
-  }, [addFiles]);
+  }, [addFiles, notify]);
 
   // Page-level paste: Ctrl/⌘+V anywhere (architecture §14 — listen for normal paste events).
   useEffect(() => {
@@ -124,6 +146,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         multiple
         accept={ACCEPT}
         className="sr-only"
+        suppressHydrationWarning
         tabIndex={-1}
         aria-hidden
         data-testid="file-input"

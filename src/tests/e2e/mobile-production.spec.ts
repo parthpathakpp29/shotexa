@@ -132,6 +132,28 @@ test.describe("mobile production usability", () => {
     await capture(page, testInfo, "beautifier-settings-mobile.png");
   });
 
+  test("Beautifier Pro exposes 3D, background, text, branding, animation, and export at every phone size", async ({ page }, testInfo) => {
+    await page.setViewportSize(PHONE_VIEWPORTS[0]);
+    await upload(page, "/screenshot-beautifier", A);
+    for (const viewport of PHONE_VIEWPORTS) {
+      await page.setViewportSize(viewport);
+      const sheet = await openSettings(page);
+      for (const name of ["Background", "3D & Perspective", "Text", "Branding", "Animation", "Export"]) {
+        const section = sheet.getByRole("button", { name, exact: true });
+        await section.scrollIntoViewIfNeeded();
+        await expect(section, `${name} at ${viewport.width}×${viewport.height}`).toBeVisible();
+      }
+      const perspective = sheet.getByRole("button", { name: "3D & Perspective", exact: true });
+      if ((await perspective.getAttribute("aria-expanded")) !== "true") await perspective.click();
+      await expect(sheet.getByRole("radiogroup", { name: "Perspective preset" })).toBeVisible();
+      if (viewport.width === 390) await capture(page, testInfo, "beautifier-pro-390-3d.png");
+      await expect(sheet.getByTestId("mobile-sheet-export")).toBeVisible();
+      await expectNoPageOverflow(page);
+      await page.keyboard.press("Escape");
+      await expect(sheet).toBeHidden();
+    }
+  });
+
   test("editor, compare, safe share, stitch, split, PDF, batch, compress, and convert controls remain reachable", async ({ page }, testInfo) => {
     await page.setViewportSize(PHONE_VIEWPORTS[2]);
     const errors: string[] = [];

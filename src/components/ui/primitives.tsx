@@ -48,7 +48,7 @@ export function Panel({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("rounded-lg border border-line bg-surface shadow-xs", className)} {...props} />;
 }
 
-/** Eyebrow (mono, accent) + serif title with an optional italic accent part + lead. */
+/** Eyebrow (mono, accent) + compact display title with optional colour emphasis + lead. */
 export function SectionHeading({ eyebrow, title, accent, lead, level = 2, className, align = "center" }: { eyebrow?: string; title: string; accent?: string; lead?: ReactNode; level?: 1 | 2; className?: string; align?: "center" | "left" }) {
   const H = level === 1 ? "h1" : "h2";
   return (
@@ -59,7 +59,7 @@ export function SectionHeading({ eyebrow, title, accent, lead, level = 2, classN
         {accent && (
           <>
             {" "}
-            <em className="text-ink">{accent}</em>
+            <span className="text-accent">{accent}</span>
           </>
         )}
       </H>
@@ -68,7 +68,7 @@ export function SectionHeading({ eyebrow, title, accent, lead, level = 2, classN
   );
 }
 
-export function Notice({ tone = "neutral", icon, title, children, actions, className }: { tone?: "neutral" | "accent" | "warning" | "error" | "success"; icon?: ReactNode; title?: ReactNode; children?: ReactNode; actions?: ReactNode; className?: string }) {
+export function Notice({ tone = "neutral", icon, title, children, actions, className, ...rest }: { tone?: "neutral" | "accent" | "warning" | "error" | "success"; icon?: ReactNode; title?: ReactNode; children?: ReactNode; actions?: ReactNode; className?: string } & Omit<HTMLAttributes<HTMLDivElement>, "title">) {
   const tones = {
     neutral: "border-line bg-surface",
     accent: "border-line bg-surface",
@@ -77,7 +77,7 @@ export function Notice({ tone = "neutral", icon, title, children, actions, class
     error: "border-[#f3c9c4] bg-error-soft",
   } as const;
   return (
-    <div role={tone === "error" ? "alert" : "status"} className={cn("flex flex-col gap-4 rounded-lg border p-4 shadow-xs sm:flex-row sm:items-center sm:gap-5 sm:px-5", tones[tone], className)}>
+    <div role={tone === "error" ? "alert" : "status"} className={cn("flex flex-col gap-4 rounded-lg border p-4 shadow-xs sm:flex-row sm:items-center sm:gap-5 sm:px-5", tones[tone], className)} {...rest}>
       <div className="flex min-w-0 flex-1 items-start gap-3.5">
         {icon && <span className={cn("mt-0.5 inline-flex size-9 shrink-0 items-center justify-center rounded-md [&_svg]:size-[18px]", tone === "accent" ? "bg-accent-soft text-accent" : "bg-surface-2 text-ink-2")}>{icon}</span>}
         <div className="min-w-0">

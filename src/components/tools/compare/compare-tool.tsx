@@ -1,12 +1,13 @@
 "use client";
 
 /**
- * Compare Screenshots: two workspace images, four ways of looking at the difference between
- * them. The comparison is a couple of asset ids and a few numbers (undoable); export renders it
- * from the ORIGINAL files and records BOTH parents on the new artifact.
+ * Compare Pro: two workspace images, five ways of looking at the difference between them, and
+ * a measured answer to "what actually changed". The comparison itself is a couple of asset ids
+ * and a few numbers (undoable); export renders it from the ORIGINAL files and records BOTH
+ * parents on the new artifact.
  */
 import { AlertTriangle, Check, Download, Images } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { formatBytes } from "@/components/tools/stitch/stitch-tool";
 import { Button } from "@/components/ui/button";
 import { Badge, EmptyState, Notice, Progress } from "@/components/ui/primitives";
@@ -17,10 +18,12 @@ import { continuationsFor, TOOLS } from "@/config/tools";
 import { compareSize } from "@/core/compare/layout";
 import { COMPARE_MODES } from "@/core/compare/presets";
 import { compareIssue } from "@/core/compare/render";
+import type { CompareVisualAnalysis } from "@/core/compare/types";
 import { messageFor } from "@/core/runtime/messages";
 import { downloadAsset } from "@/core/runtime/runtime";
 import { CompareInspector } from "./compare-inspector";
 import { CompareStage } from "./compare-stage";
+import { CompareSummaryPanel } from "./compare-summary";
 
 export function CompareTool({ landing }: { landing: ReactNode }) {
   const count = useWorkspace((s) => s.order.length);
@@ -37,6 +40,10 @@ function CompareWorkspace() {
   const job = useWorkspace((s) => Object.values(s.jobs).find((j) => j.kind === "compare-export" && j.status === "running"));
   const [completedId, setCompletedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [analysis, setAnalysis] = useState<CompareVisualAnalysis | null>(null);
+  const [selectedRegion, setSelectedRegion] = useState<number | null>(null);
+  const [selectedTextChange, setSelectedTextChange] = useState<string | null>(null);
+  const [drawIgnore, setDrawIgnore] = useState(false);
 
   const fileA = settings.a ? files[settings.a] : undefined;
   const fileB = settings.b ? files[settings.b] : undefined;
@@ -50,6 +57,8 @@ function CompareWorkspace() {
     const second = order.find((id) => id !== first) ?? order[0];
     setCompare({ ...settings, a: first, b: second }, { record: false });
   }, [order, files, selectedId, settings, setCompare]);
+
+  const onAnalysis = useCallback((next: CompareVisualAnalysis | null) => setAnalysis(next), []);
 
   const exporting = !!job;
   const ready = !!fileA && !!fileB;
@@ -123,7 +132,18 @@ function CompareWorkspace() {
               </EmptyState>
             </div>
           ) : ready ? (
-            <CompareStage key={`${settings.a}|${settings.b}`} assetA={settings.a!} assetB={settings.b!} />
+            <CompareStage
+              key={`${settings.a}|${settings.b}`}
+              assetA={settings.a!}
+              assetB={settings.b!}
+              selectedRegion={selectedRegion}
+              onSelectRegion={setSelectedRegion}
+              selectedTextChange={selectedTextChange}
+              onSelectTextChange={setSelectedTextChange}
+              drawIgnore={drawIgnore}
+              onDrawIgnore={setDrawIgnore}
+              onAnalysis={onAnalysis}
+            />
           ) : (
             <div data-testid="compare-needs-two">
               <EmptyState icon={<Images />} title="Choose two screenshots">
@@ -133,28 +153,41 @@ function CompareWorkspace() {
           )}
         </>
       }
-      inspector={<CompareInspector />}
+      inspector={<CompareInspector onDrawIgnore={setDrawIgnore} />}
       below={
-        result && (
-          <div className="mt-6" data-testid="compare-result">
-            <Notice
-              tone="success"
-              icon={<Check />}
-              title="Comparison ready"
-              actions={
-                <Button variant="secondary" onClick={() => downloadAsset(runtime, result.id)}>
-                  <Download /> Download again
-                </Button>
-              }
-            >
-              <span className="t-mono text-[12px]">
-                {result.name} · {result.width} × {result.height} px · {formatBytes(result.bytes)}
-              </span>
-              <span className="block">Saved to your downloads and added to this workspace as a new file. Both screenshots are unchanged.</span>
-            </Notice>
-            <ContinueWith tools={continuationsFor("compare")} fileId={result.id} />
-          </div>
-        )
+        <>
+          {ready && fileA && fileB && (
+            <CompareSummaryPanel
+              fileA={fileA}
+              fileB={fileB}
+              analysis={analysis}
+              selectedRegion={selectedRegion}
+              onSelectRegion={setSelectedRegion}
+              selectedTextChange={selectedTextChange}
+              onSelectTextChange={setSelectedTextChange}
+            />
+          )}
+          {result && (
+            <div className="mt-6" data-testid="compare-result">
+              <Notice
+                tone="success"
+                icon={<Check />}
+                title="Comparison ready"
+                actions={
+                  <Button variant="secondary" onClick={() => downloadAsset(runtime, result.id)}>
+                    <Download /> Download again
+                  </Button>
+                }
+              >
+                <span className="t-mono text-[12px]">
+                  {result.name} · {result.width} × {result.height} px · {formatBytes(result.bytes)}
+                </span>
+                <span className="block">Saved to your downloads and added to this workspace as a new file. Both screenshots are unchanged.</span>
+              </Notice>
+              <ContinueWith tools={continuationsFor("compare")} fileId={result.id} />
+            </div>
+          )}
+        </>
       }
     />
   );

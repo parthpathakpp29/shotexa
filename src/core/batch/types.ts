@@ -1,11 +1,12 @@
 import type { OutputFormat } from "@/core/image-encode/formats";
 
-export type BatchOperation = "compress" | "convert" | "privacy" | "resize";
+export type BatchOperation = "compress" | "convert" | "privacy" | "resize" | "background";
 export type BatchStatus = "idle" | "running" | "completed" | "cancelled";
 export type BatchItemStatus = "pending" | "processing" | "completed" | "failed" | "cancelled";
 export type ResizeMode = "width" | "height" | "percentage" | "fit";
 
 export interface BatchSettings {
+  background: { trim: boolean; padding: number };
   compress: { format: OutputFormat | "same"; quality: number };
   convert: { format: OutputFormat; quality: number; background: string };
   resize: {

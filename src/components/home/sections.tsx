@@ -14,7 +14,7 @@ import { Uploader } from "@/components/workspace/uploader";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden">
+    <section data-testid="home-hero" className="relative overflow-hidden">
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-[radial-gradient(60%_60%_at_50%_0%,var(--accent-soft),transparent)]" />
       <div className="relative mx-auto max-w-[880px] px-4 pb-20 pt-12 text-center sm:px-6 sm:pt-16">
         <Badge tone="neutral" className="bg-surface">
@@ -55,16 +55,18 @@ const PRINCIPLES: { icon: ReactNode; title: string; body: string; points: string
 
 export function PrinciplesSection() {
   return (
-    <section className="py-20 sm:py-24">
+    <section data-testid="home-principles" className="py-20 sm:py-24">
       <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
-        <SectionHeading eyebrow="Core principles" title="Smart. Controllable." accent="Private." lead="Automatic where it helps, precise controls when you need them, and private by default." />
-        <div className="mt-12 grid gap-5 md:grid-cols-3">
+        <SectionHeading title="Smart. Controllable." accent="Private." lead="Automatic where it helps, precise controls when you need them, and private by default." align="left" />
+        <div className="mt-12 grid gap-8 md:grid-cols-3 md:gap-0">
           {PRINCIPLES.map((p) => (
-            <article key={p.title} className="rounded-xl border border-line bg-surface p-6 shadow-xs">
-              <span className="inline-flex size-10 items-center justify-center rounded-md border border-accent-line bg-accent-soft text-accent [&_svg]:size-[18px]">{p.icon}</span>
-              <h3 className="t-h3 mt-5">{p.title}</h3>
-              <p className="t-body-sm mt-2 text-ink-2">{p.body}</p>
-              <ul className="mt-5 space-y-2 rounded-md border border-line bg-surface-3 p-3.5">
+            <article key={p.title} className="h-full border-l border-line pl-5 first:border-l-0 first:pl-0 md:px-7 md:first:pl-0 md:last:pr-0">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex size-9 items-center justify-center rounded-md bg-accent-soft text-accent [&_svg]:size-[18px]">{p.icon}</span>
+              </div>
+              <h3 className="t-h3 mt-8">{p.title}</h3>
+              <p className="t-body-sm mt-2 max-w-xs text-ink-2">{p.body}</p>
+              <ul className="mt-6 space-y-2 border-t border-line pt-4">
                 {p.points.map((x) => (
                   <li key={x} className="flex items-center gap-2 text-[13px] text-ink">
                     <Check aria-hidden className="size-3.5 shrink-0 text-accent" /> {x}
@@ -115,39 +117,41 @@ export function ContinuousSection() {
  * Compact index of everything that actually works today, grouped by the registry categories.
  * Deliberately quieter than the hero and workflow sections: it is a directory, not a pitch.
  */
-const NUMBER_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen"];
+const NUMBER_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty"];
 
 export function ToolIndexSection() {
   // Counted from the registry, so the headline can never overstate or lag the toolbox.
   const count = LIVE_TOOLS.length;
   return (
-    <section className="py-20 sm:py-24">
+    <section data-testid="home-toolbox" className="py-20 sm:py-24">
       <div className="mx-auto max-w-[1100px] px-4 sm:px-6">
-        <SectionHeading eyebrow="The toolbox" title={`${NUMBER_WORDS[count] ?? count} Tools,`} accent="One Workspace" lead="Add your screenshots once, then move between tools without uploading anything again." />
-        <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <SectionHeading title={`${NUMBER_WORDS[count] ?? count} tools.`} accent="One workspace." lead="Add your screenshots once, then move between tools without uploading anything again." align="left" />
+        <div className="mt-12 grid grid-cols-[minmax(0,1fr)] overflow-hidden rounded-xl border border-line bg-surface md:grid-cols-2 lg:grid-cols-4">
           {TOOL_GROUPS.map((group) => (
-            <div key={group.id} className="rounded-xl border border-line bg-surface p-6 shadow-xs">
-              <p className="t-micro text-accent-ink">{group.label}</p>
-              <ul className="mt-4 space-y-1">
+            <div key={group.id} className="h-full border-b border-line last:border-b-0 md:border-r md:[&:nth-child(2)]:border-r-0 lg:border-b-0 lg:[&:nth-child(2)]:border-r lg:last:border-r-0">
+            <div className="h-full p-5 sm:p-6">
+              <p className="text-xs font-semibold tracking-[0.06em] text-ink-2">{group.label}</p>
+              <ul className="mt-4 divide-y divide-line">
                 {group.tools.map((id) => (
                   <li key={id}>
-                    <Link href={TOOLS[id].route} className="group flex min-h-11 items-center gap-3 rounded-md px-2 -mx-2 hover:bg-surface-3">
-                      <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-accent-line bg-accent-soft text-accent">
+                    <Link href={TOOLS[id].route} className="group flex min-h-[58px] items-center gap-3 py-2 transition-colors hover:text-accent-ink">
+                      <span className="inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-line bg-surface-3 text-ink-2 transition-colors group-hover:border-accent-line group-hover:bg-accent-soft group-hover:text-accent">
                         <ToolIcon name={TOOLS[id].icon} className="size-4" />
                       </span>
                       <span className="min-w-0">
                         <span className="block text-sm font-medium text-ink">{TOOLS[id].name}</span>
-                        <span className="t-body-sm block truncate text-ink-3">{TOOLS[id].summary}</span>
+                        <span className="t-body-sm block text-ink-3 max-md:line-clamp-2 md:truncate">{TOOLS[id].summary}</span>
                       </span>
-                      <ArrowRight aria-hidden className="ml-auto size-4 shrink-0 text-ink-3 transition-transform group-hover:translate-x-0.5" />
+                      <ArrowRight aria-hidden className="ml-auto size-4 shrink-0 text-ink-3 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-accent" />
                     </Link>
                   </li>
                 ))}
               </ul>
             </div>
+            </div>
           ))}
         </div>
-        <p className="t-body-sm mt-6 text-center text-ink-3">
+        <p className="t-body-sm mt-6 text-ink-3">
           {/* Only promise "coming" tools while the registry actually has some. */}
           {UPCOMING_TOOLS.length > 0 ? "More tools are on the way — " : "Every tool works on the same workspace — "}
           <Link href="/tools" className="font-medium text-accent-ink hover:underline">
@@ -264,7 +268,7 @@ export function FinalCta() {
         <div>
           <p className="t-micro text-[#f0a584]">Ready to start</p>
           <h2 className="t-h1 mt-3 text-white">
-            Paste Any Screenshot to <em className="text-[#f0a584]">Begin</em>
+            Paste any screenshot to <span className="text-[#f0a584]">begin.</span>
           </h2>
           <p className="t-body mt-3 text-white/70">No account. Screenshot processing stays in your browser. {SITE.trustLine}.</p>
         </div>

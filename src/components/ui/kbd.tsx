@@ -5,7 +5,8 @@ export function Kbd({ children, tone = "default", className }: { children: React
   return (
     <kbd
       className={cn(
-        "inline-flex h-5 min-w-5 items-center justify-center rounded-xs px-1 font-mono text-[10.5px] font-medium leading-none",
+        // Keyboard hints mean nothing on a touch screen without a keyboard.
+        "inline-flex h-5 min-w-5 items-center justify-center rounded-xs px-1 font-mono text-[10.5px] font-medium leading-none pointer-coarse:hidden",
         tone === "inverse" ? "bg-white/20 text-white" : "border border-line bg-surface-2 text-ink-2",
         className,
       )}

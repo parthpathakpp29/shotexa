@@ -1,12 +1,35 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Mono, Inter, Playfair_Display } from "next/font/google";
+import localFont from "next/font/local";
 import { isIndexable, SITE, SOCIAL_IMAGE } from "@/config/site";
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
-// Display serif (headings, italic accent words) · UI/body sans · restrained mono for values.
-const playfair = Playfair_Display({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-playfair", display: "swap" });
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-const plexMono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-plex-mono", display: "swap" });
+// Self-host the original visual system so builds never depend on a font CDN.
+const playfair = localFont({
+  src: [
+    { path: "../assets/fonts/ui/PlayfairDisplay-Medium.ttf", weight: "500", style: "normal" },
+    { path: "../assets/fonts/ui/PlayfairDisplay-Italic.ttf", weight: "400", style: "italic" },
+  ],
+  variable: "--font-playfair",
+  display: "swap",
+});
+const inter = localFont({
+  src: [
+    { path: "../assets/fonts/ui/Inter-Regular.ttf", weight: "400", style: "normal" },
+    { path: "../assets/fonts/ui/Inter-Medium.ttf", weight: "500", style: "normal" },
+    { path: "../assets/fonts/ui/Inter-SemiBold.ttf", weight: "600", style: "normal" },
+  ],
+  variable: "--font-inter",
+  display: "swap",
+});
+const plexMono = localFont({
+  src: [
+    { path: "../assets/fonts/ui/IBMPlexMono-Regular.ttf", weight: "400", style: "normal" },
+    { path: "../assets/fonts/ui/IBMPlexMono-Medium.ttf", weight: "500", style: "normal" },
+  ],
+  variable: "--font-plex-mono",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
@@ -28,7 +51,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={`${playfair.variable} ${inter.variable} ${plexMono.variable} antialiased`}>
-      <body className="min-h-dvh bg-page text-ink">{children}</body>
+      <body className="min-h-dvh bg-page text-ink">
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }

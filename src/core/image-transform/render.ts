@@ -139,6 +139,8 @@ export async function renderDecoded(bitmap: ImageBitmap, t: ImageTransform, o: T
   } finally {
     release(canvas);
   }
+  // Checked before every Blob read: a read started while the page is being left is refused.
+  if (o.signal?.aborted) throw new EditorError("EDITOR_CANCELLED");
   // Encoders can crop silently (Chromium WebP beyond 16,383 px): never hand back a wrong size.
   const size = await readImageSize(blob);
   if (!size || size.width !== out.width || size.height !== out.height) throw new EditorError("EDITOR_EXPORT_VERIFY_FAILED", `${size?.width}x${size?.height}`);

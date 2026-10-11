@@ -2,6 +2,7 @@
 
 import { AlertTriangle, Check, Download, Files, Loader2, PackageOpen, RefreshCw, Square } from "lucide-react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { SegmentedControl, Slider, Toggle } from "@/components/ui/controls";
 import { Badge, EmptyState, FieldLabel, InspectorSection, Notice, Progress } from "@/components/ui/primitives";
@@ -16,12 +17,13 @@ import { MAX_BATCH_FILES } from "@/core/batch/types";
 import type { BatchItemState, BatchOperation, BatchResult, BatchSettings, ResizeMode } from "@/core/batch/types";
 import { resizeOutput } from "@/core/batch/settings";
 import { compareSize } from "@/core/image-encode/compare";
+import { messageFor } from "@/core/runtime/messages";
 import { formatBytes } from "@/components/tools/stitch/stitch-tool";
 import { downloadBlob } from "@/core/runtime/runtime";
 import type { WorkspaceFile } from "@/core/runtime/types";
 
 const OPS: { value: BatchOperation; label: string }[] = [
-  { value: "compress", label: "Compress" }, { value: "convert", label: "Convert" }, { value: "privacy", label: "Privacy Clean" }, { value: "resize", label: "Resize" },
+  { value: "compress", label: "Compress" }, { value: "convert", label: "Convert" }, { value: "privacy", label: "Privacy Clean" }, { value: "resize", label: "Resize" }, { value: "background", label: "Remove background" },
 ];
 
 export function BatchTool({ landing }: { landing: ReactNode }) {
@@ -68,7 +70,14 @@ function BatchWorkspace() {
   }
   async function zip() {
     setError(null);
-    try { const result = await runtime.createBatchZip(); setZipNames(result.names); downloadBlob(result.blob, "shotexa-batch.zip"); } catch (e) { setError((e as { code?: string }).code ?? "ZIP_CREATE_FAILED"); }
+    try {
+      const result = await runtime.createBatchZip();
+      setZipNames(result.names);
+      toast({ type: "success", message: "ZIP created", description: "Your files have been compressed." });
+      downloadBlob(result.blob, "shotexa-batch.zip", true);
+    } catch (e) {
+      setError((e as { code?: string }).code ?? "ZIP_CREATE_FAILED");
+    }
   }
   function alterSelection(ids: string[]) { runtime.resetBatch(); setSelection(ids); }
 
@@ -123,7 +132,7 @@ function BatchFileList({ onSelection }: { onSelection(ids: string[]): void }) {
 function ItemStatus({ status, error }: { status?: string; error?: string }) {
   if (status === "processing") return <Badge tone="accent"><Loader2 className="size-3 animate-spin" /> Processing</Badge>;
   if (status === "completed") return <Badge tone="success">Done</Badge>;
-  if (status === "failed") return <span title={error}><Badge tone="error" className="max-w-44 truncate">Failed</Badge></span>;
+  if (status === "failed") return <span title={messageFor(error)}><Badge tone="error" className="max-w-44 truncate">Failed</Badge></span>;
   if (status === "cancelled") return <Badge tone="neutral">Not processed</Badge>;
   return <Badge tone="neutral">Ready</Badge>;
 }
@@ -143,11 +152,12 @@ function BatchInspector({ disabled, onReset }: { disabled: boolean; onReset(): v
     setSettings(kind, patch);
   };
   return <div className={disabled ? "pointer-events-none opacity-60" : ""}>
-    <InspectorSection title="Operation"><SegmentedControl value={batch.operation} onChange={(value) => { onReset(); setOperation(value); }} options={OPS} label="Batch operation" className="grid-cols-2 grid-flow-row" /><p className="t-body-sm mt-3 text-ink-2">{batch.operation === "compress" ? "Reduce encoded file size without resizing." : batch.operation === "convert" ? "Change every selected image to one format." : batch.operation === "privacy" ? "Remove supported private metadata without re-encoding pixels." : "Scale each image while preserving its aspect ratio."}</p></InspectorSection>
+    <InspectorSection title="Operation"><SegmentedControl value={batch.operation} onChange={(value) => { onReset(); setOperation(value); }} options={OPS} label="Batch operation" className="grid-cols-2 grid-flow-row" /><p className="t-body-sm mt-3 text-ink-2">{batch.operation === "compress" ? "Reduce encoded file size without resizing." : batch.operation === "convert" ? "Change every selected image to one format." : batch.operation === "privacy" ? "Remove supported private metadata without re-encoding pixels." : batch.operation === "background" ? "Run local subject segmentation one image at a time and create transparent PNG files." : "Scale each image while preserving its aspect ratio."}</p></InspectorSection>
     {batch.operation === "compress" && <EncodeBatchSettings value={batch.settings.compress} onChange={(p) => update("compress", p)} allowSame />}
     {batch.operation === "convert" && <EncodeBatchSettings value={batch.settings.convert} onChange={(p) => update("convert", p as Partial<BatchSettings["convert"]>)} background />}
     {batch.operation === "resize" && <ResizeSettings value={batch.settings.resize} onChange={(p) => update("resize", p)} preview={first ? resizeOutput(first, batch.settings.resize).size : null} />}
     {batch.operation === "privacy" && <InspectorSection title="Privacy Clean"><p className="t-body-sm text-ink-2">Removes supported GPS, private EXIF, XMP, comments and software metadata. Required orientation and colour information are preserved and every output is verified.</p></InspectorSection>}
+    {batch.operation === "background" && <InspectorSection title="Background removal"><Toggle checked={batch.settings.background.trim} onChange={(trim) => update("background", { trim })} label="Trim transparent space" description="Crop each output to its detected subject bounds" />{batch.settings.background.trim && <div className="mt-3"><FieldLabel value={`${batch.settings.background.padding} px`}>Trim padding</FieldLabel><Slider label="Trim padding" min={0} max={160} value={batch.settings.background.padding} onChange={(padding) => update("background", { padding })} /></div>}<p className="t-body-sm mt-3 text-ink-2">Heavy inference is strictly sequential. Completed transparent PNGs remain available if another image fails.</p></InspectorSection>}
     <InspectorSection title="Filenames"><div className="grid gap-3"><label className="block"><span className="t-micro text-ink-3">Prefix</span><input data-testid="batch-filename-prefix" value={batch.filenamePrefix} onChange={(event) => { onReset(); setNaming(event.target.value, batch.filenameSuffix); }} className="mt-1 min-h-11 w-full rounded-md border border-line bg-surface px-3 text-sm outline-none focus-visible:border-accent" /></label><label className="block"><span className="t-micro text-ink-3">Suffix</span><input data-testid="batch-filename-suffix" value={batch.filenameSuffix} onChange={(event) => { onReset(); setNaming(batch.filenamePrefix, event.target.value); }} className="mt-1 min-h-11 w-full rounded-md border border-line bg-surface px-3 text-sm outline-none focus-visible:border-accent" /></label></div><p className="t-body-sm mt-2 text-ink-3">Applied before the extension. Invalid filename characters become hyphens.</p></InspectorSection>
     {retryable && <p className="t-body-sm mt-4 rounded-md border border-warning/20 bg-warning-soft p-3 text-warning">Changed settings apply to failed or cancelled files when you choose Retry failed. Completed outputs stay unchanged.</p>}
   </div>;
@@ -182,7 +192,7 @@ function ResultList({ filter }: { filter: "all" | "successful" | "failed" }) {
     else if (state?.status === "failed" && source) rows.push({ kind: "failed", source, state });
   }
   const shown = rows.filter((row) => filter === "all" || row.kind === filter);
-  return <ul className="divide-y divide-line rounded-lg border border-line bg-surface" data-testid="batch-result-list">{shown.map((row) => { if (row.kind === "failed") return <li key={row.source.id} className="flex items-center gap-3 px-4 py-3"><AlertTriangle className="size-4 text-warning" /><span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{row.source.name}</span><span className="t-mono text-[10.5px] text-warning">Failed · {row.state.error ?? "Could not process"}</span></span></li>; const { result } = row; const comparison = compareSize(result.originalBytes, result.bytes); return <li key={result.id} className="flex flex-wrap items-center gap-3 px-4 py-3"><Check className="size-4 text-success" /><span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{result.outputName}</span><span className="t-mono text-[10.5px] text-ink-3">{result.width} × {result.height} · {formatBytes(result.bytes)}{result.operation === "compress" && comparison.outcome === "smaller" ? ` · ${comparison.percent}% saved` : ""}{result.operation === "compress" && comparison.outcome === "larger" ? " · larger than original" : ""}{result.operation === "privacy" && result.changed === false ? " · no private metadata found; original bytes retained" : ""}</span></span><Button size="sm" variant="ghost" onClick={() => downloadBlob(result.blob, result.outputName)}><Download /> Download</Button></li>; })}</ul>;
+  return <ul className="divide-y divide-line rounded-lg border border-line bg-surface" data-testid="batch-result-list">{shown.map((row) => { if (row.kind === "failed") return <li key={row.source.id} className="flex items-center gap-3 px-4 py-3"><AlertTriangle className="size-4 text-warning" /><span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{row.source.name}</span><span className="t-mono text-[10.5px] text-warning">Failed · {messageFor(row.state.error)}</span></span></li>; const { result } = row; const comparison = compareSize(result.originalBytes, result.bytes); return <li key={result.id} className="flex flex-wrap items-center gap-3 px-4 py-3"><Check className="size-4 text-success" /><span className="min-w-0 flex-1"><span className="block truncate text-sm font-medium">{result.outputName}</span><span className="t-mono text-[10.5px] text-ink-3">{result.width} × {result.height} · {formatBytes(result.bytes)}{result.operation === "compress" && comparison.outcome === "smaller" ? ` · ${comparison.percent}% saved` : ""}{result.operation === "compress" && comparison.outcome === "larger" ? " · larger than original" : ""}{result.operation === "privacy" && result.changed === false ? " · no private metadata found; original bytes retained" : ""}</span></span><Button size="sm" variant="ghost" onClick={() => downloadBlob(result.blob, result.outputName)}><Download /> Download</Button></li>; })}</ul>;
 }
 
 function batchError(code: string) {

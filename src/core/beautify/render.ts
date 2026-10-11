@@ -18,13 +18,14 @@ import { decodeSource } from "@/core/image-transform/render";
 import type { Size } from "@/core/image-transform/types";
 import { drawBeautified } from "./draw";
 import { beautifyLayout } from "./layout";
-import { BeautifyError, type BeautifyLayout, type BeautifySettings } from "./types";
+import { BeautifyError, type BeautifyDrawResource, type BeautifyLayout, type BeautifySettings } from "./types";
 
 type Canvas = OffscreenCanvas | HTMLCanvasElement;
 type Ctx = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
 
 export interface BeautifyRenderOptions {
   source: Size;
+  resources?: { id: string; image: Blob; source: Size }[];
   format: OutputFormat;
   quality?: number;
   createCanvas?: (width: number, height: number) => Canvas;
@@ -54,12 +55,12 @@ const release = (canvas: Canvas | null) => {
 };
 
 /** How an export will run — pure, so the limits and tiling can be unit-tested. */
-export function planBeautifyExport(layout: BeautifyLayout, source: Size, format: OutputFormat, compressionStream: boolean) {
+export function planBeautifyExport(layout: BeautifyLayout, source: Size, format: OutputFormat, compressionStream: boolean, resourceBytes = 0) {
   const out = layout.canvas;
   if (!(out.width >= 1 && out.height >= 1 && Number.isInteger(out.width) && Number.isInteger(out.height))) throw new BeautifyError("BEAUTIFY_INVALID", `${out.width}x${out.height}`);
   const decision = chooseOutputStrategy(
     // The whole decoded source stays resident: any output row may sample any source row.
-    { width: out.width, height: out.height, format, largestSourceBytes: source.width * source.height * 4 },
+    { width: out.width, height: out.height, format, largestSourceBytes: source.width * source.height * 4 + resourceBytes },
     { offscreenCanvas: true, compressionStream },
     DEFAULT_LIMITS,
   );
@@ -73,7 +74,7 @@ export function planBeautifyExport(layout: BeautifyLayout, source: Size, format:
 export async function renderBeautified(image: Blob, settings: BeautifySettings, o: BeautifyRenderOptions): Promise<BeautifyRenderResult> {
   const started = performance.now();
   const layout = beautifyLayout(settings, o.source);
-  const plan = planBeautifyExport(layout, o.source, o.format, typeof CompressionStream !== "undefined");
+  const plan = planBeautifyExport(layout, o.source, o.format, typeof CompressionStream !== "undefined", (o.resources ?? []).reduce((total, resource) => total + resource.source.width * resource.source.height * 4, 0));
   // Filtered canvas draws can sample outside a tile. Until every supported engine proves the
   // same edge behaviour, refuse a tiled blurred-background export rather than risk faint seams.
   if (plan.strategy === "tiled-png" && settings.background.kind === "screenshot" && settings.background.blur > 0) {
@@ -82,16 +83,24 @@ export async function renderBeautified(image: Blob, settings: BeautifySettings, 
   const { out } = plan;
   const make = o.createCanvas ?? ((w: number, h: number) => new OffscreenCanvas(w, h));
   let bitmap: ImageBitmap | null = null;
+  const resourceBitmaps: ImageBitmap[] = [];
   let canvas: Canvas | null = null;
   let blob: Blob;
   try {
     bitmap = await decodeSource(image, o.source);
+    const resources: BeautifyDrawResource[] = [];
+    for (const resource of o.resources ?? []) {
+      if (o.signal?.aborted) throw new EncodeError("ENCODE_CANCELLED");
+      const decoded = await decodeSource(resource.image, resource.source);
+      resourceBitmaps.push(decoded);
+      resources.push({ id: resource.id, image: decoded, imageScale: 1, source: resource.source });
+    }
     if (o.signal?.aborted) throw new EncodeError("ENCODE_CANCELLED");
 
     if (plan.strategy === "single-canvas") {
       canvas = make(out.width, out.height);
       const ctx = context(canvas);
-      drawBeautified(ctx, layout, bitmap, 1, 1, 0);
+      drawBeautified(ctx, layout, bitmap, 1, 1, 0, resources);
       o.onProgress?.(0.6);
       blob = (await encodeCanvas(canvas, o.format, o.quality)) ?? (() => {
         throw new EncodeError("ENCODE_MEMORY_PRESSURE", "encoder returned null");
@@ -106,7 +115,7 @@ export async function renderBeautified(image: Blob, settings: BeautifySettings, 
           const tileH = Math.min(plan.tileHeight, out.height - y);
           if (canvas.height !== tileH) canvas.height = tileH;
           ctx.clearRect(0, 0, out.width, tileH);
-          drawBeautified(ctx, layout, bitmap, 1, 1, y);
+          drawBeautified(ctx, layout, bitmap, 1, 1, y, resources);
           await encoder.writeRows(ctx.getImageData(0, 0, out.width, tileH).data, tileH);
           o.onProgress?.((index + 1) / (plan.tiles + 1));
           await o.yieldBetweenTiles?.();
@@ -122,6 +131,7 @@ export async function renderBeautified(image: Blob, settings: BeautifySettings, 
     throw toEncodeError(error);
   } finally {
     bitmap?.close();
+    resourceBitmaps.forEach((resource) => resource.close());
     release(canvas);
   }
   // Encoders can crop silently (Chromium WebP beyond 16,383 px): never hand back a wrong size.

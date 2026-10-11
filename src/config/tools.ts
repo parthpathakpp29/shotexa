@@ -7,7 +7,7 @@
  *  - "preview" route + workspace shell exist (files carry over) but the tool is not finished:
  *              noindex, not in the sitemap, honest "coming next" state
  */
-export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "split" | "compress" | "convert" | "beautify" | "compare" | "metadata" | "batch";
+export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "structured-data" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "split" | "compress" | "convert" | "beautify" | "compare" | "metadata" | "remove-background" | "batch";
 
 export type ToolStatus = "live" | "preview";
 export type ToolIcon = "stitch" | "combine" | "shield" | "blur" | "text" | "pdf" | "crop" | "pen" | "scissors" | "compress" | "convert" | "sparkles" | "compare" | "eraser" | "batch";
@@ -87,12 +87,12 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     status: "live",
     category: "create",
     icon: "compare",
-    summary: "See what changed between two screenshots.",
+    summary: "Measure what changed between two screenshots.",
     minFiles: 2,
     seo: {
-      title: "Compare Screenshots Online – Before & After Image Comparison | Shotexa",
+      title: "Compare Screenshots Online – Visual Diff & Before/After Comparison | Shotexa",
       h1: "Compare Two Screenshots Online",
-      description: "Compare two screenshots side by side, with a before/after slider, as an overlay, or as a pixel difference — privately in your browser.",
+      description: "Compare two screenshots side by side, with a before/after slider, as an overlay, or as a measured pixel or perceptual difference. Auto-align them, see changed regions and text changes, ignore areas that always change, and export a visual comparison report — privately in your browser.",
     },
     continueWith: ["editor", "annotate", "beautify", "safe-share", "compress", "pdf"],
   },
@@ -103,12 +103,12 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     status: "live",
     category: "protect",
     icon: "shield",
-    summary: "Black out sensitive details and remove private metadata before sharing.",
+    summary: "Privacy Guard scans locally for likely sensitive details, then lets you review, redact and clean the copy.",
     minFiles: 1,
     seo: {
-      title: "Redact Screenshot Online – Hide Sensitive Information | Shotexa",
-      h1: "Redact Sensitive Information From a Screenshot",
-      description: "Permanently black out sensitive information and remove private metadata from screenshots, locally in your browser.",
+      title: "Privacy Guard – Scan & Redact Screenshots Locally | Shotexa",
+      h1: "Privacy Guard for Screenshot Redaction",
+      description: "Find likely sensitive text locally, review every suggested region, flatten redactions and remove private metadata in your browser.",
     },
     continueWith: ["extract-text", "pdf", "annotate", "beautify", "editor", "combine", "compress"],
   },
@@ -134,7 +134,23 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     summary: "Copy the text in a screenshot.",
     minFiles: 1,
     seo: { title: "Screenshot to Text – Free Private OCR | Shotexa", h1: "Convert Screenshot to Text", description: "Extract editable text from screenshots with on-device OCR." },
-    continueWith: ["searchable-pdf", "pdf", "safe-share"],
+    continueWith: ["structured-data", "searchable-pdf", "pdf", "safe-share"],
+  },
+  "structured-data": {
+    id: "structured-data",
+    name: "Screenshot to Data",
+    route: "/screenshot-to-data",
+    status: "live",
+    category: "documents",
+    icon: "text",
+    summary: "Extract editable tables and structured data from screenshots.",
+    minFiles: 1,
+    seo: {
+      title: "Screenshot to Data – Extract Tables, CSV, XLSX & JSON | Shotexa",
+      h1: "Extract Tables and Data From Screenshots",
+      description: "Reconstruct editable tables, key/value fields, code and documents from screenshots, then export CSV, XLSX, JSON or Markdown — locally in your browser.",
+    },
+    continueWith: ["extract-text", "safe-share", "pdf", "annotate", "beautify"],
   },
   pdf: {
     id: "pdf",
@@ -257,6 +273,22 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     seo: { title: "Remove Image Metadata – Free EXIF & GPS Remover | Shotexa", h1: "Remove Metadata From Images", description: "Remove GPS, EXIF and other privacy-sensitive metadata locally in your browser." },
     continueWith: ["safe-share", "extract-text", "pdf"],
   },
+  "remove-background": {
+    id: "remove-background",
+    name: "Remove Background",
+    route: "/remove-background",
+    status: "live",
+    category: "edit",
+    icon: "eraser",
+    summary: "Isolate a subject, refine its mask and replace or preserve transparency.",
+    minFiles: 1,
+    seo: {
+      title: "Remove Background from Image Online — Private Browser Tool | Shotexa",
+      h1: "Remove an Image Background Locally",
+      description: "Remove image backgrounds in your browser, refine the mask, export a transparent PNG or WebP, and replace the background without uploading your image.",
+    },
+    continueWith: ["beautify", "batch", "editor", "annotate", "compress", "convert"],
+  },
   batch: {
     id: "batch",
     name: "Batch",
@@ -264,12 +296,12 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     status: "live",
     category: "edit",
     icon: "batch",
-    summary: "Compress, convert, resize or privacy-clean several screenshots at once.",
+    summary: "Compress, convert, resize, privacy-clean or remove backgrounds from several images.",
     minFiles: 2,
     seo: {
       title: "Batch Process Screenshots Online – Compress, Convert & Resize | Shotexa",
       h1: "Batch Process Screenshots Online",
-      description: "Process several screenshots sequentially and download the verified results together as a ZIP — privately in your browser.",
+      description: "Process screenshots sequentially, including local background removal, and download the results together as a ZIP — privately in your browser.",
     },
     continueWith: ["editor", "safe-share", "extract-text", "pdf"],
   },
@@ -341,6 +373,6 @@ export function suggestedNext(ctx: SuggestionContext): ToolId[] {
 
 /** Tool tabs above the workspace preview; multi-image tools only appear when they apply. */
 export function suggestedTools(fileCount: number): ToolId[] {
-  const single: ToolId[] = ["editor", "annotate", "safe-share", "blur", "extract-text", "pdf", "metadata"];
+  const single: ToolId[] = ["editor", "annotate", "remove-background", "safe-share", "blur", "extract-text", "structured-data", "pdf", "metadata"];
   return fileCount >= 2 ? ["stitch", "combine", "batch", ...single] : single;
 }

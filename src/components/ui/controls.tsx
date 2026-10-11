@@ -29,8 +29,10 @@ export function SegmentedControl<T extends string>({ value, onChange, options, l
             }}
             tabIndex={active ? 0 : -1}
             className={cn(
-              "rounded-sm px-2 font-medium transition-colors duration-150 max-md:min-h-11",
-              size === "sm" ? "h-7 text-xs" : "h-9 text-[13px]",
+              // Labels wrap inside their segment instead of spilling out of a fixed height:
+              // inspectors are narrow, and some labels ("Translation + scale") are long.
+              "min-w-0 break-words rounded-sm px-2 py-1 font-medium leading-tight text-balance transition-colors duration-150 max-md:min-h-11",
+              size === "sm" ? "min-h-7 text-xs" : "min-h-9 text-[13px]",
               active ? "border border-line bg-surface text-ink shadow-xs" : "text-ink-2 hover:text-ink",
             )}
           >
@@ -45,13 +47,12 @@ export function SegmentedControl<T extends string>({ value, onChange, options, l
 export function Toggle({ checked, onChange, label, description, className }: { checked: boolean; onChange: (v: boolean) => void; label: string; description?: ReactNode; className?: string }) {
   const id = useId();
   return (
-    <div className={cn("flex items-center justify-between gap-4 rounded-md border border-line bg-surface-3 p-3.5", className)}>
-      <div className="min-w-0">
-        <label htmlFor={id} className="block text-sm font-medium text-ink">
-          {label}
-        </label>
-        {description && <div className="t-mono mt-0.5 text-[12px] text-accent-ink">{description}</div>}
-      </div>
+    // The whole row is the label, so the tap target is the row rather than the small switch.
+    <label htmlFor={id} className={cn("flex cursor-pointer items-center justify-between gap-4 rounded-md border border-line bg-surface-3 p-3.5", className)}>
+      <span className="min-w-0">
+        <span className="block text-sm font-medium text-ink">{label}</span>
+        {description && <span className="t-mono mt-0.5 block text-[12px] text-accent-ink">{description}</span>}
+      </span>
       <button
         id={id}
         type="button"
@@ -62,7 +63,7 @@ export function Toggle({ checked, onChange, label, description, className }: { c
       >
         <span className={cn("inline-block size-5 rounded-full bg-white shadow-sm transition-transform duration-150", checked ? "translate-x-[22px]" : "translate-x-[3px]")} />
       </button>
-    </div>
+    </label>
   );
 }
 

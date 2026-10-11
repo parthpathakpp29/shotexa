@@ -16,9 +16,9 @@ export function LogoMark({ className }: { className?: string }) {
 
 export function Logo({ href = "/", className }: { href?: string; className?: string }) {
   return (
-    <Link href={href} className={cn("inline-flex items-center gap-2.5 rounded-sm", className)} aria-label="Shotexa home">
+    <Link href={href} className={cn("inline-flex min-h-11 items-center gap-2.5 rounded-sm md:min-h-0", className)} aria-label="Shotexa home">
       <LogoMark />
-      <span className="font-display text-[1.375rem] leading-none tracking-[-0.01em] text-ink">Shotexa</span>
+      <span className="font-sans text-[1.25rem] font-semibold leading-none tracking-[-0.045em] text-ink">Shotexa</span>
     </Link>
   );
 }

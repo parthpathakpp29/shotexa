@@ -63,7 +63,7 @@ test.describe("Phase 1 workspace", () => {
       if (r.method() !== "GET" && r.method() !== "HEAD" && body && body.length > 1024) leaks.push(`${r.method()} ${r.url()}`);
     });
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Everything You Need for");
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Everything You Need for Screenshots");
     await shot(page, "01-homepage");
     await shot(page, "01-homepage-full", true);
 

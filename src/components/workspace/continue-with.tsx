@@ -17,7 +17,7 @@ export function ContinueWith({ tools, fileId, title = "Continue with", className
   return (
     <section aria-label={title} className={cn("mt-6", className)}>
       <p className="t-micro mb-3 text-ink-3">{title}</p>
-      <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      <ul className="grid grid-cols-[minmax(0,1fr)] gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {tools.map((id, i) => {
           const t = TOOLS[id];
           const upcoming = t.status !== "live";

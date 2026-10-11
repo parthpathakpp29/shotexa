@@ -125,7 +125,8 @@ test.describe("Phase 2B production OCR", () => {
     await page.getByTestId("extract-text").click();
     await expect(page.getByTestId("cancel-ocr")).toBeVisible({ timeout: 30_000 });
     await page.getByTestId("cancel-ocr").click();
-    await expect(page.getByText("Extraction cancelled")).toBeVisible();
+    // The tool's own state, not page-wide text: a transient toast says the same thing.
+    await expect(page.getByTestId("ocr-cancelled")).toBeVisible();
     await page.getByTestId("file-input").setInputFiles(RECEIPT);
     // Wait for the second screenshot to finish ingesting: `.last()` would otherwise resolve
     // to the first file and re-run OCR on it.

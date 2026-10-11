@@ -15,10 +15,11 @@ function ToolCard({ id }: { id: ToolId }) {
   const upcoming = t.status !== "live";
   return (
     <li>
+      {/* A compact row on phones (18 tall cards is a lot of scrolling), a card from sm up. */}
       <Link
         href={t.route}
         className={cn(
-          "group flex h-full flex-col rounded-xl border p-6 shadow-xs transition-colors hover:border-accent-line",
+          "group grid h-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3.5 rounded-xl border p-4 shadow-xs transition-colors hover:border-accent-line sm:flex sm:flex-col sm:items-stretch sm:p-6",
           upcoming ? "border-line bg-surface-3" : "border-line bg-surface",
         )}
       >
@@ -32,22 +33,25 @@ function ToolCard({ id }: { id: ToolId }) {
             <ToolIcon name={t.icon} className="size-[18px]" />
           </span>
           {upcoming ? (
-            <Badge tone="neutral">Coming soon</Badge>
+            <Badge tone="neutral" className="max-sm:hidden">Coming soon</Badge>
           ) : (
-            <Badge tone="accent" dot>
+            <Badge tone="accent" dot className="max-sm:hidden">
               Available
             </Badge>
           )}
         </span>
-        <span className={cn("t-h3 mt-5", upcoming && "text-ink-2")}>{t.name}</span>
-        <span className="t-body-sm mt-2 flex-1 text-ink-2">{t.summary}</span>
-        {upcoming ? (
-          <span className="t-body-sm mt-4 text-ink-3">Not available yet</span>
-        ) : (
-          <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-accent-ink">
-            Open <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-0.5" />
-          </span>
-        )}
+        <span className="min-w-0 sm:mt-5 sm:flex sm:flex-1 sm:flex-col">
+          <span className={cn("t-h3 block max-sm:text-lg max-sm:leading-snug", upcoming && "text-ink-2")}>{t.name}</span>
+          <span className="t-body-sm mt-0.5 block text-ink-2 sm:mt-2 sm:flex-1">{t.summary}</span>
+          {upcoming ? (
+            <span className="t-body-sm mt-1 block text-ink-3 sm:mt-4">Not available yet</span>
+          ) : (
+            <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-accent-ink max-sm:hidden">
+              Open <ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-0.5" />
+            </span>
+          )}
+        </span>
+        <ArrowRight aria-hidden className="size-4 text-ink-3 sm:hidden" />
       </Link>
     </li>
   );
@@ -62,7 +66,7 @@ export default function ToolsPage() {
         {TOOL_GROUPS.map((group) => (
           <section key={group.id} className="mt-14 first:mt-12">
             <h2 className="t-h2">{group.label}</h2>
-            <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-2.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
               {group.tools.map((id) => (
                 <ToolCard key={id} id={id} />
               ))}
@@ -73,7 +77,7 @@ export default function ToolsPage() {
           <section className="mt-16 border-t border-line pt-12">
             <h2 className="t-h2 text-ink-2">Coming soon</h2>
             <p className="t-body-sm mt-2 max-w-xl text-ink-3">These routes already keep your workspace, so your screenshots carry over — the tools themselves are still being built.</p>
-            <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-2.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
               {UPCOMING_TOOLS.map((id) => (
                 <ToolCard key={id} id={id} />
               ))}

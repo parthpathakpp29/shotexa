@@ -1,4 +1,5 @@
 import { HomeView } from "@/components/home/home-view";
+import { ProductDemoSection } from "@/components/home/product-demo";
 import { ContinuousSection, FaqSection, FinalCta, Hero, PrinciplesSection, PrivacySection, ToolIndexSection } from "@/components/home/sections";
 import { WorkflowSection } from "@/components/home/workflow";
 import { SiteFooter } from "@/components/site/site-footer";
@@ -12,6 +13,7 @@ export default function HomePage() {
       marketing={
         <>
           <Hero />
+          <ProductDemoSection />
           <WorkflowSection />
           <ToolIndexSection />
           <PrinciplesSection />

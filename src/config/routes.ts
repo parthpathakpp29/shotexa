@@ -17,6 +17,7 @@ export interface StaticRoute {
 export const STATIC_ROUTES: StaticRoute[] = [
   { path: "/", title: "Shotexa – Free Private Screenshot Tools Online", description: "Stitch screenshots, hide sensitive information, extract text and create PDFs directly in your browser. Files stay on your device.", indexable: true },
   { path: "/tools", title: "All Screenshot Tools | Shotexa", description: "Every Shotexa screenshot tool — stitch, redact, extract text, PDF and more, all processed locally in your browser.", indexable: true },
+  { path: "/workflows", title: "Screenshot Workflows & Recipes | Shotexa", description: "Connect Shotexa tools into local screenshot workflows for safe sharing, product assets, bug reports, documentation and web-ready exports.", indexable: true },
   { path: "/privacy", title: "How Shotexa Keeps Screenshots Local | Shotexa", description: "Learn how Shotexa processes screenshots in your browser, keeps files in the current workspace and clears them when the tab closes or reloads.", indexable: true },
   { path: "/alternatives", title: "Shotexa Alternatives & Comparisons | Shotexa", description: "Compare Shotexa to popular screenshot tools like Xnapper, CleanShot X, and Snagit to find the best fit for your workflow.", indexable: true },
   { path: "/alternatives/xnapper", title: "Best Free Xnapper Alternative for Windows & Web | Shotexa", description: "Looking for an Xnapper alternative? Shotexa is a free, browser-based screenshot beautifier and editor that works on any operating system.", indexable: true },
@@ -58,5 +59,5 @@ export function toolMetadata(id: ToolId): Metadata {
 /** Input capture is intentional only on the homepage and tool routes, never information pages. */
 export function acceptsScreenshotInput(pathname: string): boolean {
   const path = pathname.length > 1 ? pathname.replace(/\/$/, "") : pathname;
-  return path === "/" || !!toolByRoute(path);
+  return path === "/" || path === "/workflows" || !!toolByRoute(path);
 }

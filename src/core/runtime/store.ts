@@ -6,7 +6,7 @@ import { createStore } from "zustand/vanilla";
 import type { ToolId } from "@/config/tools";
 import { clampRect } from "@/core/redaction/geometry";
 import type { ImageRect, Redaction, RedactionMode, RedactionSession } from "@/core/redaction/types";
-import type { EditorSession, ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, SplitSession, EncodeSession, BeautifySession, CompareSession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
+import type { CompareRunState, EditorSession, ExportSettings, FileId, Job, OcrLanguageChoice, OcrSession, Operation, OverlapHint, PdfBreakEdit, PdfSession, SplitSession, EncodeSession, BeautifySession, CompareSession, StitchPair, StitchSession, StitchViewMode, WorkspaceDocument, WorkspaceFile } from "./types";
 import type { BatchItemState, BatchOperation, BatchSession, BatchSettings } from "@/core/batch/types";
 import { DEFAULT_BATCH_SETTINGS } from "@/core/batch/settings";
 import { MAX_BATCH_FILES } from "@/core/batch/types";
@@ -49,6 +49,7 @@ export interface WorkspaceState {
   encode: EncodeSession;
   beautify: BeautifySession;
   compare: CompareSession;
+  compareRun: CompareRunState;
   batch: BatchSession;
   documents: Record<string, WorkspaceDocument>;
   documentOrder: string[];
@@ -140,6 +141,8 @@ export interface WorkspaceActions {
    * change without a history entry, for the automatic first choice of screenshots.
    */
   setCompare(next: CompareSettings, opts?: { coalesce?: string; now?: number; record?: boolean }): void;
+  /** Compare Pro run state (not undoable): alignment, text diff and report progress. */
+  setCompareRun(patch: Partial<CompareRunState>): void;
   setBatchSelection(ids: FileId[]): void;
   toggleBatchSelection(id: FileId): void;
   setBatchOperation(operation: BatchOperation): void;
@@ -186,6 +189,7 @@ const initial = (): WorkspaceState => ({
   encode: DEFAULT_ENCODE_SETTINGS,
   beautify: { byAsset: {} },
   compare: DEFAULT_COMPARE,
+  compareRun: { pair: null, align: { status: "idle" }, text: { status: "idle", progress: null }, report: { status: "idle" }, version: 0 },
   batch: { selectedIds: [], operation: "compress", settings: DEFAULT_BATCH_SETTINGS, status: "idle", currentIndex: null, items: {}, addedToWorkspace: false, filenamePrefix: "", filenameSuffix: "" },
   documents: {},
   documentOrder: [],
@@ -321,6 +325,11 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
             split: { byAsset: splitByAsset },
             beautify: { byAsset: beautifyByAsset },
             compare,
+            // Cached alignment/text/report results belonged to the pair that just changed.
+            compareRun:
+              s.compare.a === id || s.compare.b === id
+                ? { pair: null, align: { status: "idle" as const }, text: { status: "idle" as const, progress: null }, report: { status: "idle" as const }, version: s.compareRun.version + 1 }
+                : s.compareRun,
             batch: {
               ...s.batch,
               selectedIds: s.batch.selectedIds.filter((x) => x !== id),
@@ -617,6 +626,17 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           set((s) => ({ history: { past: [...s.history.past.slice(0, -1), { ...last, after: next, at: now }], future: [] } }));
         } else record({ type: "COMPARE_SET", before, after: next, at: now, key: opts.coalesce });
         applyOp({ type: "COMPARE_SET", before, after: next, at: now }, 1);
+      },
+      setCompareRun(patch) {
+        set((s) => ({
+          compareRun: {
+            ...s.compareRun,
+            ...patch,
+            align: { ...s.compareRun.align, ...patch.align },
+            text: { ...s.compareRun.text, ...patch.text },
+            report: { ...s.compareRun.report, ...patch.report },
+          },
+        }));
       },
       setEncodeSettings: (tool, patch) => set((s) => ({ encode: { ...s.encode, [tool]: normaliseSettings({ ...s.encode[tool], ...patch }) } })),
       setBatchSelection(ids) {

@@ -49,6 +49,8 @@ export async function encodeImage(image: Blob, o: EncodeOptions): Promise<Encode
   const started = performance.now();
   let bitmap: ImageBitmap | null = null;
   try {
+    // Checked before every Blob read: a read started while the page is being left is refused.
+    if (o.signal?.aborted) throw new EncodeError("ENCODE_CANCELLED");
     bitmap = await decodeSource(image, o.source);
     const decoded = bitmap;
     const common = { source: o.source, background: o.background, createCanvas: o.createCanvas, yieldBetweenTiles: o.yieldBetweenTiles, signal: o.signal };
@@ -119,6 +121,8 @@ export async function compareFormats(
   const started = performance.now();
   let bitmap: ImageBitmap | null = null;
   try {
+    // Checked before every Blob read: a read started while the page is being left is refused.
+    if (o.signal?.aborted) throw new EncodeError("ENCODE_CANCELLED");
     bitmap = await decodeSource(image, o.source);
     const candidates = [] as FormatComparisonResult["candidates"];
     for (let index = 0; index < formats.length; index++) {

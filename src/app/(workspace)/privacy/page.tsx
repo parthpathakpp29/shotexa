@@ -12,7 +12,7 @@ const POINTS = [
   },
   {
     title: "Nothing is saved after you leave",
-    body: "Screenshots stay available while you move between Shotexa tools in the same tab. Closing or refreshing the tab clears them. Shotexa does not store your screenshots in browser storage or anywhere else.",
+    body: "Screenshots stay available while you move between Shotexa tools in the same tab. Closing or refreshing the tab clears them. Shotexa does not store your screenshots in browser storage or anywhere else. The only things kept between visits are small preferences you create yourself, such as a saved workflow recipe or a custom detection rule, and those stay in this browser.",
   },
   {
     title: "No account",
@@ -20,7 +20,11 @@ const POINTS = [
   },
   {
     title: "What is downloaded to your browser",
-    body: "Like any website, Shotexa’s pages and code are downloaded from our servers. Heavier engines — such as the image-alignment engine used by Smart Stitch — are only downloaded when you use the tool that needs them.",
+    body: "Like any website, Shotexa’s pages and code are downloaded from our servers. The heavier engines are not: the image-alignment engine used by Smart Stitch, the text-recognition engine and its language data, and the background-removal model and its runtime are each downloaded only when you first use the tool that needs them, and they are served from Shotexa rather than a third party.",
+  },
+  {
+    title: "Reading, analysing and comparing happen locally too",
+    body: "Extracting text, finding likely sensitive details, pulling tables out of a screenshot, removing a background and comparing two screenshots all run in this tab. The recognised text, the detected findings and the comparison results are never sent anywhere, and nothing falls back to a server if your device cannot do the work.",
   },
   {
     title: "Exports",

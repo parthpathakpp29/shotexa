@@ -12,7 +12,7 @@ import type { SplitErrorCode, SplitExportResult, SplitPiece } from "@/core/split
 import type { EncodeErrorCode, EncodeResult, FormatComparisonResult } from "@/core/image-encode/types";
 import type { BeautifyErrorCode, BeautifySettings } from "@/core/beautify/types";
 import type { BeautifyRenderResult } from "@/core/beautify/render";
-import type { CompareErrorCode, CompareSettings } from "@/core/compare/types";
+import type { CompareAlignEstimate, CompareErrorCode, CompareSettings } from "@/core/compare/types";
 import type { CompareRenderResult } from "@/core/compare/render";
 import type { MetadataErrorCode } from "@/core/metadata/errors";
 import type { ComposeChainResult } from "@/core/stitch/compose-chain";
@@ -29,10 +29,21 @@ import type { PreprocessStep } from "@/core/ocr/preprocess";
 import type { Redaction, RedactionErrorCode, SafeShareExportResult } from "@/core/redaction/types";
 import type { StitchConfigOverrides } from "@/core/stitch/config";
 import type { GrayImage, StitchAnalysis, StitchErrorCode, StitchPlan } from "@/core/stitch/types";
+import type { BackgroundRemovalErrorCode, BackgroundRemovalRenderResult, BackgroundRemovalSettings, SegmentationResult } from "@/core/background-removal/types";
 
 export const PROTOCOL_VERSION = 1 as const;
 
 export interface WorkerOps {
+  /** Lazy U²-Net-P inference. The image and mask never leave the browser worker boundary. */
+  "background.remove": {
+    input: { image: Blob };
+    output: SegmentationResult;
+  };
+  /** Apply the editable mask to original pixels and encode the reviewed result. */
+  "background.export": {
+    input: { image: Blob; source: { width: number; height: number }; mask: { data: Uint8ClampedArray; width: number; height: number }; settings: BackgroundRemovalSettings; format: "png" | "jpeg" | "webp"; quality?: number; backgroundImage?: Blob };
+    output: BackgroundRemovalRenderResult;
+  };
   /** Downscaled preview (full decode happens here, off the main thread); bitmap is transferred. */
   "image.preview": {
     input: { image: Blob; maxWidth: number; maxPixels: number };
@@ -85,12 +96,12 @@ export interface WorkerOps {
   };
   /** Beautifier: decode once, compose background/frame/screenshot at full size, encode, verify. */
   "beautify.export": {
-    input: { image: Blob; settings: BeautifySettings; source: { width: number; height: number }; format: "png" | "jpeg" | "webp"; quality?: number };
+    input: { image: Blob; settings: BeautifySettings; source: { width: number; height: number }; resources?: { id: string; image: Blob; source: { width: number; height: number } }[]; format: "png" | "jpeg" | "webp"; quality?: number };
     output: BeautifyRenderResult;
   };
   /** Compare: decode both screenshots, compose the comparison at full size, encode, verify. */
   "compare.export": {
-    input: { imageA: Blob; imageB: Blob; settings: CompareSettings; a: { width: number; height: number }; b: { width: number; height: number }; format: "png" | "jpeg" | "webp"; quality?: number };
+    input: { imageA: Blob; imageB: Blob; settings: CompareSettings; a: { width: number; height: number }; b: { width: number; height: number }; alignment?: CompareAlignEstimate | null; format: "png" | "jpeg" | "webp"; quality?: number };
     output: CompareRenderResult;
   };
   /** Full-resolution redaction render followed by encode → Privacy Clean → verification. */
@@ -146,7 +157,7 @@ export type WorkerRequest =
   | ({ [K in OpName]: Envelope & { type: "RUN"; op: K; input: WorkerOps[K]["input"] } }[OpName])
   | (Envelope & { type: "CANCEL" });
 
-export type WorkerErrorCode = StitchErrorCode | CombineErrorCode | EditorErrorCode | AnnotationErrorCode | SplitErrorCode | EncodeErrorCode | BeautifyErrorCode | CompareErrorCode | RedactionErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode | MetadataErrorCode;
+export type WorkerErrorCode = StitchErrorCode | CombineErrorCode | EditorErrorCode | AnnotationErrorCode | SplitErrorCode | EncodeErrorCode | BeautifyErrorCode | CompareErrorCode | RedactionErrorCode | BackgroundRemovalErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode | MetadataErrorCode;
 
 export type WorkerResponse =
   | (Envelope & { type: "PROGRESS"; progress: number; stage?: string })

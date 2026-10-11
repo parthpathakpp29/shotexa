@@ -89,6 +89,9 @@ async function main() {
     mkdirSync(dir, { recursive: true });
     writeFileSync(join(dir, "image.png"), png);
     writeFileSync(join(dir, "truth.json"), JSON.stringify({ id: f.id, width, height, ...truth }) + "\n");
+    // Measured glyph bands belong to the ground truth: the benchmark judges "cuts through
+    // text" against rows that actually contain ink, not against DOM line boxes.
+    addInkBands(dir);
     manifest.push({ id: f.id, category: f.category, description: f.description, file: `${f.id}/image.png`, width, height, dpr: f.dpr, difficult: !!f.difficult, textLines: truth.textLines.length, regions: truth.regions.length });
     console.log(`${f.id.padEnd(20)} ${width}×${height}  lines ${truth.textLines.length}  regions ${truth.regions.length}  ${(png.length / 1024).toFixed(0)} KiB`);
     await ctx.close();

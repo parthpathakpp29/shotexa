@@ -40,7 +40,7 @@ function ConnectedWorkspace() {
     <main className="mx-auto w-full max-w-[1200px] px-3 py-5 sm:px-6 sm:py-8" data-testid="connected-workspace">
       <h1 className="sr-only">Your screenshot workspace</h1>
       <OverlapBanner className="mb-5" />
-      <div className="grid gap-5 md:grid-cols-[minmax(220px,280px)_minmax(0,1fr)]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-5 md:grid-cols-[minmax(220px,280px)_minmax(0,1fr)]">
         <aside className="rounded-lg border border-line bg-surface p-5 shadow-xs md:sticky md:top-22 md:max-h-[calc(100dvh-7rem)] md:self-start md:overflow-hidden">
           <FileTray className="max-md:max-h-[340px] md:max-h-[calc(100dvh-9.5rem)]" />
         </aside>

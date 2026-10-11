@@ -271,7 +271,7 @@ test.describe("Phase 2M Compare Screenshots", () => {
     await open(page, [panel("before.png", 400, 300, false), panel("after.png", 400, 300, true)]);
     await mode(page, "Heatmap").click();
     await hideLabels(page);
-    await expect(page.getByTestId("compare-difference-stats")).toContainText("1 changed regions");
+    await expect(page.getByTestId("compare-difference-stats")).toContainText("1 changed region");
     await expect(page.getByTestId("compare-file-details")).toContainText("PNG");
     await shot(page, "02-compare-heatmap.png");
     await page.getByRole("button", { name: /Region 1 ·/ }).click();
