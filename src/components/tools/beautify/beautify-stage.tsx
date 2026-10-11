@@ -6,7 +6,7 @@
  * between this canvas and the downloaded file is resolution.
  */
 import { Redo2, Undo2 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 import { IconButton, Mono, Toolbar } from "@/components/ui/primitives";
 import { ViewportToolbar } from "@/components/ui/viewport";
 import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
@@ -26,9 +26,11 @@ export function BeautifyStage({ assetId }: { assetId: string }) {
   const { runtime } = useWorkspaceContext();
   const file = useWorkspace((s) => s.files[assetId]);
   const version = useWorkspace((s) => s.files[assetId]?.previewVersion ?? 0);
+  const files = useWorkspace((s) => s.files);
   const settings = useWorkspace((s) => s.beautify.byAsset[assetId]) ?? DEFAULT_BEAUTIFY;
   const undo = useWorkspace((s) => s.undo);
   const redo = useWorkspace((s) => s.redo);
+  const setBeautify = useWorkspace((s) => s.setBeautify);
   const canUndo = useWorkspace((s) => s.history.past.length > 0);
   const canRedo = useWorkspace((s) => s.history.future.length > 0);
   const [zoom, setZoom] = useState<ViewportZoom>("fit");
@@ -41,6 +43,14 @@ export function BeautifyStage({ assetId }: { assetId: string }) {
 
   const source = useMemo(() => (file ? { width: file.width, height: file.height } : null), [file]);
   const layout = useMemo(() => (source ? beautifyLayout(settings, source) : null), [settings, source]);
+  const resources = useMemo(() => {
+    const ids = [...settings.composition.assetIds, settings.branding.assetId, settings.background.assetId].filter((id): id is string => !!id && id !== assetId);
+    return [...new Set(ids)].flatMap((id) => {
+      const resource = files[id];
+      const image = runtime.registry.preview(id);
+      return resource && image ? [{ id, image, imageScale: image.width / resource.width, source: { width: resource.width, height: resource.height } }] : [];
+    });
+  }, [assetId, files, runtime, settings.background.assetId, settings.branding.assetId, settings.composition.assetIds]);
 
   // Fit the composition into the frame: never wider than the frame, never taller than the stage.
   const fitWidth = useMemo(() => {
@@ -53,6 +63,26 @@ export function BeautifyStage({ assetId }: { assetId: string }) {
   const cssWidth = layout ? (zoom === "fit" ? fitWidth : Math.max(1, Math.round(layout.canvas.width * zoom))) : 0;
   const cssHeight = layout && cssWidth ? Math.max(1, Math.round((cssWidth * layout.canvas.height) / layout.canvas.width)) : 0;
   const viewport = useViewportInteraction({ scrollRef, contentRef: stageRef, zoom, setZoom, fitScale, allowDragPan: true, allowTouchPan: true });
+  const motionStyle = {
+    animationDuration: `${settings.animation.duration}ms`,
+    animationTimingFunction: settings.animation.easing,
+    animationIterationCount: settings.animation.loop ? "infinite" : "1",
+    animationDirection: settings.animation.loop ? "alternate" : "normal",
+    animationFillMode: "both",
+    ["--beautify-motion" as string]: String(settings.animation.intensity / 100),
+    ["--beautify-motion-x" as string]: settings.animation.direction === "left" ? "-1" : settings.animation.direction === "right" ? "1" : "0",
+    ["--beautify-motion-y" as string]: settings.animation.direction === "up" ? "-1" : settings.animation.direction === "down" ? "1" : "0",
+  } as CSSProperties;
+
+  const nudge = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!event.key.startsWith("Arrow")) return;
+    event.preventDefault();
+    const step = event.shiftKey ? 0.05 : 0.01;
+    const horizontal = event.key === "ArrowLeft" || event.key === "ArrowRight";
+    const delta = event.key === "ArrowLeft" || event.key === "ArrowUp" ? -step : step;
+    setBeautify(assetId, { ...settings, [horizontal ? "offsetX" : "offsetY"]: Math.max(-1, Math.min(1, settings[horizontal ? "offsetX" : "offsetY"] + delta)) }, { coalesce: horizontal ? "offset-x" : "offset-y" });
+    window.dispatchEvent(new CustomEvent("shotexa:beautify-guide", { detail: horizontal ? "x" : "y" }));
+  };
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
@@ -79,8 +109,8 @@ export function BeautifyStage({ assetId }: { assetId: string }) {
     if (!ctx) return;
     ctx.clearRect(0, 0, size.width, size.height);
     // One renderer, one layout: the preview is the export at a smaller scale.
-    drawBeautified(ctx, layout, bitmap ?? null, bitmap ? bitmap.width / source.width : 1, size.width / layout.canvas.width);
-  }, [runtime, assetId, version, layout, source, cssWidth, cssHeight]);
+    drawBeautified(ctx, layout, bitmap ?? null, bitmap ? bitmap.width / source.width : 1, size.width / layout.canvas.width, 0, resources);
+  }, [runtime, assetId, version, layout, source, cssWidth, cssHeight, resources]);
 
   if (!file || !layout) return null;
 
@@ -111,10 +141,13 @@ export function BeautifyStage({ assetId }: { assetId: string }) {
             data-content-width={layout.content.width}
             data-content-height={layout.content.height}
             data-mode={settings.mode}
+            tabIndex={0}
+            aria-label="Beautifier canvas. Use arrow keys to nudge the composition; hold Shift for larger steps."
+            onKeyDown={nudge}
             className="bg-checker relative mx-auto rounded-xs shadow-sm"
             style={{ width: cssWidth, height: cssHeight }}
           >
-            <canvas ref={attachCanvas} aria-label={`Preview of ${file.name}`} role="img" data-testid="beautify-canvas" className="block h-full w-full rounded-xs" />
+            <canvas ref={attachCanvas} aria-label={`Preview of ${file.name}`} role="img" data-testid="beautify-canvas" data-animation={settings.animation.preset} className="beautify-motion block h-full w-full rounded-xs" style={motionStyle} />
             {alignmentGuide === "x" && <span aria-hidden data-testid="beautify-guide-x" className="pointer-events-none absolute inset-y-0 left-1/2 w-px bg-accent shadow-[0_0_0_1px_rgba(255,255,255,0.65)]" />}
             {alignmentGuide === "y" && <span aria-hidden data-testid="beautify-guide-y" className="pointer-events-none absolute inset-x-0 top-1/2 h-px bg-accent shadow-[0_0_0_1px_rgba(255,255,255,0.65)]" />}
           </div>

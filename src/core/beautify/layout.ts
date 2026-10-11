@@ -23,6 +23,7 @@ import {
   PHONE_SCREEN_RATIO,
   SHADOW_PRESETS,
 } from "./presets";
+import { projectPerspective, translatePerspective } from "./perspective";
 import type { BeautifyLayout, BeautifyMode, BeautifySettings, FrameLayout, ScreenFit } from "./types";
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, Number.isFinite(v) ? v : lo));
@@ -51,12 +52,17 @@ export function clampSettings(s: BeautifySettings): BeautifySettings {
       blur: clamp(Math.round(s.background.blur), 0, 48),
       brightness: clamp(Math.round(s.background.brightness), 35, 120),
       saturation: clamp(Math.round(s.background.saturation), 70, 140),
+      intensity: clamp(Math.round(s.background.intensity ?? 55), 0, 100),
+      assetId: s.background.assetId ?? null,
+      pattern: s.background.pattern ?? "dots",
     },
     border: {
       ...s.border,
       width: clamp(Math.round(s.border.width * 10) / 10, 1, 24),
       opacity: clamp(Math.round(s.border.opacity), 5, 100),
       color: colour(s.border.color, "#ffffff"),
+      blur: clamp(Math.round(s.border.blur ?? 12), 0, 40),
+      tint: colour(s.border.tint ?? "#ffffff", "#ffffff"),
     },
     shadowAdvanced: {
       x: clamp(s.shadowAdvanced.x, -12, 12),
@@ -64,19 +70,70 @@ export function clampSettings(s: BeautifySettings): BeautifySettings {
       blur: clamp(s.shadowAdvanced.blur, 0, 20),
       spread: clamp(s.shadowAdvanced.spread, 0, 8),
       opacity: clamp(s.shadowAdvanced.opacity, 0, 80),
+      color: colour(s.shadowAdvanced.color ?? "#14100c", "#14100c"),
     },
     customCanvas: { ...s.customCanvas, width, height, aspectRatio: clamp(s.customCanvas.aspectRatio || width / height, 0.05, 20) },
-    exportScale: s.exportScale === 2 || s.exportScale === 4 ? s.exportScale : 1,
+    exportScale: s.exportScale === 2 || s.exportScale === 3 || s.exportScale === 4 ? s.exportScale : 1,
     text: {
       ...s.text,
+      eyebrow: (s.text.eyebrow ?? "").slice(0, 80),
       title: s.text.title.slice(0, 120),
       subtitle: s.text.subtitle.slice(0, 200),
+      footer: (s.text.footer ?? "").slice(0, 160),
+      family: s.text.family ?? "system",
       fontSize: clamp(Math.round(s.text.fontSize), 18, 120),
       spacing: clamp(Math.round(s.text.spacing), 0, 48),
       maxWidth: clamp(Math.round(s.text.maxWidth), 30, 100),
       color: colour(s.text.color, "#1c1714"),
+      lineHeight: clamp(Math.round(s.text.lineHeight ?? 120), 80, 200),
+      letterSpacing: clamp(Math.round((s.text.letterSpacing ?? 0) * 10) / 10, -3, 12),
     },
-    browser: { ...s.browser, address: s.browser.address.slice(0, 80) },
+    browser: {
+      ...s.browser,
+      address: s.browser.address.slice(0, 80),
+      title: (s.browser.title ?? "").slice(0, 80),
+      showControls: s.browser.showControls ?? true,
+      color: colour(s.browser.color ?? "#f3f1ee", "#f3f1ee"),
+      thickness: clamp(Math.round(s.browser.thickness ?? 100), 50, 160),
+    },
+    phone: {
+      ...s.phone,
+      color: colour(s.phone.color ?? "#1c1714", "#1c1714"),
+      thickness: clamp(Math.round(s.phone.thickness ?? 100), 50, 160),
+      shadow: s.phone.shadow ?? true,
+    },
+    perspective: {
+      ...s.perspective,
+      rotateX: clamp(s.perspective?.rotateX ?? 0, -60, 60),
+      rotateY: clamp(s.perspective?.rotateY ?? 0, -60, 60),
+      rotateZ: clamp(s.perspective?.rotateZ ?? 0, -45, 45),
+      depth: clamp(s.perspective?.depth ?? 900, 200, 2000),
+      originX: clamp(s.perspective?.originX ?? 50, 0, 100),
+      originY: clamp(s.perspective?.originY ?? 50, 0, 100),
+      preset: s.perspective?.preset ?? "flat",
+    },
+    composition: {
+      layout: s.composition?.layout ?? "single",
+      assetIds: [...new Set(s.composition?.assetIds ?? [])].slice(0, 3),
+      selectedAssetId: s.composition?.selectedAssetId ?? null,
+      spacing: clamp(s.composition?.spacing ?? 6, 0, 20),
+      items: s.composition?.items ?? {},
+    },
+    branding: {
+      assetId: s.branding?.assetId ?? null,
+      position: s.branding?.position ?? "bottom-right",
+      scale: clamp(s.branding?.scale ?? 18, 5, 60),
+      opacity: clamp(s.branding?.opacity ?? 90, 5, 100),
+      margin: clamp(s.branding?.margin ?? 4, 0, 20),
+    },
+    animation: {
+      preset: s.animation?.preset ?? "none",
+      duration: clamp(s.animation?.duration ?? 1800, 300, 15000),
+      easing: s.animation?.easing ?? "ease-in-out",
+      direction: s.animation?.direction ?? "up",
+      intensity: clamp(s.animation?.intensity ?? 40, 0, 100),
+      loop: s.animation?.loop ?? false,
+    },
   };
 }
 
@@ -118,14 +175,15 @@ interface Natural {
 /** The composition before any padding, scaling or positioning. */
 export function naturalComposition(s: BeautifySettings, source: Size): Natural {
   const whole = { x: 0, y: 0, width: source.width, height: source.height };
-  if (s.mode === "browser") {
-    const chrome = browserChrome(source.width);
+  if (["browser", "minimal-browser", "mac-window", "windows-window", "laptop", "monitor"].includes(s.mode)) {
+    const chrome = Math.round(browserChrome(source.width) * (s.browser.thickness ?? 100) / 100);
     const area = { ...whole, y: chrome };
-    return { size: { width: source.width, height: source.height + chrome }, screen: area, image: area, sourceRect: whole };
+    const base = s.mode === "laptop" ? Math.round(source.width * 0.075) : s.mode === "monitor" ? Math.round(source.width * 0.17) : 0;
+    return { size: { width: source.width, height: source.height + chrome + base }, screen: area, image: area, sourceRect: whole };
   }
-  if (s.mode === "phone") {
+  if (["phone", "android-phone", "tablet"].includes(s.mode)) {
     const opening = phoneOpening(source, s.phone.fit);
-    const bezel = phoneBezel(opening);
+    const bezel = Math.round(phoneBezel(opening) * (s.phone.thickness ?? 100) / 100);
     const size = { width: opening.width + bezel * 2, height: opening.height + bezel * 2 };
     const screen = { x: bezel, y: bezel, width: opening.width, height: opening.height };
     if (s.phone.fit === "contain") {
@@ -151,12 +209,18 @@ export function naturalComposition(s: BeautifySettings, source: Size): Natural {
 }
 
 function captionHeight(s: BeautifySettings): number {
+  const eyebrow = s.text.eyebrow?.trim();
   const title = s.text.title.trim();
   const subtitle = s.text.subtitle.trim();
-  if (!title && !subtitle) return 0;
-  const titleHeight = title ? s.text.fontSize * 1.2 : 0;
-  const subtitleHeight = subtitle ? Math.max(14, Math.round(s.text.fontSize * 0.56)) * 1.3 : 0;
-  return Math.ceil(titleHeight + subtitleHeight + (title && subtitle ? s.text.spacing : 0) + s.text.fontSize * 0.8);
+  const footer = s.text.footer?.trim();
+  if (!eyebrow && !title && !subtitle && !footer) return 0;
+  const lineHeight = s.text.lineHeight / 100;
+  const eyebrowHeight = eyebrow ? Math.max(11, s.text.fontSize * 0.28) * lineHeight : 0;
+  const titleHeight = title ? s.text.fontSize * lineHeight : 0;
+  const subtitleHeight = subtitle ? Math.max(14, Math.round(s.text.fontSize * 0.56)) * lineHeight : 0;
+  const footerHeight = footer ? Math.max(12, s.text.fontSize * 0.34) * lineHeight : 0;
+  const rows = [eyebrowHeight, titleHeight, subtitleHeight, footerHeight].filter(Boolean).length;
+  return Math.ceil(eyebrowHeight + titleHeight + subtitleHeight + footerHeight + Math.max(0, rows - 1) * s.text.spacing + s.text.fontSize * 0.8);
 }
 
 /** The canvas the current preset asks for, and the padding kept clear around the composition. */
@@ -190,8 +254,8 @@ export function canvasFor(s: BeautifySettings, base: Size): { canvas: Size; pad:
 }
 
 function frameLayout(s: BeautifySettings, content: Rect, screen: Rect, k: number): FrameLayout | null {
-  if (s.mode === "browser") {
-    const chrome = Math.round(browserChrome(screen.width / k) * k);
+  if (["browser", "minimal-browser", "mac-window", "windows-window", "laptop", "monitor"].includes(s.mode)) {
+    const chrome = Math.round(browserChrome(screen.width / k) * k * (s.browser.thickness ?? 100) / 100);
     const r = Math.max(2, Math.round(chrome * 0.14));
     const gap = r * 3.2;
     const cy = content.y + chrome / 2;
@@ -209,14 +273,14 @@ function frameLayout(s: BeautifySettings, content: Rect, screen: Rect, k: number
           fontSize: Math.max(5, Math.round(barHeight * 0.52)),
         }
       : null;
-    return { kind: "browser", theme: s.browser.theme, chrome, dots, address };
+    return { kind: "browser", style: s.mode, theme: s.browser.theme, color: s.browser.color ?? FRAME_COLORS[s.browser.theme].chrome, showControls: s.browser.showControls ?? true, title: s.browser.title ?? "", chrome, dots, address };
   }
-  if (s.mode === "phone") {
+  if (["phone", "android-phone", "tablet"].includes(s.mode)) {
     const bezel = Math.round(Math.min(screen.x - content.x, screen.y - content.y));
     const width = Math.round(screen.width * PHONE_NOTCH_WIDTH_RATIO);
     const height = Math.max(3, Math.round(screen.width * PHONE_NOTCH_HEIGHT_RATIO));
     const notch = { x: Math.round(screen.x + (screen.width - width) / 2), y: Math.round(screen.y + height * 0.6), width, height, radius: height / 2 };
-    return { kind: "phone", theme: s.phone.theme, bezel, notch };
+    return { kind: "phone", style: s.mode, theme: s.phone.theme, color: s.phone.color ?? FRAME_COLORS[s.phone.theme].shell, shadow: s.phone.shadow ?? true, bezel, notch };
   }
   return null;
 }
@@ -253,16 +317,18 @@ export function beautifyLayout(settings: BeautifySettings, source: Size): Beauti
   const screen = place(natural.screen);
   const image = place(natural.image);
 
-  const radiusFraction = (s.mode === "phone" ? 100 : s.radius) / 100;
+  const phoneLike = ["phone", "android-phone", "tablet"].includes(s.mode);
+  const browserLike = ["browser", "minimal-browser", "mac-window", "windows-window", "laptop", "monitor"].includes(s.mode);
+  const radiusFraction = (phoneLike ? 100 : s.radius) / 100;
   const shortContent = Math.min(content.width, content.height);
   const shortScreen = Math.min(screen.width, screen.height);
   let radius = Math.round(radiusFraction * MAX_RADIUS_RATIO * shortContent);
   let screenRadii: readonly [number, number, number, number] = [radius, radius, radius, radius];
-  if (s.mode === "browser") {
+  if (browserLike) {
     // The window is rounded; the screenshot keeps the window's bottom corners and squares off
     // against the chrome strip above it.
     screenRadii = [0, 0, radius, radius];
-  } else if (s.mode === "phone") {
+  } else if (phoneLike) {
     const screenRadius = Math.round(PHONE_SCREEN_RADIUS_RATIO * screen.width);
     const bezel = Math.round(Math.min(screen.x - content.x, screen.y - content.y));
     radius = screenRadius + bezel;
@@ -277,7 +343,7 @@ export function beautifyLayout(settings: BeautifySettings, source: Size): Beauti
         offsetX: Math.round((shadowSettings.x / 100) * shortContent),
         offsetY: Math.round((shadowSettings.y / 100) * shortContent),
         spread: Math.round((shadowSettings.spread / 100) * shortContent),
-        color: hexAlpha(s.shadow === "glow" ? s.background.color : "#14100c", shadowSettings.opacity),
+        color: hexAlpha(s.shadow === "glow" ? s.background.color : (shadowSettings.color ?? "#14100c"), shadowSettings.opacity),
       };
   const border = s.border.kind === "none" ? null : { kind: s.border.kind, width: s.border.width * s.exportScale, color: hexAlpha(s.border.color, s.border.opacity) };
   const caption = captionSpace <= 0
@@ -309,8 +375,22 @@ export function beautifyLayout(settings: BeautifySettings, source: Size): Beauti
     border,
     caption,
     frame: frameLayout(s, content, screen, k),
-    screenBackground: s.mode === "phone" ? FRAME_COLORS[s.phone.theme].screen : FRAME_COLORS.light.screen,
+    screenBackground: phoneLike ? FRAME_COLORS[s.phone.theme].screen : FRAME_COLORS.light.screen,
     zoom: image.width / natural.sourceRect.width,
+    composition: s.composition,
+    branding: s.branding,
+    perspective: (() => {
+      const projected = projectPerspective(content, s.perspective);
+      if (!projected.active) return projected;
+      const captionTop = captionSpace > 0 && s.text.placement === "top" ? captionSpace : 0;
+      const freeProjectedX = Math.max(0, canvas.width - projected.bounds.width);
+      const freeProjectedY = Math.max(0, canvas.height - captionSpace - projected.bounds.height);
+      return translatePerspective(
+        projected,
+        clamp((freeProjectedX / 2) * (1 + s.offsetX), 0, freeProjectedX),
+        captionTop + clamp((freeProjectedY / 2) * (1 + s.offsetY), 0, freeProjectedY),
+      );
+    })(),
   };
 }
 

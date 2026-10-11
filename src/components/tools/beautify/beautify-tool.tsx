@@ -7,6 +7,7 @@
  */
 import { AlertTriangle, Check, Copy, Download } from "lucide-react";
 import { useState, type ReactNode } from "react";
+import { toast } from "@/components/ui/use-toast";
 import { formatBytes } from "@/components/tools/stitch/stitch-tool";
 import { Button } from "@/components/ui/button";
 import { Badge, Notice, Progress } from "@/components/ui/primitives";
@@ -39,8 +40,6 @@ function BeautifyWorkspace() {
   const files = useWorkspace((s) => s.files);
   const [completedId, setCompletedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [copyStatus, setCopyStatus] = useState<string | null>(null);
-
   if (!selectedId || !file) return null;
   const canvas = beautifySize(settings, { width: file.width, height: file.height });
   const issue = encodeIssue(canvas, format);
@@ -64,14 +63,14 @@ function BeautifyWorkspace() {
     const blob = runtime.registry.blob(id);
     if (!blob || blob.type !== "image/png") return;
     if (!navigator.clipboard?.write || typeof ClipboardItem === "undefined") {
-      setCopyStatus("Copy PNG is not supported in this browser. Download remains available.");
+      toast({ type: "error", message: "Copy PNG is not supported in this browser. Download remains available." });
       return;
     }
     try {
       await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-      setCopyStatus("PNG copied to the clipboard.");
+      toast({ type: "success", message: "PNG copied to the clipboard." });
     } catch {
-      setCopyStatus("The browser blocked clipboard image access. Download the PNG instead.");
+      toast({ type: "error", message: "The browser blocked clipboard image access. Download the PNG instead." });
     }
   }
 
@@ -138,7 +137,6 @@ function BeautifyWorkspace() {
                 {result.name} · {result.width} × {result.height} px · {formatBytes(result.bytes)}
               </span>
               <span className="block">Saved to your downloads and added to this workspace as a new file. The original screenshot is unchanged.</span>
-              {copyStatus && <span className="mt-1 block" role="status" data-testid="beautify-copy-status">{copyStatus}</span>}
             </Notice>
             <ContinueWith tools={continuationsFor("beautify")} fileId={result.id} />
           </div>

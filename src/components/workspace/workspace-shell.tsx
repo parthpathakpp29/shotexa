@@ -105,7 +105,7 @@ function WorkspaceHeader({ tool, status, exportAction }: { tool: ToolId; status?
     <header className="sticky top-0 z-30 border-b border-line bg-page/90 backdrop-blur">
       <div className="flex h-16 items-center gap-4 px-4 lg:px-6">
         <Logo className="max-md:hidden" />
-        <Link href="/" aria-label="Shotexa home" className="md:hidden">
+        <Link href="/" aria-label="Shotexa home" className="inline-flex size-11 items-center justify-center md:hidden">
           <LogoMark />
         </Link>
         <span aria-hidden className="h-6 w-px bg-line max-md:hidden" />
@@ -227,7 +227,7 @@ export function WorkspaceShell({
       {/* Mobile: sticky action bar + sheets */}
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 backdrop-blur md:hidden">
         <div className="flex items-center gap-1">
-          <MobileBarButton label={`Files (${count})`} onClick={() => setSheet("files")}>
+          <MobileBarButton label={`Files (${count})`} visibleLabel={`Files ${count}`} onClick={() => setSheet("files")}>
             <Images />
           </MobileBarButton>
           <MobileBarButton label={inspectorTitle} visibleLabel="Settings" onClick={() => setSheet("settings")} testId="mobile-inspector-trigger">

@@ -24,17 +24,21 @@ export function Uploader({ className, sample = true, multipleHint = "or drag and
       {...drop.props}
       data-testid="dropzone"
       className={cn(
-        "relative rounded-xl border border-dashed border-line-strong bg-surface p-6 text-center shadow-sm transition-colors sm:p-10",
-        drop.over && "border-accent bg-accent-soft",
+        "group relative rounded-xl border border-dashed border-line-strong bg-surface p-6 text-center shadow-sm transition-[background-color,border-color,box-shadow] duration-200 sm:p-10",
+        drop.over && "is-dragging border-accent bg-accent-soft shadow-accent",
         className,
       )}
     >
-      <p className="inline-flex items-center gap-2.5 rounded-md border border-line bg-surface-3 px-3.5 py-2 text-sm text-ink">
+      {/* Touch screens can't paste into the page or drag files in, so they get a plain prompt. */}
+      <p className="inline-flex items-center gap-2.5 rounded-md border border-line bg-surface-3 px-3.5 py-2 text-sm text-ink pointer-coarse:hidden">
         <ImagePlus aria-hidden className="size-4 text-accent" />
         Paste a screenshot
         <Kbd>{paste}</Kbd>
       </p>
-      <p className="t-body-sm mt-4 text-ink-2">{drop.over ? "Drop to add your screenshots" : multipleHint}</p>
+      <p className="t-body-sm mt-4 text-ink-2 pointer-coarse:mt-0">
+        <span className="pointer-coarse:hidden">{drop.over ? "Drop to add your screenshots" : multipleHint}</span>
+        <span className="hidden pointer-coarse:inline">Choose screenshots from your photos or files.</span>
+      </p>
       <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
         <Button variant="primary" size="lg" kbd={open} onClick={openPicker}>
           Choose screenshots

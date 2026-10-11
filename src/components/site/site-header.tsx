@@ -16,6 +16,7 @@ import { useShortcutLabel } from "@/lib/use-shortcut-label";
  * grouped Tools menu (built from the registry) rather than a widening row of links.
  */
 const NAV = [
+  { href: "/workflows", label: "Workflows" },
   { href: "/alternatives", label: "Alternatives" },
   { href: "/privacy", label: "Privacy" },
   { href: "/tools", label: "All tools" },
@@ -84,7 +85,7 @@ export function SiteHeader({ onChoose, className }: { onChoose?: () => void; cla
         <nav aria-label="Main" className="hidden items-center gap-6 lg:flex">
           <ToolsMenu />
           {NAV.map((n) => (
-            <Link key={n.href} href={n.href} className="t-micro text-ink-2 transition-colors hover:text-ink">
+            <Link key={n.href} href={n.href} className="nav-link t-micro text-ink-2 transition-colors hover:text-ink">
               {n.label}
             </Link>
           ))}

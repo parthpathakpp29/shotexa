@@ -39,7 +39,7 @@ export interface WorkspaceFile {
 export type JobStatus = "running" | "done" | "failed" | "cancelled";
 export interface Job {
   id: string;
-  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "editor-export" | "annotate-export" | "split-export" | "encode" | "beautify-export" | "compare-export" | "batch" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "pdf-analyse" | "pdf-export";
+  kind: "preview" | "overlap-check" | "stitch-analyse" | "stitch-export" | "combine-export" | "editor-export" | "annotate-export" | "split-export" | "encode" | "beautify-export" | "compare-export" | "compare-align" | "compare-text" | "compare-report" | "batch" | "redaction-export" | "metadata-inspect" | "metadata-clean" | "ocr" | "structured-data" | "privacy-scan" | "background-remove" | "background-export" | "pdf-analyse" | "pdf-export";
   status: JobStatus;
   progress: number | null;
   /** Controlled error code only (never raw messages). */
@@ -162,6 +162,21 @@ export interface BeautifySession {
 
 /** Compare Screenshots: two chosen assets and a few numbers. No rendered pixels here. */
 export type CompareSession = CompareSettings;
+
+/**
+ * Compare Pro's non-undoable run state: whether an alignment, a text diff or a report is in
+ * flight, and which pair the cached results belong to. The results themselves live in the
+ * CompareAnalysisRegistry, never here.
+ */
+export interface CompareRunState {
+  /** `a|b` the cached measurements belong to. */
+  pair: string | null;
+  align: { status: "idle" | "running" | "done" | "failed"; error?: string; stage?: string };
+  text: { status: "idle" | "running" | "done" | "failed" | "cancelled"; progress: number | null; stage?: string; error?: string };
+  report: { status: "idle" | "running" | "done" | "failed"; kind?: "pdf" | "zip" | "json"; error?: string; stage?: string };
+  /** Bumped whenever a measurement lands, so views can re-read the registry. */
+  version: number;
+}
 
 /** Compress / Convert settings — one set per tool, not undoable (like export settings). */
 export type EncodeSession = Record<EncodeTool, EncodeSettings>;

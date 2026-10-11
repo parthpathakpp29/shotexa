@@ -5,6 +5,7 @@ import type { ImageTransform } from "@/core/image-transform/types";
 import type { BatchOperation, BatchSettings, BatchSource } from "./types";
 
 export const DEFAULT_BATCH_SETTINGS: BatchSettings = {
+  background: { trim: false, padding: 24 },
   compress: { format: "same", quality: 0.8 },
   convert: { format: "webp", quality: 0.92, background: "#ffffff" },
   resize: {
@@ -22,6 +23,7 @@ export const DEFAULT_BATCH_SETTINGS: BatchSettings = {
 };
 
 export function batchFormat(operation: BatchOperation, source: BatchSource, settings: BatchSettings): OutputFormat {
+  if (operation === "background") return "png";
   const input = formatOfMime(source.type) ?? "png";
   if (operation === "compress") return settings.compress.format === "same" ? input : settings.compress.format;
   if (operation === "convert") return settings.convert.format;
@@ -44,6 +46,7 @@ export function batchOutputName(operation: BatchOperation, sourceName: string, f
   if (operation === "compress") return encodedName("compress", sourceName, format);
   if (operation === "convert") return encodedName("convert", sourceName, format);
   if (operation === "privacy") return `privacy-clean-${sourceName.replace(/^privacy-clean-/, "")}`;
+  if (operation === "background") return `background-removed-${withExtension(sourceName.replace(/^background-removed-/, ""), "png")}`;
   return `resized-${withExtension(sourceName.replace(/^resized-/, ""), format)}`;
 }
 
@@ -55,4 +58,3 @@ export function resizeOutput(source: BatchSource, settings: BatchSettings["resiz
 export function resultMime(format: OutputFormat) {
   return FORMAT_MIME[format];
 }
-

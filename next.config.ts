@@ -9,6 +9,13 @@ const nextConfig: NextConfig = {
         source: "/vendor/:path*",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
+      {
+        // These public URLs are stable rather than content-hashed. Keep a shared CDN copy
+        // hot, but make browsers revalidate so a future deployment cannot show a stale
+        // poster or recording.
+        source: "/product/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=0, s-maxage=31536000, stale-while-revalidate=86400" }],
+      },
     ];
   },
 };

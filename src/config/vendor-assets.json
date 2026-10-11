@@ -17,5 +17,18 @@
   "searchablePdf": {
     "fontPath": "/vendor/pdf/Hind-Regular.ttf",
     "fontLicensePath": "/vendor/pdf/OFL.txt"
+  },
+  "backgroundRemoval": {
+    "model": "U2NETP",
+    "modelVersion": "u2netp-v1",
+    "modelBytes": 4574861,
+    "modelSha256": "309c8469258dda742793dce0ebea8e6dd393174f89934733ecc8b14c76f4ddd8",
+    "modelPath": "/vendor/background-removal/u2netp-v1/u2netp.onnx",
+    "modelLicensePath": "/vendor/background-removal/u2netp-v1/LICENSE.txt",
+    "runtime": "onnxruntime-web",
+    "runtimeVersion": "1.30.0",
+    "runtimePath": "/vendor/onnxruntime/1.30.0/",
+    "runtimeModulePath": "/vendor/onnxruntime/1.30.0/ort-wasm-simd-threaded.jsep.mjs",
+    "runtimeWasmPath": "/vendor/onnxruntime/1.30.0/ort-wasm-simd-threaded.jsep.wasm"
   }
 }

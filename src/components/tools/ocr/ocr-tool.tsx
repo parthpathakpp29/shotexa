@@ -102,7 +102,7 @@ function OcrWorkspace() {
             </Notice>
           )}
           {result?.status === "cancelled" && (
-            <Notice className="mb-4" title="Extraction cancelled">
+            <Notice className="mb-4" title="Extraction cancelled" data-testid="ocr-cancelled">
               Your screenshot is unchanged. Start again whenever you are ready.
             </Notice>
           )}
@@ -125,7 +125,7 @@ function OcrWorkspace() {
               <Progress value={result.progress} label="OCR progress" />
             </div>
           )}
-          <div className="grid gap-4 xl:grid-cols-2">
+          <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-2">
             <FilePreview />
             <section className="flex min-h-[32rem] flex-col rounded-lg border border-line bg-surface p-4 shadow-xs" aria-label="Extracted text editor">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3">

@@ -64,10 +64,10 @@ serveWorker(
       encodeImage(image, { source, format, quality, background, probe, targetBytes, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "encode") }),
     "image.compareFormats": async ({ image, source, quality, background }, ctx) =>
       compareFormats(image, { source, quality, background, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compare formats") }),
-    "beautify.export": async ({ image, settings, source, format, quality }, ctx) =>
-      renderBeautified(image, settings, { source, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
-    "compare.export": async ({ imageA, imageB, settings, a, b, format, quality }, ctx) =>
-      renderCompare(imageA, imageB, settings, { a, b, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
+    "beautify.export": async ({ image, settings, source, resources, format, quality }, ctx) =>
+      renderBeautified(image, settings, { source, resources, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
+    "compare.export": async ({ imageA, imageB, settings, a, b, alignment, format, quality }, ctx) =>
+      renderCompare(imageA, imageB, settings, { a, b, alignment, format, quality, signal: ctx.signal, onProgress: (p) => ctx.progress(p, "compose") }),
     "metadata.inspect": async ({ image, name, type }) => runMetadataInspect(image, name, type),
     "metadata.clean": async ({ image, name, type, policy }) => runMetadataClean(image, name, type, policy),
     "redaction.export": async ({ image, operations, format, quality }, ctx) =>

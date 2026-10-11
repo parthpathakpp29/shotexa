@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowRight, Gauge, Sparkles } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { formatBytes } from "@/components/tools/stitch/stitch-tool";
 import { Button } from "@/components/ui/button";
 import { Mono } from "@/components/ui/primitives";
@@ -12,6 +12,7 @@ import { FORMAT_LABEL, formatOfMime, supportsQuality, type OutputFormat } from "
 import type { EncodeRunResult } from "@/core/runtime/runtime";
 import { cn } from "@/lib/cn";
 import { useElementWidth } from "@/lib/use-element-width";
+import { useObjectUrls } from "@/lib/object-url";
 
 const MAX_PANE = 520;
 
@@ -37,8 +38,8 @@ export function EncodePreview({
 }) {
   const file = useWorkspace((s) => s.files[assetId]);
   const [measureRef, available] = useElementWidth<HTMLDivElement>();
-  const url = useMemo(() => (result ? URL.createObjectURL(result.blob) : null), [result]);
-  useEffect(() => () => void (url && URL.revokeObjectURL(url)), [url]);
+  const blobs = useMemo(() => (result ? [result.blob] : []), [result]);
+  const [url = null] = useObjectUrls(blobs);
   if (!file) return null;
   const input = formatOfMime(file.type) ?? "png";
   // Before and after side by side at every width, so the comparison stays in view on phones.
@@ -70,9 +71,13 @@ export function EncodePreview({
             </Mono>
           </figcaption>
           <div className={cn("relative flex max-h-[60dvh] min-h-40 items-start justify-center overflow-auto rounded-sm bg-checker", stale && "opacity-50")}>
-            {result && url ? (
-              // eslint-disable-next-line @next/next/no-img-element -- local Blob preview of the encoded file
-              <img src={url} alt="Encoded result" style={{ width: paneWidth }} className="h-auto max-w-full" data-testid="encode-result-image" />
+            {result ? (
+              url ? (
+                // eslint-disable-next-line @next/next/no-img-element -- local Blob preview of the encoded file
+                <img src={url} alt="Encoded result" style={{ width: paneWidth }} className="h-auto max-w-full" data-testid="encode-result-image" />
+              ) : (
+                <div aria-hidden className="min-h-40" />
+              )
             ) : (
               <div className="flex min-h-40 flex-col items-center justify-center gap-3 p-3 text-center sm:p-6">
                 <p className="t-body-sm text-ink-2">See the exact file size before you download.</p>

@@ -19,8 +19,8 @@ describe("tool registry", () => {
     }
   });
 
-  it("lists the production tools completed through Phase 2N", () => {
-    const live = ["stitch", "combine", "beautify", "compare", "safe-share", "blur", "extract-text", "pdf", "searchable-pdf", "editor", "annotate", "split", "compress", "convert", "metadata", "batch"];
+  it("lists every production tool from the canonical registry", () => {
+    const live = ["stitch", "combine", "beautify", "compare", "safe-share", "blur", "extract-text", "structured-data", "pdf", "searchable-pdf", "editor", "annotate", "split", "compress", "convert", "metadata", "remove-background", "batch"];
     expect(TOOL_LIST.filter((t) => t.status === "live").map((t) => t.id)).toEqual(live);
     expect(TOOLS.stitch.route).toBe("/stitch-screenshots");
     expect(LIVE_TOOLS).toEqual(live);
@@ -75,7 +75,7 @@ describe("tool registry", () => {
 
   it("ships Compare Screenshots at one canonical route", () => {
     expect(TOOLS.compare).toMatchObject({ route: "/compare-screenshots", status: "live", category: "create", minFiles: 2 });
-    expect(TOOLS.compare.seo.title).toBe("Compare Screenshots Online – Before & After Image Comparison | Shotexa");
+    expect(TOOLS.compare.seo.title).toBe("Compare Screenshots Online – Visual Diff & Before/After Comparison | Shotexa");
     expect(TOOLS.compare.seo.h1).toBe("Compare Two Screenshots Online");
     for (const synonym of ["/before-after-screenshot", "/image-difference", "/screenshot-diff"]) expect(toolByRoute(synonym)).toBeUndefined();
     // Results people check against an original can hand off to it.
@@ -89,6 +89,14 @@ describe("tool registry", () => {
     expect(TOOLS.batch.seo.h1).toBe("Batch Process Screenshots Online");
     for (const synonym of ["/batch-compress", "/batch-convert", "/bulk-resize", "/bulk-screenshot-tools"]) expect(toolByRoute(synonym)).toBeUndefined();
     expect(continuationsFor("batch")).toEqual(["editor", "safe-share", "extract-text", "pdf"]);
+  });
+
+  it("ships Background Remover at one canonical route", () => {
+    expect(TOOLS["remove-background"]).toMatchObject({ route: "/remove-background", status: "live", category: "edit", minFiles: 1 });
+    expect(TOOLS["remove-background"].seo.title).toBe("Remove Background from Image Online — Private Browser Tool | Shotexa");
+    expect(TOOLS["remove-background"].seo.h1).toBe("Remove an Image Background Locally");
+    for (const synonym of ["/background-remover", "/remove-image-background", "/transparent-background"]) expect(toolByRoute(synonym)).toBeUndefined();
+    expect(continuationsFor("remove-background")[0]).toBe("beautify");
   });
 
   it("ships the Screenshot Beautifier at one canonical route", () => {
@@ -107,10 +115,10 @@ describe("tool registry", () => {
     expect([...grouped].sort()).toEqual([...LIVE_TOOLS].sort());
     expect(new Set(grouped).size).toBe(grouped.length);
     expect(TOOL_GROUPS.map((g) => g.id)).toEqual(["create", "protect", "documents", "edit"]);
-    expect(TOOL_GROUPS.find((g) => g.id === "edit")?.tools).toEqual(["editor", "annotate", "split", "compress", "convert", "batch"]);
+    expect(TOOL_GROUPS.find((g) => g.id === "edit")?.tools).toEqual(["editor", "annotate", "split", "compress", "convert", "remove-background", "batch"]);
     expect(TOOL_GROUPS.find((g) => g.id === "create")?.tools).toEqual(["stitch", "combine", "beautify", "compare"]);
     expect(TOOL_GROUPS.find((g) => g.id === "protect")?.tools).toEqual(["safe-share", "blur", "metadata"]);
-    expect(TOOL_GROUPS.find((g) => g.id === "documents")?.tools).toEqual(["extract-text", "pdf", "searchable-pdf"]);
+    expect(TOOL_GROUPS.find((g) => g.id === "documents")?.tools).toEqual(["extract-text", "structured-data", "pdf", "searchable-pdf"]);
     // Blur must stay reachable from navigation, not only from its own URL.
     expect(grouped).toContain("blur");
   });
@@ -139,12 +147,13 @@ describe("tool registry", () => {
     expect(acceptsScreenshotInput("/screenshot-beautifier")).toBe(true);
     expect(acceptsScreenshotInput("/compare-screenshots")).toBe(true);
     expect(acceptsScreenshotInput("/batch-screenshots")).toBe(true);
+    expect(acceptsScreenshotInput("/remove-background")).toBe(true);
     expect(acceptsScreenshotInput("/tools")).toBe(false);
     expect(acceptsScreenshotInput("/privacy")).toBe(false);
   });
 
   it("suggests only live tools, and multi-image tools only when they apply", () => {
-    const single: ToolId[] = ["editor", "annotate", "safe-share", "blur", "extract-text", "pdf", "metadata"];
+    const single: ToolId[] = ["editor", "annotate", "remove-background", "safe-share", "blur", "extract-text", "structured-data", "pdf", "metadata"];
     expect(suggestedTools(1)).toEqual(single);
     expect(suggestedTools(2)).toEqual(["stitch", "combine", "batch", ...single]);
     expect(suggestedTools(5).slice(0, 2)).toEqual(["stitch", "combine"]);
@@ -168,14 +177,14 @@ describe("tool registry", () => {
 
 describe("SEO config", () => {
   it("sitemap lists indexable static pages and live tools only", () => {
-    expect(sitemapPaths()).toEqual(["/", "/tools", "/privacy", "/alternatives", "/alternatives/xnapper", "/alternatives/cleanshot-x", "/alternatives/snagit", "/alternatives/pika", "/alternatives/shots-so", "/stitch-screenshots", "/combine-screenshots", "/screenshot-beautifier", "/compare-screenshots", "/redact-screenshot", "/blur-screenshot", "/screenshot-to-text", "/screenshot-to-pdf", "/screenshot-to-searchable-pdf", "/screenshot-editor", "/annotate-screenshot", "/split-long-screenshot", "/compress-screenshot", "/convert-screenshot", "/remove-image-metadata", "/batch-screenshots"]);
+    expect(sitemapPaths()).toEqual(["/", "/tools", "/workflows", "/privacy", "/alternatives", "/alternatives/xnapper", "/alternatives/cleanshot-x", "/alternatives/snagit", "/alternatives/pika", "/alternatives/shots-so", "/stitch-screenshots", "/combine-screenshots", "/screenshot-beautifier", "/compare-screenshots", "/redact-screenshot", "/blur-screenshot", "/screenshot-to-text", "/screenshot-to-data", "/screenshot-to-pdf", "/screenshot-to-searchable-pdf", "/screenshot-editor", "/annotate-screenshot", "/split-long-screenshot", "/compress-screenshot", "/convert-screenshot", "/remove-image-metadata", "/remove-background", "/batch-screenshots"]);
     expect(sitemapPaths().some((p) => p.startsWith("/spikes"))).toBe(false);
   });
 
   it("sitemap.xml uses absolute URLs on the site origin", () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
     const entries = sitemap();
-    expect(entries.length).toBe(25);
+    expect(entries.length).toBe(28);
     for (const e of entries) expect(e.url).toMatch(/^https:\/\/[^/]+(\/|$)/);
   });
 
@@ -202,16 +211,22 @@ describe("SEO config", () => {
       robots: { index: true },
     });
     expect(toolMetadata("compare")).toMatchObject({
-      title: "Compare Screenshots Online – Before & After Image Comparison | Shotexa",
+      title: "Compare Screenshots Online – Visual Diff & Before/After Comparison | Shotexa",
       alternates: { canonical: "/compare-screenshots" },
       robots: { index: true },
     });
     expect(toolMetadata("compress")).toMatchObject({ title: "Compress Screenshot Online – Reduce Image Size | Shotexa", alternates: { canonical: "/compress-screenshot" }, robots: { index: true } });
     expect(toolMetadata("convert")).toMatchObject({ title: "Convert Screenshot – PNG, JPEG & WebP | Shotexa", alternates: { canonical: "/convert-screenshot" }, robots: { index: true } });
     expect(toolMetadata("batch")).toMatchObject({ title: "Batch Process Screenshots Online – Compress, Convert & Resize | Shotexa", alternates: { canonical: "/batch-screenshots" }, robots: { index: true } });
+    expect(toolMetadata("remove-background")).toMatchObject({ title: "Remove Background from Image Online — Private Browser Tool | Shotexa", alternates: { canonical: "/remove-background" }, robots: { index: true } });
     expect(toolMetadata("extract-text")).toMatchObject({
       title: "Screenshot to Text – Free Private OCR | Shotexa",
       alternates: { canonical: "/screenshot-to-text" },
+      robots: { index: true },
+    });
+    expect(toolMetadata("structured-data")).toMatchObject({
+      title: "Screenshot to Data – Extract Tables, CSV, XLSX & JSON | Shotexa",
+      alternates: { canonical: "/screenshot-to-data" },
       robots: { index: true },
     });
     expect(toolMetadata("pdf")).toMatchObject({

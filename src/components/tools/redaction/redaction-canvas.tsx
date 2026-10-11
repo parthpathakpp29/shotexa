@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { IconButton, Mono, Toolbar, ToolbarDivider } from "@/components/ui/primitives";
 import { displayToImage, imageToDisplay, rectFromPoints, type ViewportTransform } from "@/core/redaction/geometry";
 import type { ImageRect, Redaction } from "@/core/redaction/types";
+import type { PrivacyFinding } from "@/core/privacy/types";
 import { useElementWidth } from "@/lib/use-element-width";
 import { cn } from "@/lib/cn";
 import { useReleasingCanvas } from "@/lib/use-canvas-ref";
@@ -56,7 +57,7 @@ function drawPreview(canvas: HTMLCanvasElement, bitmap: ImageBitmap, file: { wid
   }
 }
 
-export function RedactionCanvas({ assetId }: { assetId: string }) {
+export function RedactionCanvas({ assetId, findings = [], currentFindingId, onSelectFinding }: { assetId: string; findings?: PrivacyFinding[]; currentFindingId?: string | null; onSelectFinding?(id: string): void }) {
   const { runtime } = useWorkspaceContext();
   const file = useWorkspace((s) => s.files[assetId]);
   const version = useWorkspace((s) => s.files[assetId]?.previewVersion ?? 0);
@@ -199,6 +200,27 @@ export function RedactionCanvas({ assetId }: { assetId: string }) {
             }}
           >
             <canvas ref={attachCanvas} className="pointer-events-none block h-full w-full" aria-hidden />
+            {findings.filter((finding) => !finding.ignored && !finding.applied).flatMap((finding) => finding.regions.map((region, regionIndex) => {
+              const r = imageToDisplay(region, transform);
+              const current = finding.id === currentFindingId;
+              return (
+                <button
+                  type="button"
+                  key={`${finding.id}:${regionIndex}`}
+                  aria-label={`${finding.label}, ${finding.confidence} confidence, ${finding.selected ? "selected" : "not selected"} for redaction`}
+                  data-testid="privacy-finding-region"
+                  data-confidence={finding.confidence}
+                  data-selected={finding.selected}
+                  onPointerDown={(event) => event.stopPropagation()}
+                  onClick={(event) => { event.stopPropagation(); onSelectFinding?.(finding.id); }}
+                  className={cn(
+                    "absolute cursor-pointer border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white",
+                    current ? "z-20 border-accent bg-accent/20 ring-2 ring-white/90" : finding.selected ? "z-10 border-success bg-success/10" : finding.confidence === "low" ? "border-dashed border-warning/70 bg-warning/10" : "border-line-strong bg-surface/10",
+                  )}
+                  style={{ left: r.x, top: r.y, width: Math.max(8, r.width), height: Math.max(8, r.height) }}
+                />
+              );
+            }))}
             {shown.map((op) => {
               const r = imageToDisplay(op.rect, transform);
               const selected = op.id === selectedId;

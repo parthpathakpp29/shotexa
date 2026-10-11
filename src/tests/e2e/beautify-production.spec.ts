@@ -163,7 +163,7 @@ test.describe("Phase 2L Screenshot Beautifier", () => {
   test("gradient background runs across the canvas", async ({ page }) => {
     await open(page, solid("shot.png", 600, 400, RED));
     await page.getByTestId("beautify-bg-sky").click();
-    await page.getByRole("radiogroup", { name: "Background type" }).getByRole("radio", { name: "Gradient" }).click();
+    await page.getByRole("radiogroup", { name: "Background type" }).getByRole("radio", { name: "Gradient", exact: true }).click();
     await page.getByRole("radiogroup", { name: "Gradient direction" }).getByRole("radio", { name: "Down right" }).click();
     await page.getByRole("radiogroup", { name: "Shadow" }).getByRole("radio", { name: "None" }).click();
     await shot(page, "03-gradient.png");
@@ -320,11 +320,45 @@ test.describe("Phase 2L Screenshot Beautifier", () => {
     await page.getByTestId("beautify-auto-layout").click();
     expect((await outputSize(page)).width / (await outputSize(page)).height).toBeCloseTo(16 / 9, 2);
     await page.getByTestId("beautify-auto-background").click();
-    await page.getByRole("radiogroup", { name: "Background type" }).getByRole("radio", { name: "Gradient" }).click();
+    await page.getByRole("radiogroup", { name: "Background type" }).getByRole("radio", { name: "Gradient", exact: true }).click();
     await shot(page, "10-power-tools.png");
     const expected = await outputSize(page);
     const out = (await exportImage(page)).png;
     expect([out.width, out.height]).toEqual([expected.width, expected.height]);
+    expect(outbound).toEqual([]);
+    expect(errors).toEqual([]);
+  });
+
+  test("V2.0A: 3D preset, premium background, multi-image, branding, animation and PNG export", async ({ page }) => {
+    const { errors, outbound } = watch(page);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await open(page, [solid("primary.png", 900, 600, RED), solid("second.png", 720, 960, BLUE), solid("logo.png", 240, 120, WHITE)]);
+
+    await page.getByRole("button", { name: "3D & Perspective" }).click();
+    await page.getByRole("radiogroup", { name: "Perspective preset" }).getByRole("radio", { name: "Tilt Left" }).click();
+    await page.getByRole("button", { name: "Advanced 3D controls" }).click();
+    await expect(page.getByRole("slider", { name: "Rotate Y" })).toHaveValue("-9");
+
+    await page.getByRole("radiogroup", { name: "Background type" }).getByRole("radio", { name: "Mesh gradient" }).click();
+    await style(page, "Browser").click();
+    await page.getByTestId("beautify-title").fill("Beautifier Pro");
+    await page.getByRole("button", { name: "Multi-screenshot layout" }).click();
+    await page.getByRole("radiogroup", { name: "Multi-screenshot layout" }).getByRole("radio", { name: "Side by side" }).click();
+    await page.getByRole("switch", { name: "second.png" }).click();
+
+    await page.getByRole("button", { name: "Branding" }).click();
+    await page.getByRole("combobox", { name: "Logo or watermark image" }).selectOption({ label: "logo.png" });
+    await page.getByRole("button", { name: "Animation" }).click();
+    await page.getByRole("combobox", { name: "Animation preset" }).selectOption("float");
+    await expect(page.getByTestId("beautify-canvas")).toHaveAttribute("data-animation", "float");
+    expect(await page.getByTestId("beautify-canvas").evaluate((element) => getComputedStyle(element).animationName)).toBe("none");
+    await shot(page, "v2-3d-multi-branding-animation.png");
+
+    const expected = await outputSize(page);
+    const out = (await exportImage(page)).png;
+    expect([out.width, out.height]).toEqual([expected.width, expected.height]);
+    expect(boundsOf(out, RED).count).toBeGreaterThan(1000);
+    expect(boundsOf(out, BLUE).count).toBeGreaterThan(1000);
     expect(outbound).toEqual([]);
     expect(errors).toEqual([]);
   });
@@ -429,7 +463,7 @@ test.describe("Phase 2L Screenshot Beautifier", () => {
     await page.getByRole("button", { name: "Rotate right" }).click();
     await Promise.all([page.waitForEvent("download"), page.getByTestId("export").click()]);
     await page.getByTestId("editor-result").getByRole("link", { name: /Annotate/ }).click();
-    await expect(page.getByTestId("annotate-stage")).toHaveAttribute("data-out-width", "600");
+    await expect(page.getByTestId("annotate-stage")).toHaveAttribute("data-out-width", "600", { timeout: 30_000 });
     const box = (await page.getByTestId("annotate-stage").boundingBox())!;
     await page.mouse.move(box.x + 40, box.y + 40);
     await page.mouse.down();

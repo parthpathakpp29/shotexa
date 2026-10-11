@@ -4,6 +4,8 @@
  * Stitch analysis/export, artifacts). Created once per WorkspaceProvider mount — screenshots
  * are never persisted; a full reload starts empty.
  */
+import { toast } from "@/components/ui/use-toast";
+import { encodeCanvas } from "@/core/image-encode/encode";
 import { readImageSize } from "@/core/image/image-size";
 import { validateImageHeader } from "@/core/image/validate";
 import type { MetadataCleanRun, MetadataInspectRun } from "@/core/metadata/run";
@@ -14,19 +16,28 @@ import type { AnalysedSet, ShotexaPdfEngine } from "@/core/pdf/pdf-engine";
 import type { PageSetup, PaginationPlan } from "@/core/pdf/types";
 import { searchableSourceFromResult } from "@/core/pdf/searchable-text";
 import type { CombinePlan } from "@/core/combine/types";
+import type { CompareAlignEstimate, CompareTextDiff, CompareVisualAnalysis } from "@/core/compare/types";
 import type { EncodeTool } from "@/core/image-encode/types";
 import type { OutputFormat } from "@/core/image-encode/formats";
 import { IDENTITY_TRANSFORM, isIdentity } from "@/core/image-transform/transform";
 import type { SafeShareExportResult } from "@/core/redaction/types";
+import { PrivacyScanRegistry } from "@/core/privacy/registry";
+import type { PrivacyScanConfig, PrivacyScanResult } from "@/core/privacy/types";
+import { StructuredResultRegistry } from "@/core/structured-data/registry";
+import type { StructuredAnalysisOptions, StructuredExtraction } from "@/core/structured-data/types";
 import { planStitchChain, type ChainPlan } from "@/core/stitch/chain";
 import { rgbaToGray } from "@/core/stitch/gray";
 import { HINT, likelyOverlap } from "@/core/stitch/overlap-hint";
 import type { GrayImage } from "@/core/stitch/types";
 import { WorkerJobError } from "@/workers/broker/worker-client";
+import { CompareAnalysisRegistry, compareAlignKey, comparePairKey, type CompareReportKind } from "./compare-analysis-registry";
 import { AssetRegistry } from "./asset-registry";
+import { safeFileName } from "./safe-name";
 import { OcrResultRegistry } from "./ocr-result-registry";
 import { PdfAnalysisRegistry } from "./pdf-analysis-registry";
 import { BatchResultRegistry } from "./batch-result-registry";
+import { BackgroundMaskRegistry } from "@/core/background-removal/registry";
+import { DEFAULT_BACKGROUND_REMOVAL, type BackgroundRemovalRenderResult, type BackgroundRemovalSettings, type SegmentationResult } from "@/core/background-removal/types";
 import type { BatchResult, BatchSource } from "@/core/batch/types";
 import { MAX_BATCH_FILES, MAX_BATCH_INPUT_BYTES } from "@/core/batch/types";
 import { batchFormat, batchOutputName, resizeOutput, resultMime } from "@/core/batch/settings";
@@ -128,6 +139,8 @@ export interface WorkspacePdfResult {
 }
 
 const EXT: Record<ImageMime, string> = { "image/png": "png", "image/jpeg": "jpg", "image/webp": "webp" };
+/** Worker preview failures the page must not retry itself (see `makePreview`). */
+const NO_PAGE_FALLBACK = new Set(["WORKER_CRASHED", "CANCELLED", "DECODE_FAILED"]);
 const codeOf = (e: unknown) => (e instanceof WorkerJobError ? e.code : ((e as { code?: string })?.code ?? "INTERNAL"));
 const newId = () => (typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `f${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`);
 
@@ -135,8 +148,12 @@ export interface WorkspaceRuntime {
   store: WorkspaceStore;
   registry: AssetRegistry;
   ocrResults: OcrResultRegistry;
+  structuredResults: StructuredResultRegistry;
+  privacyScans: PrivacyScanRegistry;
   pdfAnalyses: PdfAnalysisRegistry;
   batchResults: BatchResultRegistry;
+  backgroundMasks: BackgroundMaskRegistry;
+  compareAnalyses: CompareAnalysisRegistry;
   broker: WorkerBroker;
   caps: Capabilities;
   ingest(files: File[], source: FileSource): Promise<IngestResult>;
@@ -162,6 +179,30 @@ export interface WorkspaceRuntime {
    * artifact that records BOTH parents.
    */
   exportCompare(): Promise<EditorExportResult>;
+  /**
+   * Measure how to put "after" on top of "before" for the current comparison, from small
+   * greyscale proxies of the preview bitmaps. Cached until the chosen screenshots or the
+   * fitting change, so moving a slider never re-measures anything.
+   */
+  alignCompare(force?: boolean): Promise<CompareAlignEstimate>;
+  /** Forget the measured alignment (the manual nudge is settings, and is reset separately). */
+  resetCompareAlignment(): void;
+  /**
+   * OCR both screenshots (reusing any cached result) and diff the visible text. Never runs
+   * as part of the visual comparison: it is always an explicit, cancellable request.
+   */
+  analyseCompareText(onStage?: (stage: string) => void): Promise<CompareTextDiff>;
+  cancelCompareText(): Promise<void>;
+  /** Publish the preview's measurement so the summary, report and workflows can read it. */
+  publishCompareAnalysis(analysis: CompareVisualAnalysis | null): void;
+  /**
+   * Measure the comparison without a preview on screen, at a bounded analysis width. Used by
+   * the report and by the workflow adapter so neither depends on the user having opened the
+   * Difference view — and so neither needs its own copy of the comparison logic.
+   */
+  measureCompare(maxWidth?: number): Promise<CompareVisualAnalysis | null>;
+  /** Build the Shotexa Visual Comparison Report. Returns the Blob; nothing is uploaded. */
+  exportCompareReport(kind: CompareReportKind, options?: { download?: boolean }): Promise<{ blob: Blob; name: string }>;
   /** Compose the asset with its Beautifier settings at full resolution into a new artifact. */
   exportBeautified(assetId?: FileId): Promise<EditorExportResult>;
   /**
@@ -178,8 +219,15 @@ export interface WorkspaceRuntime {
   exportSafeShare(assetId?: FileId): Promise<WorkspaceSafeShareResult>;
   inspectMetadata(assetId?: FileId): Promise<MetadataInspectRun>;
   cleanMetadata(assetId?: FileId): Promise<WorkspaceMetadataCleanResult>;
-  extractText(assetId?: FileId, language?: OcrLanguageChoice): Promise<WorkspaceOcrResult>;
-  cancelOcr(assetId?: FileId): Promise<void>;
+  extractText(assetId?: FileId, language?: OcrLanguageChoice, silent?: boolean): Promise<WorkspaceOcrResult>;
+  cancelOcr(assetId?: FileId, silent?: boolean): Promise<void>;
+  extractStructuredData(assetId: FileId, options?: StructuredAnalysisOptions, onStage?: (stage: string) => void): Promise<StructuredExtraction>;
+  cancelStructuredData(): void;
+  scanPrivacy(assetId: FileId, config: PrivacyScanConfig, onStage?: (stage: string) => void): Promise<PrivacyScanResult>;
+  cancelPrivacyScan(): Promise<void>;
+  removeBackground(assetId: FileId, onStage?: (stage: string) => void, silent?: boolean): Promise<SegmentationResult>;
+  cancelBackgroundRemoval(): void;
+  exportRemovedBackground(assetId: FileId, settings?: BackgroundRemovalSettings, backgroundImage?: Blob): Promise<EditorExportResult>;
   planPdf(inputIds: FileId[], setup: PageSetup, smart: boolean, edits?: Record<FileId, PdfBreakEdit>): Promise<PaginationPlan>;
   pdfSafeYs(assetId: FileId): number[];
   exportPdf(inputIds: FileId[], plan: PaginationPlan): Promise<WorkspacePdfResult>;
@@ -194,16 +242,31 @@ export interface WorkspaceRuntime {
   dispose(): void;
 }
 
-export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Capabilities; createOcrService?: () => Promise<OcrService>; ocrTimeoutMs?: number } = {}): WorkspaceRuntime {
+export function createWorkspaceRuntime(opts: {
+  broker?: WorkerBroker;
+  caps?: Capabilities;
+  createOcrService?: () => Promise<OcrService>;
+  ocrTimeoutMs?: number;
+  /** Where `pagehide`/`pageshow` arrive (the window by default; tests pass their own target). */
+  pageEvents?: EventTarget | null;
+} = {}): WorkspaceRuntime {
   const registry = new AssetRegistry();
   const ocrResults = new OcrResultRegistry();
+  const structuredResults = new StructuredResultRegistry();
+  const privacyScans = new PrivacyScanRegistry();
   const pdfAnalyses = new PdfAnalysisRegistry();
   const batchResults = new BatchResultRegistry();
+  const backgroundMasks = new BackgroundMaskRegistry();
+  const compareAnalyses = new CompareAnalysisRegistry();
   const store = createWorkspaceStore((id) => {
     registry.remove(id);
     ocrResults.removeAsset(id);
+    structuredResults.removeAsset(id);
+    privacyScans.removeAsset(id);
     pdfAnalyses.remove(id);
     batchResults.removeSource(id);
+    backgroundMasks.remove(id);
+    compareAnalyses.removeAsset(id);
     alphaCache.delete(id);
   });
   const broker = opts.broker ?? new WorkerBroker(browserWorkerFactories());
@@ -213,11 +276,26 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
   const alphaCache = new Map<FileId, boolean>();
   let pasteCount = 0;
   let activeBatchAbort: AbortController | null = null;
+  let activePrivacyAbort: AbortController | null = null;
   let previewChain: Promise<void> = Promise.resolve();
   let disposed = false;
+  /**
+   * The page is being left — a navigation, a closed tab, or a move into the back/forward
+   * cache. WebKit stops a page's loads as soon as a navigation starts (before `pagehide`), so
+   * a decode or Blob read started from then on is refused and reported as a page error
+   * ("Cannot load blob … due to access control checks"). Image work therefore starts nothing
+   * new while leaving: previews stop, worker jobs are refused, and main-thread pipelines stop
+   * between steps through `pageAbort`. Work already running finishes or is cancelled quietly.
+   */
+  let leaving = false;
+  let pageAbort = new AbortController();
   let ocrService: OcrService | null = null;
   let activeOcrAsset: FileId | null = null;
   let activeOcrAbort: AbortController | null = null;
+  let activeStructuredAbort: AbortController | null = null;
+  let activeBackgroundAbort: AbortController | null = null;
+  let activeCompareTextAbort: AbortController | null = null;
+  let activeCompareReportAbort: AbortController | null = null;
   let pdfEngine: ShotexaPdfEngine | null = null;
   let activePdfAbort: AbortController | null = null;
 
@@ -241,13 +319,26 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     store.getState().upsertJob({ id, kind, status, progress, error });
 
   /** Downscaled preview via the Image Worker (full decode off the main thread); page fallback. */
-  async function makePreview(id: FileId) {
+  function makePreview(id: FileId): Promise<void> {
+    return track(() => makePreviewNow(id));
+  }
+
+  async function makePreviewNow(id: FileId) {
     const blob = registry.blob(id);
-    if (!blob || disposed) return;
+    if (!blob || disposed || leaving) return;
     let bitmap: ImageBitmap;
     try {
       bitmap = (await broker.run("image", "image.preview", { image: blob, ...PREVIEW })).bitmap;
-    } catch {
+    } catch (error) {
+      // Decode on the page only when the worker ran and could not do something the page can.
+      // Never after the page starts going away (see `leaving`), and never because the worker
+      // itself failed or was stopped: WebKit stops a page's loads as soon as a navigation
+      // starts — before `pagehide` — which kills a worker still loading its script, and a
+      // decode started then is refused ("Cannot load blob … due to access control checks").
+      // A crashed worker (or one out of memory) is no better served by the same decode on the
+      // main thread, and a failed decode would fail identically there.
+      if (disposed || leaving) return;
+      if (NO_PAGE_FALLBACK.has(codeOf(error))) throw error;
       const f = store.getState().files[id];
       if (!f) return;
       const s = Math.min(1, PREVIEW.maxWidth / f.width, Math.sqrt(PREVIEW.maxPixels / (f.width * f.height)));
@@ -260,6 +351,56 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     registry.setPreview(id, bitmap);
     proxies.delete(id);
     store.getState().markPreview(id);
+  }
+
+  /** After a back/forward-cache restore: previews interrupted by `pagehide` are made now. */
+  function resumePreviews() {
+    for (const id of store.getState().order) {
+      if (registry.preview(id)) continue;
+      previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
+    }
+  }
+
+  const pageEvents = opts.pageEvents === undefined ? (typeof window === "undefined" ? null : window) : opts.pageEvents;
+  function markLeaving() {
+    if (leaving) return;
+    leaving = true;
+    broker.suspend?.();
+    pageAbort.abort();
+  }
+  function markStaying() {
+    if (!leaving || disposed) return;
+    leaving = false;
+    pageAbort = new AbortController();
+    broker.resume?.();
+    resumePreviews();
+  }
+  const onPageHide = () => markLeaving();
+  // Only a page restored from the back/forward cache comes back; a fresh load is a new runtime.
+  const onPageShow = (event: Event) => { if ((event as PageTransitionEvent).persisted) markStaying(); };
+  // `beforeunload` is the first sign of a navigation — early enough to stop new loads. If the
+  // navigation does not happen after all (cancelled, or it became a download), the page is
+  // still in use: the next interaction resumes the work.
+  const onStillHere = () => markStaying();
+  const onBeforeUnload = () => {
+    markLeaving();
+    pageEvents?.addEventListener("pointerdown", onStillHere, { once: true });
+    pageEvents?.addEventListener("keydown", onStillHere, { once: true });
+  };
+  pageEvents?.addEventListener("pagehide", onPageHide);
+  pageEvents?.addEventListener("pageshow", onPageShow);
+  /**
+   * Image work in progress. A `beforeunload` listener can keep a page out of Firefox's
+   * back/forward cache, so it is attached only while such work runs (web.dev guidance).
+   */
+  let busy = 0;
+  async function track<T>(work: () => Promise<T>): Promise<T> {
+    if (busy++ === 0) pageEvents?.addEventListener("beforeunload", onBeforeUnload);
+    try {
+      return await work();
+    } finally {
+      if (--busy === 0) pageEvents?.removeEventListener("beforeunload", onBeforeUnload);
+    }
   }
 
   /** Tiny greyscale proxy (for the overlap hint) from the preview bitmap. */
@@ -287,7 +428,13 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
    * Full-resolution greyscale decoded on the page, for browsers whose workers can't read
    * pixels (no OffscreenCanvas — WebKit/WinCairo, Spike B). 1 byte per pixel is transferred.
    */
-  async function pageGray(blob: Blob): Promise<GrayImage> {
+  function pageGray(blob: Blob): Promise<GrayImage> {
+    return track(() => pageGrayNow(blob));
+  }
+
+  async function pageGrayNow(blob: Blob): Promise<GrayImage> {
+    // Never start a decode on a page that is being left (see `leaving`).
+    if (disposed || leaving) throw Object.assign(new Error("Page is closing"), { code: "CANCELLED" });
     const bm = await createImageBitmap(blob);
     const canvas = Object.assign(document.createElement("canvas"), { width: bm.width, height: bm.height });
     try {
@@ -324,22 +471,42 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     const rejected: IngestResult["rejected"] = [];
     const metas: WorkspaceFile[] = [];
     for (const file of files) {
-      const head = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+      if (disposed || leaving) break; // no new file reads once the page is being left
+      // Reading a file can fail: it was moved or deleted, or the page is being left and WebKit
+      // has already stopped file reads (NotReadableError). Neither may escape as an error.
+      let head: Uint8Array;
+      let size: Awaited<ReturnType<typeof readImageSize>>;
+      try {
+        head = new Uint8Array(await file.slice(0, 16).arrayBuffer());
+      } catch {
+        if (disposed || leaving) break;
+        rejected.push({ name: file.name || "Pasted image", code: "UNREADABLE" });
+        continue;
+      }
       const v = validateImageHeader(file.name, file.type, head); // extension + MIME + magic bytes
       if (!v.ok) {
         rejected.push({ name: file.name || "Pasted image", code: v.code });
         continue;
       }
-      const size = await readImageSize(file); // header only — no decode
+      try {
+        size = await readImageSize(file); // header only — no decode
+      } catch {
+        if (disposed || leaving) break;
+        size = null;
+      }
       if (!size) {
         rejected.push({ name: file.name || "Pasted image", code: "UNREADABLE" });
         continue;
       }
       const id = newId();
-      const name = source === "paste" || !file.name ? `Pasted screenshot ${++pasteCount}.${EXT[v.type]}` : file.name;
+      // Sanitised once, here: the name reaches download attributes and ZIP entries later.
+      const name = source === "paste" || !file.name ? `Pasted screenshot ${++pasteCount}.${EXT[v.type]}` : safeFileName(file.name, `screenshot.${EXT[v.type]}`);
       registry.put(id, file);
       metas.push({ id, name, type: v.type, bytes: file.size, width: size.width, height: size.height, source, kind: "original", addedAt: Date.now(), previewVersion: 0 });
     }
+    // WorkspaceProvider already presents one concise, aria-live ingestion summary. Keep
+    // that established notice as the sole file-add/rejection announcement rather than
+    // showing a second toast for the same action.
     if (metas.length) store.getState().addFiles(metas);
     // Previews one at a time (each is a full decode transiently — Spike B), then the hint.
     for (const m of metas) {
@@ -665,11 +832,14 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     job(jobId, "compare-export", "running", 0);
     try {
       const onProgress = (progress: number) => job(jobId, "compare-export", "running", progress);
+      // The export applies the SAME measured alignment the preview showed, not a new one.
+      const alignment = settings.alignment.mode === "off" ? null : await alignCompare();
       const result = caps.offscreenCanvas
-        ? await broker.run("image", "compare.export", { imageA: blobA, imageB: blobB, settings, a, b, format, quality }, { onProgress })
+        ? await broker.run("image", "compare.export", { imageA: blobA, imageB: blobB, settings, a, b, alignment, format, quality }, { onProgress })
         : await (await import("@/core/compare/render")).renderCompare(blobA, blobB, settings, {
             a,
             b,
+            alignment,
             format,
             quality,
             createCanvas: (width, height) => Object.assign(document.createElement("canvas"), { width, height }),
@@ -706,29 +876,397 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     }
   }
 
+  /* --------------------------------------------------------------- Compare Pro */
+
+  /** Canvas factory for the small, bounded Compare analyses that run on the page. */
+  const compareCanvas = (width: number, height: number): OffscreenCanvas | HTMLCanvasElement =>
+    typeof OffscreenCanvas !== "undefined" ? new OffscreenCanvas(width, height) : Object.assign(document.createElement("canvas"), { width, height });
+
+  /** The chosen pair, or a controlled error. Nothing in Compare Pro works without both. */
+  function compareContext() {
+    const s = store.getState();
+    const settings = s.compare;
+    const fileA = settings.a ? s.files[settings.a] : undefined;
+    const fileB = settings.b ? s.files[settings.b] : undefined;
+    if (!settings.a || !settings.b || !fileA || !fileB) throw Object.assign(new Error("Two screenshots"), { code: "COMPARE_NEEDS_TWO" });
+    return {
+      settings,
+      idA: settings.a,
+      idB: settings.b,
+      fileA,
+      fileB,
+      sizeA: { width: fileA.width, height: fileA.height },
+      sizeB: { width: fileB.width, height: fileB.height },
+      pair: comparePairKey(settings.a, settings.b),
+    };
+  }
+
+  const bumpCompare = () => store.getState().setCompareRun({ version: store.getState().compareRun.version + 1 });
+
+  /**
+   * Measure the alignment from small greyscale proxies of the two preview bitmaps (the
+   * originals are never decoded for this). The result is cached against the inputs it
+   * depended on, so moving a slider, changing sensitivity or drawing an ignore region never
+   * re-measures anything.
+   */
+  async function alignCompare(force = false): Promise<CompareAlignEstimate> {
+    const { settings, idA, idB, fileA, fileB, sizeA, sizeB, pair } = compareContext();
+    const key = compareAlignKey(settings, sizeA, sizeB);
+    if (!force) {
+      const cached = compareAnalyses.alignment(pair, key);
+      if (cached) return cached;
+    }
+    if (settings.alignment.mode === "off") {
+      const off: CompareAlignEstimate = { status: "off", dx: 0, dy: 0, scale: 1, score: 0, confidence: "high", method: "off", analysisScale: 1 };
+      compareAnalyses.setAlignment(pair, key, off);
+      store.getState().setCompareRun({ pair, align: { status: "idle", error: undefined } });
+      bumpCompare();
+      return off;
+    }
+    const jobId = `compare-align:${pair}`;
+    job(jobId, "compare-align", "running", null);
+    store.getState().setCompareRun({ pair, align: { status: "running", error: undefined } });
+    try {
+      const [{ compareLayout }, { compareProxies }, { alignGray }, { ALIGN_ANALYSIS_WIDTH }] = await Promise.all([
+        import("@/core/compare/layout"),
+        import("@/core/compare/draw"),
+        import("@/core/compare/align"),
+        import("@/core/compare/presets"),
+      ]);
+      const bitmapA = registry.preview(idA);
+      const bitmapB = registry.preview(idB);
+      if (!bitmapA || !bitmapB) {
+        // Previews are still being generated; do NOT cache this, so it is measured properly
+        // the moment they arrive.
+        job(jobId, "compare-align", "done", 1);
+        store.getState().setCompareRun({ pair, align: { status: "idle", error: undefined } });
+        return { status: "failed", dx: 0, dy: 0, scale: 1, score: 0, confidence: "low", method: settings.alignment.mode, analysisScale: 1, reason: "too-small" };
+      }
+      let estimate: CompareAlignEstimate;
+      {
+        // Measure from the UNALIGNED placement, so the estimate is absolute.
+        const unaligned = { ...settings, alignment: { mode: "off" as const, dx: 0, dy: 0, scale: 1 } };
+        const layout = compareLayout(unaligned, { size: sizeA, name: fileA.name }, { size: sizeB, name: fileB.name }, null);
+        const proxies = compareProxies(
+          layout,
+          { image: bitmapA, imageScale: bitmapA.width / fileA.width },
+          { image: bitmapB, imageScale: bitmapB.width / fileB.width },
+          ALIGN_ANALYSIS_WIDTH,
+          compareCanvas,
+        );
+        estimate = proxies
+          ? alignGray(proxies.a, proxies.b, { mode: settings.alignment.mode, analysisScale: 1 / Math.max(0.0001, proxies.scale) })
+          : { status: "failed", dx: 0, dy: 0, scale: 1, score: 0, confidence: "low", method: settings.alignment.mode, analysisScale: 1, reason: "no-texture" };
+      }
+      compareAnalyses.setAlignment(pair, key, estimate);
+      store.getState().setCompareRun({ pair, align: { status: estimate.status === "failed" ? "failed" : "done", error: estimate.reason } });
+      bumpCompare();
+      job(jobId, "compare-align", "done", 1);
+      return estimate;
+    } catch (error) {
+      const code = codeOf(error);
+      job(jobId, "compare-align", "failed", null, code);
+      store.getState().setCompareRun({ pair, align: { status: "failed", error: code } });
+      // A failed measurement is never fatal: the comparison simply runs unaligned.
+      const failure: CompareAlignEstimate = { status: "failed", dx: 0, dy: 0, scale: 1, score: 0, confidence: "low", method: settings.alignment.mode, analysisScale: 1, reason: "low-score" };
+      compareAnalyses.setAlignment(pair, key, failure);
+      bumpCompare();
+      return failure;
+    }
+  }
+
+  function resetCompareAlignment(): void {
+    const s = store.getState();
+    if (!s.compare.a || !s.compare.b) return;
+    compareAnalyses.clearAlignment(comparePairKey(s.compare.a, s.compare.b));
+    s.setCompareRun({ align: { status: "idle", error: undefined } });
+    bumpCompare();
+  }
+
+  /**
+   * OCR both screenshots and diff the visible text. OCR results already in this session are
+   * reused, so a second run on the same pair is just the comparison. Stages are the real ones;
+   * there is no synthetic percentage, because OCR cannot report one meaningfully here.
+   */
+  async function analyseCompareText(onStage?: (stage: string) => void): Promise<CompareTextDiff> {
+    const { idA, idB, pair } = compareContext();
+    await cancelCompareText(true);
+    const abort = new AbortController();
+    activeCompareTextAbort = abort;
+    const jobId = `compare-text:${pair}`;
+    job(jobId, "compare-text", "running", null);
+    const stage = (text: string) => {
+      onStage?.(text);
+      store.getState().setCompareRun({ pair, text: { status: "running", progress: null, stage: text, error: undefined } });
+    };
+    const guard = () => {
+      if (abort.signal.aborted) throw Object.assign(new Error("COMPARE_CANCELLED"), { code: "COMPARE_CANCELLED" });
+    };
+    try {
+      const started = typeof performance !== "undefined" ? performance.now() : Date.now();
+      stage("Reading before…");
+      let ocrA = ocrResults.forAsset(idA);
+      if (!ocrA) {
+        stage("Extracting text from before…");
+        ocrA = (await extractText(idA, undefined, true)).result;
+      }
+      guard();
+      stage("Reading after…");
+      let ocrB = ocrResults.forAsset(idB);
+      if (!ocrB) {
+        stage("Extracting text from after…");
+        ocrB = (await extractText(idB, undefined, true)).result;
+      }
+      guard();
+      stage("Comparing visible text…");
+      const { diffOcrText } = await import("@/core/compare/text-diff");
+      const diff = diffOcrText(ocrA, ocrB, started);
+      guard();
+      compareAnalyses.setTextDiff(pair, diff);
+      store.getState().setCompareRun({ pair, text: { status: "done", progress: null, stage: undefined, error: undefined } });
+      bumpCompare();
+      job(jobId, "compare-text", "done", 1);
+      toast({
+        type: "success",
+        message: "Text compared",
+        description: diff.changes.length ? `${diff.changes.length} visible text change${diff.changes.length === 1 ? "" : "s"} found.` : "No visible text change was detected.",
+      });
+      return diff;
+    } catch (error) {
+      const raw = codeOf(error);
+      const cancelled = raw === "COMPARE_CANCELLED" || raw === "OCR_CANCELLED" || raw === "CANCELLED" || abort.signal.aborted;
+      const code = cancelled ? "COMPARE_CANCELLED" : raw.startsWith("OCR_") ? raw : "COMPARE_TEXT_FAILED";
+      job(jobId, "compare-text", cancelled ? "cancelled" : "failed", null, code);
+      store.getState().setCompareRun({ pair, text: { status: cancelled ? "cancelled" : "failed", progress: null, stage: undefined, error: code } });
+      // The visual comparison is untouched by a text-diff failure, and stays on screen.
+      if (!cancelled) toast({ type: "error", message: "Text comparison failed", description: "The visual comparison is unaffected. Both screenshots stayed on this device." });
+      throw Object.assign(new Error(code), { code });
+    } finally {
+      if (activeCompareTextAbort === abort) activeCompareTextAbort = null;
+    }
+  }
+
+  async function cancelCompareText(silent = false): Promise<void> {
+    const active = activeCompareTextAbort;
+    if (!active) return;
+    active.abort();
+    activeCompareTextAbort = null;
+    await cancelOcr(undefined, true);
+    store.getState().setCompareRun({ text: { status: "cancelled", progress: null, stage: undefined } });
+    if (!silent) toast({ type: "info", message: "Text comparison cancelled" });
+  }
+
+  function publishCompareAnalysis(analysis: CompareVisualAnalysis | null): void {
+    const s = store.getState();
+    if (!s.compare.a || !s.compare.b) return;
+    compareAnalyses.setVisual(comparePairKey(s.compare.a, s.compare.b), analysis);
+  }
+
+  /**
+   * Headless measurement: build the difference view at a bounded analysis width, run the
+   * same engine the preview runs, publish the result. No new comparison logic lives here.
+   */
+  async function measureCompare(maxWidth = 1200): Promise<CompareVisualAnalysis | null> {
+    const { settings, idA, idB, fileA, fileB, sizeA, sizeB, pair } = compareContext();
+    const bitmapA = registry.preview(idA);
+    const bitmapB = registry.preview(idB);
+    if (!bitmapA || !bitmapB) return null;
+    const estimate = settings.alignment.mode === "off" ? null : await alignCompare();
+    const [{ compareLayout }, { drawCompare }] = await Promise.all([import("@/core/compare/layout"), import("@/core/compare/draw")]);
+    const layout = compareLayout(
+      { ...settings, mode: settings.mode === "heatmap" ? "heatmap" : "difference", labels: false },
+      { size: sizeA, name: fileA.name },
+      { size: sizeB, name: fileB.name },
+      estimate,
+    );
+    const scale = Math.min(1, maxWidth / layout.canvas.width);
+    const width = Math.max(1, Math.round(layout.canvas.width * scale));
+    const height = Math.max(1, Math.round(layout.canvas.height * scale));
+    const canvas = compareCanvas(width, height);
+    try {
+      const ctx = canvas.getContext("2d", { willReadFrequently: true }) as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
+      if (!ctx) return null;
+      const analysis = drawCompare(
+        ctx as never,
+        layout,
+        { image: bitmapA, imageScale: bitmapA.width / fileA.width },
+        { image: bitmapB, imageScale: bitmapB.width / fileB.width },
+        width,
+        height,
+        { createCanvas: compareCanvas },
+      );
+      const textDiff = compareAnalyses.textDiff(pair);
+      let enriched = analysis;
+      if (analysis && textDiff?.changes.length) {
+        const { applyTextChanges } = await import("@/core/compare/analysis");
+        enriched = applyTextChanges(analysis, textDiff, { a: layout.a, b: layout.b });
+      }
+      compareAnalyses.setVisual(pair, enriched);
+      bumpCompare();
+      return enriched;
+    } finally {
+      canvas.width = 0;
+      canvas.height = 0;
+    }
+  }
+
+  /**
+   * Bounded PNG renders of the views the report includes, drawn from the preview bitmaps
+   * through the SAME layout the preview uses. Bounded on purpose: a report does not need
+   * full-resolution pages, and this keeps the peak memory of generating one small.
+   */
+  async function compareReportImages(estimate: CompareAlignEstimate | null, maxWidth = 1400): Promise<{ before?: Blob; after?: Blob; difference?: Blob; heatmap?: Blob }> {
+    const { settings, idA, idB, fileA, fileB, sizeA, sizeB } = compareContext();
+    const bitmapA = registry.preview(idA);
+    const bitmapB = registry.preview(idB);
+    if (!bitmapA || !bitmapB) return {};
+    const [{ compareLayout }, { drawCompare }] = await Promise.all([import("@/core/compare/layout"), import("@/core/compare/draw")]);
+    const sourceA = { image: bitmapA, imageScale: bitmapA.width / fileA.width };
+    const sourceB = { image: bitmapB, imageScale: bitmapB.width / fileB.width };
+
+    const single = async (bitmap: ImageBitmap) => {
+      const scale = Math.min(1, maxWidth / bitmap.width);
+      const width = Math.max(1, Math.round(bitmap.width * scale));
+      const height = Math.max(1, Math.round(bitmap.height * scale));
+      const canvas = compareCanvas(width, height);
+      try {
+        const ctx = canvas.getContext("2d") as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
+        if (!ctx) return undefined;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(bitmap, 0, 0, width, height);
+        return (await encodeCanvas(canvas, "png")) ?? undefined;
+      } finally {
+        canvas.width = 0;
+        canvas.height = 0;
+      }
+    };
+
+    const view = async (mode: "difference" | "heatmap") => {
+      const layout = compareLayout({ ...settings, mode, labels: true }, { size: sizeA, name: fileA.name }, { size: sizeB, name: fileB.name }, estimate);
+      const scale = Math.min(1, maxWidth / layout.canvas.width);
+      const width = Math.max(1, Math.round(layout.canvas.width * scale));
+      const height = Math.max(1, Math.round(layout.canvas.height * scale));
+      const canvas = compareCanvas(width, height);
+      try {
+        const ctx = canvas.getContext("2d", { willReadFrequently: true }) as CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D | null;
+        if (!ctx) return undefined;
+        drawCompare(ctx as never, layout, sourceA, sourceB, width, height, { createCanvas: compareCanvas });
+        return (await encodeCanvas(canvas, "png")) ?? undefined;
+      } finally {
+        canvas.width = 0;
+        canvas.height = 0;
+      }
+    };
+
+    return {
+      before: await single(bitmapA),
+      after: await single(bitmapB),
+      difference: await view("difference"),
+      heatmap: await view("heatmap"),
+    };
+  }
+
+  /**
+   * Build and download the Shotexa Visual Comparison Report. "json" is the machine-readable
+   * summary only; "pdf" is the document; "zip" packages the images, the PDF and the JSON.
+   */
+  async function exportCompareReport(kind: CompareReportKind, options: { download?: boolean } = {}): Promise<{ blob: Blob; name: string }> {
+    const { settings, idA, idB, fileA, fileB, pair } = compareContext();
+    activeCompareReportAbort?.abort();
+    const abort = new AbortController();
+    activeCompareReportAbort = abort;
+    const jobId = `compare-report:${pair}`;
+    job(jobId, "compare-report", "running", null);
+    const setStage = (text: string) => store.getState().setCompareRun({ pair, report: { status: "running", kind, stage: text, error: undefined } });
+    setStage("Collecting measurements…");
+    try {
+      const [{ buildCompareSummary, summaryToJson }, { COMPARE_REPORT_NAMES }] = await Promise.all([import("@/core/compare/summary"), import("@/core/compare/presets")]);
+      const estimate = settings.alignment.mode === "off" ? null : await alignCompare();
+      // A report always carries a measurement, even if the user never opened Difference.
+      if (!compareAnalyses.visual(pair)) {
+        setStage("Measuring the difference…");
+        await measureCompare();
+      }
+      const [alphaA, alphaB] = await Promise.all([hasTransparency(idA), hasTransparency(idB)]);
+      const summary = buildCompareSummary({
+        a: { name: fileA.name, width: fileA.width, height: fileA.height, bytes: fileA.bytes, type: fileA.type, transparent: alphaA },
+        b: { name: fileB.name, width: fileB.width, height: fileB.height, bytes: fileB.bytes, type: fileB.type, transparent: alphaB },
+        settings,
+        alignment: estimate,
+        analysis: compareAnalyses.visual(pair),
+        textDiff: compareAnalyses.textDiff(pair),
+      });
+      if (abort.signal.aborted) throw Object.assign(new Error("COMPARE_CANCELLED"), { code: "COMPARE_CANCELLED" });
+      let blob: Blob;
+      let name: string;
+      if (kind === "json") {
+        blob = new Blob([summaryToJson(summary)], { type: "application/json;charset=utf-8" });
+        name = COMPARE_REPORT_NAMES.json;
+      } else {
+        setStage("Rendering comparison views…");
+        const images = await compareReportImages(estimate);
+        if (abort.signal.aborted) throw Object.assign(new Error("COMPARE_CANCELLED"), { code: "COMPARE_CANCELLED" });
+        setStage("Writing the PDF…");
+        const { createCompareReportPdf, createCompareReportZip } = await import("@/core/compare/report");
+        const pdf = await createCompareReportPdf({ summary, images, signal: abort.signal });
+        if (kind === "pdf") {
+          blob = pdf;
+          name = COMPARE_REPORT_NAMES.pdf;
+        } else {
+          setStage("Packaging the report…");
+          blob = (await createCompareReportZip({ summary, images, pdf, signal: abort.signal })).blob;
+          name = COMPARE_REPORT_NAMES.zip;
+        }
+      }
+      compareAnalyses.setReport(pair, { kind, name, blob, createdAt: Date.now() });
+      store.getState().setCompareRun({ pair, report: { status: "done", kind, stage: undefined, error: undefined } });
+      bumpCompare();
+      job(jobId, "compare-report", "done", 1);
+      if (options.download !== false) downloadBlob(blob, name);
+      return { blob, name };
+    } catch (error) {
+      const raw = codeOf(error);
+      const cancelled = raw === "COMPARE_CANCELLED" || abort.signal.aborted;
+      const code = cancelled ? "COMPARE_CANCELLED" : raw === "ZIP_TOO_LARGE" || raw === "ZIP_EMPTY" || raw === "ZIP_CREATE_FAILED" ? raw : "COMPARE_REPORT_FAILED";
+      job(jobId, "compare-report", cancelled ? "cancelled" : "failed", null, code);
+      store.getState().setCompareRun({ pair, report: { status: cancelled ? "idle" : "failed", kind, stage: undefined, error: code } });
+      if (!cancelled) toast({ type: "error", message: "Report not created", description: "The comparison itself is unaffected. Try the JSON summary, or a smaller comparison." });
+      throw Object.assign(new Error(code), { code });
+    } finally {
+      if (activeCompareReportAbort === abort) activeCompareReportAbort = null;
+    }
+  }
+
   async function exportBeautified(assetId?: FileId): Promise<EditorExportResult> {
     const { id: sourceId, file, blob } = selected(assetId);
     const s = store.getState();
     const source = { width: file.width, height: file.height };
     const { DEFAULT_BEAUTIFY } = await import("@/core/beautify/presets");
     const settings = s.beautify.byAsset[sourceId] ?? DEFAULT_BEAUTIFY;
+    const resourceIds = [...new Set([...settings.composition.assetIds, settings.branding.assetId, settings.background.assetId].filter((id): id is string => !!id && id !== sourceId))];
+    const resources = resourceIds.flatMap((id) => {
+      const resourceFile = s.files[id];
+      const resourceBlob = registry.blob(id);
+      return resourceFile && resourceBlob ? [{ id, image: resourceBlob, source: { width: resourceFile.width, height: resourceFile.height } }] : [];
+    });
     const { format, quality } = s.exportSettings;
     const jobId = `beautify:${Date.now()}`;
     job(jobId, "beautify-export", "running", 0);
     try {
       const onProgress = (progress: number) => job(jobId, "beautify-export", "running", progress);
       const result = caps.offscreenCanvas
-        ? await broker.run("image", "beautify.export", { image: blob, settings, source, format, quality }, { onProgress })
+        ? await broker.run("image", "beautify.export", { image: blob, settings, source, resources, format, quality }, { onProgress })
         : await (await import("@/core/beautify/render")).renderBeautified(blob, settings, {
             source,
+            resources,
             format,
             quality,
             createCanvas: (width, height) => Object.assign(document.createElement("canvas"), { width, height }),
             yieldBetweenTiles: timeSlicer(),
             onProgress,
           });
-      // The whole source is decoded whatever the output size: size the recycle by the larger.
-      if (Math.max(result.width * result.height, source.width * source.height) > 16_000_000) broker.release("image");
+      // Every selected local resource is decoded for this composition; recycle by their total.
+      if (Math.max(result.width * result.height, source.width * source.height + resources.reduce((total, resource) => total + resource.source.width * resource.source.height, 0)) > 16_000_000) broker.release("image");
       const mime: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
       const base = file.name.replace(/\.[^.]+$/, "").replace(/^beautified-/, "");
       const id = newId();
@@ -743,7 +1281,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
         height: result.height,
         source: "artifact",
         kind: "artifact",
-        derivedFrom: [sourceId],
+        derivedFrom: [sourceId, ...resourceIds],
         producedBy: "beautify",
         addedAt: Date.now(),
         previewVersion: 0,
@@ -774,12 +1312,13 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
       const onProgress = (progress: number) => job(jobId, "encode", "running", progress);
       const result = caps.offscreenCanvas
         ? await broker.run("image", "image.encode", { image: blob, ...input }, { onProgress })
-        : await (await import("@/core/image-encode/reencode")).encodeImage(blob, {
+        : await track(async () => (await import("@/core/image-encode/reencode")).encodeImage(blob, {
             ...input,
+            signal: pageAbort.signal,
             createCanvas: (width, height) => Object.assign(document.createElement("canvas"), { width, height }),
             yieldBetweenTiles: timeSlicer(),
             onProgress,
-          });
+          }));
       if (source.width * source.height > 16_000_000) broker.release("image");
       job(jobId, "encode", "done", 1);
       const mime: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
@@ -924,7 +1463,25 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
           let width = source.width;
           let height = source.height;
           let changed: boolean | undefined;
-          if (operation === "privacy") {
+          if (operation === "background") {
+            try {
+              await removeBackground(id, () => onProgress(0.35), true);
+              if (abort.signal.aborted) throw Object.assign(new Error("BACKGROUND_CANCELLED"), { code: "BACKGROUND_CANCELLED" });
+              const removed = await renderBackgroundAsset(id, {
+                ...DEFAULT_BACKGROUND_REMOVAL,
+                edge: { ...DEFAULT_BACKGROUND_REMOVAL.edge },
+                background: { kind: "transparent" },
+                subject: { ...DEFAULT_BACKGROUND_REMOVAL.subject, padding: settings.background.padding },
+                trim: settings.background.trim,
+              }, "png", 1, undefined, abort.signal);
+              output = removed.blob;
+              width = removed.width;
+              height = removed.height;
+            } finally {
+              // Batch has no mask editor; release each alpha plane before the next inference.
+              backgroundMasks.remove(id);
+            }
+          } else if (operation === "privacy") {
             const cleaned = caps.offscreenCanvas
               ? await broker.run("image", "metadata.clean", { image: blob, name: source.name, type: source.type }, { signal: abort.signal })
               : await (await import("@/core/metadata/run")).runMetadataClean(blob, source.name, source.type);
@@ -985,7 +1542,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
           };
           // The worker is deliberately retained for small files, but a large decoded heap is
           // recycled before the next item (Spike B/Phase 2K).
-          if (source.width * source.height > 16_000_000) broker.release("image");
+          if (source.width * source.height > 16_000_000) broker.release(operation === "background" ? "background" : "image");
           return result;
         },
         abort.signal,
@@ -1002,6 +1559,13 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
       const cancelled = abort.signal.aborted || summary.cancelled > 0;
       store.getState().setBatchRun(cancelled ? "cancelled" : "completed", null);
       job(jobId, "batch", cancelled ? "cancelled" : "done", cancelled ? null : 1);
+      if (!cancelled) {
+        if (summary.failed > 0) {
+          toast({ type: "warning", message: "Batch completed with errors", description: `${summary.completed} processed, ${summary.failed} failed.` });
+        } else {
+          toast({ type: "success", message: "Batch completed", description: `${summary.completed} files processed.` });
+        }
+      }
       return summary;
     } finally {
       activeBatchAbort = null;
@@ -1009,7 +1573,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
   }
 
   function runBatch(ids = store.getState().batch.selectedIds) { return executeBatch(ids, true); }
-  function cancelBatch() { activeBatchAbort?.abort(); }
+  function cancelBatch() { activeBatchAbort?.abort(); activeBackgroundAbort?.abort(); broker.release("background"); toast({ type: "info", message: "Batch processing cancelled" }); }
   function resetBatch() { activeBatchAbort?.abort(); batchResults.clear(); store.getState().resetBatchResults(); }
   function retryBatchFailed() {
     const s = store.getState().batch;
@@ -1158,7 +1722,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     }
   }
 
-  async function extractText(assetId?: FileId, language?: OcrLanguageChoice): Promise<WorkspaceOcrResult> {
+  async function extractText(assetId?: FileId, language?: OcrLanguageChoice, silent = false): Promise<WorkspaceOcrResult> {
     const { id, blob } = selected(assetId);
     const choice = language ?? store.getState().ocr.language;
     if (activeOcrAsset) await cancelOcr(activeOcrAsset);
@@ -1202,6 +1766,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
         durationMs: result.timings.totalMs,
       });
       job(jobId, "ocr", "done", 1);
+      if (!silent) toast({ type: "success", message: "Text extracted", description: "Text is ready to copy or download." });
       return { resultId, result };
     } catch (error) {
       const code = timedOut ? "OCR_TIMEOUT" : codeOf(error);
@@ -1211,6 +1776,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
       } else {
         store.getState().failOcr(id, code);
         job(jobId, "ocr", "failed", null, code);
+        if (!silent) toast({ type: "error", message: "Extraction failed", description: "Could not extract text from this image." });
       }
       throw Object.assign(new Error(code), { code });
     } finally {
@@ -1222,7 +1788,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     }
   }
 
-  async function cancelOcr(assetId?: FileId): Promise<void> {
+  async function cancelOcr(assetId?: FileId, silent = false): Promise<void> {
     const id = assetId ?? activeOcrAsset;
     if (!id) return;
     store.getState().cancelOcr(id);
@@ -1233,6 +1799,161 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
       activeOcrAsset = null;
     }
     await ocrService?.cancel();
+    if (!silent) toast({ type: "info", message: "Text extraction cancelled" });
+  }
+
+  async function extractStructuredData(assetId: FileId, options: StructuredAnalysisOptions = {}, onStage?: (stage: string) => void): Promise<StructuredExtraction> {
+    activeStructuredAbort?.abort();
+    const abort = new AbortController();
+    activeStructuredAbort = abort;
+    const jobId = `structured:${assetId}`;
+    job(jobId, "structured-data", "running", null);
+    try {
+      onStage?.("Reading screenshot…");
+      let ocr = ocrResults.forAsset(assetId);
+      if (!ocr) {
+        onStage?.("Extracting text…");
+        ocr = (await extractText(assetId, undefined, true)).result;
+      }
+      if (abort.signal.aborted) throw Object.assign(new Error("STRUCTURED_CANCELLED"), { code: "STRUCTURED_CANCELLED" });
+      onStage?.("Analyzing structure…");
+      await Promise.resolve();
+      // Loaded here, not at module scope: the table/key-value analyser and the privacy
+      // detector tables are tens of KB that every workspace page would otherwise carry.
+      const { analyseStructuredData } = await import("@/core/structured-data/analyse");
+      const result = analyseStructuredData({ assetId, ocr, options });
+      if (abort.signal.aborted) throw Object.assign(new Error("STRUCTURED_CANCELLED"), { code: "STRUCTURED_CANCELLED" });
+      onStage?.("Preparing data…");
+      structuredResults.put(result);
+      job(jobId, "structured-data", "done", 1);
+      return result;
+    } catch (error) {
+      const code = abort.signal.aborted ? "STRUCTURED_CANCELLED" : codeOf(error);
+      job(jobId, "structured-data", code === "STRUCTURED_CANCELLED" ? "cancelled" : "failed", null, code);
+      throw Object.assign(new Error(code), { code });
+    } finally {
+      if (activeStructuredAbort === abort) activeStructuredAbort = null;
+    }
+  }
+
+  function cancelStructuredData(): void {
+    activeStructuredAbort?.abort();
+    activeStructuredAbort = null;
+    if (activeOcrAsset) void cancelOcr(activeOcrAsset, true);
+  }
+
+  async function scanPrivacy(assetId: FileId, config: PrivacyScanConfig, onStage?: (stage: string) => void): Promise<PrivacyScanResult> {
+    const selectedAsset = selected(assetId);
+    activePrivacyAbort?.abort();
+    const abort = new AbortController();
+    activePrivacyAbort = abort;
+    const jobId = `privacy-scan:${assetId}`;
+    job(jobId, "privacy-scan", "running", null);
+    try {
+      onStage?.("Reading screenshot…");
+      let ocr = ocrResults.forAsset(assetId);
+      if (!ocr) {
+        onStage?.("Extracting text…");
+        ocr = (await extractText(assetId, undefined, true)).result;
+      }
+      if (abort.signal.aborted) throw Object.assign(new Error("PRIVACY_SCAN_CANCELLED"), { code: "PRIVACY_SCAN_CANCELLED" });
+      const { buildPrivacyScan } = await import("@/core/privacy/scan");
+      const result = await buildPrivacyScan({ assetId, blob: selectedAsset.blob, ocr, config, signal: abort.signal, onStage });
+      privacyScans.put(result);
+      job(jobId, "privacy-scan", "done", 1);
+      toast({ type: "success", message: "Privacy scan complete", description: `${result.findings.length} possible sensitive item${result.findings.length === 1 ? "" : "s"} found. Review before redacting.` });
+      return result;
+    } catch (error) {
+      const code = (error as { code?: string }).code ?? "PRIVACY_SCAN_FAILED";
+      if (code === "PRIVACY_SCAN_CANCELLED" || abort.signal.aborted) {
+        job(jobId, "privacy-scan", "cancelled", null, "PRIVACY_SCAN_CANCELLED");
+        toast({ type: "info", message: "Detection cancelled" });
+        throw Object.assign(new Error("PRIVACY_SCAN_CANCELLED"), { code: "PRIVACY_SCAN_CANCELLED" });
+      }
+      job(jobId, "privacy-scan", "failed", null, "PRIVACY_SCAN_FAILED");
+      toast({ type: "error", message: "Scan failed", description: "Shotexa could not complete the local privacy scan. Manual redaction is still available." });
+      throw Object.assign(new Error("PRIVACY_SCAN_FAILED"), { code: "PRIVACY_SCAN_FAILED" });
+    } finally { if (activePrivacyAbort === abort) activePrivacyAbort = null; }
+  }
+
+  async function cancelPrivacyScan(): Promise<void> {
+    const active = activePrivacyAbort;
+    active?.abort();
+    activePrivacyAbort = null;
+    if (active) await cancelOcr(undefined, true);
+  }
+
+  async function removeBackground(assetId: FileId, onStage?: (stage: string) => void, silent = false): Promise<SegmentationResult> {
+    const { file, blob } = selected(assetId);
+    activeBackgroundAbort?.abort();
+    const abort = new AbortController();
+    activeBackgroundAbort = abort;
+    const jobId = `background:${assetId}`;
+    job(jobId, "background-remove", "running", null);
+    try {
+      const result = caps.offscreenCanvas
+        ? await broker.run("background", "background.remove", { image: blob }, { signal: abort.signal, onProgress: (_progress, stage) => { if (stage) onStage?.(stage); } })
+        : await (await import("@/core/background-removal/inference")).segmentImage(blob, location.origin, abort.signal, onStage, (width, height) => Object.assign(document.createElement("canvas"), { width, height }));
+      if (abort.signal.aborted) throw Object.assign(new Error("BACKGROUND_CANCELLED"), { code: "BACKGROUND_CANCELLED" });
+      backgroundMasks.put(assetId, result);
+      // Avoid retaining the inference heap beside a later full-resolution canvas on large files.
+      if (file.width * file.height > 16_000_000) broker.release("background");
+      job(jobId, "background-remove", "done", 1);
+      if (!silent) toast({ type: "success", message: "Background removed", description: "Review the mask and refine any edges before exporting." });
+      return result;
+    } catch (error) {
+      const code = abort.signal.aborted ? "BACKGROUND_CANCELLED" : codeOf(error);
+      job(jobId, "background-remove", code === "BACKGROUND_CANCELLED" || code === "CANCELLED" ? "cancelled" : "failed", null, code);
+      if (!silent && code !== "BACKGROUND_CANCELLED" && code !== "CANCELLED") toast({ type: "error", message: code === "BACKGROUND_MODEL_LOAD_FAILED" ? "Model unavailable" : "Background removal failed", description: "The image stayed on this device. Retry, or check that this browser can run local WebAssembly." });
+      throw Object.assign(new Error(code), { code });
+    } finally { if (activeBackgroundAbort === abort) activeBackgroundAbort = null; }
+  }
+
+  function cancelBackgroundRemoval(): void {
+    activeBackgroundAbort?.abort();
+    activeBackgroundAbort = null;
+    // Inference itself is not cooperatively interruptible; terminate the isolated worker.
+    broker.release("background");
+    toast({ type: "info", message: "Background removal cancelled" });
+  }
+
+  async function renderBackgroundAsset(assetId: FileId, settings: BackgroundRemovalSettings, format: OutputFormat, quality: number, backgroundImage?: Blob, signal = new AbortController().signal): Promise<BackgroundRemovalRenderResult> {
+    const { file, blob } = selected(assetId);
+    const mask = backgroundMasks.materialize(assetId);
+    const entry = backgroundMasks.get(assetId);
+    if (!mask || !entry) throw Object.assign(new Error("BACKGROUND_MASK_MISSING"), { code: "BACKGROUND_MASK_MISSING" });
+    const input = { image: blob, source: { width: file.width, height: file.height }, mask: { data: mask, width: entry.result.width, height: entry.result.height }, settings, format, quality, backgroundImage };
+    return caps.offscreenCanvas
+      ? broker.run("background", "background.export", input, { signal })
+      : (await import("@/core/background-removal/render")).renderRemovedBackground(blob, { ...input, createCanvas: (width, height) => Object.assign(document.createElement("canvas"), { width, height }), signal });
+  }
+
+  async function exportRemovedBackground(assetId: FileId, settings: BackgroundRemovalSettings = DEFAULT_BACKGROUND_REMOVAL, backgroundImage?: Blob): Promise<EditorExportResult> {
+    const { file } = selected(assetId);
+    const { format, quality } = store.getState().exportSettings;
+    const abort = new AbortController();
+    const jobId = `background-export:${assetId}:${Date.now()}`;
+    job(jobId, "background-export", "running", null);
+    try {
+      const result = await renderBackgroundAsset(assetId, settings, format, quality, backgroundImage, abort.signal);
+      const type: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
+      const id = newId();
+      const extension = format === "jpeg" ? "jpg" : format;
+      registry.put(id, result.blob);
+      store.getState().addArtifact({ id, name: `background-removed-${file.name.replace(/\.[^.]+$/, "")}.${extension}`, type, bytes: result.blob.size, width: result.width, height: result.height, source: "artifact", kind: "artifact", derivedFrom: [assetId], producedBy: "remove-background", addedAt: Date.now(), previewVersion: 0 });
+      // Keep the reviewed source active so its mask, completion summary and refinement
+      // history remain visible. Continue With explicitly selects the derived artifact.
+      store.getState().select(assetId);
+      job(jobId, "background-export", "done", 1);
+      previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
+      if (result.width * result.height > 16_000_000) broker.release("background");
+      toast({ type: "success", message: "Export ready", description: `${result.width} × ${result.height} ${format.toUpperCase()} created locally.` });
+      return { id, width: result.width, height: result.height, bytes: result.blob.size, sourceId: assetId };
+    } catch (error) {
+      const code = codeOf(error);
+      job(jobId, "background-export", "failed", null, code);
+      throw Object.assign(new Error(code), { code });
+    }
   }
 
   async function planPdf(inputIds: FileId[], setup: PageSetup, smart: boolean, edits: Record<FileId, PdfBreakEdit> = {}): Promise<PaginationPlan> {
@@ -1355,6 +2076,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
       store.getState().addDocument(document);
       store.getState().setPdfStatus("ready", 1, "PDF ready");
       job("pdf:export", "pdf-export", "done", 1);
+      toast({ type: "success", message: "PDF generated", description: document.name });
       return { id, blob: result.blob, bytes: result.blob.size, pages: result.pages, ms: result.ms, path: result.path };
     } catch (error) {
       const code = codeOf(error);
@@ -1362,6 +2084,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
       if (activePdfAbort === abort) {
         store.getState().setPdfStatus(cancelled ? "cancelled" : "failed", null, undefined, cancelled ? "PDF_CANCELLED" : code);
         job("pdf:export", "pdf-export", cancelled ? "cancelled" : "failed", null, code);
+        if (!cancelled) toast({ type: "error", message: "PDF generation failed", description: "Could not create the PDF file." });
       }
       throw Object.assign(new Error(code), { code });
     } finally {
@@ -1379,6 +2102,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     pdfEngine?.dispose();
     pdfEngine = null;
     store.getState().setPdfStatus("cancelled", null, undefined, "PDF_CANCELLED");
+    toast({ type: "info", message: "PDF generation cancelled" });
   }
 
   // Reordering changes which screenshots are adjacent: re-run the (cheap) overlap hint.
@@ -1390,8 +2114,12 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     store,
     registry,
     ocrResults,
+    structuredResults,
+    privacyScans,
     pdfAnalyses,
     batchResults,
+    backgroundMasks,
+    compareAnalyses,
     broker,
     caps,
     ingest,
@@ -1414,6 +2142,13 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     addSplitPieces,
     exportBeautified,
     exportCompare,
+    alignCompare,
+    resetCompareAlignment,
+    analyseCompareText,
+    cancelCompareText,
+    publishCompareAnalysis,
+    measureCompare,
+    exportCompareReport,
     encodeAsset,
     compareEncodeFormats,
     saveEncoded,
@@ -1423,6 +2158,13 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     cleanMetadata,
     extractText,
     cancelOcr,
+    extractStructuredData,
+    cancelStructuredData,
+    scanPrivacy,
+    cancelPrivacyScan,
+    removeBackground,
+    cancelBackgroundRemoval,
+    exportRemovedBackground,
     planPdf,
     pdfSafeYs,
     exportPdf,
@@ -1436,12 +2178,22 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
     addBatchResults,
     dispose() {
       disposed = true;
+      pageAbort.abort();
+      pageEvents?.removeEventListener("pagehide", onPageHide);
+      pageEvents?.removeEventListener("pageshow", onPageShow);
+      pageEvents?.removeEventListener("beforeunload", onBeforeUnload);
+      pageEvents?.removeEventListener("pointerdown", onStillHere);
+      pageEvents?.removeEventListener("keydown", onStillHere);
       unsubscribe();
       store.getState().clear();
       registry.clear();
       ocrResults.clear();
+      structuredResults.clear();
+      privacyScans.clear();
       pdfAnalyses.clear();
       batchResults.clear();
+      backgroundMasks.clear();
+      compareAnalyses.clear();
       void ocrService?.dispose();
       ocrService = null;
       pdfEngine?.dispose();
@@ -1452,7 +2204,7 @@ export function createWorkspaceRuntime(opts: { broker?: WorkerBroker; caps?: Cap
 }
 
 /** Save a Blob that is not (yet) in the registry, e.g. a rendered Split piece. */
-export function downloadBlob(blob: Blob, name: string): void {
+export function downloadBlob(blob: Blob, name: string, silent = false): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -1460,6 +2212,7 @@ export function downloadBlob(blob: Blob, name: string): void {
   document.body.appendChild(a);
   a.click();
   a.remove();
+  if (!silent) toast({ type: "success", message: "Download started", description: name });
   // The click has started the download; give the browser a moment before releasing the URL.
   setTimeout(() => URL.revokeObjectURL(url), 30_000);
 }
@@ -1469,14 +2222,15 @@ export function downloadBlob(blob: Blob, name: string): void {
  * programmatic downloads; some ask once to allow "multiple downloads" from the page.
  */
 export async function downloadBlobs(files: { blob: Blob; name: string }[], gapMs = 250): Promise<void> {
+  toast({ type: "success", message: "Download started", description: `Downloading ${files.length} files...` });
   for (let i = 0; i < files.length; i++) {
-    downloadBlob(files[i].blob, files[i].name);
+    downloadBlob(files[i].blob, files[i].name, true);
     if (i < files.length - 1) await new Promise((resolve) => setTimeout(resolve, gapMs));
   }
 }
 
 /** Save a registry asset through a temporary link; the object URL is owned by the registry. */
-export function downloadAsset(runtime: WorkspaceRuntime, id: FileId): void {
+export function downloadAsset(runtime: WorkspaceRuntime, id: FileId, silent = false): void {
   const state = runtime.store.getState();
   const f = state.files[id] ?? state.documents[id];
   const url = runtime.registry.objectUrl(id);
@@ -1487,4 +2241,11 @@ export function downloadAsset(runtime: WorkspaceRuntime, id: FileId): void {
   document.body.appendChild(a);
   a.click();
   a.remove();
+  if (!silent) {
+    if (f.bytes > 15 * 1024 * 1024) {
+      toast({ type: "info", message: "Download started", description: `${f.name} is ${(f.bytes / (1024 * 1024)).toFixed(1)} MB and may take a moment.` });
+    } else {
+      toast({ type: "success", message: "Download started", description: f.name });
+    }
+  }
 }

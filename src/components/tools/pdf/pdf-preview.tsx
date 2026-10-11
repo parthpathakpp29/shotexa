@@ -124,7 +124,7 @@ export function PdfPreview({ inputIds, files, plan, selected, disabled, onSelect
                             onMove(assetId, active.breakIndex, active.startY + (event.clientY - active.startClientY) / active.scale, { snap: true, coalesce: true });
                           }}
                           className={cn(
-                            "absolute inset-x-[-8px] z-10 h-6 -translate-y-1/2 cursor-ns-resize touch-none outline-none after:absolute after:inset-x-0 after:top-1/2 after:border-t-2 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:cursor-default",
+                            "absolute inset-x-[-8px] z-10 h-6 -translate-y-1/2 cursor-ns-resize max-md:h-11 touch-none outline-none after:absolute after:inset-x-0 after:top-1/2 after:border-t-2 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:cursor-default",
                             kind === "high" && "after:border-success",
                             kind === "review" && "after:border-warning",
                             kind === "manual" && "after:border-accent",

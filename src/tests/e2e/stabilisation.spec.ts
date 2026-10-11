@@ -15,6 +15,11 @@ import { PDFDocument } from "pdf-lib";
 import { PNG } from "pngjs";
 import { gzipSync } from "node:zlib";
 import { FIXTURE_DIR } from "../helpers/stitch-fixtures";
+import { sitemapPaths, STATIC_ROUTES } from "@/config/routes";
+import { LIVE_TOOLS, TOOLS, UPCOMING_TOOLS } from "@/config/tools";
+
+/** Mirrors the homepage's own number words so the assertion follows the registry, not copy. */
+const TOOL_WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty"];
 
 type RGB = [number, number, number];
 type RGBA = [number, number, number, number];
@@ -306,6 +311,54 @@ test.describe("cross-tool chains without re-upload", () => {
     expect([rowAt(0), rowAt(399), rowAt(400 + gap), rowAt(799 + gap), rowAt(p.height - 1)]).toEqual([0, 399, 400, 799, 1199]);
     await expectNewestSelected(page, 5);
   });
+
+  test("Remove Background \u2192 Beautifier, with the original still in the workspace", async ({ page, browserName }) => {
+    // The V2.0E handoff: the removal result must arrive in the Beautifier as its own
+    // workspace image. One engine is enough here \u2014 local inference is covered
+    // cross-browser by the Background Remover suite itself.
+    test.skip(browserName !== "chromium", "Local U\u00b2-Net inference is covered cross-browser by its own suite.");
+    test.setTimeout(420_000);
+    const { errors, outbound } = watch(page);
+    await page.goto("/remove-background");
+    await page.getByTestId("file-input").setInputFiles(png("subject.png", 240, 240, (x, y) => ((x - 120) ** 2 + (y - 120) ** 2 < 70 ** 2 ? [230, 60, 40, 255] : [245, 245, 245, 255])));
+    await expect(page.getByTestId("background-removal-workspace")).toBeVisible({ timeout: 30_000 });
+    await page.getByRole("button", { name: "Remove background", exact: true }).click();
+    await expect(page.getByText("Mask ready", { exact: true }).first()).toBeVisible({ timeout: 300_000 });
+    await page.getByRole("group", { name: "Export format" }).getByRole("button", { name: "PNG", exact: true }).click();
+    const removed = await exportDownload(page, "background-removal-result");
+    expect(signature(removed.buffer)).toBe("png");
+
+    await continueTo(page, "background-removal-result", /Beautifier/, /\/screenshot-beautifier$/);
+    await expect(page.getByTestId("beautify-stage")).toBeVisible({ timeout: 60_000 });
+    // The removal result is a second workspace image: the upload was not consumed.
+    await expect(page.getByTestId("file-item")).toHaveCount(2);
+    const composed = await exportDownload(page, "beautify-result");
+    expect(signature(composed.buffer)).toBe("png");
+    expect(PNG.sync.read(composed.buffer).width).toBeGreaterThan(0);
+    expect(outbound).toEqual([]);
+    expect(errors).toEqual([]);
+  });
+
+  test("Compare difference \u2192 Annotate, with both originals still in the workspace", async ({ page }) => {
+    const { errors, outbound } = watch(page);
+    await page.goto("/compare-screenshots");
+    await page.getByTestId("file-input").setInputFiles([
+      png("before.png", 200, 150, () => [40, 80, 200, 255]),
+      png("after.png", 200, 150, (x, y) => (x > 120 && y > 90 ? [220, 40, 40, 255] : [40, 80, 200, 255])),
+    ]);
+    await expect(page.getByTestId("compare-stage")).toBeVisible({ timeout: 30_000 });
+    await page.getByRole("radiogroup", { name: "Comparison view" }).getByRole("radio", { name: "Difference", exact: true }).click();
+    await expect(page.getByTestId("compare-difference-stats")).toContainText("changed", { timeout: 30_000 });
+    const out = await exportDownload(page, "compare-result");
+    expect(signature(out.buffer)).toBe("png");
+
+    await continueTo(page, "compare-result", /Annotate/, /\/annotate-screenshot$/);
+    await expect(page.getByTestId("annotate-canvas")).toBeVisible({ timeout: 30_000 });
+    // Both originals plus the difference image: nothing was consumed or re-uploaded.
+    await expect(page.getByTestId("file-item")).toHaveCount(3);
+    expect(outbound).toEqual([]);
+    expect(errors).toEqual([]);
+  });
 });
 
 test.describe("shared encoder regression", () => {
@@ -411,58 +464,179 @@ test.describe("shared encoder regression", () => {
 });
 
 test.describe("product surface", () => {
-  test("every sitemap route works; tools page and menu list every tool with no 'Coming soon'", async ({ page, request }) => {
+  test("the sitemap IS the route registry: every indexable route, nothing else, all reachable", async ({ request }) => {
     const xml = await (await request.get("/sitemap.xml")).text();
-    const paths = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => new URL(m[1]).pathname);
-    expect(paths.length).toBe(19);
+    const locs = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+    const paths = locs.map((loc) => new URL(loc).pathname);
+
+    // Derived from the registry, never a magic number: the sitemap and `sitemapPaths()` are
+    // the same set, so adding a tool or a static page cannot silently miss the sitemap.
+    expect([...paths].sort()).toEqual([...sitemapPaths()].sort());
+    expect(new Set(paths).size, "duplicate <loc> entries").toBe(paths.length);
+    // Absolute, same host, and the homepage is the bare origin rather than a trailing slash.
+    for (const loc of locs) expect(loc, `absolute canonical URL for ${loc}`).toMatch(/^https?:\/\/[^/]+(\/|$)/);
+    expect(new Set(locs.map((loc) => new URL(loc).origin)).size, "mixed hosts in the sitemap").toBe(1);
+
+    // Every listed route must actually exist.
     for (const path of paths) expect((await request.get(path)).status(), path).toBe(200);
-    for (const synonym of ["/png-to-jpg", "/jpg-to-png", "/webp-to-png", "/split-screenshot", "/crop-screenshot", "/add-arrow-to-screenshot", "/highlight-screenshot", "/batch-compress", "/batch-convert", "/bulk-resize", "/bulk-screenshot-tools"]) {
+
+    // Live tools are all listed; anything not yet live stays reachable for workspace
+    // continuity but must stay out of the sitemap.
+    for (const id of LIVE_TOOLS) expect(paths, `${id} missing from sitemap`).toContain(TOOLS[id].route);
+    for (const id of UPCOMING_TOOLS) {
+      expect(paths, `${id} must not be indexed while it is ${TOOLS[id].status}`).not.toContain(TOOLS[id].route);
+      expect((await request.get(TOOLS[id].route)).status(), TOOLS[id].route).toBe(200);
+    }
+    for (const route of STATIC_ROUTES.filter((item) => !item.indexable)) expect(paths).not.toContain(route.path);
+    // Internal spike pages are never product surface.
+    expect(paths.filter((path) => path.startsWith("/spikes"))).toEqual([]);
+
+    // Synonym routes are deliberately absent: one intent, one page.
+    for (const synonym of ["/png-to-jpg", "/jpg-to-png", "/webp-to-png", "/split-screenshot", "/crop-screenshot", "/add-arrow-to-screenshot", "/highlight-screenshot", "/batch-compress", "/batch-convert", "/bulk-resize", "/bulk-screenshot-tools", "/before-after-screenshot", "/screenshot-diff", "/background-remover", "/screenshot-table-to-excel"]) {
       expect((await request.get(synonym)).status(), synonym).toBe(404);
     }
     const robots = await (await request.get("/robots.txt")).text();
     expect(robots).toMatch(/Sitemap: .*\/sitemap\.xml/);
+  });
 
-    const toolRoutes = paths.filter((p) => !["/", "/tools", "/privacy"].includes(p));
+  test("tools page, homepage index and the tool switcher all list exactly the live registry", async ({ page }) => {
+    const liveRoutes = LIVE_TOOLS.map((id) => TOOLS[id].route);
     await page.goto("/tools");
     await expect(page.getByText(/coming soon/i)).toHaveCount(0);
-    for (const route of toolRoutes) await expect(page.locator(`main a[href="${route}"]`).first()).toBeVisible();
+    for (const route of liveRoutes) await expect(page.locator(`main a[href="${route}"]`).first()).toBeVisible();
 
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /Sixteen Tools/ })).toBeVisible();
-    await expect(page.getByText(/on the way|what’s coming/i)).toHaveCount(0);
+    // The headline counts the registry rather than repeating a number that can go stale.
+    await expect(page.getByTestId("home-toolbox")).toContainText(new RegExp(`${TOOL_WORDS[LIVE_TOOLS.length] ?? LIVE_TOOLS.length} tools`, "i"));
+    await expect(page.getByText(/on the way|coming soon/i)).toHaveCount(0);
+    for (const route of liveRoutes) await expect(page.locator(`a[href="${route}"]`).first()).toBeVisible();
 
     await page.goto("/compress-screenshot");
     await page.getByTestId("file-input").setInputFiles(solid("a.png", 50, 50, RED));
     await page.getByRole("button", { name: "Compress", exact: true }).click();
     const menu = page.getByRole("menu", { name: "Switch tool" });
-    await expect(menu.getByRole("menuitem")).toHaveCount(toolRoutes.length);
-    await expect(menu.getByText(/coming soon|soon/i)).toHaveCount(0);
+    await expect(menu.getByRole("menuitem")).toHaveCount(liveRoutes.length + UPCOMING_TOOLS.length);
+    await expect(menu.getByText(/coming soon|soon/i)).toHaveCount(UPCOMING_TOOLS.length);
   });
 
-  test("homepage loads no heavy engine or tool implementation; record its JS weight", async ({ page }) => {
+  test("every internal link on every indexable route resolves", async ({ page, request }) => {
+    const seen = new Set<string>();
+    for (const path of sitemapPaths()) {
+      await page.goto(path);
+      const hrefs = await page.evaluate(() =>
+        [...document.querySelectorAll("a[href]")]
+          .map((a) => (a as HTMLAnchorElement).getAttribute("href") ?? "")
+          .filter((href) => href.startsWith("/") && !href.startsWith("//")),
+      );
+      for (const href of hrefs) seen.add(href.split("#")[0].split("?")[0] || "/");
+    }
+    expect(seen.size).toBeGreaterThan(20);
+    for (const href of [...seen].sort()) {
+      expect((await request.get(href)).status(), `broken internal link: ${href}`).toBeLessThan(400);
+    }
+  });
+
+  test("the homepage ships no heavy engine, model or tool renderer before the user asks", async ({ page }) => {
     const urls: string[] = [];
-    const scripts: { url: string; body: Buffer }[] = [];
+    const initial: Buffer[] = [];
+    const prefetched: Buffer[] = [];
+    let loaded = false;
     page.on("request", (r) => urls.push(r.url()));
     page.on("response", async (r) => {
-      if (r.request().resourceType() === "script") scripts.push({ url: r.url(), body: await r.body().catch(() => Buffer.alloc(0)) });
+      if (r.request().resourceType() !== "script") return;
+      (loaded ? prefetched : initial).push(await r.body().catch(() => Buffer.alloc(0)));
     });
     await page.goto("/", { waitUntil: "load" });
+    loaded = true;
     await page.waitForTimeout(3000);
-    // The page's own UI fonts (/_next/static/media) are expected; engines, models, workers and
-    // the Hindi PDF font (/vendor/pdf/Hind-Regular.ttf) must wait for intent.
-    expect(urls.filter((u) => /opencv|tesseract|traineddata|\.wasm|\/vendor\/|hind-regular|\.worker/i.test(u))).toEqual([]);
-    const text = scripts.map((s) => s.body.toString("utf8"));
-    const markers = {
+
+    // No engine, model, worker or vendor asset at any point: those wait for intent. The
+    // page's own UI fonts (/_next/static/media) are expected.
+    expect(urls.filter((u) => /opencv|tesseract|traineddata|\.wasm|\/vendor\/|u2netp|ort-wasm|hind-regular|\.worker/i.test(u))).toEqual([]);
+
+    // Nothing tool-specific in what the browser must parse before the page is usable. Next
+    // prefetches linked routes AFTER load, which is navigation cost rather than first-paint
+    // cost — but a renderer must never sit in the initial payload of a page that cannot use it.
+    const before = initial.map((b) => b.toString("utf8"));
+    const after = [...initial, ...prefetched].map((b) => b.toString("utf8"));
+    const initialOnly = {
       "pdf-lib": "PDFDocument.create",
       fontkit: "fontkit",
-      "Annotation renderer": "Screenshot annotation canvas",
-      "Split tool": "Every row of the original is in exactly one piece",
-      "Compress/Convert": "PNG is lossless: every pixel is kept exactly",
+      "annotation renderer": "Screenshot annotation canvas",
+      "redaction renderer": "Screenshot redaction canvas",
+      "privacy detector tables": "Authorization header",
+      "compare report writer": "measured locally in the browser",
+      "split tool": "Every row of the original is in exactly one piece",
+      "compress/convert": "PNG is lossless: every pixel is kept exactly",
     };
-    for (const [name, marker] of Object.entries(markers)) expect(text.filter((t) => t.includes(marker)).length, name).toBe(0);
-    const raw = scripts.reduce((n, s) => n + s.body.length, 0);
-    const gzip = scripts.reduce((n, s) => n + gzipSync(s.body).length, 0);
-    test.info().annotations.push({ type: "homepage-js", description: `${scripts.length} scripts · ${(raw / 1024).toFixed(1)} KB raw · ${(gzip / 1024).toFixed(1)} KB gzip` });
-    console.log(`homepage JS: ${scripts.length} scripts, ${(raw / 1024).toFixed(1)} KB raw, ${(gzip / 1024).toFixed(1)} KB gzip`);
+    for (const [name, marker] of Object.entries(initialOnly)) {
+      expect(before.filter((t) => t.includes(marker)).length, `${name} in the initial homepage bundle`).toBe(0);
+    }
+    // These must not even be prefetched: they are engines, not screens.
+    for (const [name, marker] of Object.entries({ "pdf-lib": "PDFDocument.create", fontkit: "fontkit" })) {
+      expect(after.filter((t) => t.includes(marker)).length, `${name} anywhere on the homepage`).toBe(0);
+    }
+
+    const raw = initial.reduce((n, b) => n + b.length, 0);
+    const gzip = initial.reduce((n, b) => n + gzipSync(b).length, 0);
+    const prefetchRaw = prefetched.reduce((n, b) => n + b.length, 0);
+    // A ceiling, not a target: it exists so a stray static import cannot quietly double the
+    // first load. Raise it deliberately, with a measurement, never to make a run pass.
+    expect(gzip, "initial homepage JS (gzip)").toBeLessThan(260 * 1024);
+    test.info().annotations.push({ type: "homepage-js", description: `${initial.length} scripts · ${(raw / 1024).toFixed(1)} KB raw · ${(gzip / 1024).toFixed(1)} KB gzip · prefetch ${(prefetchRaw / 1024).toFixed(1)} KB` });
+    console.log(`homepage JS: initial ${initial.length} scripts, ${(raw / 1024).toFixed(1)} KB raw, ${(gzip / 1024).toFixed(1)} KB gzip; prefetch ${(prefetchRaw / 1024).toFixed(1)} KB`);
+  });
+
+  test("each tool route carries only its own engine code", async ({ page }) => {
+    // One screen must not drag another tool's renderer or detector tables with it.
+    const cases: { route: string; forbidden: Record<string, string> }[] = [
+      { route: "/screenshot-editor", forbidden: { "privacy detector tables": "Authorization header", "compare report writer": "measured locally in the browser", "pdf-lib": "PDFDocument.create" } },
+      { route: "/screenshot-to-text", forbidden: { "privacy detector tables": "Authorization header", "annotation renderer": "Screenshot annotation canvas", "pdf-lib": "PDFDocument.create" } },
+      { route: "/compare-screenshots", forbidden: { "privacy detector tables": "Authorization header", "pdf-lib": "PDFDocument.create", fontkit: "fontkit" } },
+      { route: "/remove-background", forbidden: { "privacy detector tables": "Authorization header", "annotation renderer": "Screenshot annotation canvas", "pdf-lib": "PDFDocument.create" } },
+    ];
+    for (const { route, forbidden } of cases) {
+      const initial: Buffer[] = [];
+      let loaded = false;
+      const onResponse = async (r: import("@playwright/test").Response) => {
+        if (r.request().resourceType() === "script" && !loaded) initial.push(await r.body().catch(() => Buffer.alloc(0)));
+      };
+      page.on("response", onResponse);
+      await page.goto(route, { waitUntil: "load" });
+      loaded = true;
+      await page.waitForTimeout(1500);
+      page.off("response", onResponse);
+      const text = initial.map((b) => b.toString("utf8"));
+      for (const [name, marker] of Object.entries(forbidden)) {
+        expect(text.filter((t) => t.includes(marker)).length, `${name} in the initial bundle of ${route}`).toBe(0);
+      }
+    }
+  });
+
+  test("heavy engines are fetched only once the feature that needs them is used", async ({ page }) => {
+    test.setTimeout(300_000);
+    const urls: string[] = [];
+    page.on("request", (r) => urls.push(r.url()));
+    const fetched = (pattern: RegExp) => urls.filter((u) => pattern.test(u));
+
+    await page.goto("/screenshot-to-text");
+    await page.getByTestId("file-input").setInputFiles(RECEIPT);
+    await expect(page.getByTestId("ocr-workspace")).toBeVisible({ timeout: 30_000 });
+    expect(fetched(/tesseract|traineddata/i), "OCR engine fetched before extraction").toEqual([]);
+    await page.getByTestId("extract-text").click();
+    await expect(page.getByTestId("ocr-result-text")).toBeVisible({ timeout: 180_000 });
+    expect(fetched(/tesseract/i).length, "OCR engine never fetched").toBeGreaterThan(0);
+    // OCR must not drag the other engines in with it.
+    expect(fetched(/opencv|u2netp|ort-wasm/i)).toEqual([]);
+
+    urls.length = 0;
+    await page.goto("/compare-screenshots");
+    await page.getByTestId("file-input").setInputFiles([solid("a.png", 80, 60, RED), solid("b.png", 80, 60, BLUE)]);
+    await expect(page.getByTestId("compare-stage")).toBeVisible({ timeout: 30_000 });
+    await page.getByRole("radiogroup", { name: "Alignment mode" }).getByRole("radio", { name: "Auto", exact: true }).click();
+    await expect(page.getByTestId("compare-align-result")).toBeVisible({ timeout: 30_000 });
+    // Compare Pro aligns with its own TypeScript matcher: OpenCV stays unloaded.
+    expect(fetched(/opencv/i), "Compare loaded OpenCV").toEqual([]);
+    expect(fetched(/u2netp|ort-wasm|tesseract/i)).toEqual([]);
   });
 });

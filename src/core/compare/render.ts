@@ -18,7 +18,7 @@ import { decodeSource } from "@/core/image-transform/render";
 import type { Size } from "@/core/image-transform/types";
 import { drawCompare } from "./draw";
 import { compareLayout } from "./layout";
-import { CompareError, type CompareSettings } from "./types";
+import { CompareError, type CompareAlignEstimate, type CompareSettings, type CompareVisualAnalysis } from "./types";
 
 type Canvas = OffscreenCanvas | HTMLCanvasElement;
 
@@ -27,6 +27,12 @@ export interface CompareRenderOptions {
   b: Size;
   format: OutputFormat;
   quality?: number;
+  /**
+   * The alignment measured at preview resolution. The export applies exactly the same
+   * transform (it is expressed in cell pixels, which are resolution-independent), so the
+   * saved file is the preview at full size — never a second, differently aligned comparison.
+   */
+  alignment?: CompareAlignEstimate | null;
   createCanvas?: (width: number, height: number) => Canvas;
   signal?: { readonly aborted: boolean };
   onProgress?: (progress: number) => void;
@@ -37,6 +43,8 @@ export interface CompareRenderResult {
   width: number;
   height: number;
   ms: number;
+  /** Full-resolution measurement, when the rendered view produced one. */
+  analysis: CompareVisualAnalysis | null;
 }
 
 const release = (canvas: Canvas | null) => {
@@ -57,7 +65,7 @@ export function compareIssue(canvas: Size, mode: CompareSettings["mode"], a: Siz
 
 export async function renderCompare(imageA: Blob, imageB: Blob, settings: CompareSettings, o: CompareRenderOptions): Promise<CompareRenderResult> {
   const started = performance.now();
-  const layout = compareLayout(settings, { size: o.a, name: "" }, { size: o.b, name: "" });
+  const layout = compareLayout(settings, { size: o.a, name: "" }, { size: o.b, name: "" }, o.alignment ?? null);
   const out = layout.canvas;
   if (compareIssue(out, layout.mode, o.a, o.b)) throw new CompareError("COMPARE_TOO_LARGE", `${out.width}x${out.height}`);
   const make = o.createCanvas ?? ((w: number, h: number) => new OffscreenCanvas(w, h));
@@ -65,6 +73,7 @@ export async function renderCompare(imageA: Blob, imageB: Blob, settings: Compar
   let bitmapB: ImageBitmap | null = null;
   let canvas: Canvas | null = null;
   let blob: Blob;
+  let analysis: CompareVisualAnalysis | null = null;
   try {
     bitmapA = await decodeSource(imageA, o.a);
     o.onProgress?.(0.25);
@@ -74,7 +83,7 @@ export async function renderCompare(imageA: Blob, imageB: Blob, settings: Compar
     canvas = make(out.width, out.height);
     const ctx = canvas.getContext("2d", { willReadFrequently: layout.mode === "difference" || layout.mode === "heatmap" });
     if (!ctx) throw new EncodeError("ENCODE_MEMORY_PRESSURE", "2d context unavailable");
-    drawCompare(ctx as never, layout, { image: bitmapA, imageScale: 1 }, { image: bitmapB, imageScale: 1 }, out.width, out.height, { scale: 1, createCanvas: make });
+    analysis = drawCompare(ctx as never, layout, { image: bitmapA, imageScale: 1 }, { image: bitmapB, imageScale: 1 }, out.width, out.height, { scale: 1, createCanvas: make });
     o.onProgress?.(0.8);
     blob = (await encodeCanvas(canvas, o.format, o.quality)) ?? (() => {
       throw new EncodeError("ENCODE_MEMORY_PRESSURE", "encoder returned null");
@@ -91,5 +100,5 @@ export async function renderCompare(imageA: Blob, imageB: Blob, settings: Compar
   const size = await readImageSize(blob);
   if (!size || size.width !== out.width || size.height !== out.height) throw new EncodeError("ENCODE_VERIFY_FAILED", `${size?.width}x${size?.height}`);
   o.onProgress?.(1);
-  return { blob, width: out.width, height: out.height, ms: Math.round(performance.now() - started) };
+  return { blob, width: out.width, height: out.height, ms: Math.round(performance.now() - started), analysis };
 }

@@ -35,7 +35,10 @@ export function createWorkerClient(factory: () => Worker) {
       else if (msg.type === "CANCELLED") job.reject(new WorkerJobError("CANCELLED"));
       else job.reject(new WorkerJobError(msg.code));
     });
-    worker.addEventListener("error", () => {
+    worker.addEventListener("error", (event) => {
+      // Handled here — every waiting job is rejected — so it must not also surface as an
+      // uncaught page error (e.g. a worker script whose load the page's teardown cancelled).
+      event.preventDefault();
       for (const job of pending.values()) job.reject(new WorkerJobError("WORKER_CRASHED"));
       pending.clear();
       worker?.terminate();

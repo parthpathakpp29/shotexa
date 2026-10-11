@@ -167,7 +167,7 @@
     outline-offset: 2px;
     border-radius: var(--radius-xs);
   }
-  /* Serif italic accent in headings ("Screenshots", "Execute Any Tool."). */
+  /* Serif italic accent in editorial headings. */
   em.accent {
     font-style: italic;
     color: var(--accent);
@@ -187,6 +187,53 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toast-countdown {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+/* Calm interaction feedback only: no decorative marketing choreography. */
+.is-dragging svg { animation: uploader-lift 420ms var(--ease-out) both; }
+@keyframes uploader-lift {
+  50% { transform: translateY(-3px); }
+}
+
+/* Product demo enters as one composed surface, rather than animating its individual contents. */
+.product-demo-copy,
+.product-demo-frame {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
+}
+.product-demo-frame {
+  transform: translateY(16px) scale(0.98);
+  transition-delay: 70ms;
+}
+.product-demo-section[data-entered="true"] .product-demo-copy,
+.product-demo-section[data-entered="true"] .product-demo-frame {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .product-demo-copy,
+  .product-demo-frame {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 
@@ -241,4 +288,27 @@
   background-image: linear-gradient(45deg, #efeae2 25%, transparent 25%), linear-gradient(-45deg, #efeae2 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #efeae2 75%), linear-gradient(-45deg, transparent 75%, #efeae2 75%);
   background-size: 16px 16px;
   background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+}
+@keyframes beautify-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes beautify-slide { from { opacity: .25; transform: translate(calc(var(--beautify-motion-x) * 28px * var(--beautify-motion)), calc(var(--beautify-motion-y) * 28px * var(--beautify-motion))); } to { opacity: 1; transform: translate(0, 0); } }
+@keyframes beautify-zoom { from { opacity: .4; transform: scale(calc(1 - .14 * var(--beautify-motion))); } to { opacity: 1; transform: scale(1); } }
+@keyframes beautify-float { from { transform: translateY(calc(-8px * var(--beautify-motion))) rotate(-.2deg); } to { transform: translateY(calc(8px * var(--beautify-motion))) rotate(.2deg); } }
+@keyframes beautify-pan { from { transform: translate(calc(-10px * var(--beautify-motion)), 0) scale(1.01); } to { transform: translate(calc(10px * var(--beautify-motion)), 0) scale(1.03); } }
+@keyframes beautify-parallax { from { transform: translate(calc(-8px * var(--beautify-motion)), calc(4px * var(--beautify-motion))) scale(1.01); } to { transform: translate(calc(8px * var(--beautify-motion)), calc(-4px * var(--beautify-motion))) scale(1.025); } }
+@keyframes beautify-tilt { from { transform: perspective(900px) rotateY(calc(-3deg * var(--beautify-motion))); } to { transform: perspective(900px) rotateY(calc(3deg * var(--beautify-motion))); } }
+@keyframes beautify-rotate-3d { from { transform: perspective(900px) rotateX(calc(-2deg * var(--beautify-motion))) rotateY(calc(-5deg * var(--beautify-motion))); } to { transform: perspective(900px) rotateX(calc(2deg * var(--beautify-motion))) rotateY(calc(5deg * var(--beautify-motion))); } }
+@keyframes beautify-orbit { from { transform: translate(calc(-7px * var(--beautify-motion)), 0) rotate(calc(-1deg * var(--beautify-motion))); } to { transform: translate(calc(7px * var(--beautify-motion)), calc(-5px * var(--beautify-motion))) rotate(calc(1deg * var(--beautify-motion))); } }
+
+.beautify-motion[data-animation="fade-in"] { animation-name: beautify-fade-in; }
+.beautify-motion[data-animation="slide-up"] { animation-name: beautify-slide; }
+.beautify-motion[data-animation="zoom-in"] { animation-name: beautify-zoom; }
+.beautify-motion[data-animation="float"] { animation-name: beautify-float; }
+.beautify-motion[data-animation="slow-pan"] { animation-name: beautify-pan; }
+.beautify-motion[data-animation="parallax"] { animation-name: beautify-parallax; }
+.beautify-motion[data-animation="tilt"] { animation-name: beautify-tilt; }
+.beautify-motion[data-animation="rotate-3d"] { animation-name: beautify-rotate-3d; }
+.beautify-motion[data-animation="orbit"] { animation-name: beautify-orbit; }
+
+@media (prefers-reduced-motion: reduce) {
+  .beautify-motion { animation: none !important; transform: none !important; }
 }
