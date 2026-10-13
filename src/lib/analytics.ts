@@ -3,6 +3,7 @@ import { toolByRoute, type ToolId } from "@/config/tools";
 
 export const GA_MEASUREMENT_ID = "G-912D4G6Z2B";
 export const ANALYTICS_PREFERENCE_KEY = "shotexa.analytics-consent.v1";
+export const VERCEL_ANALYTICS_OPT_OUT_KEY = "shotexa.vercel-analytics-opt-out.v1";
 
 export type AnalyticsPreference = "accepted" | "rejected" | null;
 export type AnalyticsEvent = "tool_opened" | "upload_completed" | "export_completed" | "workflow_completed";
@@ -37,6 +38,30 @@ export function saveAnalyticsPreference(value: Exclude<AnalyticsPreference, null
   }
 }
 
+/** Preserve a rejection saved when the old control covered both services. */
+export function vercelAnalyticsEnabled(previousGoogleChoice?: AnalyticsPreference): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const saved = window.localStorage.getItem(VERCEL_ANALYTICS_OPT_OUT_KEY);
+    if (saved === null && previousGoogleChoice === "rejected") {
+      window.localStorage.setItem(VERCEL_ANALYTICS_OPT_OUT_KEY, "true");
+      return false;
+    }
+    return saved !== "true";
+  } catch {
+    return false;
+  }
+}
+
+export function saveVercelAnalyticsEnabled(enabled: boolean): boolean {
+  try {
+    window.localStorage.setItem(VERCEL_ANALYTICS_OPT_OUT_KEY, enabled ? "false" : "true");
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Only known public paths reach GA. Query strings, hashes and arbitrary user paths never do. */
 export function safeAnalyticsPath(pathname: string): string | null {
   const path = pathname.length > 1 ? pathname.replace(/\/$/, "") : pathname;
@@ -52,6 +77,19 @@ export function safeAnalyticsUrl(url: string): string | null {
     return path ? `${window.location.origin}${path}` : null;
   } catch {
     return null;
+  }
+}
+
+/** The SDK sends document.referrer separately from beforeSend's URL field. */
+export function safeVercelReferrer(referrer: string): boolean {
+  if (!referrer) return true;
+  if (typeof window === "undefined") return false;
+  try {
+    const parsed = new URL(referrer);
+    if (!/^https?:$/.test(parsed.protocol) || parsed.username || parsed.password || parsed.search || parsed.hash) return false;
+    return parsed.origin === window.location.origin ? safeAnalyticsPath(parsed.pathname) !== null : parsed.pathname === "/";
+  } catch {
+    return false;
   }
 }
 

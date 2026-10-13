@@ -31,12 +31,16 @@ const POINTS = [
     body: "When you export, the file is created in your browser and saved through your browser’s normal download. Where it goes from there is up to you.",
   },
   {
-    title: "Optional analytics",
-    body: "If you accept analytics, Shotexa loads Google Analytics 4 (Google LLC) to count visits and basic actions: opening a tool, adding a screenshot, starting an export download and finishing a workflow. It uses analytics cookies and receives the public page path, without query strings, and the tool ID when you open a tool. Vercel Analytics counts page views on known public pages; it does not receive query strings or unknown routes. We do not send screenshots, filenames, recognised text, detected secrets, extracted data or your workflow inputs. We do not use advertising personalization. Google may also receive standard browser and device information when its tag runs.",
+    title: "Cookieless Vercel Analytics",
+    body: "Where permitted, Vercel Web Analytics automatically counts visits to known public pages for basic traffic statistics. It does not use cookies. Vercel may process the public page URL, time, referring site, approximate location, browser, operating system and device type, and uses a short-lived request hash to estimate visitors. Shotexa strips query strings, fragments and credentials from page URLs and excludes unknown routes and unsafe referrers. We do not send screenshots, filenames, recognised text, detected secrets, extracted data or workflow inputs. You can turn Vercel Analytics off through Analytics choices in the footer.",
+  },
+  {
+    title: "Optional Google Analytics",
+    body: "Google Analytics 4 (Google LLC) loads only after you explicitly accept it. It uses analytics cookies to count public page views and approved actions: opening a tool, adding a screenshot, starting an export download and finishing a workflow. It receives an allowlisted public page URL without query strings or fragments, and a validated tool ID when you open a tool. Google may also receive standard browser and device information. Shotexa disables advertising consent, advertising personalisation and Google Signals.",
   },
   {
     title: "Your analytics choice",
-    body: "Analytics is off until you choose Accept analytics. If you reject, Shotexa does not load Google Analytics or Vercel Analytics. We save your choice in this browser's local storage; you can change it later through Analytics choices in the footer. Rejecting after accepting reloads the page to remove the tags. This choice does not affect any screenshot tool.",
+    body: "Accept Google Analytics enables Google Analytics; Reject Google Analytics or ignoring the choice keeps it off. Vercel Analytics continues independently unless you turn it off with its separate control. If you rejected analytics under our earlier combined choice, we keep Vercel Analytics off until you turn it on. Your choices are saved in this browser's local storage and can be changed through Analytics choices in the footer. Switching off either service reloads the page to stop its tag. None of these choices affects the screenshot tools.",
   },
 ];
 

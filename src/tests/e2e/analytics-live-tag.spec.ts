@@ -2,19 +2,19 @@ import { expect, test } from "@playwright/test";
 
 // Opt-in network check for the actual Google tag. The normal suite uses a local
 // collector mock so it remains deterministic and sends no CI traffic to GA4.
-test("rejection sends no real analytics requests", async ({ page }) => {
+test("rejection sends no real Google Analytics requests", async ({ page }) => {
   test.skip(process.env.E2E_REAL_GA4 !== "1", "Run with E2E_REAL_GA4=1 in a network-enabled environment");
-  const analyticsRequests: string[] = [];
+  const googleRequests: string[] = [];
   page.on("request", (request) => {
-    if (/googletagmanager\.com|google-analytics\.com|va\.vercel-scripts\.com|\/_vercel\/insights\/|\/3e5b8101dc4b4d62\/view/.test(request.url())) analyticsRequests.push(request.url());
+    if (/googletagmanager\.com|google-analytics\.com/.test(request.url())) googleRequests.push(request.url());
   });
   await page.goto("/?private=must-not-send");
-  expect(analyticsRequests).toEqual([]);
-  await page.getByRole("button", { name: "Reject analytics" }).click();
+  expect(googleRequests).toEqual([]);
+  await page.getByRole("button", { name: "Reject Google Analytics" }).click();
   await page.goto("/tools");
   await expect(page).toHaveURL(/\/tools$/);
   expect(await page.evaluate(() => localStorage.getItem("shotexa.analytics-consent.v1"))).toBe("rejected");
-  expect(analyticsRequests).toEqual([]);
+  expect(googleRequests).toEqual([]);
 });
 
 test("the real Google tag emits sanitized GA4 requests for accepted navigation", async ({ page }) => {
@@ -41,7 +41,7 @@ test("the real Google tag emits sanitized GA4 requests for accepted navigation",
 
   await page.goto("/?private=must-not-send");
   expect(collectionUrls).toEqual([]);
-  await page.getByRole("button", { name: "Accept analytics" }).click();
+  await page.getByRole("button", { name: "Accept Google Analytics" }).click();
   await expect.poll(() => tagResponses, { timeout: 30_000 }).toContain(200);
   await expect.poll(() => collectionUrls.length, { timeout: 30_000 }).toBe(1);
   await expect.poll(() => collectionResponses.length, { timeout: 30_000 }).toBe(1);

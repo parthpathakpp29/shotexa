@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { analyticsPreference, configureAnalytics, safeAnalyticsPath, safeAnalyticsUrl, saveAnalyticsPreference, trackAnalyticsEvent, trackPageView } from "@/lib/analytics";
+import { analyticsPreference, configureAnalytics, safeAnalyticsPath, safeAnalyticsUrl, safeVercelReferrer, saveAnalyticsPreference, saveVercelAnalyticsEnabled, trackAnalyticsEvent, trackPageView, vercelAnalyticsEnabled } from "@/lib/analytics";
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -23,6 +23,41 @@ describe("analytics privacy boundary", () => {
     expect(safeAnalyticsUrl("https://user:pass@shotexa.com/privacy")).toBe("https://shotexa.com/privacy");
     expect(safeAnalyticsUrl("/private/secret-123")).toBeNull();
     expect(safeAnalyticsUrl("not a url%")).toBeNull();
+  });
+
+  it("blocks unsafe referrers that the Vercel SDK would send separately", () => {
+    vi.stubGlobal("window", { location: { origin: "https://shotexa.com" } });
+    expect(safeVercelReferrer("")).toBe(true);
+    expect(safeVercelReferrer("https://shotexa.com/tools")).toBe(true);
+    expect(safeVercelReferrer("https://news.example/")).toBe(true);
+    expect(safeVercelReferrer("https://shotexa.com/tools?token=secret")).toBe(false);
+    expect(safeVercelReferrer("https://shotexa.com/private/user-file")).toBe(false);
+    expect(safeVercelReferrer("https://news.example/private-user-page")).toBe(false);
+    expect(safeVercelReferrer("https://news.example/#private")).toBe(false);
+    expect(safeVercelReferrer("https://user:password@news.example/")).toBe(false);
+    expect(safeVercelReferrer("not-a-url")).toBe(false);
+  });
+
+  it("persists a separate Vercel objection and fails closed if storage is unavailable", () => {
+    const values = new Map<string, string>();
+    vi.stubGlobal("window", { localStorage: {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => { values.set(key, value); },
+    } });
+    expect(vercelAnalyticsEnabled()).toBe(true);
+    expect(saveVercelAnalyticsEnabled(false)).toBe(true);
+    expect(vercelAnalyticsEnabled()).toBe(false);
+    expect(saveVercelAnalyticsEnabled(true)).toBe(true);
+    expect(vercelAnalyticsEnabled()).toBe(true);
+    values.delete("shotexa.vercel-analytics-opt-out.v1");
+    values.set("shotexa.analytics-consent.v1", "rejected");
+    expect(vercelAnalyticsEnabled("rejected")).toBe(false);
+    expect(values.get("shotexa.vercel-analytics-opt-out.v1")).toBe("true");
+    expect(saveVercelAnalyticsEnabled(true)).toBe(true);
+    expect(vercelAnalyticsEnabled("rejected")).toBe(true);
+    vi.stubGlobal("window", { localStorage: { getItem: () => { throw new Error("blocked"); } } });
+    expect(vercelAnalyticsEnabled()).toBe(false);
+    expect(saveVercelAnalyticsEnabled(true)).toBe(false);
   });
 
   it("never queues events before consent, then only sends allowlisted values and clean URLs", () => {
