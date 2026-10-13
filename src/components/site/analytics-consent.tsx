@@ -7,11 +7,12 @@ import { useEffect, useRef, useState } from "react";
 import { Analytics as VercelAnalytics, type BeforeSendEvent } from "@vercel/analytics/next";
 import { Button } from "@/components/ui/button";
 import { toolByRoute } from "@/config/tools";
-import { analyticsPreference, configureAnalytics, disableAnalytics, GA_MEASUREMENT_ID, saveAnalyticsPreference, safeAnalyticsPath, safeAnalyticsUrl, trackAnalyticsEvent, trackPageView, type AnalyticsPreference } from "@/lib/analytics";
+import { analyticsPreference, configureAnalytics, disableAnalytics, GA_MEASUREMENT_ID, saveAnalyticsPreference, saveVercelAnalyticsEnabled, safeAnalyticsPath, safeAnalyticsUrl, safeVercelReferrer, trackAnalyticsEvent, trackPageView, vercelAnalyticsEnabled, type AnalyticsPreference } from "@/lib/analytics";
 
 const PREFERENCES_EVENT = "shotexa:analytics-preferences";
 
 function filterVercelAnalyticsEvent(event: BeforeSendEvent): BeforeSendEvent | null {
+  if (!vercelAnalyticsEnabled() || !safeVercelReferrer(document.referrer)) return null;
   const url = safeAnalyticsUrl(event.url);
   return url ? { ...event, url } : null;
 }
@@ -23,15 +24,18 @@ export function AnalyticsPreferencesButton() {
 export function AnalyticsConsent({ enabled }: { enabled: boolean }) {
   const pathname = usePathname();
   const [preference, setPreference] = useState<AnalyticsPreference | "loading">("loading");
+  const [vercelEnabled, setVercelEnabled] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [ready, setReady] = useState(false);
   const [storageError, setStorageError] = useState(false);
+  const [vercelStorageError, setVercelStorageError] = useState(false);
   const lastPage = useRef<string | null>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
       const saved = analyticsPreference();
       if (enabled && saved === "accepted") configureAnalytics(window.location.pathname);
+      setVercelEnabled(enabled && vercelAnalyticsEnabled(saved));
       setPreference(saved);
     }, 0);
     const open = () => setSettingsOpen(true);
@@ -60,6 +64,7 @@ export function AnalyticsConsent({ enabled }: { enabled: boolean }) {
 
   function choose(value: Exclude<AnalyticsPreference, null>) {
     if (!saveAnalyticsPreference(value)) { setStorageError(true); return; }
+    setVercelStorageError(!saveVercelAnalyticsEnabled(vercelEnabled));
     setStorageError(false);
     setSettingsOpen(false);
     if (value === "rejected" && preference === "accepted") {
@@ -71,8 +76,15 @@ export function AnalyticsConsent({ enabled }: { enabled: boolean }) {
     setPreference(value);
   }
 
+  function chooseVercel(value: boolean) {
+    if (!saveVercelAnalyticsEnabled(value)) { setVercelStorageError(true); return; }
+    setVercelStorageError(false);
+    setVercelEnabled(value);
+    if (!value) window.location.reload();
+  }
+
   return <>
-    {preference === "accepted" && <VercelAnalytics beforeSend={filterVercelAnalyticsEvent} />}
+    {vercelEnabled && <VercelAnalytics beforeSend={filterVercelAnalyticsEvent} />}
     {preference === "accepted" && <Script
       id="shotexa-ga4"
       src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
@@ -81,13 +93,18 @@ export function AnalyticsConsent({ enabled }: { enabled: boolean }) {
     />}
     {(preference === null || settingsOpen) && <section role="region" aria-label="Analytics choices" className="fixed inset-x-0 bottom-0 z-40 max-h-[90dvh] overflow-y-auto overscroll-contain border-t border-line bg-surface p-4 pb-[max(1rem,env(safe-area-inset-bottom))] shadow-md sm:inset-x-4 sm:bottom-4 sm:mx-auto sm:max-w-2xl sm:rounded-xl sm:border sm:p-5">
       <div className="mx-auto max-w-2xl">
-        <h2 className="font-display text-xl text-ink">Your analytics choice</h2>
-        <p className="t-body-sm mt-2 text-ink-2">Shotexa works without analytics. If you accept, Google Analytics uses cookies to count page visits and basic tool actions, and Vercel Analytics counts page views on known public pages. Screenshots and their contents stay on your device. You can change your choice here later.</p>
+        <h2 className="font-display text-xl text-ink">Analytics choices</h2>
+        <p className="t-body-sm mt-2 text-ink-2">Cookieless Vercel Analytics counts visits to public pages where permitted. You can turn it off below. Google Analytics is optional: Accept enables it, and Reject keeps it off. Your screenshot tools work either way, and screenshots stay on your device.</p>
         <Link href="/privacy" className="mt-2 inline-flex min-h-10 items-center text-sm font-medium text-accent-ink underline-offset-4 hover:underline">Read the privacy details</Link>
-        {storageError && <p role="alert" className="text-sm text-error">This browser cannot save your choice, so analytics stays off.</p>}
+        {storageError && <p role="alert" className="text-sm text-error">This browser cannot save your Google Analytics choice, so Google Analytics stays off.</p>}
         <div className="mt-3 grid grid-cols-2 gap-3">
-          <Button variant="secondary" size="lg" className="w-full" onClick={() => choose("rejected")}>Reject analytics</Button>
-          <Button variant="secondary" size="lg" className="w-full" onClick={() => choose("accepted")}>Accept analytics</Button>
+          <Button variant="secondary" size="lg" className="w-full" onClick={() => choose("rejected")}>Reject Google Analytics</Button>
+          <Button variant="secondary" size="lg" className="w-full" onClick={() => choose("accepted")}>Accept Google Analytics</Button>
+        </div>
+        <div className="mt-3 border-t border-line pt-3">
+          <p className="t-body-sm text-ink-2">Vercel Analytics is {vercelEnabled ? "on" : "off"}, independent of your Google choice.</p>
+          <button type="button" onClick={() => chooseVercel(!vercelEnabled)} className="t-body-sm mt-1 inline-flex min-h-10 items-center font-medium text-accent-ink underline-offset-4 hover:underline">Turn {vercelEnabled ? "off" : "on"} Vercel Analytics</button>
+          {vercelStorageError && <p role="alert" className="text-sm text-error">This browser could not save your Vercel Analytics choice.</p>}
         </div>
       </div>
     </section>}

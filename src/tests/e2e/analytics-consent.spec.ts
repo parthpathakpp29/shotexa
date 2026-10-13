@@ -16,7 +16,7 @@ test.beforeEach(async ({ page }) => {
     body: `(()=>{let configured=false;const layer=window.dataLayer=window.dataLayer||[];function send(entry){if(Object.prototype.toString.call(entry)!=="[object Arguments]")return;if(entry[0]==="config"&&entry[1]==="G-912D4G6Z2B")configured=true;if(entry[0]==="event"&&configured){const p=entry[2]||{};const q=new URLSearchParams({tid:"G-912D4G6Z2B",en:entry[1],dl:p.page_location||"",dr:p.page_referrer||""});if(p.tool_id)q.set("ep.tool_id",p.tool_id);fetch("https://www.google-analytics.com/g/collect?"+q.toString(),{mode:"no-cors"})}}layer.forEach(send);const push=layer.push.bind(layer);layer.push=function(entry){const result=push(entry);send(entry);return result}})();`,
   }));
   await page.route("https://www.google-analytics.com/**", (route) => route.fulfill({ status: 204, body: "" }));
-  const vercelScript = `(()=>{let beforeSend=null;const queued=window.vaq||[];window.va=function(type){const value=arguments[1];if(type==="beforeSend"){beforeSend=value;return}if(type==="pageview"){const event=beforeSend?.({type:"pageview",url:location.href});if(event)fetch("/3e5b8101dc4b4d62/view",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({o:event.url,dp:location.pathname,r:""})})}};queued.forEach(args=>window.va(...args));if(!queued.some(args=>args[0]==="pageview"))window.va("pageview")})();`;
+  const vercelScript = `(()=>{let beforeSend=null;const queued=window.vaq||[];window.va=function(type){const value=arguments[1];if(type==="beforeSend"){beforeSend=value;return}if(type==="pageview"){const event=beforeSend?.({type:"pageview",url:location.href});if(event)fetch("/3e5b8101dc4b4d62/view",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({o:event.url,dp:location.pathname,r:document.referrer})})}};queued.forEach(args=>window.va(...args));if(!queued.some(args=>args[0]==="pageview"))window.va("pageview")})();`;
   await page.route("https://va.vercel-scripts.com/v1/script.debug.js", (route) => route.fulfill({ contentType: "application/javascript", body: vercelScript }));
   await page.route("**/_vercel/insights/script.js", (route) => route.fulfill({ contentType: "application/javascript", body: vercelScript }));
   await page.route("**/3e5b8101dc4b4d62/view", (route) => {
@@ -25,20 +25,91 @@ test.beforeEach(async ({ page }) => {
   });
 });
 
-test("Reject keeps the Google tag and collection requests off", async ({ page }) => {
-  const requests: string[] = [];
-  page.on("request", (request) => { if (/googletagmanager\.com|google-analytics\.com|va\.vercel-scripts\.com|\/_vercel\/insights\/script\.js|\/3e5b8101dc4b4d62\/view/.test(request.url())) requests.push(request.url()); });
+test("Vercel tracks before and after rejecting Google, without loading the Google tag", async ({ page }) => {
+  const googleRequests: string[] = [];
+  const vercelBodies: Array<{ o: string; r: string }> = [];
+  page.on("request", (request) => {
+    if (/googletagmanager\.com|google-analytics\.com/.test(request.url())) googleRequests.push(request.url());
+    if (request.url().endsWith("/3e5b8101dc4b4d62/view")) vercelBodies.push(request.postDataJSON());
+  });
   await page.goto("/?private=do-not-send");
+  await expect.poll(() => vercelBodies.length).toBe(1);
+  expect(vercelBodies[0].o).toBe(new URL("/", page.url()).origin + "/");
+  expect(googleRequests).toEqual([]);
   await page.setViewportSize({ width: 667, height: 375 });
   const banner = page.getByRole("region", { name: "Analytics choices" });
   await expect(banner).toBeVisible();
   expect((await banner.boundingBox())!.height).toBeLessThanOrEqual(339);
-  await page.getByRole("button", { name: "Reject analytics" }).click();
+  await page.getByRole("button", { name: "Reject Google Analytics" }).click();
   await expect(page.getByRole("region", { name: "Analytics choices" })).toBeHidden();
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "All tools" }).click();
+  await expect(page).toHaveURL(/\/tools$/);
+  await expect.poll(() => vercelBodies.length).toBe(2);
+  await page.goto("/screenshot-editor");
+  await expect.poll(() => vercelBodies.length).toBe(3);
+  expect(vercelBodies.map((body) => body.o)).toEqual(["/", "/tools", "/screenshot-editor"].map((path) => new URL(path, page.url()).href));
+  expect(JSON.stringify(vercelBodies)).not.toContain("do-not-send");
+  expect(googleRequests).toEqual([]);
+  expect(await page.evaluate(() => localStorage.getItem("shotexa.analytics-consent.v1"))).toBe("rejected");
+});
+
+test("Vercel opt-out persists independently of Google consent", async ({ page }) => {
+  const googleRequests: string[] = [];
+  const vercelBodies: Array<{ o: string }> = [];
+  page.on("request", (request) => {
+    if (/googletagmanager\.com|google-analytics\.com/.test(request.url())) googleRequests.push(request.url());
+    if (request.url().endsWith("/3e5b8101dc4b4d62/view")) vercelBodies.push(request.postDataJSON());
+  });
+  await page.goto("/");
+  await expect.poll(() => vercelBodies.length).toBe(1);
+  await page.getByRole("button", { name: "Turn off Vercel Analytics" }).click();
+  await expect.poll(async () => page.evaluate(() => localStorage.getItem("shotexa.vercel-analytics-opt-out.v1"))).toBe("true");
   await page.goto("/tools");
   await expect(page).toHaveURL(/\/tools$/);
-  expect(requests).toEqual([]);
+  expect(vercelBodies).toHaveLength(1);
+  expect(googleRequests).toEqual([]);
+  await page.getByRole("button", { name: "Turn on Vercel Analytics" }).click();
+  await expect.poll(() => vercelBodies.length).toBe(2);
+  expect(vercelBodies[1].o).toBe(new URL("/tools", page.url()).href);
+  expect(googleRequests).toEqual([]);
+});
+
+test("a legacy rejected choice remains a Vercel opt-out until changed", async ({ page }) => {
+  const vercelBodies: Array<{ o: string }> = [];
+  page.on("request", (request) => { if (request.url().endsWith("/3e5b8101dc4b4d62/view")) vercelBodies.push(request.postDataJSON()); });
+  await page.addInitScript(() => localStorage.setItem("shotexa.analytics-consent.v1", "rejected"));
+  await page.goto("/");
+  expect(vercelBodies).toEqual([]);
+  await expect.poll(async () => page.evaluate(() => localStorage.getItem("shotexa.vercel-analytics-opt-out.v1"))).toBe("true");
+  await page.getByRole("button", { name: "Analytics choices" }).click();
+  await page.getByRole("button", { name: "Turn on Vercel Analytics" }).click();
+  await expect.poll(() => vercelBodies.length).toBe(1);
+  expect(vercelBodies[0].o).toBe(new URL("/", page.url()).href);
   expect(await page.evaluate(() => localStorage.getItem("shotexa.analytics-consent.v1"))).toBe("rejected");
+});
+
+test("Vercel excludes private routes and unsafe referrers", async ({ page }) => {
+  const vercelBodies: Array<{ o: string; r: string }> = [];
+  const scripts: string[] = [];
+  page.on("request", (request) => {
+    if (/va\.vercel-scripts\.com|\/_vercel\/insights\/script\.js/.test(request.url())) scripts.push(request.url());
+    if (request.url().endsWith("/3e5b8101dc4b4d62/view")) vercelBodies.push(request.postDataJSON());
+  });
+  await page.goto("/spikes/ocr?secret=do-not-send");
+  await expect.poll(() => scripts.length).toBe(1);
+  await page.waitForTimeout(300);
+  expect(vercelBodies).toEqual([]);
+  const origin = new URL(page.url()).origin;
+  await page.goto("/tools", { referer: `${origin}/?secret=do-not-send` });
+  expect(await page.evaluate(() => document.referrer)).toContain("do-not-send");
+  await expect.poll(() => scripts.length).toBe(2);
+  await page.waitForTimeout(300);
+  expect(vercelBodies).toEqual([]);
+  await page.goto("/?secret=do-not-send");
+  await expect.poll(() => vercelBodies.length).toBe(1);
+  expect(vercelBodies[0].o).toBe(`${origin}/`);
+  expect(JSON.stringify(vercelBodies)).not.toContain("do-not-send");
 });
 
 test("Accept tracks one sanitized page view per route and safe tool actions", async ({ page }) => {
@@ -51,13 +122,16 @@ test("Accept tracks one sanitized page view per route and safe tool actions", as
   });
   page.on("response", (response) => { if (response.url().endsWith("/3e5b8101dc4b4d62/view")) vercelStatuses.push(response.status()); });
   await page.goto("/?private=do-not-send");
-  await page.getByRole("button", { name: "Accept analytics" }).click();
+  await expect.poll(() => vercelBodies.length).toBe(1);
+  expect(requests.filter((url) => url.includes("googletagmanager.com"))).toHaveLength(0);
+  await page.getByRole("button", { name: "Accept Google Analytics" }).click();
   await expect.poll(async () => (await analyticsCalls(page)).filter((entry) => entry[0] === "event" && entry[1] === "page_view").length).toBe(1);
   await expect.poll(() => requests.filter((url) => url.includes("/g/collect?")).length).toBe(1);
   await expect.poll(() => vercelBodies.length).toBeGreaterThanOrEqual(1);
   await expect.poll(() => vercelStatuses.length).toBeGreaterThanOrEqual(1);
   expect(vercelStatuses).not.toContain(400);
   expect(vercelBodies[0]).toMatchObject({ o: new URL("/", page.url()).origin + "/", dp: "/" });
+  expect(vercelBodies).toHaveLength(1);
   expect(JSON.stringify(vercelBodies)).not.toContain("do-not-send");
   const firstCollect = new URL(requests.find((url) => url.includes("/g/collect?"))!);
   expect(firstCollect.searchParams.get("tid")).toBe("G-912D4G6Z2B");
@@ -70,10 +144,12 @@ test("Accept tracks one sanitized page view per route and safe tool actions", as
   expect(config?.[2]).toMatchObject({ send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false });
   expect(JSON.stringify(await analyticsCalls(page))).not.toContain("do-not-send");
 
-  await page.locator('a[href="/tools"]').first().click();
-  await expect(page).toHaveURL(/\/tools$/);
-  await page.locator('a[href="/screenshot-editor"]').first().click();
-  await expect(page).toHaveURL(/\/screenshot-editor$/);
+  await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "All tools" }).click();
+  await expect(page).toHaveURL(/\/tools$/, { timeout: 20_000 });
+  await page.locator('a[href="/screenshot-editor"]:visible').first().click();
+  await expect(page).toHaveURL(/\/screenshot-editor$/, { timeout: 20_000 });
+  await expect.poll(() => vercelBodies.length).toBe(3);
+  expect(vercelBodies.map((body) => body.o)).toEqual(["/", "/tools", "/screenshot-editor"].map((path) => new URL(path, page.url()).href));
   await expect.poll(async () => (await analyticsCalls(page)).filter((entry) => entry[0] === "event" && entry[1] === "page_view").length).toBe(3);
   await expect.poll(() => requests.filter((url) => url.includes("/g/collect?") && url.includes("en=page_view")).length).toBe(3);
   expect((await analyticsCalls(page)).filter((entry) => entry[0] === "event" && entry[1] === "tool_opened")).toHaveLength(1);
@@ -97,27 +173,29 @@ test("An accepted visitor can reject later and the tag stays off after reload", 
   const requests: string[] = [];
   page.on("request", (request) => { if (/googletagmanager\.com|google-analytics\.com|\/3e5b8101dc4b4d62\/view/.test(request.url())) requests.push(request.url()); });
   await page.goto("/");
-  await page.getByRole("button", { name: "Accept analytics" }).click();
+  await page.getByRole("button", { name: "Accept Google Analytics" }).click();
   await expect.poll(() => requests.filter((url) => url.includes("googletagmanager.com")).length).toBe(1);
   await page.getByRole("button", { name: "Analytics choices" }).click();
-  await page.getByRole("button", { name: "Reject analytics" }).click();
+  await page.getByRole("button", { name: "Reject Google Analytics" }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect.poll(async () => page.evaluate(() => localStorage.getItem("shotexa.analytics-consent.v1"))).toBe("rejected");
-  const before = requests.length;
+  const googleBefore = requests.filter((url) => /googletagmanager\.com|google-analytics\.com/.test(url)).length;
+  const vercelBefore = requests.filter((url) => url.includes("/3e5b8101dc4b4d62/view")).length;
   await page.reload();
   await page.goto("/tools");
-  expect(requests.length).toBe(before);
+  await expect.poll(() => requests.filter((url) => url.includes("/3e5b8101dc4b4d62/view")).length).toBeGreaterThan(vercelBefore);
+  expect(requests.filter((url) => /googletagmanager\.com|google-analytics\.com/.test(url))).toHaveLength(googleBefore);
 });
 
 test("Saved consent resumes once, and Reject can later change to Accept", async ({ page }) => {
   const requests: string[] = [];
   page.on("request", (request) => { if (/googletagmanager\.com|google-analytics\.com\/g\/collect|\/3e5b8101dc4b4d62\/view/.test(request.url())) requests.push(request.url()); });
   await page.goto("/");
-  await page.getByRole("button", { name: "Reject analytics" }).click();
+  await page.getByRole("button", { name: "Reject Google Analytics" }).click();
   await page.reload();
-  expect(requests).toEqual([]);
+  expect(requests.filter((url) => /googletagmanager\.com|google-analytics\.com/.test(url))).toEqual([]);
   await page.getByRole("button", { name: "Analytics choices" }).click();
-  await page.getByRole("button", { name: "Accept analytics" }).click();
+  await page.getByRole("button", { name: "Accept Google Analytics" }).click();
   await expect.poll(() => requests.filter((url) => url.includes("/g/collect?")).length).toBe(1);
   await page.reload();
   await expect.poll(() => requests.filter((url) => url.includes("/g/collect?")).length).toBe(2);
@@ -129,7 +207,7 @@ test("A finished workflow records one completion without sending its custom name
   const collectionUrls: string[] = [];
   page.on("request", (request) => { if (request.url().includes("google-analytics.com/g/collect")) collectionUrls.push(request.url()); });
   await page.goto("/workflows");
-  await page.getByRole("button", { name: "Accept analytics" }).click();
+  await page.getByRole("button", { name: "Accept Google Analytics" }).click();
   await expect.poll(async () => (await analyticsCalls(page)).filter((entry) => entry[0] === "event" && entry[1] === "page_view").length).toBe(1);
   await page.getByRole("button", { name: /^Custom workflow/ }).click();
   await page.getByLabel("Workflow name").fill("Private client name");
