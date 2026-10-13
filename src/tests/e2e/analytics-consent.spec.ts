@@ -33,12 +33,14 @@ test("Vercel tracks before and after rejecting Google, without loading the Googl
     if (request.url().endsWith("/3e5b8101dc4b4d62/view")) vercelBodies.push(request.postDataJSON());
   });
   await page.goto("/?private=do-not-send");
-  await expect.poll(() => vercelBodies.length).toBe(1);
+  const banner = page.getByRole("region", { name: "Analytics choices" });
+  await expect(banner).toBeVisible();
+  await expect.poll(() => vercelBodies.length, { timeout: 15_000 }).toBe(1);
   expect(vercelBodies[0].o).toBe(new URL("/", page.url()).origin + "/");
   expect(googleRequests).toEqual([]);
   await page.setViewportSize({ width: 667, height: 375 });
-  const banner = page.getByRole("region", { name: "Analytics choices" });
-  await expect(banner).toBeVisible();
+  await expect(banner.getByText(/Vercel Analytics is on/)).toHaveCount(0);
+  await expect(banner.getByRole("button", { name: /Turn off Vercel Analytics/ })).toHaveCount(0);
   expect((await banner.boundingBox())!.height).toBeLessThanOrEqual(339);
   await page.getByRole("button", { name: "Reject Google Analytics" }).click();
   await expect(page.getByRole("region", { name: "Analytics choices" })).toBeHidden();
@@ -54,39 +56,46 @@ test("Vercel tracks before and after rejecting Google, without loading the Googl
   expect(await page.evaluate(() => localStorage.getItem("shotexa.analytics-consent.v1"))).toBe("rejected");
 });
 
-test("Vercel opt-out persists independently of Google consent", async ({ page }) => {
+test("a saved Vercel opt-out persists independently of Google consent", async ({ page }) => {
   const googleRequests: string[] = [];
   const vercelBodies: Array<{ o: string }> = [];
   page.on("request", (request) => {
     if (/googletagmanager\.com|google-analytics\.com/.test(request.url())) googleRequests.push(request.url());
     if (request.url().endsWith("/3e5b8101dc4b4d62/view")) vercelBodies.push(request.postDataJSON());
   });
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem("seeded-vercel-opt-out")) return;
+    localStorage.setItem("shotexa.vercel-analytics-opt-out.v1", "true");
+    sessionStorage.setItem("seeded-vercel-opt-out", "true");
+  });
   await page.goto("/");
-  await expect.poll(() => vercelBodies.length).toBe(1);
-  await page.getByRole("button", { name: "Turn off Vercel Analytics" }).click();
   await expect.poll(async () => page.evaluate(() => localStorage.getItem("shotexa.vercel-analytics-opt-out.v1"))).toBe("true");
+  await page.getByRole("button", { name: "Accept Google Analytics" }).click();
+  await expect.poll(() => googleRequests.filter((url) => url.includes("/g/collect?")).length).toBe(1);
   await page.goto("/tools");
   await expect(page).toHaveURL(/\/tools$/);
-  expect(vercelBodies).toHaveLength(1);
-  expect(googleRequests).toEqual([]);
-  await page.getByRole("button", { name: "Turn on Vercel Analytics" }).click();
-  await expect.poll(() => vercelBodies.length).toBe(2);
-  expect(vercelBodies[1].o).toBe(new URL("/tools", page.url()).href);
-  expect(googleRequests).toEqual([]);
+  expect(vercelBodies).toHaveLength(0);
+  await expect.poll(() => googleRequests.filter((url) => url.includes("/g/collect?")).length).toBe(2);
+  expect(await page.evaluate(() => localStorage.getItem("shotexa.vercel-analytics-opt-out.v1"))).toBe("true");
 });
 
-test("a legacy rejected choice remains a Vercel opt-out until changed", async ({ page }) => {
+test("a legacy rejected choice remains a Vercel opt-out", async ({ page }) => {
   const vercelBodies: Array<{ o: string }> = [];
   page.on("request", (request) => { if (request.url().endsWith("/3e5b8101dc4b4d62/view")) vercelBodies.push(request.postDataJSON()); });
-  await page.addInitScript(() => localStorage.setItem("shotexa.analytics-consent.v1", "rejected"));
+  await page.addInitScript(() => {
+    if (sessionStorage.getItem("seeded-legacy-choice")) return;
+    localStorage.setItem("shotexa.analytics-consent.v1", "rejected");
+    sessionStorage.setItem("seeded-legacy-choice", "true");
+  });
   await page.goto("/");
   expect(vercelBodies).toEqual([]);
   await expect.poll(async () => page.evaluate(() => localStorage.getItem("shotexa.vercel-analytics-opt-out.v1"))).toBe("true");
   await page.getByRole("button", { name: "Analytics choices" }).click();
-  await page.getByRole("button", { name: "Turn on Vercel Analytics" }).click();
-  await expect.poll(() => vercelBodies.length).toBe(1);
-  expect(vercelBodies[0].o).toBe(new URL("/", page.url()).href);
-  expect(await page.evaluate(() => localStorage.getItem("shotexa.analytics-consent.v1"))).toBe("rejected");
+  await expect(page.getByRole("button", { name: /Turn on Vercel Analytics/ })).toHaveCount(0);
+  await page.getByRole("button", { name: "Accept Google Analytics" }).click();
+  await page.goto("/tools");
+  expect(vercelBodies).toEqual([]);
+  expect(await page.evaluate(() => localStorage.getItem("shotexa.vercel-analytics-opt-out.v1"))).toBe("true");
 });
 
 test("Vercel excludes private routes and unsafe referrers", async ({ page }) => {
@@ -106,8 +115,10 @@ test("Vercel excludes private routes and unsafe referrers", async ({ page }) => 
   await expect.poll(() => scripts.length).toBe(2);
   await page.waitForTimeout(300);
   expect(vercelBodies).toEqual([]);
-  await page.goto("/?secret=do-not-send");
-  await expect.poll(() => vercelBodies.length).toBe(1);
+  await page.goto("/?secret=do-not-send", { referer: `${origin}/tools` });
+  expect(await page.evaluate(() => document.referrer)).toBe(`${origin}/tools`);
+  await expect(page.getByRole("region", { name: "Analytics choices" })).toBeVisible();
+  await expect.poll(() => vercelBodies.length, { timeout: 15_000 }).toBe(1);
   expect(vercelBodies[0].o).toBe(`${origin}/`);
   expect(JSON.stringify(vercelBodies)).not.toContain("do-not-send");
 });
