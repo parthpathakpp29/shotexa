@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { analyticsPreference, configureAnalytics, safeAnalyticsPath, trackAnalyticsEvent, trackPageView } from "@/lib/analytics";
+import { analyticsPreference, configureAnalytics, safeAnalyticsPath, safeAnalyticsUrl, trackAnalyticsEvent, trackPageView } from "@/lib/analytics";
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -10,6 +10,13 @@ describe("analytics privacy boundary", () => {
     expect(safeAnalyticsPath("/workflows?secret=123")).toBeNull();
     expect(safeAnalyticsPath("/private/secret-123")).toBeNull();
     expect(safeAnalyticsPath("/spikes/ocr")).toBeNull();
+  });
+
+  it("sanitizes Vercel Analytics URLs to allowlisted paths", () => {
+    expect(safeAnalyticsUrl("/workflows?private=secret")).toBe("/workflows");
+    expect(safeAnalyticsUrl("https://shotexa.com/privacy?private=secret")).toBe("/privacy");
+    expect(safeAnalyticsUrl("/private/secret-123")).toBeNull();
+    expect(safeAnalyticsUrl("not a url%")).toBeNull();
   });
 
   it("never queues events before consent, then only sends allowlisted values and clean URLs", () => {

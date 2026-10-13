@@ -43,6 +43,14 @@ export function safeAnalyticsPath(pathname: string): string | null {
   return allowedPaths.has(path) ? path : null;
 }
 
+export function safeAnalyticsUrl(url: string): string | null {
+  try {
+    return safeAnalyticsPath(new URL(url, "https://shotexa.invalid").pathname);
+  } catch {
+    return null;
+  }
+}
+
 export function configureAnalytics(pathname: string): boolean {
   const path = safeAnalyticsPath(pathname);
   if (analyticsPreference() !== "accepted" || !path) return false;
