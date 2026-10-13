@@ -44,8 +44,12 @@ export function safeAnalyticsPath(pathname: string): string | null {
 }
 
 export function safeAnalyticsUrl(url: string): string | null {
+  if (typeof window === "undefined") return null;
   try {
-    return safeAnalyticsPath(new URL(url, "https://shotexa.invalid").pathname);
+    const parsed = new URL(url);
+    if (!/^https?:$/.test(parsed.protocol) || parsed.origin !== window.location.origin) return null;
+    const path = safeAnalyticsPath(parsed.pathname);
+    return path ? `${window.location.origin}${path}` : null;
   } catch {
     return null;
   }
@@ -56,7 +60,12 @@ export function configureAnalytics(pathname: string): boolean {
   if (analyticsPreference() !== "accepted" || !path) return false;
   if (window.__shotexaGaConfigured) return true;
   window.dataLayer ??= [];
-  window.gtag = (...args: unknown[]) => { window.dataLayer?.push(args); };
+  // gtag.js consumes the standard Arguments queue entries, not arrays of parameters.
+  window.gtag = function gtag() {
+    // gtag.js requires the native Arguments object, so rest parameters cannot replace this.
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer?.push(arguments);
+  };
   window.gtag("consent", "default", {
     analytics_storage: "granted",
     ad_storage: "denied",
@@ -90,11 +99,13 @@ export function trackPageView(pathname: string): void {
 /** No caller supplied strings or file data are forwarded; tool IDs are registry validated. */
 export function trackAnalyticsEvent(event: AnalyticsEvent, toolId?: ToolId): void {
   if (typeof window === "undefined" || analyticsPreference() !== "accepted" || !window.__shotexaGaConfigured) return;
+  if (event !== "tool_opened" && event !== "upload_completed" && event !== "export_completed" && event !== "workflow_completed") return;
   const path = safeAnalyticsPath(window.location.pathname);
   if (!path) return;
   const tool = toolByRoute(path);
+  if (event === "tool_opened" && (!tool || tool.id !== toolId)) return;
   const params: Record<string, string> = { page_location: `${window.location.origin}${path}`, page_referrer: "" };
-  if (event === "tool_opened" && tool && tool.id === toolId) params.tool_id = tool.id;
+  if (event === "tool_opened" && tool) params.tool_id = tool.id;
   window.gtag?.("event", event, params);
 }
 

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { analyticsPreference, configureAnalytics, safeAnalyticsPath, safeAnalyticsUrl, trackAnalyticsEvent, trackPageView } from "@/lib/analytics";
+import { analyticsPreference, configureAnalytics, safeAnalyticsPath, safeAnalyticsUrl, saveAnalyticsPreference, trackAnalyticsEvent, trackPageView } from "@/lib/analytics";
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -12,9 +12,15 @@ describe("analytics privacy boundary", () => {
     expect(safeAnalyticsPath("/spikes/ocr")).toBeNull();
   });
 
-  it("sanitizes Vercel Analytics URLs to allowlisted paths", () => {
-    expect(safeAnalyticsUrl("/workflows?private=secret")).toBe("/workflows");
-    expect(safeAnalyticsUrl("https://shotexa.com/privacy?private=secret")).toBe("/privacy");
+  it("returns only same-origin absolute allowlisted Vercel URLs without query or hash", () => {
+    vi.stubGlobal("window", { location: { origin: "https://shotexa.com" } });
+    expect(safeAnalyticsUrl("https://shotexa.com/workflows?private=secret#fragment")).toBe("https://shotexa.com/workflows");
+    expect(safeAnalyticsUrl("https://shotexa.com/privacy?private=secret")).toBe("https://shotexa.com/privacy");
+    expect(safeAnalyticsUrl("https://shotexa.com/")).toBe("https://shotexa.com/");
+    expect(safeAnalyticsUrl("/workflows")).toBeNull();
+    expect(safeAnalyticsUrl("https://evil.example/privacy")).toBeNull();
+    expect(safeAnalyticsUrl("javascript:/privacy")).toBeNull();
+    expect(safeAnalyticsUrl("https://user:pass@shotexa.com/privacy")).toBe("https://shotexa.com/privacy");
     expect(safeAnalyticsUrl("/private/secret-123")).toBeNull();
     expect(safeAnalyticsUrl("not a url%")).toBeNull();
   });
@@ -23,7 +29,7 @@ describe("analytics privacy boundary", () => {
     const values = new Map<string, string>();
     const browser = {
       location: { origin: "https://shotexa.com", pathname: "/screenshot-to-text", search: "?secret=123" },
-      localStorage: { getItem: (key: string) => values.get(key) ?? null },
+      localStorage: { getItem: (key: string) => values.get(key) ?? null, setItem: (key: string, value: string) => { values.set(key, value); } },
       dataLayer: [] as unknown[],
     };
     vi.stubGlobal("window", browser);
@@ -31,16 +37,28 @@ describe("analytics privacy boundary", () => {
     trackAnalyticsEvent("upload_completed");
     expect(browser.dataLayer).toHaveLength(0);
 
-    values.set("shotexa.analytics-consent.v1", "accepted");
+    expect(saveAnalyticsPreference("accepted")).toBe(true);
+    expect(analyticsPreference()).toBe("accepted");
+    expect(configureAnalytics(browser.location.pathname)).toBe(true);
     expect(configureAnalytics(browser.location.pathname)).toBe(true);
     trackPageView(browser.location.pathname);
     trackAnalyticsEvent("tool_opened", "extract-text");
+    trackAnalyticsEvent("tool_opened", "combine");
     trackAnalyticsEvent("export_completed");
+    trackAnalyticsEvent("private_event" as "tool_opened");
+    expect(browser.dataLayer.every((entry) => Object.prototype.toString.call(entry) === "[object Arguments]")).toBe(true);
+    expect(browser.dataLayer.filter((entry) => (entry as IArguments)[0] === "config")).toHaveLength(1);
+    expect(browser.dataLayer.filter((entry) => (entry as IArguments)[0] === "event" && (entry as IArguments)[1] === "tool_opened")).toHaveLength(1);
     const sent = JSON.stringify(browser.dataLayer);
     expect(sent).toContain("tool_opened");
     expect(sent).toContain("extract-text");
     expect(sent).toContain("export_completed");
     expect(sent).not.toContain("secret=123");
     expect(sent).not.toContain("screenshot-to-text?");
+    expect(sent).not.toContain("private_event");
+    expect(saveAnalyticsPreference("rejected")).toBe(true);
+    expect(analyticsPreference()).toBe("rejected");
+    trackPageView(browser.location.pathname);
+    expect(browser.dataLayer.filter((entry) => (entry as IArguments)[0] === "event" && (entry as IArguments)[1] === "page_view")).toHaveLength(1);
   });
 });
