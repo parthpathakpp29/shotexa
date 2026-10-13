@@ -31,12 +31,12 @@ const POINTS = [
     body: "When you export, the file is created in your browser and saved through your browser’s normal download. Where it goes from there is up to you.",
   },
   {
-    title: "Optional Google Analytics",
-    body: "If you accept analytics, Shotexa loads Google Analytics 4 (Google LLC) to count visits and basic actions: opening a tool, adding a screenshot, starting an export download and finishing a workflow. It uses analytics cookies and receives the public page path, without query strings, and the tool ID when you open a tool. We do not send screenshots, filenames, recognised text, detected secrets, extracted data or your workflow inputs. We do not use advertising personalization. Google may also receive standard browser and device information when its tag runs.",
+    title: "Optional analytics",
+    body: "If you accept analytics, Shotexa loads Google Analytics 4 (Google LLC) to count visits and basic actions: opening a tool, adding a screenshot, starting an export download and finishing a workflow. It uses analytics cookies and receives the public page path, without query strings, and the tool ID when you open a tool. Vercel Analytics counts page views on known public pages; it does not receive query strings or unknown routes. We do not send screenshots, filenames, recognised text, detected secrets, extracted data or your workflow inputs. We do not use advertising personalization. Google may also receive standard browser and device information when its tag runs.",
   },
   {
     title: "Your analytics choice",
-    body: "Analytics is off until you choose Accept analytics. If you reject, Shotexa does not load Google's analytics tag. We save your choice in this browser's local storage; you can change it later through Analytics choices in the footer. Rejecting after accepting reloads the page to remove the tag. This choice does not affect any screenshot tool.",
+    body: "Analytics is off until you choose Accept analytics. If you reject, Shotexa does not load Google Analytics or Vercel Analytics. We save your choice in this browser's local storage; you can change it later through Analytics choices in the footer. Rejecting after accepting reloads the page to remove the tags. This choice does not affect any screenshot tool.",
   },
 ];
 

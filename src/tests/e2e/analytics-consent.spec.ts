@@ -15,11 +15,19 @@ test.beforeEach(async ({ page }) => {
     body: `window.dataLayer=window.dataLayer||[];const push=window.dataLayer.push.bind(window.dataLayer);window.dataLayer.push=function(entry){const result=push(entry);if(entry[0]==="event")fetch("https://www.google-analytics.com/g/collect?en="+encodeURIComponent(entry[1]));return result};`,
   }));
   await page.route("https://www.google-analytics.com/**", (route) => route.fulfill({ status: 204, body: "" }));
+  await page.route("https://va.vercel-scripts.com/v1/script.debug.js", (route) => route.fulfill({
+    contentType: "application/javascript",
+    body: "",
+  }));
+  await page.route("**/_vercel/insights/script.js", (route) => route.fulfill({
+    contentType: "application/javascript",
+    body: "",
+  }));
 });
 
 test("Reject keeps the Google tag and collection requests off", async ({ page }) => {
   const requests: string[] = [];
-  page.on("request", (request) => { if (/googletagmanager\.com|google-analytics\.com/.test(request.url())) requests.push(request.url()); });
+  page.on("request", (request) => { if (/googletagmanager\.com|google-analytics\.com|va\.vercel-scripts\.com|\/_vercel\/insights\/script\.js/.test(request.url())) requests.push(request.url()); });
   await page.goto("/?private=do-not-send");
   await page.setViewportSize({ width: 667, height: 375 });
   const banner = page.getByRole("region", { name: "Analytics choices" });
@@ -35,11 +43,12 @@ test("Reject keeps the Google tag and collection requests off", async ({ page })
 
 test("Accept tracks one sanitized page view per route and safe tool actions", async ({ page }) => {
   const requests: string[] = [];
-  page.on("request", (request) => { if (/googletagmanager\.com|google-analytics\.com/.test(request.url())) requests.push(request.url()); });
+  page.on("request", (request) => { if (/googletagmanager\.com|google-analytics\.com|va\.vercel-scripts\.com|\/_vercel\/insights\/script\.js/.test(request.url())) requests.push(request.url()); });
   await page.goto("/?private=do-not-send");
   await page.getByRole("button", { name: "Accept analytics" }).click();
   await expect.poll(async () => (await analyticsCalls(page)).filter((entry) => entry[0] === "event" && entry[1] === "page_view").length).toBe(1);
   expect(requests.filter((url) => url.includes("googletagmanager.com"))).toHaveLength(1);
+  expect(requests.filter((url) => /va\.vercel-scripts\.com|\/_vercel\/insights\/script\.js/.test(url))).toHaveLength(1);
   const config = (await analyticsCalls(page)).find((entry) => entry[0] === "config");
   expect(config?.[2]).toMatchObject({ send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false });
   expect(JSON.stringify(await analyticsCalls(page))).not.toContain("do-not-send");
