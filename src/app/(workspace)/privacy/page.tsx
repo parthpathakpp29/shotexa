@@ -32,7 +32,7 @@ const POINTS = [
   },
   {
     title: "Cookieless Vercel Analytics",
-    body: "Where permitted, Vercel Web Analytics automatically counts visits to known public pages for basic traffic statistics. It does not use cookies. Vercel may process the public page URL, time, referring site, approximate location, browser, operating system and device type, and uses a short-lived request hash to estimate visitors. Shotexa strips query strings, fragments and credentials from page URLs and excludes unknown routes and unsafe referrers. We do not send screenshots, filenames, recognised text, detected secrets, extracted data or workflow inputs. You can turn Vercel Analytics off through Analytics choices in the footer.",
+    body: "Where permitted, Vercel Web Analytics automatically counts visits to known public pages for basic traffic statistics. It does not use cookies. Vercel may process the public page URL, time, referring site, approximate location, browser, operating system and device type, and uses a short-lived request hash to estimate visitors. Shotexa strips query strings, fragments and credentials from page URLs and excludes unknown routes and unsafe referrers. We do not send screenshots, filenames, recognised text, detected secrets, extracted data or workflow inputs.",
   },
   {
     title: "Optional Google Analytics",
@@ -40,7 +40,7 @@ const POINTS = [
   },
   {
     title: "Your analytics choice",
-    body: "Accept Google Analytics enables Google Analytics; Reject Google Analytics or ignoring the choice keeps it off. Vercel Analytics continues independently unless you turn it off with its separate control. If you rejected analytics under our earlier combined choice, we keep Vercel Analytics off until you turn it on. Your choices are saved in this browser's local storage and can be changed through Analytics choices in the footer. Switching off either service reloads the page to stop its tag. None of these choices affects the screenshot tools.",
+    body: "Accept Google Analytics enables Google Analytics; Reject Google Analytics or ignoring the choice keeps it off. This choice does not change Vercel Analytics. Earlier Vercel opt-outs remain honored. Your Google choice is saved in this browser's local storage and can be changed through Analytics choices in the footer. Rejecting Google after accepting reloads the page to stop its tag. None of these choices affects the screenshot tools.",
   },
 ];
 
