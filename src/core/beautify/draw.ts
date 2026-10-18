@@ -9,6 +9,7 @@ import { drawImageClamped } from "@/core/image/draw-source";
 import type { Rect } from "@/core/image-transform/types";
 import { FRAME_COLORS, WINDOW_DOTS } from "./presets";
 import { multiImageLayout } from "./multi-layout";
+import { paintStudioArt } from "./studio-art";
 import type { BeautifyDrawResource, BeautifyLayout, GradientAngle, Point } from "./types";
 
 type Ctx = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
@@ -44,6 +45,10 @@ export function gradientLine(angle: GradientAngle, width: number, height: number
 
 function paintBackground(ctx: Ctx, layout: BeautifyLayout, image: CanvasImageSource | null, imageScale: number, scale: number, resources: BeautifyDrawResource[]): void {
   const { canvas, background } = layout;
+  if (background.kind === "studio") {
+    paintStudioArt(ctx, canvas, background);
+    return;
+  }
   if (background.kind === "custom-image") {
     ctx.fillStyle = background.color;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -458,9 +463,9 @@ function paintNotch(ctx: Ctx, layout: BeautifyLayout): void {
   ctx.fill();
 }
 
-function paintProjectedShadow(ctx: Ctx, layout: BeautifyLayout, scale: number): void {
+function paintProjectedShadow(ctx: Ctx, layout: BeautifyLayout, scale: number, quad = layout.perspective.quad): void {
   if (!layout.shadow || (layout.frame?.kind === "phone" && !layout.frame.shadow)) return;
-  const [a, b, c, d] = layout.perspective.quad;
+  const [a, b, c, d] = quad;
   ctx.save();
   ctx.shadowColor = layout.shadow.color;
   ctx.shadowBlur = layout.shadow.blur * scale;
@@ -505,9 +510,32 @@ function paintComposition(ctx: Ctx, layout: BeautifyLayout, image: CanvasImageSo
 
 /** Piecewise-affine projection keeps vectors and source pixels in the canonical Canvas2D path. */
 function paintPerspectiveComposition(ctx: Ctx, layout: BeautifyLayout, image: CanvasImageSource | null, imageScale: number, scale: number, resources: BeautifyDrawResource[]): void {
-  paintProjectedShadow(ctx, layout, scale);
-  const cells = 6;
   const r = layout.content;
+  const [tl, tr, br, bl] = layout.perspective.quad;
+  const affineBr = { x: tr.x + bl.x - tl.x, y: tr.y + bl.y - tl.y };
+  // A gentle camera tilt is visually indistinguishable from an affine projection. Drawing it
+  // in one pass avoids triangle seams entirely and keeps small type sharp in live previews.
+  if (Math.hypot(affineBr.x - br.x, affineBr.y - br.y) < Math.min(r.width, r.height) * 0.03) {
+    paintProjectedShadow(ctx, layout, scale, [tl, tr, affineBr, bl]);
+    ctx.save();
+    ctx.transform(...affine(
+      [{ x: r.x, y: r.y }, { x: r.x + r.width, y: r.y }, { x: r.x, y: r.y + r.height }],
+      [tl, tr, bl],
+    ));
+    paintComposition(ctx, layout, image, imageScale, scale, false, resources);
+    ctx.restore();
+    return;
+  }
+  paintProjectedShadow(ctx, layout, scale);
+  // Canvas antialiasing leaves hairline gaps where adjacent triangle clips meet at preview
+  // scale. Let the opaque triangles overlap by one device pixel, clipped to the outer quad.
+  ctx.save();
+  ctx.beginPath();
+  layout.perspective.quad.forEach((point, index) => index ? ctx.lineTo(point.x, point.y) : ctx.moveTo(point.x, point.y));
+  ctx.closePath();
+  ctx.clip();
+  const overlap = 1.5 / Math.max(scale, 0.1);
+  const cells = 6;
   for (let y = 0; y < cells; y++) for (let x = 0; x < cells; x++) {
     const u0 = x / cells, u1 = (x + 1) / cells, v0 = y / cells, v1 = (y + 1) / cells;
     const s00 = { x: r.x + r.width * u0, y: r.y + r.height * v0 };
@@ -520,13 +548,23 @@ function paintPerspectiveComposition(ctx: Ctx, layout: BeautifyLayout, image: Ca
     const d01 = bilinear(layout.perspective.quad, u0, v1);
     const triangles = [[[s00, s10, s11], [d00, d10, d11]], [[s00, s11, s01], [d00, d11, d01]]] as const;
     for (const [source, target] of triangles) {
+      const cx = (target[0].x + target[1].x + target[2].x) / 3;
+      const cy = (target[0].y + target[1].y + target[2].y) / 3;
+      const area = Math.abs((target[1].x - target[0].x) * (target[2].y - target[0].y) - (target[2].x - target[0].x) * (target[1].y - target[0].y)) / 2;
+      const perimeter = Math.hypot(target[1].x - target[0].x, target[1].y - target[0].y) + Math.hypot(target[2].x - target[1].x, target[2].y - target[1].y) + Math.hypot(target[0].x - target[2].x, target[0].y - target[2].y);
+      const inradius = Math.max(1, (2 * area) / perimeter);
+      const expansion = 1 + overlap / inradius;
+      const expanded = target.map((point) => {
+        return { x: cx + (point.x - cx) * expansion, y: cy + (point.y - cy) * expansion };
+      });
       ctx.save();
-      ctx.beginPath(); ctx.moveTo(target[0].x, target[0].y); ctx.lineTo(target[1].x, target[1].y); ctx.lineTo(target[2].x, target[2].y); ctx.closePath(); ctx.clip();
+      ctx.beginPath(); ctx.moveTo(expanded[0].x, expanded[0].y); ctx.lineTo(expanded[1].x, expanded[1].y); ctx.lineTo(expanded[2].x, expanded[2].y); ctx.closePath(); ctx.clip();
       ctx.transform(...affine(source, target));
       paintComposition(ctx, layout, image, imageScale, scale, false, resources);
       ctx.restore();
     }
   }
+  ctx.restore();
 }
 
 /**

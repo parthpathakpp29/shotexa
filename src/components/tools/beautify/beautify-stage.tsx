@@ -102,7 +102,10 @@ export function BeautifyStage({ assetId }: { assetId: string }) {
     const canvas = canvasRef.current;
     const bitmap = runtime.registry.preview(assetId);
     if (!canvas || !layout || !source || !cssWidth) return;
-    const size = backingSize({ width: cssWidth, height: cssHeight }, Infinity);
+    // Perspective's piecewise canvas projection needs more samples than its CSS display size:
+    // a bounded 2× backing removes the low-resolution triangle seams seen on laptop screens.
+    const multiplier = layout.perspective.active ? 2 : 1;
+    const size = backingSize({ width: cssWidth * multiplier, height: cssHeight * multiplier }, layout.perspective.active ? Math.min(layout.canvas.width, 1600) : Infinity);
     canvas.width = size.width;
     canvas.height = size.height;
     const ctx = canvas.getContext("2d");

@@ -1,0 +1,32 @@
+HEIC decoder notices for Shotexa V2.1
+
+Shotexa's HEIC converter uses heic-to 1.6.6 by Hopper Gee, which embeds
+libheif 1.23.6 by Struktur AG, Dirk Farin and contributors. The libheif
+Emscripten build uses libde265 1.0.16 by Struktur AG, Dirk Farin and
+contributors for HEVC decoding. These components are covered by the GNU
+Lesser General Public License version 3 (or the later-version option stated
+in each component's own source notice).
+
+Copyright notices identified in upstream documentation:
+  libheif: Copyright (c) 2017-2020 Struktur AG;
+           Copyright (c) 2017-2026 Dirk Farin.
+  libde265: Copyright (c) 2013-2014 Struktur AG;
+             Copyright (c) 2013-2024 Dirk Farin.
+
+License texts distributed with this site:
+  /licenses/heic-to-LGPL-3.0.txt
+  /licenses/GPL-3.0.txt
+
+Version-specific upstream source and build instructions:
+  https://github.com/hoppergee/heic-to/tree/v1.6.6
+  https://github.com/strukturag/libheif/tree/v1.23.6
+  https://github.com/strukturag/libde265/tree/v1.0.16
+
+The heic-to package's generated CSP decoder identifies libheif 1.23.6,
+USE_UNSAFE_EVAL=0 and LIBDE265_VERSION=1.0.16. Its published development
+instructions use USE_WASM=0. The distributed browser code is compiled
+JavaScript; there is no separately served libheif WASM file in this build.
+
+These notices and source pointers do not themselves supply a verified way to
+recombine or relink Shotexa with a modified decoder. The HEIC-enabled build
+remains subject to a separate release review of that requirement.

@@ -1,0 +1,5 @@
+import { ConversionPage } from "@/components/tools/conversion/conversion-page";
+import { toolMetadata } from "@/config/routes";
+
+export const metadata = toolMetadata("heic-to-jpg");
+export default function Page() { return <ConversionPage tool="heic-to-jpg" />; }

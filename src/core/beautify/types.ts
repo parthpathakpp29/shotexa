@@ -16,7 +16,7 @@ export type BeautifyMode =
   | "tablet"
   | "laptop"
   | "monitor";
-export type BackgroundKind = "solid" | "gradient" | "mesh" | "radial" | "aurora" | "soft-blur" | "noise" | "pattern" | "screenshot" | "custom-image";
+export type BackgroundKind = "solid" | "gradient" | "mesh" | "radial" | "aurora" | "soft-blur" | "noise" | "pattern" | "screenshot" | "custom-image" | "studio";
 /** Gradient direction, in degrees clockwise from "top to bottom". */
 export type GradientAngle = 0 | 45 | 90 | 135;
 export type ShadowPreset = "none" | "soft" | "float" | "strong" | "deep" | "hard" | "ambient" | "glow" | "studio" | "custom";
@@ -74,6 +74,8 @@ export interface BeautifyBackground {
   /** Optional local workspace image. The Blob remains in AssetRegistry. */
   assetId?: string | null;
   pattern?: "dots" | "grid" | "diagonal";
+  /** Original, resolution-independent artwork rendered by the shared canvas pipeline. */
+  studioId?: string;
 }
 
 export interface BeautifyBorder {
@@ -223,6 +225,7 @@ export interface BackgroundPaint {
   intensity?: number;
   assetId?: string | null;
   pattern?: "dots" | "grid" | "diagonal";
+  studioId?: string;
 }
 
 export interface ShadowPaint {

@@ -239,6 +239,7 @@ export interface WorkspaceRuntime {
   retryBatchFailed(): Promise<{ completed: number; failed: number; cancelled: number }>;
   createBatchZip(): Promise<{ blob: Blob; names: string[] }>;
   addBatchResults(): FileId[];
+  addConvertedImage(blob: Blob, name: string, width: number, height: number, producedBy: "pdf-to-jpg" | "svg-to-png"): FileId;
   dispose(): void;
 }
 
@@ -1629,6 +1630,20 @@ export function createWorkspaceRuntime(opts: {
     return added.map((f) => f.id);
   }
 
+  /** Register a locally converted raster in the same lifecycle as other workspace outputs. */
+  function addConvertedImage(blob: Blob, name: string, width: number, height: number, producedBy: "pdf-to-jpg" | "svg-to-png"): FileId {
+    if (disposed || leaving || (blob.type !== "image/png" && blob.type !== "image/jpeg")) throw new Error("Conversion output is unavailable");
+    const id = newId();
+    registry.put(id, blob);
+    store.getState().addArtifact({
+      id, name: safeFileName(name, `converted.${blob.type === "image/png" ? "png" : "jpg"}`),
+      type: blob.type, bytes: blob.size, width, height,
+      source: "artifact", kind: "artifact", producedBy, addedAt: Date.now(), previewVersion: 0,
+    });
+    previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
+    return id;
+  }
+
   function selected(assetId?: FileId) {
     const id = assetId ?? store.getState().selectedId;
     const file = id ? store.getState().files[id] : undefined;
@@ -2176,6 +2191,7 @@ export function createWorkspaceRuntime(opts: {
     retryBatchFailed,
     createBatchZip: zipBatch,
     addBatchResults,
+    addConvertedImage,
     dispose() {
       disposed = true;
       pageAbort.abort();

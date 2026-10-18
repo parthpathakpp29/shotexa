@@ -9,6 +9,8 @@ import type { ToolId } from "./tools";
 export interface ToolContent {
   /** Hint under the uploader. */
   dropHint: string;
+  /** Input types for non-screenshot converters. */
+  inputs?: string;
   /** H2 for the overview, in natural words ("What Smart Stitch does"). */
   whatHeading: string;
   /** 2–4 sentences. */
@@ -24,6 +26,22 @@ export interface ToolContent {
 }
 
 export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
+  "pdf-to-jpg": {
+    dropHint: "Choose a PDF document", inputs: "PDF documents", whatHeading: "What the PDF image converter does",
+    intro: "Render selected PDF pages into clear, shareable images. Choose JPG for smaller files or PNG for lossless page graphics. The browser renders one page at a time to limit memory use.",
+    steps: [{ title: "Open a PDF", body: "Choose a PDF under 60 MB and up to 80 pages." }, { title: "Select pages and resolution", body: "Pick individual pages or all pages and choose a render scale." }, { title: "Export", body: "Download individual images or a ZIP of selected pages." }],
+    useCases: [{ title: "Share a page", body: "Turn a chart, slide or document page into an image." }, { title: "Reuse page artwork", body: "Convert a page locally, then open its image in Editor or Beautifier without uploading it again." }],
+    privacy: "PDF parsing and page rendering happen locally in your browser. Document contents are not uploaded.", outputs: ["JPG", "PNG", "ZIP"],
+    faq: [{ q: "Can I convert a password-protected PDF?", a: "Unlock it first. This converter does not request or store passwords." }, { q: "Is PDF text still editable?", a: "No. Exported pages are raster images; choose a higher scale for readable text." }, { q: "Can I select only some pages?", a: "Yes. Preview the pages, select the ones you need, and download them individually or together." }],
+  },
+  "svg-to-png": {
+    dropHint: "Choose a passive SVG file", inputs: "Passive SVG artwork", whatHeading: "What the SVG converter does",
+    intro: "Rasterize supported SVG drawings at dimensions you choose. PNG can retain transparent areas; JPG uses a solid background. Active SVG content and external resources are rejected to keep conversion local and safe.",
+    steps: [{ title: "Choose an SVG", body: "Use passive vector artwork with basic shapes, paths, text and gradients." }, { title: "Set dimensions", body: "Keep the aspect ratio or specify exact width and height." }, { title: "Export", body: "Download a PNG or JPG and continue editing it in Shotexa." }],
+    useCases: [{ title: "Export icons and diagrams", body: "Create crisp raster versions sized for presentations or social posts." }, { title: "Make a JPG", body: "Choose a background color for artwork that needs a JPG file." }],
+    privacy: "SVG validation and rasterization happen in your browser. External references and active content are rejected.", outputs: ["PNG", "JPG"],
+    faq: [{ q: "Why was my SVG rejected?", a: "Scripts, embedded images, stylesheets, external links and other active or unsupported constructs are not accepted. Export a plain SVG from your design app." }, { q: "Can PNG stay transparent?", a: "Yes. Choose PNG and leave transparent regions in the SVG." }, { q: "How large can the export be?", a: "Shotexa limits canvas dimensions and pixel count to keep browser memory use reasonable. Reduce the width or height if you reach the limit." }],
+  },
   stitch: {
     dropHint: "or drag and drop two or more overlapping screenshots here",
     whatHeading: "What Smart Stitch does",
@@ -71,10 +89,10 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
   beautify: {
     dropHint: "or drag and drop a screenshot to put it on a background or in a frame",
     whatHeading: "What the Beautifier does",
-    intro: "The Beautifier turns a plain screenshot into a presentable image. Place it on a solid, gradient or blurred background, inside a generic browser window or phone frame, add shadows and 3D perspective, and size the result for where you’re posting it. Up to three screenshots can share one composition.",
+    intro: "Turn a plain screenshot into a polished product image. Start with one of 12 visual templates or pair your screenshot with an original background from the 18-scene library. Browser and phone frames, shadows, perspective, typography and custom canvas sizes remain editable. Up to three screenshots can share one composition.",
     steps: [
       { title: "Add a screenshot", body: "Paste, drop or choose an image — or open a result from another Shotexa tool." },
-      { title: "Start from a style", body: "Pick a preset such as SaaS Hero, Documentation or App Showcase, then adjust anything you like." },
+      { title: "Choose a visual template", body: "Browse designs for launches, documentation, portfolios, apps and social posts. Classic presets are also available." },
       { title: "Adjust the details", body: "Background, frame, padding, corners, shadow, perspective, captions and an optional logo." },
       { title: "Set the size and export", body: "Keep it automatic, choose a ratio, or use a fixed size for X, LinkedIn, YouTube, Open Graph or Product Hunt. Export at 1× to 4×." },
     ],
@@ -91,6 +109,7 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
       { q: "Are these real browser or phone designs?", a: "No. The frames are generic shapes drawn by Shotexa. They carry no company’s logo and don’t copy a particular device." },
       { q: "Can I use more than one screenshot?", a: "Yes. Add up to two more screenshots and choose a layout such as side by side, stacked, fanned or overlapping." },
       { q: "Which sizes are available?", a: "Automatic, common ratios such as 1:1, 4:5 and 16:9, a custom size, and fixed sizes for X, LinkedIn, YouTube thumbnails, Open Graph images and Product Hunt." },
+      { q: "Can I change a template after choosing it?", a: "Yes. Templates are starting points. You can change the background, frame, spacing, shadow, perspective, text and export size before downloading." },
     ],
     workflows: ["product-screenshot"],
   },

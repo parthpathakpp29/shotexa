@@ -1,0 +1,68 @@
+import { assertRasterSize, encodeCanvas, releaseCanvas, type RasterFormat } from "./raster";
+
+const MAX_HEIC_BYTES = 25 * 1024 * 1024;
+
+/** Read HEIF spatial extents before the decoder allocates full-resolution pixels. */
+export async function preflightHeicSize(file: Blob): Promise<void> {
+  const bytes = new DataView(await file.arrayBuffer());
+  let found = false;
+  const walk = (start: number, end: number, depth: number): void => {
+    if (depth > 6) return;
+    for (let offset = start; offset + 8 <= end;) {
+      let size = bytes.getUint32(offset);
+      const kind = String.fromCharCode(bytes.getUint8(offset + 4), bytes.getUint8(offset + 5), bytes.getUint8(offset + 6), bytes.getUint8(offset + 7));
+      let header = 8;
+      if (size === 1) {
+        if (offset + 16 > end) break;
+        const extended = bytes.getBigUint64(offset + 8);
+        if (extended > BigInt(Number.MAX_SAFE_INTEGER)) break;
+        size = Number(extended);
+        header = 16;
+      } else if (size === 0) size = end - offset;
+      if (size < header || offset + size > end) break;
+      const content = offset + header;
+      if (kind === "ispe" && content + 12 <= offset + size) {
+        found = true;
+        assertRasterSize(bytes.getUint32(content + 4), bytes.getUint32(content + 8));
+      } else if (kind === "meta" || kind === "iprp" || kind === "ipco") {
+        walk(content + (kind === "meta" ? 4 : 0), offset + size, depth + 1);
+      }
+      offset += size;
+    }
+  };
+  walk(0, bytes.byteLength, 0);
+  if (!found) throw new Error("This HEIC/HEIF variant does not expose a safe image size.");
+}
+
+/** The decoder is imported only after a HEIC/HEIF file is chosen. */
+export async function convertHeic(file: File, format: RasterFormat, quality = 0.92): Promise<{ blob: Blob; width: number; height: number }> {
+  if (file.size < 12 || file.size > MAX_HEIC_BYTES) throw new Error("Choose a HEIC file under 25 MB.");
+  const head = new Uint8Array(await file.slice(0, 32).arrayBuffer());
+  const brand = String.fromCharCode(...head.slice(8, 12));
+  if (String.fromCharCode(...head.slice(4, 8)) !== "ftyp" || !/^(heic|heix|hevc|hevx|mif1|msf1)$/.test(brand)) throw new Error("This is not a supported HEIC/HEIF file.");
+  await preflightHeicSize(file);
+  const { heicTo } = await import("heic-to/csp");
+  let bitmap: ImageBitmap | null = null;
+  const canvas = document.createElement("canvas");
+  try {
+    // libheif applies HEIF orientation. Do not apply EXIF orientation again.
+    bitmap = await heicTo({ blob: file, type: "bitmap" });
+    assertRasterSize(bitmap.width, bitmap.height);
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("Canvas is unavailable in this browser.");
+    if (format === "jpg") {
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    ctx.drawImage(bitmap, 0, 0);
+    return { blob: await encodeCanvas(canvas, format, quality), width: bitmap.width, height: bitmap.height };
+  } catch (error) {
+    if (error instanceof Error && /too large|unavailable|dimensions/i.test(error.message)) throw error;
+    throw new Error("This HEIC/HEIF image could not be decoded. Some codec variants are unsupported.");
+  } finally {
+    bitmap?.close();
+    releaseCanvas(canvas);
+  }
+}

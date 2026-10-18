@@ -33,7 +33,7 @@ export function ToolEducation({ tool }: { tool: ToolId }) {
               {content.outputs.map((format) => <li key={format} className="t-mono rounded-sm border border-line bg-surface-2 px-2 py-1 text-[12px] text-ink">{format}</li>)}
             </ul>
             <h3 className="t-micro mt-5 text-ink-3">Works with</h3>
-            <p className="t-body-sm mt-1 text-ink">{t.minFiles === 2 ? "Two or more PNG, JPEG or WebP images" : "PNG, JPEG and WebP images"}</p>
+            <p className="t-body-sm mt-1 text-ink">{content.inputs ?? (t.minFiles === 2 ? "Two or more PNG, JPEG or WebP images" : "PNG, JPEG and WebP images")}</p>
             <h3 className="mt-5 flex items-center gap-2 text-sm font-semibold"><ShieldCheck aria-hidden className="size-4 text-accent" /> Privacy and processing</h3>
             <p className="t-body-sm mt-1.5 text-ink-2">{content.privacy}</p>
             <Link href="/privacy" className="mt-1 inline-flex min-h-10 items-center text-sm text-accent-ink underline-offset-4 hover:underline">How Shotexa keeps files local</Link>

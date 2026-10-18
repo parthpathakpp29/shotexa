@@ -7,7 +7,7 @@
  *  - "preview" route + workspace shell exist (files carry over) but the tool is not finished:
  *              noindex, not in the sitemap, honest "coming next" state
  */
-export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "structured-data" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "split" | "compress" | "convert" | "beautify" | "compare" | "metadata" | "remove-background" | "batch";
+export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "structured-data" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "split" | "compress" | "convert" | "beautify" | "compare" | "metadata" | "remove-background" | "batch" | "pdf-to-jpg" | "svg-to-png";
 
 export type ToolStatus = "live" | "preview";
 export type ToolIcon = "stitch" | "combine" | "shield" | "blur" | "text" | "pdf" | "crop" | "pen" | "scissors" | "compress" | "convert" | "sparkles" | "compare" | "eraser" | "batch";
@@ -36,6 +36,18 @@ export interface ToolConfig {
 }
 
 export const TOOLS: Record<ToolId, ToolConfig> = {
+  "pdf-to-jpg": {
+    id: "pdf-to-jpg", name: "PDF to JPG", route: "/pdf-to-jpg", status: "live", category: "documents", icon: "pdf", minFiles: 1,
+    summary: "Turn selected PDF pages into clear JPG or PNG images.",
+    seo: { title: "PDF to JPG Converter – Select Pages & Resolution | Shotexa", h1: "Convert PDF Pages to JPG or PNG", description: "Preview PDF pages, choose pages and resolution, then export JPG or PNG images locally in your browser. Download one page or a ZIP of many." },
+    continueWith: ["editor", "beautify", "compress", "metadata"],
+  },
+  "svg-to-png": {
+    id: "svg-to-png", name: "SVG to PNG", route: "/svg-to-png", status: "live", category: "edit", icon: "convert", minFiles: 1,
+    summary: "Rasterize safe SVG artwork to sharp PNG or JPG images.",
+    seo: { title: "SVG to PNG Converter – Resize & Export Privately | Shotexa", h1: "Convert SVG to PNG or JPG", description: "Turn passive SVG artwork into transparent PNG or background-filled JPG images. Choose dimensions and convert locally, without uploading the artwork." },
+    continueWith: ["editor", "beautify", "compress", "metadata"],
+  },
   stitch: {
     id: "stitch",
     name: "Smart Stitch",
@@ -71,12 +83,12 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     status: "live",
     category: "create",
     icon: "sparkles",
-    summary: "Put a screenshot on a background, or in a browser or phone frame.",
+    summary: "Create screenshot mockups with visual templates, original backgrounds and editable frames.",
     minFiles: 1,
     seo: {
-      title: "Screenshot Beautifier – Make Screenshots Look Better | Shotexa",
-      h1: "Beautify a Screenshot Online",
-      description: "Put a screenshot on a styled background, or inside a browser window or phone frame, and export it at full resolution — privately in your browser.",
+      title: "Screenshot Beautifier – Free Mockups & Backgrounds | Shotexa",
+      h1: "Beautify Screenshots With Templates and Backgrounds",
+      description: "Create screenshot mockups with 12 editable templates, 18 original backgrounds, browser and phone frames, and high-resolution export. Free, no watermark or upload.",
     },
     continueWith: ["editor", "annotate", "safe-share", "compare", "compress", "pdf", "combine"],
   },
