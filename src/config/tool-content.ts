@@ -89,11 +89,11 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
   beautify: {
     dropHint: "or drag and drop a screenshot to put it on a background or in a frame",
     whatHeading: "What the Beautifier does",
-    intro: "Turn a plain screenshot into a polished product image. Start with one of 12 visual templates or pair your screenshot with an original background from the 18-scene library. Browser and phone frames, shadows, perspective, typography and custom canvas sizes remain editable. Up to three screenshots can share one composition.",
+    intro: "Turn a plain screenshot into a polished product image. Start with one of 12 visual templates or an original background from the 18-scene library. Add optional text or logo watermarks, save a local Brand Kit, and style several screenshots as a ZIP pack. Frames, perspective, typography and export sizes remain editable.",
     steps: [
       { title: "Add a screenshot", body: "Paste, drop or choose an image — or open a result from another Shotexa tool." },
       { title: "Choose a visual template", body: "Browse designs for launches, documentation, portfolios, apps and social posts. Classic presets are also available." },
-      { title: "Adjust the details", body: "Background, frame, padding, corners, shadow, perspective, captions and an optional logo." },
+      { title: "Adjust the details", body: "Background, frame, padding, captions and optional text or logo watermarks. Save your choices as a Brand Kit for later." },
       { title: "Set the size and export", body: "Keep it automatic, choose a ratio, or use a fixed size for X, LinkedIn, YouTube, Open Graph or Product Hunt. Export at 1× to 4×." },
     ],
     useCases: [
@@ -101,6 +101,7 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
       { title: "Docs and help articles", body: "Add a subtle frame and background so screenshots read as part of the page." },
       { title: "App and landing-page visuals", body: "Show a mobile screen in a phone frame with depth and a soft shadow." },
       { title: "Side-by-side compositions", body: "Place two or three screenshots together, side by side, stacked or overlapping." },
+      { title: "Screenshot packs", body: "Apply one template or saved brand to several screenshots, refine each image, then export a ZIP for a launch, docs or portfolio." },
     ],
     privacy: "The composition is drawn in your browser from your original pixels. Nothing is uploaded, and the browser frame’s address bar only shows a URL if you type one.",
     outputs: ["PNG", "JPEG", "WebP"],
@@ -110,6 +111,9 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
       { q: "Can I use more than one screenshot?", a: "Yes. Add up to two more screenshots and choose a layout such as side by side, stacked, fanned or overlapping." },
       { q: "Which sizes are available?", a: "Automatic, common ratios such as 1:1, 4:5 and 16:9, a custom size, and fixed sizes for X, LinkedIn, YouTube thumbnails, Open Graph images and Product Hunt." },
       { q: "Can I change a template after choosing it?", a: "Yes. Templates are starting points. You can change the background, frame, spacing, shadow, perspective, text and export size before downloading." },
+      { q: "Does Shotexa add a watermark to every export?", a: "No. Watermarks are optional, free, and fully editable. Your export stays clean unless you add one." },
+      { q: "Where are Brand Kits saved?", a: "In this browser's local storage. A kit can include a chosen logo and style, but your uploaded screenshots are not saved across reloads." },
+      { q: "Can I style and export many screenshots together?", a: "Yes. Open Screenshot Packs from the Beautifier, apply a shared template or Brand Kit, adjust any image, then download individual files or a ZIP." },
     ],
     workflows: ["product-screenshot"],
   },

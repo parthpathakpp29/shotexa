@@ -157,6 +157,8 @@ export interface WorkspaceRuntime {
   broker: WorkerBroker;
   caps: Capabilities;
   ingest(files: File[], source: FileSource): Promise<IngestResult>;
+  /** Validated local image for branding; it does not become a screenshot. */
+  ingestResource(file: File): Promise<IngestResult>;
   removeFile(id: FileId): void;
   clear(): void;
   analyseStitch(): Promise<void>;
@@ -356,7 +358,7 @@ export function createWorkspaceRuntime(opts: {
 
   /** After a back/forward-cache restore: previews interrupted by `pagehide` are made now. */
   function resumePreviews() {
-    for (const id of store.getState().order) {
+    for (const id of Object.keys(store.getState().files)) {
       if (registry.preview(id)) continue;
       previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
     }
@@ -468,7 +470,7 @@ export function createWorkspaceRuntime(opts: {
     job("overlap", "overlap-check", "done");
   }
 
-  async function ingest(files: File[], source: FileSource): Promise<IngestResult> {
+  async function ingest(files: File[], source: FileSource, asResource = false): Promise<IngestResult> {
     const rejected: IngestResult["rejected"] = [];
     const metas: WorkspaceFile[] = [];
     for (const file of files) {
@@ -503,12 +505,15 @@ export function createWorkspaceRuntime(opts: {
       // Sanitised once, here: the name reaches download attributes and ZIP entries later.
       const name = source === "paste" || !file.name ? `Pasted screenshot ${++pasteCount}.${EXT[v.type]}` : safeFileName(file.name, `screenshot.${EXT[v.type]}`);
       registry.put(id, file);
-      metas.push({ id, name, type: v.type, bytes: file.size, width: size.width, height: size.height, source, kind: "original", addedAt: Date.now(), previewVersion: 0 });
+      metas.push({ id, name, type: v.type, bytes: file.size, width: size.width, height: size.height, source, kind: asResource ? "resource" : "original", addedAt: Date.now(), previewVersion: 0 });
     }
     // WorkspaceProvider already presents one concise, aria-live ingestion summary. Keep
     // that established notice as the sole file-add/rejection announcement rather than
     // showing a second toast for the same action.
-    if (metas.length) store.getState().addFiles(metas);
+    if (metas.length) {
+      if (asResource) store.getState().addResources(metas);
+      else store.getState().addFiles(metas);
+    }
     // Previews one at a time (each is a full decode transiently — Spike B), then the hint.
     for (const m of metas) {
       previewChain = previewChain.then(async () => {
@@ -521,7 +526,7 @@ export function createWorkspaceRuntime(opts: {
         }
       });
     }
-    previewChain = previewChain.then(() => checkOverlap());
+    if (!asResource) previewChain = previewChain.then(() => checkOverlap());
     await previewChain;
     return { added: metas.map((m) => m.id), rejected };
   }
@@ -1244,7 +1249,7 @@ export function createWorkspaceRuntime(opts: {
     const source = { width: file.width, height: file.height };
     const { DEFAULT_BEAUTIFY } = await import("@/core/beautify/presets");
     const settings = s.beautify.byAsset[sourceId] ?? DEFAULT_BEAUTIFY;
-    const resourceIds = [...new Set([...settings.composition.assetIds, settings.branding.assetId, settings.background.assetId].filter((id): id is string => !!id && id !== sourceId))];
+    const resourceIds = [...new Set([...settings.composition.assetIds, settings.branding.assetId, settings.background.assetId, ...(settings.watermarks ?? []).map((layer) => layer.assetId)].filter((id): id is string => !!id && id !== sourceId))];
     const resources = resourceIds.flatMap((id) => {
       const resourceFile = s.files[id];
       const resourceBlob = registry.blob(id);
@@ -2138,6 +2143,7 @@ export function createWorkspaceRuntime(opts: {
     broker,
     caps,
     ingest,
+    ingestResource: (file) => ingest([file], "picker", true),
     removeFile: (id) => {
       proxies.delete(id);
       store.getState().removeFile(id);

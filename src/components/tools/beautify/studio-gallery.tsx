@@ -36,7 +36,7 @@ function PreviewCard({ assetId, settings, label, caption, testId, active, onClic
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     const bitmap = runtime.registry.preview(assetId);
-    const ids = [...settings.composition.assetIds, settings.branding.assetId, settings.background.assetId].filter((id): id is string => !!id && id !== assetId);
+    const ids = [...settings.composition.assetIds, settings.branding.assetId, settings.background.assetId, ...(settings.watermarks ?? []).map((layer) => layer.assetId)].filter((id): id is string => !!id && id !== assetId);
     const resources = [...new Set(ids)].flatMap((id) => {
       const resource = files[id]; const image = runtime.registry.preview(id);
       return resource && image ? [{ id, image, imageScale: image.width / resource.width, source: { width: resource.width, height: resource.height } }] : [];

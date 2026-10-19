@@ -156,9 +156,9 @@ describe("tool page education content", () => {
       expect(content.steps.length, id).toBeGreaterThanOrEqual(3);
       expect(content.steps.length, id).toBeLessThanOrEqual(5);
       expect(content.useCases.length, id).toBeGreaterThanOrEqual(2);
-      expect(content.useCases.length, id).toBeLessThanOrEqual(4);
+      expect(content.useCases.length, id).toBeLessThanOrEqual(id === "beautify" ? 5 : 4);
       expect(content.faq.length, id).toBeGreaterThanOrEqual(3);
-      expect(content.faq.length, id).toBeLessThanOrEqual(5);
+      expect(content.faq.length, id).toBeLessThanOrEqual(id === "beautify" ? 8 : 5);
       expect(content.outputs.length, id).toBeGreaterThan(0);
       expect(content.privacy, id).toMatch(/browser|device/);
       expect(content.whatHeading.startsWith("What "), id).toBe(true);

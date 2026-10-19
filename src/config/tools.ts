@@ -83,12 +83,12 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     status: "live",
     category: "create",
     icon: "sparkles",
-    summary: "Create screenshot mockups with visual templates, original backgrounds and editable frames.",
+    summary: "Create mockups, optional watermarks, saved brand kits and multi-image screenshot packs.",
     minFiles: 1,
     seo: {
-      title: "Screenshot Beautifier – Free Mockups & Backgrounds | Shotexa",
+      title: "Screenshot Beautifier, Watermarks & Brand Kits | Shotexa",
       h1: "Beautify Screenshots With Templates and Backgrounds",
-      description: "Create screenshot mockups with 12 editable templates, 18 original backgrounds, browser and phone frames, and high-resolution export. Free, no watermark or upload.",
+      description: "Style screenshots with 12 templates, 18 backgrounds, optional text or logo watermarks, local Brand Kits and ZIP screenshot packs. Free, private and no account.",
     },
     continueWith: ["editor", "annotate", "safe-share", "compare", "compress", "pdf", "combine"],
   },
@@ -315,7 +315,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Batch Process Screenshots Online",
       description: "Process screenshots sequentially, including local background removal, and download the results together as a ZIP — privately in your browser.",
     },
-    continueWith: ["editor", "safe-share", "extract-text", "pdf"],
+    continueWith: ["beautify", "editor", "safe-share", "extract-text", "pdf"],
   },
 };
 

@@ -16,6 +16,8 @@ import { ANIMATION_PRESETS } from "@/core/beautify/animation";
 import type { AnimationPreset, BackgroundKind, BeautifyMode, BeautifySettings, BorderKind, CaptionPlacement, ExportScale, FontFamily, FontWeight, FrameTheme, GradientAngle, MultiLayout, OutputPreset, PerspectivePreset, ScreenFit, ShadowPreset, TextAlignment } from "@/core/beautify/types";
 import { cn } from "@/lib/cn";
 import { RecipeGallery, StudioBackgrounds, StudioTemplates } from "./studio-gallery";
+import { WatermarkInspector } from "./watermark-inspector";
+import { BrandKitPanel } from "./brand-kit-panel";
 
 const MODES: { value: BeautifyMode; label: string }[] = [
   { value: "clean", label: "Clean" },
@@ -72,7 +74,7 @@ function NumberField({ label, value, min, max, onChange, testId }: { label: stri
   );
 }
 
-export function BeautifyInspector({ assetId }: { assetId: string }) {
+export function BeautifyInspector({ assetId, selectedWatermark = null, onSelectWatermark = () => undefined }: { assetId: string; selectedWatermark?: string | null; onSelectWatermark?(id: string | null): void }) {
   const { runtime } = useWorkspaceContext();
   const file = useWorkspace((s) => s.files[assetId]);
   const stored = useWorkspace((s) => s.beautify.byAsset[assetId]);
@@ -149,6 +151,12 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
     <div data-testid="beautify-inspector">
       <ProSection title="Templates" defaultOpen>
         <StudioTemplates assetId={assetId} settings={settings} onApply={apply} />
+      </ProSection>
+      <ProSection title="Brand Kit">
+        <BrandKitPanel assetId={assetId} settings={settings} />
+      </ProSection>
+      <ProSection title="Watermark Stamp Pro">
+        <WatermarkInspector assetId={assetId} settings={settings} selectedId={selectedWatermark} onSelect={onSelectWatermark} />
       </ProSection>
       <ProSection title="Layout">
         <Button variant="primary" size="sm" className="mb-4 w-full max-md:h-11" data-testid="beautify-auto-design" onClick={applyAutoDesign}><WandSparkles /> Auto Design</Button>
@@ -559,7 +567,8 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
       )}
 
       <ProSection title="Branding">
-        <label className="block"><span className="t-micro mb-1.5 block text-ink-3">Logo / watermark</span><select aria-label="Logo or watermark image" value={settings.branding.assetId ?? ""} onChange={(event) => apply({ branding: { ...settings.branding, assetId: event.target.value || null } })} className="h-10 w-full rounded-sm border border-line bg-surface px-2.5 text-sm text-ink max-md:h-11"><option value="">None</option>{order.filter((id) => id !== assetId).map((id) => <option key={id} value={id}>{files[id]?.name ?? "Local image"}</option>)}</select></label>
+        <p className="t-body-sm mb-3 text-ink-3">A quick anchored logo. Use Watermark Stamp Pro above for free positioning and patterns.</p>
+        <label className="block"><span className="t-micro mb-1.5 block text-ink-3">Logo / watermark</span><select aria-label="Logo or watermark image" value={settings.branding.assetId ?? ""} onChange={(event) => apply({ branding: { ...settings.branding, assetId: event.target.value || null } })} className="h-10 w-full rounded-sm border border-line bg-surface px-2.5 text-sm text-ink max-md:h-11"><option value="">None</option><optgroup label="Brand assets">{Object.values(files).filter((file) => file.kind === "resource").map((file) => <option key={file.id} value={file.id}>{file.name}</option>)}</optgroup><optgroup label="Workspace screenshots">{order.filter((id) => id !== assetId).map((id) => <option key={id} value={id}>{files[id]?.name ?? "Local image"}</option>)}</optgroup></select></label>
         {settings.branding.assetId && <div className="mt-3 space-y-3"><SegmentedControl<BeautifySettings["branding"]["position"]> label="Watermark position" size="sm" value={settings.branding.position} onChange={(position) => apply({ branding: { ...settings.branding, position } })} options={[{ value: "top-left", label: "Top left" }, { value: "top-right", label: "Top right" }, { value: "bottom-left", label: "Bottom left" }, { value: "bottom-right", label: "Bottom right" }, { value: "center", label: "Centre" }]} className="grid-flow-row grid-cols-2" /><div><FieldLabel value={`${settings.branding.scale}%`}>Scale</FieldLabel><Slider label="Watermark scale" value={settings.branding.scale} min={5} max={60} onChange={(scale) => apply({ branding: { ...settings.branding, scale } }, "branding-scale")} /></div><div><FieldLabel value={`${settings.branding.opacity}%`}>Opacity</FieldLabel><Slider label="Watermark opacity" value={settings.branding.opacity} min={5} max={100} onChange={(opacity) => apply({ branding: { ...settings.branding, opacity } }, "branding-opacity")} /></div><div><FieldLabel value={`${settings.branding.margin}%`}>Margin</FieldLabel><Slider label="Watermark margin" value={settings.branding.margin} min={0} max={20} onChange={(margin) => apply({ branding: { ...settings.branding, margin } }, "branding-margin")} /></div></div>}
         <p className="t-body-sm mt-2 text-ink-3">Choose another local workspace image. It stays in this browser session.</p>
       </ProSection>

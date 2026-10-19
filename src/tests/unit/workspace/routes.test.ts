@@ -94,7 +94,7 @@ describe("tool registry", () => {
     expect(TOOLS.batch.seo.title).toBe("Batch Process Screenshots Online – Compress, Convert & Resize | Shotexa");
     expect(TOOLS.batch.seo.h1).toBe("Batch Process Screenshots Online");
     for (const synonym of ["/batch-compress", "/batch-convert", "/bulk-resize", "/bulk-screenshot-tools"]) expect(toolByRoute(synonym)).toBeUndefined();
-    expect(continuationsFor("batch")).toEqual(["editor", "safe-share", "extract-text", "pdf"]);
+    expect(continuationsFor("batch")).toEqual(["beautify", "editor", "safe-share", "extract-text", "pdf"]);
   });
 
   it("ships Background Remover at one canonical route", () => {
@@ -107,7 +107,7 @@ describe("tool registry", () => {
 
   it("ships the Screenshot Beautifier at one canonical route", () => {
     expect(TOOLS.beautify).toMatchObject({ route: "/screenshot-beautifier", status: "live", category: "create", minFiles: 1 });
-    expect(TOOLS.beautify.seo.title).toBe("Screenshot Beautifier – Free Mockups & Backgrounds | Shotexa");
+    expect(TOOLS.beautify.seo.title).toBe("Screenshot Beautifier, Watermarks & Brand Kits | Shotexa");
     expect(TOOLS.beautify.seo.h1).toBe("Beautify Screenshots With Templates and Backgrounds");
     // Frame styles live inside this one tool, not as separate routes.
     for (const synonym of ["/browser-frame", "/phone-mockup", "/screenshot-frame", "/screenshot-mockup"]) expect(toolByRoute(synonym)).toBeUndefined();
@@ -212,7 +212,7 @@ describe("SEO config", () => {
       robots: { index: true },
     });
     expect(toolMetadata("beautify")).toMatchObject({
-      title: "Screenshot Beautifier – Free Mockups & Backgrounds | Shotexa",
+      title: "Screenshot Beautifier, Watermarks & Brand Kits | Shotexa",
       alternates: { canonical: "/screenshot-beautifier" },
       robots: { index: true },
     });

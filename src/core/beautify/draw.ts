@@ -10,6 +10,7 @@ import type { Rect } from "@/core/image-transform/types";
 import { FRAME_COLORS, WINDOW_DOTS } from "./presets";
 import { multiImageLayout } from "./multi-layout";
 import { paintStudioArt } from "./studio-art";
+import { paintWatermarks } from "./watermark";
 import type { BeautifyDrawResource, BeautifyLayout, GradientAngle, Point } from "./types";
 
 type Ctx = OffscreenCanvasRenderingContext2D | CanvasRenderingContext2D;
@@ -580,6 +581,7 @@ export function drawBeautified(ctx: Ctx, layout: BeautifyLayout, image: CanvasIm
   if (layout.perspective.active) paintPerspectiveComposition(ctx, layout, image, imageScale, scale, resources);
   else paintComposition(ctx, layout, image, imageScale, scale, true, resources);
   paintBranding(ctx, layout, resources);
+  paintWatermarks(ctx, layout, resources);
   paintCaption(ctx, layout);
   ctx.restore();
 }

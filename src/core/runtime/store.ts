@@ -59,6 +59,8 @@ export interface WorkspaceState {
 
 export interface WorkspaceActions {
   addFiles(files: WorkspaceFile[]): void;
+  /** Brand images live in the registry and files map, but never enter screenshot order. */
+  addResources(files: WorkspaceFile[]): void;
   removeFile(id: FileId): void;
   clear(): void;
   select(id: FileId | null): void;
@@ -286,6 +288,9 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           };
         });
       },
+      addResources(files) {
+        set((s) => ({ files: { ...s.files, ...Object.fromEntries(files.map((file) => [file.id, file])) } }));
+      },
       removeFile(id) {
         if (!get().files[id]) return;
         set((s) => {
@@ -341,7 +346,7 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
         onRemove?.(id);
       },
       clear() {
-        const ids = [...get().order, ...get().documentOrder];
+        const ids = [...Object.keys(get().files), ...get().documentOrder];
         set(initial());
         for (const id of ids) onRemove?.(id);
       },

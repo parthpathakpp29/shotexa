@@ -151,6 +151,28 @@ export interface BeautifyBranding {
   margin: number;
 }
 
+/** Percent coordinates are relative to the whole output canvas, independent of export scale. */
+export interface WatermarkLayer {
+  id: string;
+  kind: "text" | "image";
+  text: string;
+  assetId: string | null;
+  x: number;
+  y: number;
+  /** Image width, or text size, as a percentage of the canvas short side. */
+  size: number;
+  rotation: number;
+  opacity: number;
+  color: string;
+  font: FontFamily;
+  letterSpacing: number;
+  tiled: boolean;
+  /** Legacy tiled marks default to canvas; new marks can stay inside screenshot pixels. */
+  tileScope?: "canvas" | "screenshot";
+  /** Distance between repeated marks as a percentage of the canvas short side. */
+  tileGap: number;
+}
+
 export interface BeautifyAnimation {
   preset: AnimationPreset;
   duration: number;
@@ -211,6 +233,7 @@ export interface BeautifySettings {
   perspective: BeautifyPerspective;
   composition: BeautifyComposition;
   branding: BeautifyBranding;
+  watermarks?: WatermarkLayer[];
   animation: BeautifyAnimation;
 }
 
@@ -318,6 +341,7 @@ export interface BeautifyLayout {
   perspective: PerspectiveLayout;
   composition: BeautifyComposition;
   branding: BeautifyBranding;
+  watermarks: WatermarkLayer[];
 }
 
 export interface BeautifyDrawResource {

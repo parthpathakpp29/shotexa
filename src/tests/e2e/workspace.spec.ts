@@ -42,6 +42,11 @@ async function waitForAlignment(page: Page) {
   await expect(page.getByTestId("stitch-confidence")).toContainText("High confidence", { timeout: 120_000 });
 }
 
+async function dismissLocalAnalyticsChoice(page: Page) {
+  const reject = page.getByRole("button", { name: "Reject Google Analytics" });
+  if (await reject.waitFor({ state: "visible", timeout: 2_000 }).then(() => true).catch(() => false)) await reject.click();
+}
+
 async function exportStitch(page: Page) {
   const [download] = await Promise.all([page.waitForEvent("download", { timeout: 120_000 }), page.getByTestId("export").click()]);
   expect(download.suggestedFilename()).toBe("stitched-screenshot.png");
@@ -55,7 +60,13 @@ test.describe("Phase 1 workspace", () => {
   test("homepage upload → overlap suggestion → Smart Stitch → export", async ({ page }) => {
     const leaks: string[] = [];
     const errors: string[] = [];
-    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    page.on("console", (m) => {
+      if (m.type() !== "error") return;
+      // The local production server cannot serve Vercel's hosted collector script.
+      const location = m.location().url;
+      if (/^http:\/\/localhost:\d+\/_vercel\/insights\/script\.js$/.test(location)) return;
+      errors.push(m.text());
+    });
     page.on("pageerror", (e) => errors.push(e.message));
     page.on("request", (r) => {
       if (r.url().includes("/__nextjs")) return; // dev-server tooling, not app traffic
@@ -169,6 +180,7 @@ test.describe("Phase 1 workspace", () => {
   test("mobile: compact shell with sheets and sticky actions", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/stitch-screenshots");
+    await dismissLocalAnalyticsChoice(page);
     await page.getByTestId("file-input").setInputFiles([A, B]);
     await waitForAlignment(page);
     const bar = page.getByRole("button", { name: "Files (2)" });

@@ -23,6 +23,7 @@ import { messageFor } from "@/core/runtime/messages";
 import { downloadAsset } from "@/core/runtime/runtime";
 import { BeautifyInspector } from "./beautify-inspector";
 import { BeautifyStage } from "./beautify-stage";
+import { ScreenshotPackWorkspace } from "./screenshot-pack-workspace";
 
 export function BeautifyTool({ landing }: { landing: ReactNode }) {
   const count = useWorkspace((s) => s.order.length);
@@ -30,6 +31,12 @@ export function BeautifyTool({ landing }: { landing: ReactNode }) {
 }
 
 function BeautifyWorkspace() {
+  const [packMode, setPackMode] = useState(false);
+  if (packMode) return <ScreenshotPackWorkspace onBack={() => setPackMode(false)} />;
+  return <SingleBeautifyWorkspace onPack={() => setPackMode(true)} />;
+}
+
+function SingleBeautifyWorkspace({ onPack }: { onPack(): void }) {
   const { runtime } = useWorkspaceContext();
   const selectedId = useWorkspace((s) => s.selectedId);
   const file = useWorkspace((s) => (s.selectedId ? s.files[s.selectedId] : undefined));
@@ -40,6 +47,7 @@ function BeautifyWorkspace() {
   const files = useWorkspace((s) => s.files);
   const [completedId, setCompletedId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [selectedWatermark, setSelectedWatermark] = useState<string | null>(null);
   if (!selectedId || !file) return null;
   const canvas = beautifySize(settings, { width: file.width, height: file.height });
   const issue = encodeIssue(canvas, format);
@@ -94,6 +102,7 @@ function BeautifyWorkspace() {
       canvas={
         <>
           <h1 className="sr-only">{TOOLS.beautify.seo.h1}</h1>
+          <div className="mb-4 flex items-center justify-between gap-3 rounded-lg border border-line bg-surface px-4 py-3"><div><p className="text-sm font-semibold text-ink">Build a consistent screenshot pack</p><p className="text-xs text-ink-3">Style several images, refine each one, then export a ZIP.</p></div><Button variant="secondary" size="sm" onClick={onPack} data-testid="open-screenshot-packs">Create pack</Button></div>
           {error && (
             <Notice tone="error" icon={<AlertTriangle />} title="Export didn’t finish" className="mb-4">
               {messageFor(error)}
@@ -115,10 +124,10 @@ function BeautifyWorkspace() {
               <Progress value={job.progress} label="Export progress" />
             </div>
           )}
-          <BeautifyStage key={selectedId} assetId={selectedId} />
+          <BeautifyStage key={selectedId} assetId={selectedId} selectedWatermark={selectedWatermark} onSelectWatermark={setSelectedWatermark} />
         </>
       }
-      inspector={<BeautifyInspector key={selectedId} assetId={selectedId} />}
+      inspector={<BeautifyInspector key={selectedId} assetId={selectedId} selectedWatermark={selectedWatermark} onSelectWatermark={setSelectedWatermark} />}
       below={
         result && (
           <div className="mt-6" data-testid="beautify-result">

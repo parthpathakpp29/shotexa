@@ -27,8 +27,8 @@ export interface WorkspaceFile {
   width: number;
   height: number;
   source: FileSource;
-  /** "artifact" = produced by a Shotexa tool (e.g. a stitched image). */
-  kind: "original" | "artifact";
+  /** Resources are validated local brand images, kept outside screenshot order and selection. */
+  kind: "original" | "artifact" | "resource";
   derivedFrom?: FileId[];
   producedBy?: ToolId;
   addedAt: number;
