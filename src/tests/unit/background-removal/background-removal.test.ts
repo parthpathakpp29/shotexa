@@ -65,6 +65,12 @@ describe("background removal output", () => {
     expect(validateRemovalFormat("jpeg", { kind: "solid", color: "#fff" })).toEqual({ transparency: false, opaque: true });
   });
 
+  it("trims transformed bounds without clipping a scaled or moved subject", () => {
+    const settings = { ...DEFAULT_BACKGROUND_REMOVAL, trim: true, subject: { ...DEFAULT_BACKGROUND_REMOVAL.subject, scale: 2, x: 70, y: -30, padding: 10 } };
+    const plan = removalOutputPlan(Uint8ClampedArray.from([0, 255, 0, 0, 255, 0]), 3, 2, { width: 300, height: 200 }, settings);
+    expect(plan).toMatchObject({ width: 220, height: 420, drawX: -190, drawY: 10 });
+  });
+
   it("treats every replacement background as opaque", () => {
     expect(backgroundIsOpaque({ kind: "transparent" })).toBe(false);
     expect(backgroundIsOpaque({ kind: "gradient", from: "#000", to: "#fff", angle: 90 })).toBe(true);

@@ -16,9 +16,9 @@ type Result = { id: string; name: string; width: number; height: number; error?:
 
 function errorText(error: unknown): string { return error instanceof Error ? error.message : "Conversion failed. Try another file."; }
 
-export function ConversionTool({ tool }: { tool: Kind }) {
+export function ConversionTool({ tool, initialFormat, testId }: { tool: Kind; initialFormat?: RasterFormat; testId?: string }) {
   const { runtime } = useWorkspaceContext();
-  const [format, setFormat] = useState<RasterFormat>(tool === "svg-to-png" ? "png" : "jpg");
+  const [format, setFormat] = useState<RasterFormat>(initialFormat ?? (tool === "svg-to-png" ? "png" : "jpg"));
   const [quality, setQuality] = useState(92);
   const [busy, setBusy] = useState(false);
   const [progress, setProgress] = useState("");
@@ -153,7 +153,7 @@ export function ConversionTool({ tool }: { tool: Kind }) {
     try {
       setBusy(true);
       const archive = await (await import("@/core/archive/zip")).createZip(entries);
-      downloadBlob(archive.blob, `${tool}-images.zip`);
+      downloadBlob(archive.blob, `${testId ?? tool}-images.zip`);
     } catch (e) { setError(errorText(e)); }
     finally { setBusy(false); }
   }
@@ -162,7 +162,7 @@ export function ConversionTool({ tool }: { tool: Kind }) {
   const accept = tool === "pdf-to-jpg" ? ".pdf,application/pdf" : ".svg,image/svg+xml";
   const ready = tool === "pdf-to-jpg" ? pageCount > 0 && selectedPages.length > 0 : !!svg;
   const chosen = tool === "pdf-to-jpg" ? pdfName || "No PDF selected" : svgName || "No SVG selected";
-  return <div className="rounded-2xl border border-line bg-surface p-5 shadow-sm sm:p-6" data-testid={`${tool}-converter`}>
+  return <div className="rounded-2xl border border-line bg-surface p-5 shadow-sm sm:p-6" data-testid={`${testId ?? tool}-converter`}>
     <label className="block cursor-pointer rounded-xl border border-dashed border-line-strong bg-surface-3/60 p-5 text-center hover:border-accent focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/30">
       <span className="block text-base font-semibold text-ink">{tool === "pdf-to-jpg" ? "Choose a PDF" : "Choose an SVG"}</span>
       <span className="t-body-sm mt-1 block text-ink-3">Processed in this browser only</span>

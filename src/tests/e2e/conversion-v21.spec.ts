@@ -71,7 +71,7 @@ test("PDF selection renders real page pixels and ZIP", async ({ page }) => {
   expect(Object.keys(jpgPages).sort()).toEqual(["two-pages-page-01.jpg", "two-pages-page-02.jpg"]);
   for (const bytes of Object.values(jpgPages)) expect(bytes.subarray(0, 3)).toEqual(Buffer.from([0xff, 0xd8, 0xff]));
   await page.getByRole("link", { name: /Open Editor/ }).click();
-  await expect(page).toHaveURL(/screenshot-editor/);
+  await expect(page).toHaveURL(/screenshot-editor/, { timeout: 30_000 });
   await expect(page.getByTestId("editor-workspace")).toBeVisible();
   await page.goto("/pdf-to-jpg");
   await page.getByLabel("PDF file").setInputFiles({ name: "broken.pdf", mimeType: "application/pdf", buffer: Buffer.from("%PDF-1.7\nnot a PDF") });

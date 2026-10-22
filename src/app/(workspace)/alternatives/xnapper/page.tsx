@@ -12,9 +12,9 @@ export const metadata = staticMetadata("/alternatives/xnapper");
 const TABLE_DATA = [
   { feature: "Native screenshot capture", shotexa: "No", competitor: "Yes" },
   { feature: "Platform", shotexa: "Web Browser", competitor: "macOS native app" },
-  { feature: "Price", shotexa: "Free", competitor: "Paid one-time license (from $29.99)" },
+  { feature: "Price", shotexa: "Free", competitor: "Paid license; see current plans" },
   { feature: "Screenshot Beautifier", shotexa: "Yes", competitor: "Yes" },
-  { feature: "Auto-Redaction", shotexa: "No \u2014 manual Blur, Pixelate & Blackout", competitor: "Yes" },
+  { feature: "Auto-Redaction", shotexa: "Local text and face suggestions, with required review", competitor: "Yes" },
   { feature: "Text Extraction (OCR)", shotexa: "Yes", competitor: "Yes" },
   { feature: "Image Stitching", shotexa: "Yes (Smart Stitch)", competitor: "No" },
   { feature: "Installation Required", shotexa: "No", competitor: "Yes" },
@@ -131,7 +131,7 @@ export default function XnapperAlternativePage() {
           </div>
           
           <p className="t-body-sm mt-12 text-center text-ink-3">
-            Last checked: October 2026. Competitor features and pricing were reviewed against publicly available official product and pricing pages.
+            Published by Shotexa. Reviewed October 20, 2026 against the official sources below. Features and plans can change; verify your requirements before choosing.
           </p>
 
           <div className="mt-6 rounded-lg border border-line bg-surface p-5">

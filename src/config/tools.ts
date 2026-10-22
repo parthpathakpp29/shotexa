@@ -39,13 +39,13 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
   "pdf-to-jpg": {
     id: "pdf-to-jpg", name: "PDF to JPG", route: "/pdf-to-jpg", status: "live", category: "documents", icon: "pdf", minFiles: 1,
     summary: "Turn selected PDF pages into clear JPG or PNG images.",
-    seo: { title: "PDF to JPG Converter – Select Pages & Resolution | Shotexa", h1: "Convert PDF Pages to JPG or PNG", description: "Preview PDF pages, choose pages and resolution, then export JPG or PNG images locally in your browser. Download one page or a ZIP of many." },
+    seo: { title: "PDF to JPG Converter – Select Pages & Resolution | Shotexa", h1: "Convert PDF Pages to JPG", description: "Preview PDF pages, choose pages and resolution, then export JPG or PNG images locally in your browser. Download one page or a ZIP of many." },
     continueWith: ["editor", "beautify", "compress", "metadata"],
   },
   "svg-to-png": {
     id: "svg-to-png", name: "SVG to PNG", route: "/svg-to-png", status: "live", category: "edit", icon: "convert", minFiles: 1,
     summary: "Rasterize safe SVG artwork to sharp PNG or JPG images.",
-    seo: { title: "SVG to PNG Converter – Resize & Export Privately | Shotexa", h1: "Convert SVG to PNG or JPG", description: "Turn passive SVG artwork into transparent PNG or background-filled JPG images. Choose dimensions and convert locally, without uploading the artwork." },
+    seo: { title: "SVG to PNG Converter – Resize & Export Privately | Shotexa", h1: "Convert SVG to Transparent PNG", description: "Turn passive SVG artwork into transparent PNG or background-filled JPG images. Choose dimensions and convert locally, without uploading the artwork." },
     continueWith: ["editor", "beautify", "compress", "metadata"],
   },
   stitch: {
@@ -115,14 +115,14 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     status: "live",
     category: "protect",
     icon: "shield",
-    summary: "Privacy Guard scans locally for likely sensitive details, then lets you review, redact and clean the copy.",
+    summary: "Find likely sensitive text, faces and readable plate text locally, then review and redact before sharing.",
     minFiles: 1,
     seo: {
-      title: "Privacy Guard – Scan & Redact Screenshots Locally | Shotexa",
-      h1: "Privacy Guard for Screenshot Redaction",
-      description: "Find likely sensitive text locally, review every suggested region, flatten redactions and remove private metadata in your browser.",
+      title: "Redact Screenshots, Faces & Personal Information | Shotexa",
+      h1: "Smart Privacy Guard for Screenshot Redaction",
+      description: "Hide personal information in images with local text and face suggestions, manual plate redaction, flattened exports and metadata removal. Free, private, no account.",
     },
-    continueWith: ["extract-text", "pdf", "annotate", "beautify", "editor", "combine", "compress"],
+    continueWith: ["extract-text", "pdf", "annotate", "beautify", "editor", "combine", "compress", "metadata", "batch"],
   },
   blur: {
     id: "blur",

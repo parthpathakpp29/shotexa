@@ -136,7 +136,9 @@ test.describe("Phase 2D searchable PDF", () => {
     await page.mouse.down();
     await page.mouse.move(box.x + 100, box.y + 60);
     await page.mouse.up();
-    await Promise.all([page.waitForEvent("download"), page.getByTestId("export").click()]);
+    await page.getByTestId("export").click();
+    await expect(page.getByLabel("Final sanitized image")).toBeVisible({ timeout: 120_000 });
+    await page.getByRole("checkbox", { name: /I inspected the final image/ }).check();
     await page.getByTestId("safe-share-result").getByRole("link", { name: /Open Extract Text/ }).click();
     await page.getByTestId("extract-text").click();
     await expect(page.getByTestId("ocr-result-text")).toBeVisible({ timeout: 240_000 });

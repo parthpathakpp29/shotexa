@@ -585,6 +585,19 @@ describe("WorkspaceRuntime", () => {
     });
     expect(rt.store.getState().selectedId).toBe(out.id);
     expect(rt.registry.blob(out.id)).toBe(safeBlob);
+
+    const prepared = await rt.prepareSafeShare(added[0]);
+    expect(rt.registry.blob(prepared.id)).toBe(safeBlob);
+    expect(rt.store.getState().files[prepared.id]).toBeUndefined();
+    expect(rt.store.getState().selectedId).toBe(out.id);
+    rt.publishPreparedSafeShare(prepared.id);
+    expect(rt.store.getState().files[prepared.id]).toMatchObject({ producedBy: "safe-share", derivedFrom: [added[0]] });
+    expect(rt.store.getState().selectedId).toBe(prepared.id);
+
+    const abandoned = await rt.prepareSafeShare(added[0]);
+    rt.discardPreparedSafeShare(abandoned.id);
+    expect(rt.registry.blob(abandoned.id)).toBeUndefined();
+    expect(rt.store.getState().files[abandoned.id]).toBeUndefined();
   });
 
   it("keeps metadata inspection and container cleaning behind the image worker", async () => {

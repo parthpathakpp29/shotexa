@@ -16,7 +16,8 @@ function Range({ label, value, min, max, step = 1, suffix = "", onChange }: { la
   return <div><FieldLabel value={`${value}${suffix}`}>{label}</FieldLabel><input aria-label={label} className="h-11 w-full accent-[var(--color-accent)]" type="range" value={value} min={min} max={max} step={step} onChange={(event) => onChange(Number(event.target.value))} /></div>;
 }
 
-export function BackgroundRemovalInspector({ settings, ready, running, stage, error, mode, brushMode, brushSize, hardness, onSettings, onMode, onBrushMode, onBrushSize, onHardness, onRun, onCancel, onCustomBackground }: {
+export function BackgroundRemovalInspector({ method, onMethod, previewSurface, onPreviewSurface, settings, ready, running, stage, error, mode, brushMode, brushSize, hardness, onSettings, onMode, onBrushMode, onBrushSize, onHardness, onRun, onCancel, onCustomBackground }: {
+  method: "object" | "ink"; onMethod(value: "object" | "ink"): void; previewSurface: "checkerboard" | "white" | "dark" | "transparent"; onPreviewSurface(value: "checkerboard" | "white" | "dark" | "transparent"): void;
   settings: BackgroundRemovalSettings; ready: boolean; running: boolean; stage: string; error: string | null; mode: RemovalPreviewMode; brushMode: MaskBrushMode; brushSize: number; hardness: number;
   onSettings(value: BackgroundRemovalSettings): void; onMode(value: RemovalPreviewMode): void; onBrushMode(value: MaskBrushMode): void; onBrushSize(value: number): void; onHardness(value: number): void; onRun(): void; onCancel(): void; onCustomBackground(file: File | null): void;
 }) {
@@ -31,14 +32,20 @@ export function BackgroundRemovalInspector({ settings, ready, running, stage, er
 
   return <div data-testid="background-removal-inspector">
     <InspectorSection title="Remove background">
+      <label className="mb-3 block text-sm">Image type<select aria-label="Removal method" disabled={running} value={method} onChange={e => onMethod(e.target.value as "object" | "ink")} className="mt-2 h-11 w-full rounded-md border border-line bg-surface px-2"><option value="object">Objects &amp; photos</option><option value="ink">Signature / single-color mark</option></select></label>
       {!ready ? <Button variant="primary" size="lg" className="w-full" onClick={onRun} disabled={running}>{running ? <Loader2 className="animate-spin" /> : <Scissors />} {running ? stage || "Analyzing image…" : "Remove background"}</Button> : <Button variant="secondary" className="w-full" onClick={onRun} disabled={running}><RotateCcw /> Run again</Button>}
       {running && <Button variant="ghost" className="mt-2 w-full" onClick={onCancel}><X /> Cancel</Button>}
-      <p className="t-body-sm mt-3 text-ink-2" aria-live="polite">{running ? stage : ready ? "Mask ready. Review the edges before export." : "The 4.36 MiB model loads only when you start. Your image stays on your device."}</p>
-      {error && <Notice tone="error" title="Removal did not finish" className="mt-3">{error === "BACKGROUND_MODEL_LOAD_FAILED" ? "The local model could not load. Check the connection for first use, then retry." : "This browser could not complete local inference. The original image is unchanged."}</Notice>}
+      <p className="t-body-sm mt-3 text-ink-2" aria-live="polite">{running ? stage : ready ? "Mask ready. Review the edges before export." : method === "ink" ? "For one ink color on uniform paper. Preserves fine strokes at original resolution without an AI model. Review faded ink and paper texture carefully." : "The 4.36 MiB model loads only when you start. Your image stays on your device."}</p>
+      {error && <Notice tone="error" title="Removal did not finish" className="mt-3">{error === "BACKGROUND_MODEL_LOAD_FAILED" ? "The local model could not load. Check the connection for first use, then retry." : "This method could not process the image. See the message above the preview; try Objects & photos for complex backgrounds."}</Notice>}
     </InspectorSection>
 
     <InspectorSection title="Preview">
       <Choice value={mode} onChange={onMode} label="Preview mode" columns={3} options={[{ value: "removed", label: "Removed" }, { value: "original", label: "Original" }, { value: "split", label: "Split" }, { value: "checkerboard", label: "Transparency" }, { value: "mask", label: "Mask" }]} />
+      <div className="mt-3">
+        <FieldLabel>Preview surface only</FieldLabel>
+        <Choice value={previewSurface} onChange={onPreviewSurface} label="Preview surface" options={[{ value: "checkerboard", label: "Checkerboard" }, { value: "white", label: "White" }, { value: "dark", label: "Dark" }, { value: "transparent", label: "None" }]} />
+        <p className="t-body-sm mt-2 text-ink-2">The surface is not exported. Download PNG to keep transparency; a screenshot of this preview includes the surface.</p>
+      </div>
     </InspectorSection>
 
     <InspectorSection title="Refine mask">
@@ -71,7 +78,7 @@ export function BackgroundRemovalInspector({ settings, ready, running, stage, er
       <Choice value={format} onChange={(value) => setExport({ format: value })} label="Export format" columns={3} options={[{ value: "png", label: "PNG" }, { value: "webp", label: "WebP" }, { value: "jpeg", label: "JPEG" }]} />
       {format !== "png" && <div className="mt-3"><Range label="Image quality" value={Math.round(quality * 100)} min={50} max={100} suffix="%" onChange={(value) => setExport({ quality: value / 100 })} /></div>}
       {format === "jpeg" && settings.background.kind === "transparent" && <Notice tone="warning" title="JPEG needs a background" className="mt-3">Choose Solid, Gradient, Blur or a custom image. PNG and WebP preserve transparency.</Notice>}
-      <div className="t-body-sm mt-3 rounded-md bg-surface-2 p-3 text-ink-2"><span className="block"><strong className="text-ink">Transparency:</strong> {format === "jpeg" ? "Not supported" : "Preserved"}</span><span className="block"><strong className="text-ink">Processing:</strong> Local worker, Blob export</span></div>
+      <div className="t-body-sm mt-3 rounded-md bg-surface-2 p-3 text-ink-2"><span className="block"><strong className="text-ink">Transparency:</strong> {format === "jpeg" ? "Not supported" : settings.background.kind === "transparent" ? "Preserved (alpha)" : "Background included"}</span><span className="block"><strong className="text-ink">Processing:</strong> Local worker, Blob export</span></div>
     </InspectorSection>
   </div>;
 }

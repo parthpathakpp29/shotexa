@@ -47,6 +47,13 @@ export function PrivacyReview({ config, result, scanning, stage, currentFindingI
       <div className="mt-4 grid grid-cols-2 gap-2">
         {(["personal", "financial", "developer", "network", "visual"] as PrivacyCategory[]).map((category) => <label key={category} className="flex min-h-11 items-center gap-2 rounded-md border border-line px-3 text-sm"><input type="checkbox" className="size-4 accent-[var(--accent)]" checked={config.enabledCategories.includes(category)} onChange={(event) => onConfig({ ...config, enabledCategories: event.target.checked ? [...config.enabledCategories, category] : config.enabledCategories.filter((item) => item !== category) })} />{CATEGORY_LABELS[category]}</label>)}
       </div>
+      {config.enabledCategories.includes("visual") && <div className="mt-3 space-y-2 rounded-md border border-line p-3">
+        <p className="text-xs font-semibold text-ink-2">Visual suggestions</p>
+        <label className="flex min-h-10 items-center gap-2 text-sm"><input type="checkbox" checked={Boolean(config.detectFaces)} onChange={(event) => onConfig({ ...config, detectFaces: event.target.checked })} /> Find faces locally</label>
+        <label className="flex min-h-10 items-center gap-2 text-sm"><input type="checkbox" checked={Boolean(config.detectPlateText)} onChange={(event) => onConfig({ ...config, detectPlateText: event.target.checked })} /> Suggest readable Indian plate text</label>
+        <label className="flex min-h-10 items-center gap-2 text-sm"><input type="checkbox" checked={config.detectBarcodes} onChange={(event) => onConfig({ ...config, detectBarcodes: event.target.checked })} /> Find QR and barcodes</label>
+        <p className="text-xs text-ink-3">Plate text is an OCR clue, not a vehicle detector. Draw a region manually for other, unreadable, or missed plates.</p>
+      </div>}
       {scanning ? <div className="mt-4"><Button className="w-full" variant="secondary" onClick={onCancel}><X /> Cancel scan</Button><p role="status" aria-live="polite" className="mt-3 flex items-center gap-2 text-sm text-ink-2"><Loader2 className="size-4 animate-spin" /> {stage ?? "Reading screenshot…"}</p></div>
         : <Button variant="primary" size="lg" className="mt-4 w-full" onClick={onScan} disabled={!config.enabledCategories.length}><ScanSearch /> {result ? "Scan again" : "Scan screenshot"}</Button>}
       <p className="t-body-sm mt-3 text-ink-3">Detection is deterministic and local. Findings are suggestions for review, not a guarantee that everything sensitive was found.</p>
@@ -69,6 +76,8 @@ export function PrivacyReview({ config, result, scanning, stage, currentFindingI
         <Button variant="primary" size="lg" className="mt-5 w-full" disabled={!selectedCount} onClick={onApply}><ShieldCheck /> Redact Selected ({selectedCount})</Button>
         <Notice tone="warning" title="Blackout is safest" className="mt-3">Blur and pixelation can remain visually reversible in some circumstances. Shotexa recommends Blackout for irreversible sharing.</Notice>
         {result.barcodeSupport === "unsupported" && config.detectBarcodes && <p className="t-body-sm mt-3 flex gap-2 text-ink-3"><AlertTriangle className="mt-0.5 size-4 shrink-0" /> QR and barcode detection is not available in this browser. Text detection still completed.</p>}
+        {result.faceSupport === "unavailable" && <p role="alert" className="t-body-sm mt-3 flex gap-2 text-warning"><AlertTriangle className="mt-0.5 size-4 shrink-0" /> Face detection was unavailable on this device. Draw redaction regions manually.</p>}
+        {result.faceSupport === "too-large" && <p role="alert" className="t-body-sm mt-3 flex gap-2 text-warning"><AlertTriangle className="mt-0.5 size-4 shrink-0" /> This image is too large for a safe face scan on this device. Draw redaction regions manually.</p>}
       </InspectorSection>
     </>}
     <CustomRuleEditor config={config} onConfig={onConfig} />

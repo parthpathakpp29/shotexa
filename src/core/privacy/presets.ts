@@ -12,7 +12,7 @@ export const PRIVACY_PRESETS: { id: PrivacyPresetId; label: string; description:
 
 export function privacyConfigForPreset(preset: PrivacyPresetId): PrivacyScanConfig {
   const value = PRIVACY_PRESETS.find((item) => item.id === preset) ?? PRIVACY_PRESETS[4];
-  return { preset: value.id, enabledCategories: [...value.categories], includeLowConfidence: true, detectBarcodes: value.barcodes, customRules: [] };
+  return { preset: value.id, enabledCategories: [...value.categories], includeLowConfidence: true, detectBarcodes: value.barcodes, detectFaces: false, detectPlateText: false, customRules: [] };
 }
 
 export const DEFAULT_PRIVACY_SCAN = privacyConfigForPreset("maximum");

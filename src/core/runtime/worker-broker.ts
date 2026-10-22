@@ -9,7 +9,7 @@
 import { createWorkerClient, WorkerJobError, type RunOptions } from "@/workers/broker/worker-client";
 import type { OpName, WorkerOps } from "@/workers/protocol";
 
-export type WorkerKind = "image" | "vision" | "document" | "background";
+export type WorkerKind = "image" | "vision" | "document" | "background" | "privacy";
 type Client = ReturnType<typeof createWorkerClient>;
 
 export class WorkerBroker {
@@ -61,5 +61,6 @@ export function browserWorkerFactories(): Record<WorkerKind, () => Worker> {
     vision: () => new Worker(new URL("../../workers/vision.worker.ts", import.meta.url), { type: "module", name: "shotexa-vision" }),
     document: () => new Worker(new URL("../../workers/document.worker.ts", import.meta.url), { type: "module", name: "shotexa-document" }),
     background: () => new Worker(new URL("../../workers/background.worker.ts", import.meta.url), { type: "module", name: "shotexa-background" }),
+    privacy: () => new Worker(new URL("../../workers/privacy.worker.ts", import.meta.url), { type: "module", name: "shotexa-privacy" }),
   };
 }

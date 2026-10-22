@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertTriangle, Check, Download, Files, Loader2, PackageOpen, RefreshCw, Square } from "lucide-react";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { SegmentedControl, Slider, Toggle } from "@/components/ui/controls";
@@ -21,6 +21,7 @@ import { messageFor } from "@/core/runtime/messages";
 import { formatBytes } from "@/components/tools/stitch/stitch-tool";
 import { downloadBlob } from "@/core/runtime/runtime";
 import type { WorkspaceFile } from "@/core/runtime/types";
+import { batchEligibleImageIds } from "@/core/privacy/safe-workspace";
 
 const OPS: { value: BatchOperation; label: string }[] = [
   { value: "compress", label: "Compress" }, { value: "convert", label: "Convert" }, { value: "privacy", label: "Privacy Clean" }, { value: "resize", label: "Resize" }, { value: "background", label: "Remove background" },
@@ -41,12 +42,20 @@ function BatchWorkspace() {
   const [zipNames, setZipNames] = useState<string[]>([]);
   const [resultFilter, setResultFilter] = useState<"all" | "successful" | "failed">("all");
   const initialised = useRef(false);
+  const eligibleOrder = useMemo(() => batchEligibleImageIds(order, files), [order, files]);
 
   useEffect(() => {
+    if (batch.status === "running") return;
+    const allowed = new Set(eligibleOrder);
+    if (batch.selectedIds.some((id) => !allowed.has(id))) {
+      runtime.resetBatch();
+      setSelection(batch.selectedIds.filter((id) => allowed.has(id)));
+      return;
+    }
     if (initialised.current) return;
     initialised.current = true;
-    if (!batch.selectedIds.length && batch.status === "idle" && order.length >= 2) setSelection(order.slice(0, MAX_BATCH_FILES));
-  }, [batch.selectedIds.length, batch.status, order, setSelection]);
+    if (!batch.selectedIds.length && batch.status === "idle" && eligibleOrder.length >= 2) setSelection(eligibleOrder.slice(0, MAX_BATCH_FILES));
+  }, [batch.selectedIds, batch.status, eligibleOrder, runtime, setSelection]);
 
   const items = batch.selectedIds.map((id) => ({ file: files[id], state: batch.items[id] })).filter((x) => x.file);
   const complete = items.filter((x) => x.state?.status === "completed");
@@ -87,13 +96,13 @@ function BatchWorkspace() {
       tool="batch"
       status={status}
       exportAction={{ label: running ? "Processing…" : complete.length ? "Download ZIP" : "Process batch", onClick: complete.length ? zip : process, disabled: batch.selectedIds.length < 2, busy: running }}
-      fileHint="Choose which workspace images belong in this batch. Sources remain unchanged and full-resolution jobs run one at a time."
+      fileHint="Choose workspace images for this batch. A Safe Share copy replaces its source in batch selection; originals remain editable in the tray."
       inspectorTitle="Batch settings"
       canvas={<>
         <h1 className="sr-only">{TOOLS.batch.seo.h1}</h1>
         {error && <Notice tone="error" icon={<AlertTriangle />} title="Batch action didn’t finish" className="mb-4">{batchError(error)}</Notice>}
         {running && <div className="mb-4 rounded-lg border border-accent-line bg-accent-soft p-4" aria-live="polite"><div className="mb-2 flex items-center justify-between gap-3"><span className="text-sm font-medium text-accent-ink">{batch.currentIndex! + 1} of {items.length} files · Processing {current?.name}</span><span className="t-mono text-[12px] text-accent-ink">{Math.round(progress * 100)}%</span></div><Progress value={progress} label="Batch progress" /><Button variant="secondary" size="sm" className="mt-3" onClick={() => runtime.cancelBatch()}><Square /> Cancel</Button></div>}
-        {order.length < 2 ? <EmptyState icon={<Files />} title="Select multiple screenshots to process together">Add at least two screenshots with Drop, Paste or Browse.</EmptyState> : <BatchFileList onSelection={alterSelection} />}
+        {eligibleOrder.length < 2 ? <EmptyState icon={<Files />} title="Select multiple screenshots to process together">Add another screenshot or safe copy. A sanitized copy replaces its original in batch exports.</EmptyState> : <BatchFileList onSelection={alterSelection} />}
       </>}
       inspector={<BatchInspector disabled={running} onReset={() => { runtime.resetBatch(); setZipNames([]); }} />}
       below={(complete.length > 0 || failed.length > 0) && <div className="mt-6 space-y-4" data-testid="batch-results"><Notice tone={failed.length ? "warning" : "success"} icon={failed.length ? <AlertTriangle /> : <Check />} title={failed.length ? `${complete.length} completed · ${failed.length} failed` : `${complete.length} files ready`} actions={<div className="flex flex-wrap gap-2"><Button variant="primary" onClick={zip} disabled={!complete.length}><PackageOpen /> Download ZIP</Button>{failed.length > 0 && <Button variant="secondary" onClick={retry}><RefreshCw /> Retry failed</Button>}<Button variant="secondary" disabled={batch.addedToWorkspace || !complete.length} onClick={() => runtime.addBatchResults()}><Files /> {batch.addedToWorkspace ? "Added" : "Add results to workspace"}</Button></div>}>Only successful outputs are included. Completed files remain available if another item fails or the batch is cancelled.{zipNames.length > 0 && <span className="mt-1 block t-mono text-[11px]">ZIP: {zipNames.join(", ")}</span>}</Notice><div className="grid grid-cols-2 gap-2 sm:grid-cols-4" data-testid="batch-summary"><SummaryStat label="Original total" value={formatBytes(originalTotal)} /><SummaryStat label="Output total" value={formatBytes(outputTotal)} /><SummaryStat label="Bytes saved" value={`${bytesSaved < 0 ? "+" : ""}${formatBytes(Math.abs(bytesSaved))}`} warn={bytesSaved < 0} /><SummaryStat label="Savings" value={`${bytesSaved < 0 ? "+" : ""}${Math.abs(savingsPercent)}%`} warn={bytesSaved < 0} /></div><SegmentedControl value={resultFilter} onChange={setResultFilter} options={[{ value: "all", label: "All" }, { value: "successful", label: "Successful" }, { value: "failed", label: "Failed" }]} label="Batch result filter" className="max-w-md" /><ResultList filter={resultFilter} />{batch.addedToWorkspace && <ContinueWith tools={continuationsFor("batch")} fileId={selectedId} />}</div>}
@@ -102,9 +111,10 @@ function BatchWorkspace() {
 }
 
 function BatchFileList({ onSelection }: { onSelection(ids: string[]): void }) {
-  const order = useWorkspace((s) => s.order);
+  const workspaceOrder = useWorkspace((s) => s.order);
   const files = useWorkspace((s) => s.files);
   const batch = useWorkspace((s) => s.batch);
+  const order = batchEligibleImageIds(workspaceOrder, files);
   const selected = new Set(batch.selectedIds);
   const lastClicked = useRef<number | null>(null);
   const choose = (index: number, shift: boolean) => {

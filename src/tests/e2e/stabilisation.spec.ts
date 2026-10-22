@@ -78,6 +78,11 @@ async function saved(download: Download) {
 
 /** Click the tool's primary export and return the downloaded file. */
 async function exportDownload(page: Page, resultTestId: string) {
+  if (resultTestId === "safe-share-result") {
+    await page.getByTestId("export").click();
+    await expect(page.getByLabel("Final sanitized image")).toBeVisible({ timeout: 180_000 });
+    await page.getByRole("checkbox", { name: /I inspected the final image/ }).check();
+  }
   const [download] = await Promise.all([page.waitForEvent("download", { timeout: 180_000 }), page.getByTestId("export").click()]);
   await expect(page.getByTestId(resultTestId)).toBeVisible({ timeout: 180_000 });
   return saved(download);
@@ -492,7 +497,7 @@ test.describe("product surface", () => {
     expect(paths.filter((path) => path.startsWith("/spikes"))).toEqual([]);
 
     // Synonym routes are deliberately absent: one intent, one page.
-    for (const synonym of ["/png-to-jpg", "/jpg-to-png", "/webp-to-png", "/split-screenshot", "/crop-screenshot", "/add-arrow-to-screenshot", "/highlight-screenshot", "/batch-compress", "/batch-convert", "/bulk-resize", "/bulk-screenshot-tools", "/before-after-screenshot", "/screenshot-diff", "/background-remover", "/screenshot-table-to-excel"]) {
+    for (const synonym of ["/split-screenshot", "/crop-screenshot", "/add-arrow-to-screenshot", "/highlight-screenshot", "/batch-compress", "/batch-convert", "/bulk-resize", "/bulk-screenshot-tools", "/before-after-screenshot", "/screenshot-diff", "/background-remover", "/screenshot-table-to-excel"]) {
       expect((await request.get(synonym)).status(), synonym).toBe(404);
     }
     const robots = await (await request.get("/robots.txt")).text();

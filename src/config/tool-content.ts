@@ -28,7 +28,7 @@ export interface ToolContent {
 export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
   "pdf-to-jpg": {
     dropHint: "Choose a PDF document", inputs: "PDF documents", whatHeading: "What the PDF image converter does",
-    intro: "Render selected PDF pages into clear, shareable images. Choose JPG for smaller files or PNG for lossless page graphics. The browser renders one page at a time to limit memory use.",
+    intro: "Render selected PDF pages as JPG images for photo-heavy slides, document previews and services that require JPEG. Choose resolution for legible text, then adjust JPEG quality to balance artifacts and file size. Pages are processed one at a time to limit memory use; use PDF to PNG when lossless text and diagram edges matter more than size.",
     steps: [{ title: "Open a PDF", body: "Choose a PDF under 60 MB and up to 80 pages." }, { title: "Select pages and resolution", body: "Pick individual pages or all pages and choose a render scale." }, { title: "Export", body: "Download individual images or a ZIP of selected pages." }],
     useCases: [{ title: "Share a page", body: "Turn a chart, slide or document page into an image." }, { title: "Reuse page artwork", body: "Convert a page locally, then open its image in Editor or Beautifier without uploading it again." }],
     privacy: "PDF parsing and page rendering happen locally in your browser. Document contents are not uploaded.", outputs: ["JPG", "PNG", "ZIP"],
@@ -36,9 +36,9 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
   },
   "svg-to-png": {
     dropHint: "Choose a passive SVG file", inputs: "Passive SVG artwork", whatHeading: "What the SVG converter does",
-    intro: "Rasterize supported SVG drawings at dimensions you choose. PNG can retain transparent areas; JPG uses a solid background. Active SVG content and external resources are rejected to keep conversion local and safe.",
+    intro: "Turn supported SVG icons, logos and diagrams into transparent PNG files at the dimensions your layout needs. PNG preserves alpha and adds no JPEG compression artifacts, but the result is a fixed pixel grid: export at the intended display size or a suitable multiple. Active SVG content and external resources are rejected to keep conversion local and safe.",
     steps: [{ title: "Choose an SVG", body: "Use passive vector artwork with basic shapes, paths, text and gradients." }, { title: "Set dimensions", body: "Keep the aspect ratio or specify exact width and height." }, { title: "Export", body: "Download a PNG or JPG and continue editing it in Shotexa." }],
-    useCases: [{ title: "Export icons and diagrams", body: "Create crisp raster versions sized for presentations or social posts." }, { title: "Make a JPG", body: "Choose a background color for artwork that needs a JPG file." }],
+    useCases: [{ title: "Export icons and diagrams", body: "Create raster versions sized for presentations or social posts." }, { title: "Place a transparent logo", body: "Insert a PNG over white, dark or colored layouts. Transparency must already exist in the SVG; opaque white shapes remain white." }],
     privacy: "SVG validation and rasterization happen in your browser. External references and active content are rejected.", outputs: ["PNG", "JPG"],
     faq: [{ q: "Why was my SVG rejected?", a: "Scripts, embedded images, stylesheets, external links and other active or unsupported constructs are not accepted. Export a plain SVG from your design app." }, { q: "Can PNG stay transparent?", a: "Yes. Choose PNG and leave transparent regions in the SVG." }, { q: "How large can the export be?", a: "Shotexa limits canvas dimensions and pixel count to keep browser memory use reasonable. Reduce the width or height if you reach the limit." }],
   },
@@ -148,19 +148,20 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
     intro: "Privacy Guard helps you hide private details before you share a screenshot. It reads the visible text on your device and suggests likely emails, phone numbers, card and bank numbers, API keys, tokens and IP addresses — plus QR codes and barcodes where your browser can detect them. You review every suggestion, add your own boxes, and export a flattened copy with image metadata removed.",
     steps: [
       { title: "Add a screenshot", body: "Paste, drop or choose the image you want to share." },
-      { title: "Scan on your device", body: "Pick a preset — Developer, Customer Support, Finance, Social Sharing or Maximum — and Shotexa looks for likely sensitive details." },
+      { title: "Scan on your device", body: "Choose text, face and visual-code suggestions separately. Readable Indian-style plate text can be suggested by OCR; draw a manual region for other plates or anything missed." },
       { title: "Review every finding", body: "Select, ignore or adjust each suggestion. Low-confidence findings are marked as such, never treated as certain." },
-      { title: "Redact and export", body: "Use Blackout, Blur or Pixelate, draw your own boxes, then export a flattened copy with metadata removed. Shotexa checks the exported copy afterwards." },
+      { title: "Review the actual safe copy", body: "Use opaque Blackout for sensitive information, or choose Blur or Pixelate. Inspect the flattened, metadata-cleaned result before downloading or moving it to another tool." },
     ],
     useCases: [
       { title: "Sending a screenshot to support", body: "Hide account numbers, emails and addresses before attaching it to a ticket." },
       { title: "Posting a bug publicly", body: "Cover API keys, tokens and internal IP addresses before it goes in an issue tracker." },
       { title: "Sharing billing or account screens", body: "Remove card details and personal information before sending them to a colleague." },
     ],
-    privacy: "Scanning, redaction, metadata cleaning and the final check all run in your browser. The scan uses on-device text recognition, which downloads its language data the first time; your screenshot is never sent with it.",
+    privacy: "Scanning, redaction, metadata cleaning and final review run in your browser. OCR and the optional face model load from Shotexa's own origin only when requested; your image is not uploaded.",
     outputs: ["PNG", "JPEG", "WebP"],
     faq: [
       { q: "Will it find every sensitive detail?", a: "No tool can promise that. Detection looks for known patterns and context in the text Shotexa can read; unusual formats, small or blurry text and details inside pictures can be missed. Look over the image before you share it." },
+      { q: "Can Shotexa blur faces and license plates?", a: "The optional local face model suggests face regions that you can adjust. OCR may suggest readable Indian-style plate text, but it is not a general vehicle detector. Draw a manual region over any plate or face that was missed." },
       { q: "Are Blur and Pixelate permanent?", a: "They make an area hard to read, but Blackout is the mode designed to replace the selected pixels completely. Use Blackout for passwords, keys and financial details." },
       { q: "Can I undo a redaction?", a: "Yes. Redactions stay editable until you export, and undo and redo work for every change. Your original screenshot is never modified." },
       { q: "What is removed besides the redacted areas?", a: "The exported copy has image metadata such as location, device and software details removed, and Shotexa verifies the result before you download it." },
@@ -424,10 +425,10 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
   "remove-background": {
     dropHint: "or drag and drop an image to remove its background locally",
     whatHeading: "What Remove Background does",
-    intro: "Remove Background separates the main subject of an image from its background, using a small segmentation model that runs in your browser. Refine the edges with restore and erase brushes, keep the result transparent, or place the subject on a new background.",
+    intro: "Remove Background offers local object segmentation for photos and full-resolution extraction for a single ink color on uniform paper. Refine the edges with restore and erase brushes, keep the result transparent, or place the subject on a new background.",
     steps: [
       { title: "Add an image", body: "PNG, JPEG or WebP. The original file is never changed." },
-      { title: "Remove the background", body: "The model runs on your device. The first use downloads it once." },
+      { title: "Remove the background", body: "Choose Objects & photos for local AI segmentation, or Signature / single-color mark for uniform paper without a model download." },
       { title: "Refine the mask", body: "View the mask, then restore or erase areas with a brush and adjust edge smoothing." },
       { title: "Replace or keep transparent", body: "Keep transparency, or choose a solid colour, a gradient, a blurred copy of the original or your own image." },
       { title: "Export", body: "PNG and WebP keep transparency. JPEG is available once you choose a visible background." },
@@ -435,6 +436,7 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
     useCases: [
       { title: "Product photos", body: "Put a product on a clean, consistent background for a listing." },
       { title: "Profile pictures", body: "Cut yourself out of a busy photo and choose a simple backdrop." },
+      { title: "Signatures and stamps", body: "Remove uniform paper behind a single-color mark while preserving fine strokes. Textured paper and multicolor logos may need manual refinement." },
       { title: "Launch graphics", body: "Isolate a subject, then style it in the Beautifier." },
     ],
     privacy: "The model and all image processing run in your browser. The first use downloads a versioned model file; your image is never sent with that request. There’s no generative fill — Shotexa only keeps or removes existing pixels.",
@@ -442,7 +444,8 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
     faq: [
       { q: "Does Shotexa upload my image?", a: "No. Only the model file is downloaded, once; your image stays on your device." },
       { q: "Can I restore part of the removed background?", a: "Yes. Use the restore brush to bring back areas the model removed, or the erase brush to remove more." },
-      { q: "Can I export a transparent PNG?", a: "Yes. PNG and WebP keep transparency; trim the empty space around the subject if you like." },
+      { q: "Can I export a transparent PNG?", a: "Choose Transparent under Background and export PNG. The checkerboard, white and dark preview surfaces are not exported. Insert the downloaded PNG into your document; taking a screenshot of the preview captures its visible background." },
+      { q: "Why are there white edges around my signature?", a: "An object model can retain paper around thin ink. For one ink color on uniform opaque paper, choose Signature / single-color mark and inspect the result against dark and white preview surfaces. It is not intended for photographs, faded multicolor ink or textured backgrounds." },
       { q: "Does it work on phones?", a: "Yes, in current mobile browsers. It takes longer than on a computer, and very large images can need more memory than some phones have." },
     ],
     workflows: ["product-screenshot"],

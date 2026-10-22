@@ -1,0 +1,58 @@
+import type { Comparison } from "@/components/alternatives/comparison-page";
+
+export const CONVERTER_COMPARISONS = {
+  freeconvert: {
+    competitor: "FreeConvert",
+    lead: "Choose between a focused browser-local image workspace and a much broader cloud converter with advanced format settings.",
+    overview: "FreeConvert is built for converting many kinds of files, including formats Shotexa does not decode. Its image converter offers resize and metadata options and accepts sources from device or connected services. Shotexa is narrower: common screenshot formats, supported passive SVGs and PDF page images, with an editor, privacy tools and local processing around the result. FreeConvert says uploaded files are deleted after eight hours; that is different from Shotexa's default local conversion, where no source file is sent to a conversion server.",
+    rows: [
+      { topic: "Where conversion runs", shotexa: "In your browser for the listed local tools", competitor: "After file upload to FreeConvert's service" },
+      { topic: "Format breadth", shotexa: "PNG, JPEG, WebP, supported SVG artwork and PDF page images", competitor: "Much broader image and other file-format catalog" },
+      { topic: "Advanced image options", shotexa: "JPEG/WebP quality, background, selected PDF pages and SVG dimensions", competitor: "Resize, quality, orientation and metadata options vary by converter" },
+      { topic: "After conversion", shotexa: "Result stays in a temporary workspace for editing, redaction and PDF creation", competitor: "Download the converted file; other FreeConvert tools are available" },
+      { topic: "Large or unusual files", shotexa: "Browser memory and explicit format limits apply", competitor: "Supports larger files and formats outside Shotexa's scope, subject to its current limits" },
+    ],
+    shotexaFit: "You already have a screenshot, WebP, PNG, JPEG, supported SVG or PDF and want a quick local conversion that flows into annotation, privacy redaction or screenshot styling without another upload.",
+    competitorFit: "You need RAW photos, uncommon formats, video/audio conversion, a larger file allowance, or conversion controls that Shotexa's focused browser tools do not offer.",
+    caveat: "Shotexa is not a universal file converter. FreeConvert states an automatic deletion window for its uploads; this page does not suggest that its files are stored indefinitely or that its security claims are false.",
+    links: [{ label: "Image converter", href: "/convert-screenshot", detail: "Compare PNG, JPEG and WebP outputs locally." }, { label: "PDF to PNG", href: "/pdf-to-png", detail: "Render selected PDF pages to lossless images." }, { label: "SVG to JPG", href: "/svg-to-jpg", detail: "Choose the size and solid background." }],
+    faq: [{ q: "Can Shotexa replace every FreeConvert format?", a: "No. Shotexa handles a small set of browser-friendly screenshot and document-image tasks. FreeConvert lists a much wider catalog." }, { q: "Does FreeConvert process files locally?", a: "Its official converter pages describe file upload and automatic deletion. Shotexa's listed conversion tools run locally in the browser." }, { q: "Can I edit a converted image in Shotexa?", a: "Yes. A conversion result is added to the temporary workspace so you can open it in Editor, Beautifier, privacy or PDF tools." }],
+    sources: [{ label: "FreeConvert image converter", url: "https://www.freeconvert.com/image-converter" }, { label: "FreeConvert WebP options", url: "https://www.freeconvert.com/webp-converter" }],
+  },
+  convertio: {
+    competitor: "Convertio",
+    lead: "Compare Shotexa's local screenshot conversions with Convertio's broad cloud-based file conversion catalog.",
+    overview: "Convertio supports many more image types and conversion directions than Shotexa, plus cloud imports and batches. Its own documentation says conversion happens in the cloud, input files are deleted after conversion and output files normally remain available for up to 24 hours. Shotexa's narrower PNG/JPEG/WebP workflow runs in the browser and keeps the converted result alongside the original for editing, redaction and export during the current tab session.",
+    rows: [
+      { topic: "Processing location", shotexa: "Local browser processing for the image and PDF/SVG workflows on this page", competitor: "Cloud conversion on Convertio infrastructure" },
+      { topic: "Image formats", shotexa: "PNG, JPEG and WebP; separate supported SVG/PDF image tools", competitor: "Broader image catalog, including specialist and camera formats" },
+      { topic: "File sources", shotexa: "Device files, paste, drop and temporary Shotexa results", competitor: "Device, Google Drive, Dropbox and URL imports" },
+      { topic: "Batch work", shotexa: "Bounded screenshot batch processing and ZIP packs for supported tasks", competitor: "Batch conversion across more formats" },
+      { topic: "What happens next", shotexa: "Result remains a temporary image in the connected editing workspace", competitor: "Converted files are available to download, with Convertio's stated retention policy" },
+    ],
+    shotexaFit: "Your image is already PNG, JPG or WebP and you value browser-local processing, measured output settings and immediate continuation into screenshot editing or privacy tools.",
+    competitorFit: "You need a format Shotexa cannot decode, a URL/cloud-drive import, or broad batches across mixed and specialized file types.",
+    caveat: "Convertio publishes a retention policy: it says inputs are removed after conversion and outputs after 24 hours unless removed earlier. The difference here is where processing occurs, not a claim that Convertio keeps every file permanently.",
+    links: [{ label: "WebP to PNG", href: "/webp-to-png", detail: "Keep decoded transparency in a PNG." }, { label: "PNG to JPG", href: "/png-to-jpg", detail: "Choose quality and an alpha background." }, { label: "Batch screenshots", href: "/batch-screenshots", detail: "Process supported images sequentially." }],
+    faq: [{ q: "Does Convertio convert more formats than Shotexa?", a: "Yes. Convertio's image converter lists far more source and output types. Shotexa deliberately covers a smaller local workflow." }, { q: "Does Shotexa offer Google Drive import?", a: "No. Shotexa works with files you choose, paste or drop into the browser workspace." }, { q: "Does Shotexa upload images for conversion?", a: "No. The listed conversion tools process images locally in your browser." }],
+    sources: [{ label: "Convertio image converter", url: "https://convertio.co/image-converter/" }, { label: "Convertio retention policy", url: "https://support.convertio.co/hc/en-us/articles/360004419173-File-retention-policy-and-privacy-concerns" }],
+  },
+  ilovepdf: {
+    competitor: "iLovePDF",
+    lead: "Shotexa is useful for turning selected PDF pages into images and working with screenshots; iLovePDF is a much broader PDF toolkit.",
+    overview: "iLovePDF's online PDF to JPG tool can render pages or extract images embedded inside a PDF. Its wider suite also edits, merges, splits, signs and converts PDF documents. Shotexa does not provide those document-editing workflows or embedded-image extraction. It previews pages and rasterizes the ones you select to JPG or PNG locally, then keeps the page images in the screenshot workspace for redaction, annotation and design. iLovePDF also offers a separate desktop application for local processing, so this comparison distinguishes its online workflow from that desktop option.",
+    rows: [
+      { topic: "PDF to image", shotexa: "Selected page rasterization to JPG or PNG at chosen resolution", competitor: "Page-to-JPG and extraction of embedded PDF images" },
+      { topic: "Document editing", shotexa: "No full PDF text editing, merge, sign or form suite", competitor: "Broad PDF editing, organization, signing and conversion tools" },
+      { topic: "Online processing", shotexa: "PDF page rendering occurs in the browser", competitor: "Online workflow asks users to upload a PDF" },
+      { topic: "Desktop option", shotexa: "Web workspace; no desktop app", competitor: "Separate desktop app offers local/offline processing" },
+      { topic: "After page export", shotexa: "Page image can continue into screenshot Editor, Beautifier, Redaction and Compress", competitor: "Download or continue with other PDF tools" },
+    ],
+    shotexaFit: "You need a quick PNG or JPG of a few selected pages, want to inspect page previews and use those images in a local screenshot workflow.",
+    competitorFit: "You need to edit or organize the PDF itself, extract its original embedded pictures, sign documents, or use a broader PDF suite. Its desktop app is also relevant if local PDF work is essential.",
+    caveat: "Shotexa rasterizes visible pages; it does not extract original embedded assets or preserve editable PDF text in the image. Do not treat it as a complete iLovePDF replacement.",
+    links: [{ label: "PDF to PNG", href: "/pdf-to-png", detail: "Choose pages and render lossless images." }, { label: "PDF to JPG", href: "/pdf-to-jpg", detail: "Render selected pages as smaller JPEGs." }, { label: "Screenshot to PDF", href: "/screenshot-to-pdf", detail: "Build a PDF from screenshots." }],
+    faq: [{ q: "Can Shotexa extract embedded images from a PDF?", a: "No. It renders the visible page as a new image. iLovePDF's PDF to JPG tool offers embedded-image extraction." }, { q: "Can Shotexa edit PDF text or sign a PDF?", a: "No. Shotexa focuses on PDF page images and screenshot-to-PDF creation, not a full document editor." }, { q: "Does iLovePDF have an offline option?", a: "Yes. iLovePDF advertises a separate desktop app with local processing. This comparison describes its online PDF workflow where relevant." }],
+    sources: [{ label: "iLovePDF PDF to JPG", url: "https://www.ilovepdf.com/pdf_to_jpg" }, { label: "iLovePDF documentation", url: "https://www.ilovepdf.com/help/documentation" }, { label: "iLovePDF desktop", url: "https://www.ilovepdf.com/desktop" }],
+  },
+} satisfies Record<string, Comparison>;

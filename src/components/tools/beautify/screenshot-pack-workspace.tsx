@@ -15,6 +15,7 @@ import { renderBeautified } from "@/core/beautify/render";
 import { resolveStudioTemplate, STUDIO_TEMPLATES } from "@/core/beautify/studio-library";
 import type { BeautifySettings, ExportScale, OutputPreset } from "@/core/beautify/types";
 import { downloadBlob } from "@/core/runtime/runtime";
+import { batchEligibleImageIds } from "@/core/privacy/safe-workspace";
 import { BeautifyInspector } from "./beautify-inspector";
 import { BeautifyStage } from "./beautify-stage";
 
@@ -46,19 +47,18 @@ export function ScreenshotPackWorkspace({ onBack }: { onBack(): void }) {
   const [renderedSignature, setRenderedSignature] = useState("");
   const controller = useRef<AbortController | null>(null);
   const initialised = useRef(false);
-  const active = activeId && files[activeId] ? activeId : ids[0];
-  const activeSettings = active ? byAsset[active] ?? DEFAULT_BEAUTIFY : DEFAULT_BEAUTIFY;
   const references = new Set(Object.values(byAsset).flatMap((settings) => [settings.branding.assetId, settings.background.assetId, ...(settings.watermarks ?? []).map((layer) => layer.assetId)].filter((id): id is string => !!id)));
-  const eligibleIds = order.filter((id) => !references.has(id));
+  const eligibleIds = batchEligibleImageIds(order, files).filter((id) => !references.has(id));
+  const active = activeId && eligibleIds.includes(activeId) ? activeId : ids[0];
+  const activeSettings = active ? byAsset[active] ?? DEFAULT_BEAUTIFY : DEFAULT_BEAUTIFY;
   const signature = (resultIds: string[]) => JSON.stringify({ settings: resultIds.map((id) => byAsset[id] ?? DEFAULT_BEAUTIFY), exportSettings });
   const stale = outputs.length > 0 && renderedSignature !== signature(outputs.map((item) => item.id));
 
   useEffect(() => {
     if (initialised.current || !order.length) return;
     initialised.current = true;
-    const references = new Set(Object.values(byAsset).flatMap((settings) => [settings.branding.assetId, settings.background.assetId, ...(settings.watermarks ?? []).map((layer) => layer.assetId)].filter((id): id is string => !!id)));
-    setIds(order.filter((id) => !references.has(id)).slice(0, 20));
-  }, [byAsset, order]);
+    setIds(eligibleIds.slice(0, 20));
+  }, [eligibleIds, order]);
   useEffect(() => { void listBrandKits().then(setKits).catch(() => setError("Saved brands are unavailable in this browser.")); }, []);
   useEffect(() => () => { controller.current?.abort(); }, []);
 
@@ -142,7 +142,7 @@ export function ScreenshotPackWorkspace({ onBack }: { onBack(): void }) {
 
   return <WorkspaceShell tool="beautify" status={<Badge tone="accent" dot>{ids.length} in pack</Badge>}
     exportAction={{ label: running ? "Rendering pack…" : "Render selected", onClick: () => void render(ids), disabled: !ids.length, busy: running }}
-    fileHint="Choose the screenshots in this pack. Saved brand assets stay local and source files remain unchanged."
+    fileHint="Choose the screenshots in this pack. A Safe Share copy replaces its source here; originals remain editable in the tray."
     inspectorTitle="Pack controls"
     canvas={<div data-testid="screenshot-pack-workspace" className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3"><div><h1 className="font-display text-2xl text-ink">Screenshot Packs</h1><p className="text-sm text-ink-3">One visual system, tailored to each screenshot.</p></div><Button variant="ghost" size="sm" onClick={onBack}><ArrowLeft /> Back to Beautifier</Button></div>

@@ -21,7 +21,7 @@ export function issueText(issue: ReturnType<typeof encodeIssue>, format: OutputF
   return `This image is too large to encode as ${FORMAT_LABEL[format]} in a browser. Choose PNG, or split it first.`;
 }
 
-export function EncodeInspector({ tool, assetId, format, busy, outputName, onOutputName, onRun }: { tool: EncodeTool; assetId: string; format: OutputFormat; busy: boolean; outputName?: string; onOutputName?(value: string): void; onRun(): void }) {
+export function EncodeInspector({ tool, assetId, format, busy, outputName, onOutputName, onRun, presetFormat }: { tool: EncodeTool; assetId: string; format: OutputFormat; busy: boolean; outputName?: string; onOutputName?(value: string): void; onRun(): void; presetFormat?: OutputFormat }) {
   const { runtime } = useWorkspaceContext();
   const file = useWorkspace((s) => s.files[assetId]);
   const settings = useWorkspace((s) => s.encode[tool]);
@@ -50,7 +50,7 @@ export function EncodeInspector({ tool, assetId, format, busy, outputName, onOut
 
   return (
     <div data-testid="encode-inspector">
-      <InspectorSection title="Output format" action={<button type="button" onClick={() => setSettings(tool, { ...DEFAULT_ENCODE_SETTINGS[tool] })} className="inline-flex min-h-9 items-center gap-1 text-xs font-medium text-ink-2 hover:text-ink max-md:min-h-11"><RotateCcw className="size-3.5" /> Reset settings</button>}>
+      <InspectorSection title="Output format" action={<button type="button" onClick={() => setSettings(tool, { ...DEFAULT_ENCODE_SETTINGS[tool], ...(presetFormat ? { format: presetFormat } : {}) })} className="inline-flex min-h-9 items-center gap-1 text-xs font-medium text-ink-2 hover:text-ink max-md:min-h-11"><RotateCcw className="size-3.5" /> Reset settings</button>}>
         <SegmentedControl<OutputFormat>
           label="Output format"
           value={format}
@@ -92,7 +92,7 @@ export function EncodeInspector({ tool, assetId, format, busy, outputName, onOut
           <>
             <FieldLabel value={<span data-testid="encode-quality-value">{Math.round(settings.quality * 100)}%</span>}>{FORMAT_LABEL[format]} quality</FieldLabel>
             <Slider label={`${FORMAT_LABEL[format]} quality`} value={Math.round(settings.quality * 100)} min={50} max={100} onChange={(v) => setSettings(tool, { quality: v / 100 })} valueText={`${Math.round(settings.quality * 100)}%`} />
-            <p className="t-body-sm mt-2 text-ink-3">Lower quality makes a smaller file; text stays sharp down to about 80%.</p>
+            <p className="t-body-sm mt-2 text-ink-3">Lower quality can soften text and introduce artifacts. Compare at 100% zoom; use PNG when small text needs lossless output.</p>
           </>
         ) : (
           <p className="t-body-sm text-ink-2" data-testid="encode-png-note">

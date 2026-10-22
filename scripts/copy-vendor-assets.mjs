@@ -52,6 +52,11 @@ const bgDir = "vendor/background-removal/u2netp-v1";
 copyLocal("src/assets/models/u2netp.onnx", bgDir, "u2netp.onnx");
 copyLocal("src/assets/models/U2NET-LICENSE.txt", bgDir, "LICENSE.txt");
 
+// Smart Privacy Guard: YuNet face boxes (MIT). Served only after an explicit face scan.
+const faceDir = "vendor/privacy/yunet-2023mar";
+copyLocal("src/assets/models/privacy/face_detection_yunet_2023mar.onnx", faceDir, "face_detection_yunet_2023mar.onnx");
+copyLocal("src/assets/models/privacy/LICENSE.yunet.txt", faceDir, "LICENSE.txt");
+
 // Searchable PDF: a compact OFL font containing Basic Latin + Devanagari. Kept outside
 // public/vendor (which is generated and ignored) and copied only for local same-origin use.
 copyLocal("src/assets/fonts/Hind-Regular.ttf", "vendor/pdf", "Hind-Regular.ttf");
@@ -87,9 +92,21 @@ writeFileSync(
         runtimeModulePath: `/${ortDir}/ort-wasm-simd-threaded.jsep.mjs`,
         runtimeWasmPath: `/${ortDir}/ort-wasm-simd-threaded.jsep.wasm`,
       },
+      faceDetection: {
+        model: "YuNet",
+        modelVersion: "2023mar",
+        modelBytes: 232589,
+        modelSha256: "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+        modelPath: `/${faceDir}/face_detection_yunet_2023mar.onnx`,
+        modelLicensePath: `/${faceDir}/LICENSE.txt`,
+        runtime: "onnxruntime-web",
+        runtimeVersion: ortVersion,
+        runtimeModulePath: `/${ortDir}/ort-wasm-simd-threaded.jsep.mjs`,
+        runtimeWasmPath: `/${ortDir}/ort-wasm-simd-threaded.jsep.wasm`,
+      },
     },
     null,
     2,
   ) + "\n",
 );
-console.log(`vendor assets: opencv ${cvVersion}, tesseract ${tjs} (core ${tcore}), tessdata ${langVersion}, background U2NETP + onnxruntime-web ${ortVersion}`);
+console.log(`vendor assets: opencv ${cvVersion}, tesseract ${tjs} (core ${tcore}), tessdata ${langVersion}, background U2NETP, privacy YuNet + onnxruntime-web ${ortVersion}`);

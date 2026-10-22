@@ -10,7 +10,7 @@
  * artifact and downloads it. Moving a slider never re-encodes.
  */
 import { AlertTriangle, Check, Copy, Download } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { formatBytes } from "@/components/tools/stitch/stitch-tool";
 import { Button } from "@/components/ui/button";
@@ -30,15 +30,21 @@ import { EncodeInspector } from "./encode-inspector";
 import { EncodePreview } from "./encode-preview";
 import { FormatComparison } from "./format-comparison";
 
-export function EncodeTool({ tool, landing }: { tool: EncodeToolId; landing: ReactNode }) {
+type FormatPreset = { source: "image/webp" | "image/png" | "image/jpeg"; target: "png" | "jpeg"; h1: string; name: string };
+
+export function EncodeTool({ tool, landing, preset }: { tool: EncodeToolId; landing: ReactNode; preset?: FormatPreset }) {
   const count = useWorkspace((s) => s.order.length);
-  return count === 0 ? <>{landing}</> : <EncodeWorkspace tool={tool} />;
+  const setSettings = useWorkspace((s) => s.setEncodeSettings);
+  const target = preset?.target;
+  const presetName = preset?.name;
+  useEffect(() => { if (target) setSettings("convert", { format: target }); }, [target, presetName, setSettings]);
+  return count === 0 ? <>{landing}</> : <EncodeWorkspace tool={tool} preset={preset} />;
 }
 
 /** Identifies the output a set of settings produces for one asset. */
 const runKey = (assetId: string, format: string, quality: number | null, background: string | null, targetBytes: number | null) => JSON.stringify([assetId, format, quality, background, targetBytes]);
 
-function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
+function EncodeWorkspace({ tool, preset }: { tool: EncodeToolId; preset?: FormatPreset }) {
   const { runtime } = useWorkspaceContext();
   const selectedId = useWorkspace((s) => s.selectedId);
   const file = useWorkspace((s) => (s.selectedId ? s.files[s.selectedId] : undefined));
@@ -63,7 +69,8 @@ function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
   const currentComparison = comparison?.key === comparisonKey && comparison.result.sourceId === selectedId ? comparison.result : null;
   // The last result for this image, shown dimmed once the settings move on.
   const shown = run && run.result.sourceId === selectedId ? run.result : null;
-  const blocked = !!encodeIssue(file, format);
+  const sourceMismatch = !!preset && file.type !== preset.source && selectedId !== saved?.id;
+  const blocked = !!encodeIssue(file, format) || sourceMismatch;
   const busy = !!job;
   const verb = tool === "compress" ? "Compress" : "Convert";
 
@@ -97,7 +104,7 @@ function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
   }
 
   async function compareAllFormats() {
-    if (busy) return;
+    if (busy || sourceMismatch) return;
     setError(null);
     try {
       const result = await runtime.compareEncodeFormats(assetId);
@@ -146,7 +153,8 @@ function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
       inspectorTitle={`${verb} settings`}
       canvas={
         <>
-          <h1 className="sr-only">{TOOLS[tool].seo.h1}</h1>
+          <h1 className="sr-only">{preset?.h1 ?? TOOLS[tool].seo.h1}</h1>
+          {sourceMismatch && <Notice tone="warning" icon={<AlertTriangle />} title={`${preset.name} needs the right source format`} className="mb-4">This image is {file.type || "an unknown format"}. Select a {preset.name.split(" to ")[0]} image in Files, or add one to this workspace. Your current image stays here.</Notice>}
           {error && (
             <Notice tone="error" icon={<AlertTriangle />} title={`${verb} didn’t finish`} className="mb-4">
               {messageFor(error)}
@@ -178,7 +186,7 @@ function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
           />
           {tool === "convert" && (
             <>
-              <FormatComparison comparison={currentComparison} selected={current} originalBytes={file.bytes} busy={busy} blocked={false} onCompare={() => void compareAllFormats()} onSelect={selectCandidate} />
+              <FormatComparison comparison={currentComparison} selected={current} originalBytes={file.bytes} busy={busy} blocked={sourceMismatch} onCompare={() => void compareAllFormats()} onSelect={selectCandidate} />
               {current?.format === "png" && (
                 <div className="mt-4 flex flex-wrap items-center gap-3">
                   <Button variant="secondary" onClick={() => void copyPng()} className="max-md:h-11" data-testid="copy-output-png"><Copy /> Copy PNG</Button>
@@ -188,7 +196,7 @@ function EncodeWorkspace({ tool }: { tool: EncodeToolId }) {
           )}
         </>
       }
-      inspector={<EncodeInspector key={selectedId} tool={tool} assetId={selectedId} format={format} busy={busy} outputName={tool === "convert" ? outputName : undefined} onOutputName={tool === "convert" ? setOutputName : undefined} onRun={() => void encode()} />}
+      inspector={<EncodeInspector key={selectedId} tool={tool} assetId={selectedId} format={format} presetFormat={preset?.target} busy={busy} outputName={tool === "convert" ? outputName : undefined} onOutputName={tool === "convert" ? setOutputName : undefined} onRun={() => void encode()} />}
       below={saved && <SavedResult tool={tool} saved={saved} onDownload={() => downloadAsset(runtime, saved.id)} />}
     />
   );

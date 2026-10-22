@@ -222,7 +222,8 @@ test.describe("mobile production usability", () => {
     await upload(page, "/screenshot-beautifier", A);
     await expect(page.getByTestId("mobile-inspector-trigger")).toHaveText("Settings");
     const sheet = await openSettings(page);
-    const scroller = sheet.locator("div.overflow-y-auto");
+    // The settings sheet contains nested galleries; scroll its outer viewport.
+    const scroller = sheet.locator("div.overflow-y-auto").first();
     const scrollState = await scroller.evaluate((element) => ({ clientHeight: element.clientHeight, scrollHeight: element.scrollHeight }));
     expect(scrollState.scrollHeight).toBeGreaterThan(scrollState.clientHeight);
     await scroller.evaluate((element) => { element.scrollTop = element.scrollHeight; });

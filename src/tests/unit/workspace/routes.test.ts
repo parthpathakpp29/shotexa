@@ -183,7 +183,7 @@ describe("tool registry", () => {
 
 describe("SEO config", () => {
   it("sitemap lists indexable static pages and live tools only", () => {
-    expect(sitemapPaths()).toEqual(["/", "/tools", "/workflows", "/privacy", "/alternatives", "/alternatives/xnapper", "/alternatives/cleanshot-x", "/alternatives/snagit", "/alternatives/pika", "/alternatives/shots-so", "/pdf-to-jpg", "/svg-to-png", "/stitch-screenshots", "/combine-screenshots", "/screenshot-beautifier", "/compare-screenshots", "/redact-screenshot", "/blur-screenshot", "/screenshot-to-text", "/screenshot-to-data", "/screenshot-to-pdf", "/screenshot-to-searchable-pdf", "/screenshot-editor", "/annotate-screenshot", "/split-long-screenshot", "/compress-screenshot", "/convert-screenshot", "/remove-image-metadata", "/remove-background", "/batch-screenshots"]);
+    expect(sitemapPaths()).toEqual(["/", "/tools", "/workflows", "/privacy", "/alternatives", "/alternatives/xnapper", "/alternatives/cleanshot-x", "/alternatives/snagit", "/alternatives/pika", "/alternatives/shots-so", "/alternatives/freeconvert", "/alternatives/convertio", "/alternatives/ilovepdf", "/pdf-to-png", "/svg-to-jpg", "/webp-to-png", "/webp-to-jpg", "/png-to-jpg", "/jpg-to-png", "/pdf-to-jpg", "/svg-to-png", "/stitch-screenshots", "/combine-screenshots", "/screenshot-beautifier", "/compare-screenshots", "/redact-screenshot", "/blur-screenshot", "/screenshot-to-text", "/screenshot-to-data", "/screenshot-to-pdf", "/screenshot-to-searchable-pdf", "/screenshot-editor", "/annotate-screenshot", "/split-long-screenshot", "/compress-screenshot", "/convert-screenshot", "/remove-image-metadata", "/remove-background", "/batch-screenshots"]);
     expect(sitemapPaths().some((p) => p.startsWith("/spikes"))).toBe(false);
   });
 

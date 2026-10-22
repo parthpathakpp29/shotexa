@@ -65,7 +65,7 @@ export interface WorkspaceActions {
   clear(): void;
   select(id: FileId | null): void;
   setActiveTool(tool: ToolId | null): void;
-  markPreview(id: FileId): void;
+  markPreview(id: FileId, displaySize?: { width: number; height: number }): void;
   reorder(from: number, to: number): void;
   undo(): void;
   redo(): void;
@@ -352,8 +352,13 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
       },
       select: (id) => set({ selectedId: id }),
       setActiveTool: (tool) => set({ activeTool: tool }),
-      markPreview(id) {
-        set((s) => (s.files[id] ? { files: { ...s.files, [id]: { ...s.files[id], previewVersion: s.files[id].previewVersion + 1 } } } : {}));
+      markPreview(id, displaySize) {
+        set((s) => (s.files[id] ? { files: { ...s.files, [id]: {
+          ...s.files[id],
+          width: displaySize?.width && displaySize.width > 0 ? displaySize.width : s.files[id].width,
+          height: displaySize?.height && displaySize.height > 0 ? displaySize.height : s.files[id].height,
+          previewVersion: s.files[id].previewVersion + 1,
+        } } } : {}));
       },
       reorder(from, to) {
         const n = get().order.length;

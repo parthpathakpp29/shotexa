@@ -48,6 +48,9 @@ test.describe("Shotexa V2.0C Privacy Guard", () => {
     await capture(page, testInfo, "01-findings-review.png");
     await page.getByRole("button", { name: /Redact Selected/ }).click();
     await expect(page.getByTestId("redaction-region").first()).toBeVisible();
+    await page.getByTestId("export").click();
+    await expect(page.getByLabel("Final sanitized image")).toBeVisible({ timeout: 180_000 });
+    await page.getByRole("checkbox", { name: /I inspected the final image/ }).check();
     const [download] = await Promise.all([page.waitForEvent("download", { timeout: 180_000 }), page.getByTestId("export").click()]);
     expect(download.suggestedFilename()).toMatch(/^safe-copy\.(png|jpg|webp)$/);
     await expect(page.getByTestId("safe-share-result")).toContainText("metadata removed");

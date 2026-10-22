@@ -15,6 +15,8 @@ const eslintConfig = defineConfig([
     // Self-hosted third-party processing libraries (copied from node_modules).
     "public/vendor/**",
     "test-results/**",
+    "cloudflare/**/.wrangler/**",
+    ".cache/**",
   ]),
 ]);
 
