@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { IconButton, Mono, Toolbar, ToolbarDivider } from "@/components/ui/primitives";
 import { ViewportToolbar } from "@/components/ui/viewport";
 import { useWorkspace, useWorkspaceContext } from "@/components/workspace/workspace-provider";
+import { paintRemovedBackground, removalOutputPlan } from "@/core/background-removal/render";
 import { applyStroke, refineMask } from "@/core/background-removal/mask";
 import type { BackgroundRemovalSettings, MaskBrushMode, MaskPoint, MaskStroke, RemovalPreviewMode } from "@/core/background-removal/types";
 import type { ViewportZoom } from "@/core/viewport/viewport";
@@ -12,29 +13,13 @@ import { cn } from "@/lib/cn";
 import { useElementWidth } from "@/lib/use-element-width";
 import { useViewportInteraction } from "@/lib/use-viewport";
 
-function checker(ctx: CanvasRenderingContext2D, width: number, height: number) {
-  const size = 16;
-  ctx.fillStyle = "#f5f3ef"; ctx.fillRect(0, 0, width, height);
-  ctx.fillStyle = "#e5e1da";
-  for (let y = 0; y < height; y += size) for (let x = (y / size) % 2 ? size : 0; x < width; x += size * 2) ctx.fillRect(x, y, size, size);
-}
-
-function fillBackground(ctx: CanvasRenderingContext2D, settings: BackgroundRemovalSettings, bitmap: ImageBitmap, width: number, height: number, custom: ImageBitmap | null) {
-  const bg = settings.background;
-  if (bg.kind === "transparent") checker(ctx, width, height);
-  else if (bg.kind === "solid") { ctx.fillStyle = bg.color; ctx.fillRect(0, 0, width, height); }
-  else if (bg.kind === "gradient" || bg.kind === "derived") { const g = ctx.createLinearGradient(0, 0, width, height); g.addColorStop(0, bg.from); g.addColorStop(1, bg.to); ctx.fillStyle = g; ctx.fillRect(0, 0, width, height); }
-  else if (bg.kind === "blur-original") { ctx.save(); ctx.filter = `blur(${Math.max(1, bg.blur / 2)}px)`; ctx.drawImage(bitmap, -12, -12, width + 24, height + 24); ctx.restore(); }
-  else if (custom) ctx.drawImage(custom, 0, 0, width, height);
-  else { ctx.fillStyle = "#eeeae4"; ctx.fillRect(0, 0, width, height); }
-}
-
-export function BackgroundRemovalStage({ assetId, settings, mode, brushMode, brushSize, hardness, revision, customBackground, onBrushMode, onRevision }: {
-  assetId: string; settings: BackgroundRemovalSettings; mode: RemovalPreviewMode; brushMode: MaskBrushMode; brushSize: number; hardness: number; revision: number; customBackground: ImageBitmap | null;
+export function BackgroundRemovalStage({ assetId, settings, mode, brushMode, brushSize, hardness, revision, customBackground, previewSurface, onBrushMode, onRevision }: {
+  assetId: string; settings: BackgroundRemovalSettings; mode: RemovalPreviewMode; brushMode: MaskBrushMode; brushSize: number; hardness: number; revision: number; customBackground: ImageBitmap | null; previewSurface: "checkerboard" | "white" | "dark" | "transparent";
   onBrushMode(mode: MaskBrushMode): void; onRevision(): void;
 }) {
   const { runtime } = useWorkspaceContext();
   const file = useWorkspace((s) => s.files[assetId]);
+  const format = useWorkspace((s) => s.exportSettings.format);
   const previewVersion = useWorkspace((s) => s.files[assetId]?.previewVersion ?? 0);
   const [zoom, setZoom] = useState<ViewportZoom>("fit");
   const [frameRef, frameWidth] = useElementWidth<HTMLDivElement>();
@@ -45,17 +30,25 @@ export function BackgroundRemovalStage({ assetId, settings, mode, brushMode, bru
   const frame = useRef<number | null>(null);
   const entry = runtime.backgroundMasks.get(assetId);
   const ready = !!entry;
-  const fitWidth = file && frameWidth ? Math.max(1, Math.floor(Math.min(frameWidth - 32, 900, (620 * file.width) / file.height))) : 0;
-  const fitScale = file && fitWidth ? fitWidth / file.width : 1;
-  const cssWidth = file ? (zoom === "fit" ? fitWidth : Math.max(1, Math.round(file.width * zoom))) : 0;
-  const cssHeight = file && cssWidth ? Math.max(1, Math.round(cssWidth * file.height / file.width)) : 0;
+  const visibleSettings = useMemo(() => mode === "original" || mode === "mask" || mode === "split" ? { ...settings, trim: false } : settings, [mode, settings]);
+  const plan = useMemo(() => {
+    // The registry is external state; revision changes when a mask or stroke changes.
+    void revision;
+    const current = runtime.backgroundMasks.get(assetId);
+    const materialized = current ? runtime.backgroundMasks.materialize(assetId)! : null;
+    return file && current && materialized ? removalOutputPlan(refineMask(materialized, current.result.width, current.result.height, visibleSettings.edge), current.result.width, current.result.height, file, visibleSettings) : { width: file?.width ?? 1, height: file?.height ?? 1, drawX: 0, drawY: 0 };
+  }, [runtime, assetId, file, visibleSettings, revision]);
+  const fitWidth = file && frameWidth ? Math.max(1, Math.floor(Math.min(frameWidth - 32, 900, (620 * plan.width) / plan.height))) : 0;
+  const fitScale = file && fitWidth ? fitWidth / plan.width : 1;
+  const cssWidth = file ? (zoom === "fit" ? fitWidth : Math.max(1, Math.round(plan.width * zoom))) : 0;
+  const cssHeight = file && cssWidth ? Math.max(1, Math.round(cssWidth * plan.height / plan.width)) : 0;
   const viewport = useViewportInteraction({ scrollRef, contentRef: stageRef, zoom, setZoom, fitScale, allowDragPan: true, allowTouchPan: false });
 
   const draw = useMemo(() => () => {
     const canvas = canvasRef.current, bitmap = runtime.registry.preview(assetId), current = runtime.backgroundMasks.get(assetId);
     if (!canvas || !bitmap || !file || !cssWidth) return;
     const width = Math.min(bitmap.width, Math.max(1, Math.round(cssWidth * Math.min(2, devicePixelRatio || 1))));
-    const height = Math.max(1, Math.round(width * file.height / file.width));
+    const height = Math.max(1, Math.round(width * plan.height / plan.width));
     if (canvas.width !== width || canvas.height !== height) { canvas.width = width; canvas.height = height; }
     const ctx = canvas.getContext("2d", { willReadFrequently: true }); if (!ctx) return;
     ctx.clearRect(0, 0, width, height); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
@@ -68,18 +61,12 @@ export function BackgroundRemovalStage({ assetId, settings, mode, brushMode, bru
       for (let i = 0; i < mask.length; i++) image.data.set([mask[i], mask[i], mask[i], 255], i * 4);
       const temp = document.createElement("canvas"); temp.width = current.result.width; temp.height = current.result.height; temp.getContext("2d")?.putImageData(image, 0, 0); ctx.drawImage(temp, 0, 0, width, height); temp.width = temp.height = 0; return;
     }
-    fillBackground(ctx, settings, bitmap, width, height, customBackground);
-    const subject = document.createElement("canvas"); subject.width = width; subject.height = height;
-    const sctx = subject.getContext("2d", { willReadFrequently: true })!; sctx.drawImage(bitmap, 0, 0, width, height); sctx.globalCompositeOperation = "destination-in";
-    const maskCanvas = document.createElement("canvas"); maskCanvas.width = current.result.width; maskCanvas.height = current.result.height;
-    const mctx = maskCanvas.getContext("2d")!; const image = mctx.createImageData(current.result.width, current.result.height);
-    for (let i = 0; i < mask.length; i++) image.data.set([255, 255, 255, mask[i]], i * 4); mctx.putImageData(image, 0, 0); sctx.drawImage(maskCanvas, 0, 0, width, height); sctx.globalCompositeOperation = "source-over";
-    const scale = settings.subject.scale, dw = width * scale, dh = height * scale, dx = (width - dw) / 2 + settings.subject.x * width / file.width, dy = (height - dh) / 2 + settings.subject.y * height / file.height;
-    if (settings.subject.shadow && settings.background.kind !== "transparent") { ctx.save(); ctx.shadowColor = "rgba(15,23,42,.28)"; ctx.shadowBlur = 18; ctx.shadowOffsetY = 7; ctx.drawImage(subject, dx, dy, dw, dh); ctx.restore(); }
-    ctx.drawImage(subject, dx, dy, dw, dh);
+    const painted = paintRemovedBackground(bitmap, { source: file, mask: { data: materialized, width: current.result.width, height: current.result.height, matte: current.result.matte }, settings: visibleSettings, format: settings.background.kind === "transparent" ? "png" : format, createCanvas: (w, h) => Object.assign(document.createElement("canvas"), { width: w, height: h }) }, customBackground, width / plan.width);
+    ctx.drawImage(painted.canvas, 0, 0, width, height);
+    painted.canvas.width = painted.canvas.height = 0;
     if (mode === "split") { ctx.save(); ctx.beginPath(); ctx.rect(0, 0, width / 2, height); ctx.clip(); ctx.drawImage(bitmap, 0, 0, width, height); ctx.restore(); ctx.fillStyle = "rgba(255,255,255,.9)"; ctx.fillRect(width / 2 - 1, 0, 2, height); }
-    maskCanvas.width = maskCanvas.height = subject.width = subject.height = 0;
-  }, [assetId, brushMode, brushSize, cssWidth, customBackground, file, hardness, mode, runtime, settings]);
+
+  }, [assetId, brushMode, brushSize, cssWidth, customBackground, file, format, hardness, mode, runtime, settings, plan.width, plan.height, visibleSettings]);
 
   useEffect(() => { draw(); }, [draw, previewVersion, revision]);
 
@@ -88,7 +75,10 @@ export function BackgroundRemovalStage({ assetId, settings, mode, brushMode, bru
 
   function point(event: React.PointerEvent): MaskPoint {
     const box = stageRef.current!.getBoundingClientRect();
-    return { x: Math.max(0, Math.min(1, (event.clientX - box.left) / box.width)), y: Math.max(0, Math.min(1, (event.clientY - box.top) / box.height)) };
+    if (mode === "original" || mode === "mask") return { x: Math.max(0, Math.min(1, (event.clientX - box.left) / box.width)), y: Math.max(0, Math.min(1, (event.clientY - box.top) / box.height)) };
+    const scale = settings.subject.scale;
+    const dx = plan.drawX, dy = plan.drawY;
+    return { x: Math.max(0, Math.min(1, ((event.clientX - box.left) / box.width * plan.width - dx) / (file!.width * scale))), y: Math.max(0, Math.min(1, ((event.clientY - box.top) / box.height * plan.height - dy) / (file!.height * scale))) };
   }
   function start(event: React.PointerEvent<HTMLDivElement>) {
     if (!ready || event.button !== 0 || event.pointerType === "touch" && !event.isPrimary) return;
@@ -116,11 +106,11 @@ export function BackgroundRemovalStage({ assetId, settings, mode, brushMode, bru
         <ViewportToolbar zoom={zoom} fitScale={fitScale} onFit={viewport.fit} onActual={viewport.actual} onZoomIn={viewport.zoomIn} onZoomOut={viewport.zoomOut} label="Removal view" />
       </div>
       <div ref={(element) => { frameRef(element); scrollRef.current = element; }} className={cn("min-h-[440px] overflow-auto rounded-lg border border-line bg-surface-2 p-4 max-md:min-h-[52dvh] max-md:p-2", viewport.spaceHeld && "cursor-grab", viewport.isPanning && "cursor-grabbing")}>
-        {file && cssWidth > 0 && <div ref={stageRef} data-viewport-pan data-viewport-edit={ready ? "mask" : undefined} tabIndex={0} aria-label={ready ? `${brushMode === "restore" ? "Restore" : "Erase"} mask brush canvas. Use Control Z and Control Shift Z for mask history.` : "Original image preview"} onPointerDown={start} onPointerMove={move} onPointerUp={finish} onPointerCancel={finish} onKeyDown={(event) => { if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== "z") return; event.preventDefault(); if (event.shiftKey) redo(); else undo(); }} className={cn("relative mx-auto overflow-hidden rounded-xs bg-checker shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-accent", ready && "touch-none cursor-crosshair")} style={{ width: cssWidth, height: cssHeight }}>
+        {file && cssWidth > 0 && <div ref={stageRef} data-viewport-pan data-viewport-edit={ready ? "mask" : undefined} tabIndex={0} aria-label={ready ? `${brushMode === "restore" ? "Restore" : "Erase"} mask brush canvas. Use Control Z and Control Shift Z for mask history.` : "Original image preview"} onPointerDown={start} onPointerMove={move} onPointerUp={finish} onPointerCancel={finish} onKeyDown={(event) => { if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== "z") return; event.preventDefault(); if (event.shiftKey) redo(); else undo(); }} className={cn("relative mx-auto overflow-hidden rounded-xs shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-accent", previewSurface === "checkerboard" && "bg-checker", ready && "touch-none cursor-crosshair")} style={{ width: cssWidth, height: cssHeight, backgroundColor: previewSurface === "white" ? "#fff" : previewSurface === "dark" ? "#18202c" : "transparent" }}>
           <canvas ref={canvasRef} role="img" aria-label={`${mode} preview of ${file.name}`} data-testid="background-removal-canvas" className="block h-full w-full" />
         </div>}
       </div>
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-2"><p className="t-body-sm text-ink-2">One-finger drawing refines the mask. Hold Space or use the middle button to pan; pinch or the toolbar changes zoom.</p>{ready && <Mono className="text-[11px]" data-testid="background-removal-diagnostics" data-model-load-ms={entry?.result.modelLoadMs} data-inference-ms={entry?.result.inferenceMs} data-session-reused={entry?.result.sessionReused}>{entry?.result.provider.toUpperCase()} · U²-Net-P · {entry?.result.sessionReused ? "session cache" : "first load"}</Mono>}</div>
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2"><p className="t-body-sm text-ink-2">One-finger drawing refines the mask. Hold Space or use the middle button to pan; pinch or the toolbar changes zoom.</p>{ready && <Mono className="text-[11px]" data-testid="background-removal-diagnostics" data-model-load-ms={entry?.result.modelLoadMs} data-inference-ms={entry?.result.inferenceMs} data-session-reused={entry?.result.sessionReused}>{entry?.result.provider.toUpperCase()} · {entry?.result.model === "single-ink" ? "Single ink" : "U²-Net-P"} · {entry?.result.sessionReused ? "session cache" : "first load"}</Mono>}</div>
     </section>
   );
 }

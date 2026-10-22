@@ -26,5 +26,6 @@ export function maskSensitiveValue(value: string, subtype: PrivacyFindingSubtype
   if (subtype === "date-of-birth") return "••/••/••••";
   if (subtype === "username" || subtype === "identifier") return visibleEdges(clean, 2, 2);
   if (subtype === "qr-code" || subtype === "barcode" || subtype === "face") return "Visual content";
+  if (subtype === "license-plate") return `Plate text •••${clean.slice(-2)}`;
   return visibleEdges(clean, Math.min(8, Math.max(2, clean.indexOf("-") + 1)), 4);
 }

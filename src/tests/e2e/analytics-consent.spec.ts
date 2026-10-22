@@ -1,8 +1,10 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect as baseExpect, test, type Page } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const IMAGE = join(process.cwd(), "src/tests/fixtures/ocr/receipt/image.png");
+// WebKit may hydrate and load the mocked collectors after the default 5s assertion window.
+const expect = baseExpect.configure({ timeout: 20_000 });
 
 async function analyticsCalls(page: Page) {
   return page.evaluate(() => (window.dataLayer ?? []).map((entry) => Array.from(entry as ArrayLike<unknown>)));
@@ -166,7 +168,7 @@ test("Accept tracks one sanitized page view per route and safe tool actions", as
   expect((await analyticsCalls(page)).filter((entry) => entry[0] === "event" && entry[1] === "tool_opened")).toHaveLength(1);
 
   await page.getByTestId("file-input").setInputFiles({ name: "secret-token-123.png", mimeType: "image/png", buffer: readFileSync(IMAGE) });
-  await expect.poll(async () => (await analyticsCalls(page)).filter((entry) => entry[0] === "event" && entry[1] === "upload_completed").length).toBe(1);
+  await expect.poll(async () => (await analyticsCalls(page)).filter((entry) => entry[0] === "event" && entry[1] === "upload_completed").length, { timeout: 20_000 }).toBe(1);
   await page.getByRole("button", { name: "Rotate right" }).click();
   await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Export edited image" }).click()]);
   await expect.poll(async () => (await analyticsCalls(page)).filter((entry) => entry[0] === "event" && entry[1] === "export_completed").length).toBe(1);
@@ -192,7 +194,7 @@ test("An accepted visitor can reject later and the tag stays off after reload", 
   await expect.poll(async () => page.evaluate(() => localStorage.getItem("shotexa.analytics-consent.v1"))).toBe("rejected");
   const googleBefore = requests.filter((url) => /googletagmanager\.com|google-analytics\.com/.test(url)).length;
   const vercelBefore = requests.filter((url) => url.includes("/3e5b8101dc4b4d62/view")).length;
-  await page.reload();
+  await page.goto(page.url(), { waitUntil: "domcontentloaded" });
   await page.goto("/tools");
   await expect.poll(() => requests.filter((url) => url.includes("/3e5b8101dc4b4d62/view")).length).toBeGreaterThan(vercelBefore);
   expect(requests.filter((url) => /googletagmanager\.com|google-analytics\.com/.test(url))).toHaveLength(googleBefore);
@@ -203,12 +205,12 @@ test("Saved consent resumes once, and Reject can later change to Accept", async 
   page.on("request", (request) => { if (/googletagmanager\.com|google-analytics\.com\/g\/collect|\/3e5b8101dc4b4d62\/view/.test(request.url())) requests.push(request.url()); });
   await page.goto("/");
   await page.getByRole("button", { name: "Reject Google Analytics" }).click();
-  await page.reload();
+  await page.goto(page.url(), { waitUntil: "domcontentloaded" });
   expect(requests.filter((url) => /googletagmanager\.com|google-analytics\.com/.test(url))).toEqual([]);
   await page.getByRole("button", { name: "Analytics choices" }).click();
   await page.getByRole("button", { name: "Accept Google Analytics" }).click();
   await expect.poll(() => requests.filter((url) => url.includes("/g/collect?")).length).toBe(1);
-  await page.reload();
+  await page.goto(page.url(), { waitUntil: "domcontentloaded" });
   await expect.poll(() => requests.filter((url) => url.includes("/g/collect?")).length).toBe(2);
   expect(requests.filter((url) => url.includes("googletagmanager.com"))).toHaveLength(2);
   expect(await page.evaluate(() => localStorage.getItem("shotexa.analytics-consent.v1"))).toBe("accepted");

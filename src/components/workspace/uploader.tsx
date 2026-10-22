@@ -13,7 +13,7 @@ import { useDropTarget, useWorkspaceContext } from "./workspace-provider";
  * Primary input surface (homepage hero, tool landings). Paste works anywhere on the page
  * via the provider — the "Paste a screenshot" line is a hint, not a clipboard button.
  */
-export function Uploader({ className, sample = true, multipleHint = "or drag and drop screenshots anywhere in this area" }: { className?: string; sample?: boolean; multipleHint?: string }) {
+export function Uploader({ className, sample = true, multipleHint = "or drag and drop screenshots anywhere in this area", fileLabel = "screenshots" }: { className?: string; sample?: boolean; multipleHint?: string; fileLabel?: string }) {
   const { openPicker, loadSample } = useWorkspaceContext();
   const drop = useDropTarget();
   const paste = useShortcutLabel("V");
@@ -32,16 +32,16 @@ export function Uploader({ className, sample = true, multipleHint = "or drag and
       {/* Touch screens can't paste into the page or drag files in, so they get a plain prompt. */}
       <p className="inline-flex items-center gap-2.5 rounded-md border border-line bg-surface-3 px-3.5 py-2 text-sm text-ink pointer-coarse:hidden">
         <ImagePlus aria-hidden className="size-4 text-accent" />
-        Paste a screenshot
+        Paste {fileLabel === "screenshots" ? "a screenshot" : "an image"}
         <Kbd>{paste}</Kbd>
       </p>
       <p className="t-body-sm mt-4 text-ink-2 pointer-coarse:mt-0">
         <span className="pointer-coarse:hidden">{drop.over ? "Drop to add your screenshots" : multipleHint}</span>
-        <span className="hidden pointer-coarse:inline">Choose screenshots from your photos or files.</span>
+        <span className="hidden pointer-coarse:inline">Choose {fileLabel} from your photos or files.</span>
       </p>
       <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
         <Button variant="primary" size="lg" kbd={open} onClick={openPicker}>
-          Choose screenshots
+          Choose {fileLabel}
         </Button>
         {sample && (
           <Button

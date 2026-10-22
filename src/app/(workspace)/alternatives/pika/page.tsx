@@ -12,18 +12,18 @@ export const metadata = staticMetadata("/alternatives/pika");
 const TABLE_DATA = [
   { feature: "Focus", shotexa: "Screenshot utility & editing", competitor: "Screenshot mockups & design" },
   { feature: "Platform", shotexa: "Web Browser", competitor: "Web Browser" },
-  { feature: "Pricing", shotexa: "Free", competitor: "Free tier / Paid Pro" },
-  { feature: "Watermarks on Free Tier", shotexa: "No", competitor: "Yes" },
-  { feature: "Data Processing", shotexa: "Local in-browser", competitor: "Local in-browser" },
-  { feature: "3D Tilting Effects", shotexa: "No", competitor: "Yes (Pro)" },
-  { feature: "Text Extraction & Redaction", shotexa: "Yes", competitor: "No" },
-  { feature: "Image Stitching", shotexa: "Yes (Smart Stitch)", competitor: "No" },
+  { feature: "Pricing", shotexa: "Free", competitor: "Paid Pro, Team and Lifetime options" },
+  { feature: "Branding", shotexa: "Optional watermarks and local Brand Kits", competitor: "Custom watermarks and saved colors in Pro" },
+  { feature: "Data Processing", shotexa: "Local in-browser", competitor: "Not verified for every workflow; check privacy terms" },
+  { feature: "3D Tilting Effects", shotexa: "Perspective presets and editable rotation", competitor: "Yes (Pro)" },
+  { feature: "Text Extraction & Redaction", shotexa: "Yes", competitor: "Not listed on the reviewed product page" },
+  { feature: "Image Stitching", shotexa: "Yes (Smart Stitch)", competitor: "Not listed on the reviewed product page" },
 ];
 
 const FAQ = [
-  { q: "Does Shotexa put a watermark on my screenshots?", a: "No. Shotexa never adds a watermark to your exported images, regardless of which tool you use." },
+  { q: "Does Shotexa put a watermark on my screenshots?", a: "Shotexa adds no mandatory watermark. You can optionally add your own text or logo with Watermark Stamp Pro." },
   { q: "Can I export high-resolution mockups for free?", a: "Yes. Shotexa uses the original resolution of your uploaded screenshot to generate the beautified result, ensuring crisp exports without requiring a premium upgrade." },
-  { q: "Does Shotexa have 3D tilt effects like Pika?", a: "No, Shotexa's Beautifier focuses on clean, flat presentations (like plain browser windows and generic phone frames) and does not support 3D perspective tilting." },
+  { q: "Does Shotexa have 3D tilt effects like Pika?", a: "Yes. Shotexa has perspective presets and adjustable X, Y and Z rotation for static exports. Its motion presets are preview-only; it does not export video or GIF." },
 ];
 
 export default function PikaAlternativePage() {
@@ -44,7 +44,7 @@ export default function PikaAlternativePage() {
         
         <div className="mt-12 text-ink">
           <p className="t-body mb-8">
-            Pika (pika.style) is a web-based tool dedicated to creating polished screenshot mockups with gradients, 3D tilts, and custom templates. While it offers a free tier, features like watermark removal and advanced export options require a paid Pro subscription. Both Pika and Shotexa process images locally in your browser. However, Shotexa is geared toward a broader utility workflow: adding backgrounds and frames for free, but also providing tools to extract text, redact information, and stitch images together.
+            Pika (pika.style) is a web-based tool dedicated to creating polished screenshot mockups with gradients, 3D tilts, and custom templates. Its published plans include Pro, Team and Lifetime options, with templates, branding controls and shared presets for teams. Shotexa processes editing locally; we have not verified the processing location of every Pika workflow. Shotexa is geared toward a broader utility workflow: adding backgrounds and frames for free, but also providing tools to extract text, redact information, and stitch images together.
           </p>
 
           <h2 className="t-h2 mt-12 mb-6">Feature Comparison</h2>
@@ -73,9 +73,9 @@ export default function PikaAlternativePage() {
             <div>
               <h3 className="t-h3 mb-3 text-success">Where Pika is stronger</h3>
               <ul className="space-y-2 t-body-sm text-ink-2">
-                <li className="flex gap-2"><Minus className="size-4 shrink-0 mt-0.5 text-ink-3" /> Advanced design tools like 3D tilting and complex shadows.</li>
+                <li className="flex gap-2"><Minus className="size-4 shrink-0 mt-0.5 text-ink-3" /> Capture integrations, including browser and code-editor extensions.</li>
                 <li className="flex gap-2"><Minus className="size-4 shrink-0 mt-0.5 text-ink-3" /> Specific templates for code snippets and Twitter/X posts.</li>
-                <li className="flex gap-2"><Minus className="size-4 shrink-0 mt-0.5 text-ink-3" /> Ability to save custom template presets.</li>
+                <li className="flex gap-2"><Minus className="size-4 shrink-0 mt-0.5 text-ink-3" /> Team plans with shared presets and project access controls.</li>
               </ul>
             </div>
             <div>
@@ -95,7 +95,7 @@ export default function PikaAlternativePage() {
 
           <h2 className="t-h2 mt-10 mb-6">Who should choose Pika?</h2>
           <p className="t-body-sm mb-4 text-ink-2">
-            Choose Pika if you are actively designing marketing assets and need to apply 3D perspective tilts, manage saved branding presets, or format specific elements like code blocks for social media.
+            Choose Pika if you are actively designing marketing assets and need capture integrations, shared team presets, or dedicated templates for code blocks and social media.
           </p>
 
           <h2 className="t-h2 mt-12 mb-6">Relevant Shotexa Tools</h2>
@@ -132,7 +132,7 @@ export default function PikaAlternativePage() {
           </div>
 
           <p className="t-body-sm mt-12 text-center text-ink-3">
-            Last checked: October 2026. Competitor features and pricing were reviewed against publicly available official product and pricing pages.
+            Published by Shotexa. Reviewed October 20, 2026 against the official sources below. Features and plans can change; verify your requirements before choosing.
           </p>
 
           <div className="mt-6 rounded-lg border border-line bg-surface p-5">

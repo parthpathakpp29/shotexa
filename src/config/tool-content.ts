@@ -9,6 +9,8 @@ import type { ToolId } from "./tools";
 export interface ToolContent {
   /** Hint under the uploader. */
   dropHint: string;
+  /** Input types for non-screenshot converters. */
+  inputs?: string;
   /** H2 for the overview, in natural words ("What Smart Stitch does"). */
   whatHeading: string;
   /** 2–4 sentences. */
@@ -24,6 +26,22 @@ export interface ToolContent {
 }
 
 export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
+  "pdf-to-jpg": {
+    dropHint: "Choose a PDF document", inputs: "PDF documents", whatHeading: "What the PDF image converter does",
+    intro: "Render selected PDF pages as JPG images for photo-heavy slides, document previews and services that require JPEG. Choose resolution for legible text, then adjust JPEG quality to balance artifacts and file size. Pages are processed one at a time to limit memory use; use PDF to PNG when lossless text and diagram edges matter more than size.",
+    steps: [{ title: "Open a PDF", body: "Choose a PDF under 60 MB and up to 80 pages." }, { title: "Select pages and resolution", body: "Pick individual pages or all pages and choose a render scale." }, { title: "Export", body: "Download individual images or a ZIP of selected pages." }],
+    useCases: [{ title: "Share a page", body: "Turn a chart, slide or document page into an image." }, { title: "Reuse page artwork", body: "Convert a page locally, then open its image in Editor or Beautifier without uploading it again." }],
+    privacy: "PDF parsing and page rendering happen locally in your browser. Document contents are not uploaded.", outputs: ["JPG", "PNG", "ZIP"],
+    faq: [{ q: "Can I convert a password-protected PDF?", a: "Unlock it first. This converter does not request or store passwords." }, { q: "Is PDF text still editable?", a: "No. Exported pages are raster images; choose a higher scale for readable text." }, { q: "Can I select only some pages?", a: "Yes. Preview the pages, select the ones you need, and download them individually or together." }],
+  },
+  "svg-to-png": {
+    dropHint: "Choose a passive SVG file", inputs: "Passive SVG artwork", whatHeading: "What the SVG converter does",
+    intro: "Turn supported SVG icons, logos and diagrams into transparent PNG files at the dimensions your layout needs. PNG preserves alpha and adds no JPEG compression artifacts, but the result is a fixed pixel grid: export at the intended display size or a suitable multiple. Active SVG content and external resources are rejected to keep conversion local and safe.",
+    steps: [{ title: "Choose an SVG", body: "Use passive vector artwork with basic shapes, paths, text and gradients." }, { title: "Set dimensions", body: "Keep the aspect ratio or specify exact width and height." }, { title: "Export", body: "Download a PNG or JPG and continue editing it in Shotexa." }],
+    useCases: [{ title: "Export icons and diagrams", body: "Create raster versions sized for presentations or social posts." }, { title: "Place a transparent logo", body: "Insert a PNG over white, dark or colored layouts. Transparency must already exist in the SVG; opaque white shapes remain white." }],
+    privacy: "SVG validation and rasterization happen in your browser. External references and active content are rejected.", outputs: ["PNG", "JPG"],
+    faq: [{ q: "Why was my SVG rejected?", a: "Scripts, embedded images, stylesheets, external links and other active or unsupported constructs are not accepted. Export a plain SVG from your design app." }, { q: "Can PNG stay transparent?", a: "Yes. Choose PNG and leave transparent regions in the SVG." }, { q: "How large can the export be?", a: "Shotexa limits canvas dimensions and pixel count to keep browser memory use reasonable. Reduce the width or height if you reach the limit." }],
+  },
   stitch: {
     dropHint: "or drag and drop two or more overlapping screenshots here",
     whatHeading: "What Smart Stitch does",
@@ -71,11 +89,11 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
   beautify: {
     dropHint: "or drag and drop a screenshot to put it on a background or in a frame",
     whatHeading: "What the Beautifier does",
-    intro: "The Beautifier turns a plain screenshot into a presentable image. Place it on a solid, gradient or blurred background, inside a generic browser window or phone frame, add shadows and 3D perspective, and size the result for where you’re posting it. Up to three screenshots can share one composition.",
+    intro: "Turn a plain screenshot into a polished product image. Start with one of 12 visual templates or an original background from the 18-scene library. Add optional text or logo watermarks, save a local Brand Kit, and style several screenshots as a ZIP pack. Frames, perspective, typography and export sizes remain editable.",
     steps: [
       { title: "Add a screenshot", body: "Paste, drop or choose an image — or open a result from another Shotexa tool." },
-      { title: "Start from a style", body: "Pick a preset such as SaaS Hero, Documentation or App Showcase, then adjust anything you like." },
-      { title: "Adjust the details", body: "Background, frame, padding, corners, shadow, perspective, captions and an optional logo." },
+      { title: "Choose a visual template", body: "Browse designs for launches, documentation, portfolios, apps and social posts. Classic presets are also available." },
+      { title: "Adjust the details", body: "Background, frame, padding, captions and optional text or logo watermarks. Save your choices as a Brand Kit for later." },
       { title: "Set the size and export", body: "Keep it automatic, choose a ratio, or use a fixed size for X, LinkedIn, YouTube, Open Graph or Product Hunt. Export at 1× to 4×." },
     ],
     useCases: [
@@ -83,6 +101,7 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
       { title: "Docs and help articles", body: "Add a subtle frame and background so screenshots read as part of the page." },
       { title: "App and landing-page visuals", body: "Show a mobile screen in a phone frame with depth and a soft shadow." },
       { title: "Side-by-side compositions", body: "Place two or three screenshots together, side by side, stacked or overlapping." },
+      { title: "Screenshot packs", body: "Apply one template or saved brand to several screenshots, refine each image, then export a ZIP for a launch, docs or portfolio." },
     ],
     privacy: "The composition is drawn in your browser from your original pixels. Nothing is uploaded, and the browser frame’s address bar only shows a URL if you type one.",
     outputs: ["PNG", "JPEG", "WebP"],
@@ -91,6 +110,10 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
       { q: "Are these real browser or phone designs?", a: "No. The frames are generic shapes drawn by Shotexa. They carry no company’s logo and don’t copy a particular device." },
       { q: "Can I use more than one screenshot?", a: "Yes. Add up to two more screenshots and choose a layout such as side by side, stacked, fanned or overlapping." },
       { q: "Which sizes are available?", a: "Automatic, common ratios such as 1:1, 4:5 and 16:9, a custom size, and fixed sizes for X, LinkedIn, YouTube thumbnails, Open Graph images and Product Hunt." },
+      { q: "Can I change a template after choosing it?", a: "Yes. Templates are starting points. You can change the background, frame, spacing, shadow, perspective, text and export size before downloading." },
+      { q: "Does Shotexa add a watermark to every export?", a: "No. Watermarks are optional, free, and fully editable. Your export stays clean unless you add one." },
+      { q: "Where are Brand Kits saved?", a: "In this browser's local storage. A kit can include a chosen logo and style, but your uploaded screenshots are not saved across reloads." },
+      { q: "Can I style and export many screenshots together?", a: "Yes. Open Screenshot Packs from the Beautifier, apply a shared template or Brand Kit, adjust any image, then download individual files or a ZIP." },
     ],
     workflows: ["product-screenshot"],
   },
@@ -125,19 +148,20 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
     intro: "Privacy Guard helps you hide private details before you share a screenshot. It reads the visible text on your device and suggests likely emails, phone numbers, card and bank numbers, API keys, tokens and IP addresses — plus QR codes and barcodes where your browser can detect them. You review every suggestion, add your own boxes, and export a flattened copy with image metadata removed.",
     steps: [
       { title: "Add a screenshot", body: "Paste, drop or choose the image you want to share." },
-      { title: "Scan on your device", body: "Pick a preset — Developer, Customer Support, Finance, Social Sharing or Maximum — and Shotexa looks for likely sensitive details." },
+      { title: "Scan on your device", body: "Choose text, face and visual-code suggestions separately. Readable Indian-style plate text can be suggested by OCR; draw a manual region for other plates or anything missed." },
       { title: "Review every finding", body: "Select, ignore or adjust each suggestion. Low-confidence findings are marked as such, never treated as certain." },
-      { title: "Redact and export", body: "Use Blackout, Blur or Pixelate, draw your own boxes, then export a flattened copy with metadata removed. Shotexa checks the exported copy afterwards." },
+      { title: "Review the actual safe copy", body: "Use opaque Blackout for sensitive information, or choose Blur or Pixelate. Inspect the flattened, metadata-cleaned result before downloading or moving it to another tool." },
     ],
     useCases: [
       { title: "Sending a screenshot to support", body: "Hide account numbers, emails and addresses before attaching it to a ticket." },
       { title: "Posting a bug publicly", body: "Cover API keys, tokens and internal IP addresses before it goes in an issue tracker." },
       { title: "Sharing billing or account screens", body: "Remove card details and personal information before sending them to a colleague." },
     ],
-    privacy: "Scanning, redaction, metadata cleaning and the final check all run in your browser. The scan uses on-device text recognition, which downloads its language data the first time; your screenshot is never sent with it.",
+    privacy: "Scanning, redaction, metadata cleaning and final review run in your browser. OCR and the optional face model load from Shotexa's own origin only when requested; your image is not uploaded.",
     outputs: ["PNG", "JPEG", "WebP"],
     faq: [
       { q: "Will it find every sensitive detail?", a: "No tool can promise that. Detection looks for known patterns and context in the text Shotexa can read; unusual formats, small or blurry text and details inside pictures can be missed. Look over the image before you share it." },
+      { q: "Can Shotexa blur faces and license plates?", a: "The optional local face model suggests face regions that you can adjust. OCR may suggest readable Indian-style plate text, but it is not a general vehicle detector. Draw a manual region over any plate or face that was missed." },
       { q: "Are Blur and Pixelate permanent?", a: "They make an area hard to read, but Blackout is the mode designed to replace the selected pixels completely. Use Blackout for passwords, keys and financial details." },
       { q: "Can I undo a redaction?", a: "Yes. Redactions stay editable until you export, and undo and redo work for every change. Your original screenshot is never modified." },
       { q: "What is removed besides the redacted areas?", a: "The exported copy has image metadata such as location, device and software details removed, and Shotexa verifies the result before you download it." },
@@ -401,10 +425,10 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
   "remove-background": {
     dropHint: "or drag and drop an image to remove its background locally",
     whatHeading: "What Remove Background does",
-    intro: "Remove Background separates the main subject of an image from its background, using a small segmentation model that runs in your browser. Refine the edges with restore and erase brushes, keep the result transparent, or place the subject on a new background.",
+    intro: "Remove Background offers local object segmentation for photos and full-resolution extraction for a single ink color on uniform paper. Refine the edges with restore and erase brushes, keep the result transparent, or place the subject on a new background.",
     steps: [
       { title: "Add an image", body: "PNG, JPEG or WebP. The original file is never changed." },
-      { title: "Remove the background", body: "The model runs on your device. The first use downloads it once." },
+      { title: "Remove the background", body: "Choose Objects & photos for local AI segmentation, or Signature / single-color mark for uniform paper without a model download." },
       { title: "Refine the mask", body: "View the mask, then restore or erase areas with a brush and adjust edge smoothing." },
       { title: "Replace or keep transparent", body: "Keep transparency, or choose a solid colour, a gradient, a blurred copy of the original or your own image." },
       { title: "Export", body: "PNG and WebP keep transparency. JPEG is available once you choose a visible background." },
@@ -412,6 +436,7 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
     useCases: [
       { title: "Product photos", body: "Put a product on a clean, consistent background for a listing." },
       { title: "Profile pictures", body: "Cut yourself out of a busy photo and choose a simple backdrop." },
+      { title: "Signatures and stamps", body: "Remove uniform paper behind a single-color mark while preserving fine strokes. Textured paper and multicolor logos may need manual refinement." },
       { title: "Launch graphics", body: "Isolate a subject, then style it in the Beautifier." },
     ],
     privacy: "The model and all image processing run in your browser. The first use downloads a versioned model file; your image is never sent with that request. There’s no generative fill — Shotexa only keeps or removes existing pixels.",
@@ -419,7 +444,8 @@ export const TOOL_CONTENT: Record<ToolId, ToolContent> = {
     faq: [
       { q: "Does Shotexa upload my image?", a: "No. Only the model file is downloaded, once; your image stays on your device." },
       { q: "Can I restore part of the removed background?", a: "Yes. Use the restore brush to bring back areas the model removed, or the erase brush to remove more." },
-      { q: "Can I export a transparent PNG?", a: "Yes. PNG and WebP keep transparency; trim the empty space around the subject if you like." },
+      { q: "Can I export a transparent PNG?", a: "Choose Transparent under Background and export PNG. The checkerboard, white and dark preview surfaces are not exported. Insert the downloaded PNG into your document; taking a screenshot of the preview captures its visible background." },
+      { q: "Why are there white edges around my signature?", a: "An object model can retain paper around thin ink. For one ink color on uniform opaque paper, choose Signature / single-color mark and inspect the result against dark and white preview surfaces. It is not intended for photographs, faded multicolor ink or textured backgrounds." },
       { q: "Does it work on phones?", a: "Yes, in current mobile browsers. It takes longer than on a computer, and very large images can need more memory than some phones have." },
     ],
     workflows: ["product-screenshot"],

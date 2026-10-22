@@ -359,7 +359,9 @@ test.describe("Phase 2G Screenshot Editor", () => {
     await page.mouse.move(b.x + b.width * 0.4, b.y + b.height * 0.3, { steps: 8 });
     await page.mouse.up();
     await expect(page.getByTestId("redaction-region")).toHaveCount(1);
-    await Promise.all([page.waitForEvent("download", { timeout: 60_000 }), page.getByTestId("export").click()]);
+    await page.getByTestId("export").click();
+    await expect(page.getByLabel("Final sanitized image")).toBeVisible({ timeout: 60_000 });
+    await page.getByRole("checkbox", { name: /I inspected the final image/ }).check();
     await expect(page.getByTestId("safe-share-result")).toBeVisible();
 
     await page.getByTestId("safe-share-result").getByRole("link", { name: /Edit/ }).click();

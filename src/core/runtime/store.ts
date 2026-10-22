@@ -59,11 +59,13 @@ export interface WorkspaceState {
 
 export interface WorkspaceActions {
   addFiles(files: WorkspaceFile[]): void;
+  /** Brand images live in the registry and files map, but never enter screenshot order. */
+  addResources(files: WorkspaceFile[]): void;
   removeFile(id: FileId): void;
   clear(): void;
   select(id: FileId | null): void;
   setActiveTool(tool: ToolId | null): void;
-  markPreview(id: FileId): void;
+  markPreview(id: FileId, displaySize?: { width: number; height: number }): void;
   reorder(from: number, to: number): void;
   undo(): void;
   redo(): void;
@@ -286,6 +288,9 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
           };
         });
       },
+      addResources(files) {
+        set((s) => ({ files: { ...s.files, ...Object.fromEntries(files.map((file) => [file.id, file])) } }));
+      },
       removeFile(id) {
         if (!get().files[id]) return;
         set((s) => {
@@ -341,14 +346,19 @@ export function createWorkspaceStore(onRemove?: (id: FileId) => void) {
         onRemove?.(id);
       },
       clear() {
-        const ids = [...get().order, ...get().documentOrder];
+        const ids = [...Object.keys(get().files), ...get().documentOrder];
         set(initial());
         for (const id of ids) onRemove?.(id);
       },
       select: (id) => set({ selectedId: id }),
       setActiveTool: (tool) => set({ activeTool: tool }),
-      markPreview(id) {
-        set((s) => (s.files[id] ? { files: { ...s.files, [id]: { ...s.files[id], previewVersion: s.files[id].previewVersion + 1 } } } : {}));
+      markPreview(id, displaySize) {
+        set((s) => (s.files[id] ? { files: { ...s.files, [id]: {
+          ...s.files[id],
+          width: displaySize?.width && displaySize.width > 0 ? displaySize.width : s.files[id].width,
+          height: displaySize?.height && displaySize.height > 0 ? displaySize.height : s.files[id].height,
+          previewVersion: s.files[id].previewVersion + 1,
+        } } } : {}));
       },
       reorder(from, to) {
         const n = get().order.length;

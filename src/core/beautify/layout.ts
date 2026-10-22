@@ -126,6 +126,22 @@ export function clampSettings(s: BeautifySettings): BeautifySettings {
       opacity: clamp(s.branding?.opacity ?? 90, 5, 100),
       margin: clamp(s.branding?.margin ?? 4, 0, 20),
     },
+    watermarks: (s.watermarks ?? []).slice(0, 12).map((mark) => ({
+      ...mark,
+      text: (mark.text ?? "").slice(0, 160),
+      assetId: mark.assetId ?? null,
+      x: clamp(mark.x, 0, 100),
+      y: clamp(mark.y, 0, 100),
+      size: clamp(mark.size, 2, 80),
+      rotation: clamp(mark.rotation, -180, 180),
+      opacity: clamp(mark.opacity, 0, 100),
+      color: colour(mark.color, "#ffffff"),
+      font: mark.font ?? "system",
+      letterSpacing: clamp(mark.letterSpacing ?? 0, -2, 20),
+      tiled: !!mark.tiled,
+      tileScope: mark.tileScope === "screenshot" ? "screenshot" : "canvas",
+      tileGap: clamp(mark.tileGap ?? 18, 2, 100),
+    })),
     animation: {
       preset: s.animation?.preset ?? "none",
       duration: clamp(s.animation?.duration ?? 1800, 300, 15000),
@@ -379,6 +395,7 @@ export function beautifyLayout(settings: BeautifySettings, source: Size): Beauti
     zoom: image.width / natural.sourceRect.width,
     composition: s.composition,
     branding: s.branding,
+    watermarks: s.watermarks ?? [],
     perspective: (() => {
       const projected = projectPerspective(content, s.perspective);
       if (!projected.active) return projected;

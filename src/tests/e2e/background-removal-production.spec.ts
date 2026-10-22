@@ -68,7 +68,14 @@ test.describe("Shotexa V2.0E Background Remover", () => {
     expect(minAlpha).toBeLessThan(255); expect(maxAlpha).toBeGreaterThan(0); expect(posted).toEqual([]);
     await expect(page.getByTestId("background-removal-result")).toBeVisible();
     await capture(page, "05-export-complete.png");
-    await page.getByRole("link", { name: /Open Beautifier/ }).click(); await expect(page).toHaveURL(/screenshot-beautifier/); await expect(page.getByTestId("beautify-workspace")).toBeVisible(); await capture(page, "06-beautifier-handoff.png");
+    const handoffStarted = Date.now();
+    await page.getByRole("link", { name: /Open Beautifier/ }).click();
+    // Cold route loading after two model runs can exceed the default 5 s on WebKit.
+    // Keep the URL and retained-workspace assertions; record latency for diagnosis.
+    await expect(page).toHaveURL(/screenshot-beautifier/, { timeout: 60_000 });
+    await expect(page.getByTestId("beautify-workspace")).toBeVisible({ timeout: 60_000 });
+    console.log(`background remover handoff: ${Date.now() - handoffStarted}ms`);
+    await capture(page, "06-beautifier-handoff.png");
   });
 
   test("gradient and custom-image replacement produce explicit JPEG output", async ({ page }) => {

@@ -40,6 +40,9 @@ async function waitForRedactionEditor(page: Page) {
 }
 
 async function downloadFromExport(page: Page): Promise<Download> {
+  await page.getByTestId("export").click();
+  await expect(page.getByLabel("Final sanitized image")).toBeVisible({ timeout: 60_000 });
+  await page.getByRole("checkbox", { name: /I inspected the final image/ }).check();
   const [download] = await Promise.all([page.waitForEvent("download", { timeout: 60_000 }), page.getByTestId("export").click()]);
   await expect(page.getByTestId("safe-share-result")).toBeVisible();
   return download;
@@ -52,6 +55,13 @@ function pixel(png: PNG, x: number, y: number) {
 
 test.describe("Phase 2A Safe Share", () => {
   test.use({ viewport: { width: 1440, height: 960 } });
+  test.beforeEach(async ({ page }) => {
+    // Exercise the editor with analytics declined, so the fixed consent sheet cannot cover canvas controls.
+    await page.addInitScript(() => {
+      localStorage.setItem("shotexa.analytics-consent.v1", "rejected");
+      localStorage.setItem("shotexa.vercel-analytics-opt-out.v1", "true");
+    });
+  });
 
   test("Blackout permanently replaces source pixels, then cleans and verifies metadata", async ({ page }) => {
     const outbound: string[] = [];

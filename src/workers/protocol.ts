@@ -30,18 +30,20 @@ import type { Redaction, RedactionErrorCode, SafeShareExportResult } from "@/cor
 import type { StitchConfigOverrides } from "@/core/stitch/config";
 import type { GrayImage, StitchAnalysis, StitchErrorCode, StitchPlan } from "@/core/stitch/types";
 import type { BackgroundRemovalErrorCode, BackgroundRemovalRenderResult, BackgroundRemovalSettings, SegmentationResult } from "@/core/background-removal/types";
+import type { FaceSuggestion } from "@/core/privacy/face-detect";
 
 export const PROTOCOL_VERSION = 1 as const;
 
 export interface WorkerOps {
+  "privacy.faces": { input: { image: Blob }; output: FaceSuggestion[] };
   /** Lazy U²-Net-P inference. The image and mask never leave the browser worker boundary. */
   "background.remove": {
-    input: { image: Blob };
+    input: { image: Blob; method?: "object" | "ink" };
     output: SegmentationResult;
   };
   /** Apply the editable mask to original pixels and encode the reviewed result. */
   "background.export": {
-    input: { image: Blob; source: { width: number; height: number }; mask: { data: Uint8ClampedArray; width: number; height: number }; settings: BackgroundRemovalSettings; format: "png" | "jpeg" | "webp"; quality?: number; backgroundImage?: Blob };
+    input: { image: Blob; source: { width: number; height: number }; mask: { data: Uint8ClampedArray; width: number; height: number; matte?: import("@/core/background-removal/types").InkMatte }; settings: BackgroundRemovalSettings; format: "png" | "jpeg" | "webp"; quality?: number; backgroundImage?: Blob };
     output: BackgroundRemovalRenderResult;
   };
   /** Downscaled preview (full decode happens here, off the main thread); bitmap is transferred. */
@@ -157,7 +159,7 @@ export type WorkerRequest =
   | ({ [K in OpName]: Envelope & { type: "RUN"; op: K; input: WorkerOps[K]["input"] } }[OpName])
   | (Envelope & { type: "CANCEL" });
 
-export type WorkerErrorCode = StitchErrorCode | CombineErrorCode | EditorErrorCode | AnnotationErrorCode | SplitErrorCode | EncodeErrorCode | BeautifyErrorCode | CompareErrorCode | RedactionErrorCode | BackgroundRemovalErrorCode | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode | MetadataErrorCode;
+export type WorkerErrorCode = StitchErrorCode | CombineErrorCode | EditorErrorCode | AnnotationErrorCode | SplitErrorCode | EncodeErrorCode | BeautifyErrorCode | CompareErrorCode | RedactionErrorCode | BackgroundRemovalErrorCode | "FACE_DETECTION_FAILED" | "UNKNOWN_OP" | "PROTOCOL_MISMATCH" | "COMPOSE_FAILED" | "MEMORY_PRESSURE" | "OCR_DECODE_FAILED" | "OCR_OUT_OF_MEMORY" | PdfErrorCode | MetadataErrorCode;
 
 export type WorkerResponse =
   | (Envelope & { type: "PROGRESS"; progress: number; stage?: string })

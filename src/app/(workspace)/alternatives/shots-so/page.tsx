@@ -13,14 +13,14 @@ const TABLE_DATA = [
   { feature: "Primary Focus", shotexa: "Utility, editing, and redaction", competitor: "Design, mockups, and animation" },
   { feature: "Platform", shotexa: "Web Browser", competitor: "Web Browser" },
   { feature: "Pricing Model", shotexa: "Free", competitor: "Free tier / Paid Pro subscriptions" },
-  { feature: "Video & Animations", shotexa: "No", competitor: "Yes" },
+  { feature: "Video & Animations", shotexa: "Preview motion only; no video export", competitor: "Yes" },
   { feature: "Exports", shotexa: "Static image and PDF exports", competitor: "Static and animated exports" },
-  { feature: "Image Stitching", shotexa: "Yes", competitor: "No" },
-  { feature: "Text OCR / Redaction", shotexa: "Yes", competitor: "No" },
+  { feature: "Image Stitching", shotexa: "Yes", competitor: "Not listed on the reviewed product page" },
+  { feature: "Text OCR / Redaction", shotexa: "Yes", competitor: "Not listed on the reviewed product page" },
 ];
 
 const FAQ = [
-  { q: "Can Shotexa create the animated zoom videos like Shots.so?", a: "No. Shotexa focuses exclusively on static screenshot manipulation. It does not support video rendering, motion zooms, or animations." },
+  { q: "Can Shotexa create the animated zoom videos like Shots.so?", a: "Shotexa exports static images and PDFs. Its Beautifier includes motion previews, but it cannot export the animated videos offered by Shots.so." },
   { q: "Is Shotexa a complete replacement for Shots.so?", a: "No. If you need stylized, animated mockups for a landing page or app store listing, Shots.so is built for that purpose. Shotexa makes more sense when you need to quickly beautify, redact, or extract text from an everyday screenshot for documentation or communication." },
 ];
 
@@ -73,7 +73,7 @@ export default function ShotsSoAlternativePage() {
               <ul className="space-y-2 t-body-sm text-ink-2">
                 <li className="flex gap-2"><Minus className="size-4 shrink-0 mt-0.5 text-ink-3" /> Extensive library of specific device mockups (iPhones, MacBooks).</li>
                 <li className="flex gap-2"><Minus className="size-4 shrink-0 mt-0.5 text-ink-3" /> Exporting animated MP4s and video zooms.</li>
-                <li className="flex gap-2"><Minus className="size-4 shrink-0 mt-0.5 text-ink-3" /> High-end design options like glassmorphism and generated backgrounds.</li>
+                <li className="flex gap-2"><Minus className="size-4 shrink-0 mt-0.5 text-ink-3" /> Animated mockup presets and video zoom effects.</li>
               </ul>
             </div>
             <div>
@@ -130,7 +130,7 @@ export default function ShotsSoAlternativePage() {
           </div>
 
           <p className="t-body-sm mt-12 text-center text-ink-3">
-            Last checked: October 2026. Competitor features and pricing were reviewed against publicly available official product and pricing pages.
+            Published by Shotexa. Reviewed October 20, 2026 against the official sources below. Features and plans can change; verify your requirements before choosing.
           </p>
 
           <div className="mt-6 rounded-lg border border-line bg-surface p-5">

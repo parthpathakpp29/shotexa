@@ -39,6 +39,17 @@ function setup(ids = ["a", "b", "c"]) {
 }
 
 describe("workspace store — files", () => {
+  it("keeps brand resources out of screenshot order and releases them on clear", () => {
+    const { s, onRemove } = setup(["screen"]);
+    s().addResources([file("logo", { kind: "resource" })]);
+    expect(s().files.logo.kind).toBe("resource");
+    expect(s().order).toEqual(["screen"]);
+    expect(s().selectedId).toBe("screen");
+    s().clear();
+    expect(onRemove).toHaveBeenCalledWith("logo");
+    expect(s().files).toEqual({});
+  });
+
   it("adds files in order and selects the first", () => {
     const { s } = setup();
     expect(s().order).toEqual(["a", "b", "c"]);

@@ -7,7 +7,7 @@
  *  - "preview" route + workspace shell exist (files carry over) but the tool is not finished:
  *              noindex, not in the sitemap, honest "coming next" state
  */
-export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "structured-data" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "split" | "compress" | "convert" | "beautify" | "compare" | "metadata" | "remove-background" | "batch";
+export type ToolId = "stitch" | "combine" | "safe-share" | "blur" | "extract-text" | "structured-data" | "pdf" | "searchable-pdf" | "editor" | "annotate" | "split" | "compress" | "convert" | "beautify" | "compare" | "metadata" | "remove-background" | "batch" | "pdf-to-jpg" | "svg-to-png";
 
 export type ToolStatus = "live" | "preview";
 export type ToolIcon = "stitch" | "combine" | "shield" | "blur" | "text" | "pdf" | "crop" | "pen" | "scissors" | "compress" | "convert" | "sparkles" | "compare" | "eraser" | "batch";
@@ -36,6 +36,18 @@ export interface ToolConfig {
 }
 
 export const TOOLS: Record<ToolId, ToolConfig> = {
+  "pdf-to-jpg": {
+    id: "pdf-to-jpg", name: "PDF to JPG", route: "/pdf-to-jpg", status: "live", category: "documents", icon: "pdf", minFiles: 1,
+    summary: "Turn selected PDF pages into clear JPG or PNG images.",
+    seo: { title: "PDF to JPG Converter – Select Pages & Resolution | Shotexa", h1: "Convert PDF Pages to JPG", description: "Preview PDF pages, choose pages and resolution, then export JPG or PNG images locally in your browser. Download one page or a ZIP of many." },
+    continueWith: ["editor", "beautify", "compress", "metadata"],
+  },
+  "svg-to-png": {
+    id: "svg-to-png", name: "SVG to PNG", route: "/svg-to-png", status: "live", category: "edit", icon: "convert", minFiles: 1,
+    summary: "Rasterize safe SVG artwork to sharp PNG or JPG images.",
+    seo: { title: "SVG to PNG Converter – Resize & Export Privately | Shotexa", h1: "Convert SVG to Transparent PNG", description: "Turn passive SVG artwork into transparent PNG or background-filled JPG images. Choose dimensions and convert locally, without uploading the artwork." },
+    continueWith: ["editor", "beautify", "compress", "metadata"],
+  },
   stitch: {
     id: "stitch",
     name: "Smart Stitch",
@@ -71,12 +83,12 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     status: "live",
     category: "create",
     icon: "sparkles",
-    summary: "Put a screenshot on a background, or in a browser or phone frame.",
+    summary: "Create mockups, optional watermarks, saved brand kits and multi-image screenshot packs.",
     minFiles: 1,
     seo: {
-      title: "Screenshot Beautifier – Make Screenshots Look Better | Shotexa",
-      h1: "Beautify a Screenshot Online",
-      description: "Put a screenshot on a styled background, or inside a browser window or phone frame, and export it at full resolution — privately in your browser.",
+      title: "Screenshot Beautifier, Watermarks & Brand Kits | Shotexa",
+      h1: "Beautify Screenshots With Templates and Backgrounds",
+      description: "Style screenshots with 12 templates, 18 backgrounds, optional text or logo watermarks, local Brand Kits and ZIP screenshot packs. Free, private and no account.",
     },
     continueWith: ["editor", "annotate", "safe-share", "compare", "compress", "pdf", "combine"],
   },
@@ -103,14 +115,14 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
     status: "live",
     category: "protect",
     icon: "shield",
-    summary: "Privacy Guard scans locally for likely sensitive details, then lets you review, redact and clean the copy.",
+    summary: "Find likely sensitive text, faces and readable plate text locally, then review and redact before sharing.",
     minFiles: 1,
     seo: {
-      title: "Privacy Guard – Scan & Redact Screenshots Locally | Shotexa",
-      h1: "Privacy Guard for Screenshot Redaction",
-      description: "Find likely sensitive text locally, review every suggested region, flatten redactions and remove private metadata in your browser.",
+      title: "Redact Screenshots, Faces & Personal Information | Shotexa",
+      h1: "Smart Privacy Guard for Screenshot Redaction",
+      description: "Hide personal information in images with local text and face suggestions, manual plate redaction, flattened exports and metadata removal. Free, private, no account.",
     },
-    continueWith: ["extract-text", "pdf", "annotate", "beautify", "editor", "combine", "compress"],
+    continueWith: ["extract-text", "pdf", "annotate", "beautify", "editor", "combine", "compress", "metadata", "batch"],
   },
   blur: {
     id: "blur",
@@ -303,7 +315,7 @@ export const TOOLS: Record<ToolId, ToolConfig> = {
       h1: "Batch Process Screenshots Online",
       description: "Process screenshots sequentially, including local background removal, and download the results together as a ZIP — privately in your browser.",
     },
-    continueWith: ["editor", "safe-share", "extract-text", "pdf"],
+    continueWith: ["beautify", "editor", "safe-share", "extract-text", "pdf"],
   },
 };
 

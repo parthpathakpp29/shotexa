@@ -1,0 +1,22 @@
+Archived V2.1 HEIC entries from src/config/tools.ts and src/config/tool-content.ts.
+These are source snippets for restoration, not production configuration.
+
+ToolId union member: "heic-to-jpg"
+
+TOOLS entry:
+  "heic-to-jpg": {
+    id: "heic-to-jpg", name: "HEIC to JPG", route: "/heic-to-jpg", status: "live", category: "edit", icon: "convert", minFiles: 1,
+    summary: "Convert supported iPhone HEIC photos to JPG or PNG in your browser.",
+    seo: { title: "HEIC to JPG Converter – Private, Free & Batch | Shotexa", h1: "Convert HEIC to JPG or PNG", description: "Convert supported HEIC and HEIF photos to JPG or PNG locally in your browser. Adjust JPG quality, process multiple files, and download a ZIP without uploading images." },
+    continueWith: ["editor", "beautify", "compress", "metadata", "pdf"],
+  },
+
+TOOL_CONTENT entry:
+  "heic-to-jpg": {
+    dropHint: "Choose one or more HEIC or HEIF photos", inputs: "HEIC and HEIF photos", whatHeading: "What the HEIC converter does",
+    intro: "HEIC is common on iPhones, but many websites and apps need JPG or PNG. Shotexa decodes supported HEIC/HEIF images on your device, keeps their displayed orientation, and creates standard images for editing or sharing. Some HEIF codec variants cannot be decoded by this browser tool.",
+    steps: [{ title: "Choose photos", body: "Add HEIC or HEIF files, up to 25 MB each." }, { title: "Choose JPG or PNG", body: "JPG offers adjustable quality; PNG keeps transparency where present." }, { title: "Download or continue", body: "Save individual images or one ZIP, then use the results in Shotexa's other tools." }],
+    useCases: [{ title: "Share iPhone photos", body: "Create JPGs for sites and apps that do not accept HEIC." }, { title: "Keep transparent details", body: "Choose PNG when a decoded image contains transparency or when lossless raster output matters." }],
+    privacy: "Decoding and encoding happen in your browser. Your photos are not uploaded.", outputs: ["JPG", "PNG", "ZIP"],
+    faq: [{ q: "Does this support every HEIF file?", a: "No. HEIF is a container that can hold different codecs. Unsupported variants show a clear error." }, { q: "Will the result be upright?", a: "The decoder applies the HEIF orientation when it renders the image. Shotexa does not rotate it a second time." }, { q: "Can I convert several photos together?", a: "Yes. Select up to 20 files, then download each result or a ZIP of the successful images." }],
+  },

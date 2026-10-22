@@ -10,7 +10,7 @@ export type PrivacyFindingSubtype =
   | "api-key" | "access-token" | "bearer-token" | "jwt" | "generic-secret"
   | "connection-string" | "secret-url" | "authorization-header" | "session-value" | "password-value"
   | "ipv4" | "ipv6" | "mac-address" | "private-network"
-  | "qr-code" | "barcode" | "face" | "custom";
+  | "qr-code" | "barcode" | "face" | "license-plate" | "custom";
 
 export interface PrivacyFinding {
   id: string;
@@ -22,7 +22,7 @@ export interface PrivacyFinding {
   severity: PrivacySeverity;
   regions: ImageRect[];
   reason: string;
-  detector: "pattern" | "context" | "entropy" | "custom" | "barcode" | "face";
+  detector: "pattern" | "context" | "entropy" | "custom" | "barcode" | "face" | "plate-text";
   recommendation: RedactionMode | "review";
   selected: boolean;
   ignored?: boolean;
@@ -37,6 +37,8 @@ export interface PrivacyScanConfig {
   enabledCategories: PrivacyCategory[];
   includeLowConfidence: boolean;
   detectBarcodes: boolean;
+  detectFaces?: boolean;
+  detectPlateText?: boolean;
   customRules: PrivacyCustomRule[];
 }
 
@@ -56,6 +58,7 @@ export interface PrivacyScanResult {
   findings: PrivacyFinding[];
   stages: string[];
   barcodeSupport: "supported" | "unsupported" | "not-requested";
+  faceSupport?: "supported" | "unavailable" | "too-large" | "not-requested";
 }
 
 export interface PrivacyVerification {

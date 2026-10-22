@@ -20,11 +20,17 @@ describe("tool registry", () => {
   });
 
   it("lists every production tool from the canonical registry", () => {
-    const live = ["stitch", "combine", "beautify", "compare", "safe-share", "blur", "extract-text", "structured-data", "pdf", "searchable-pdf", "editor", "annotate", "split", "compress", "convert", "metadata", "remove-background", "batch"];
+    const live = ["pdf-to-jpg", "svg-to-png", "stitch", "combine", "beautify", "compare", "safe-share", "blur", "extract-text", "structured-data", "pdf", "searchable-pdf", "editor", "annotate", "split", "compress", "convert", "metadata", "remove-background", "batch"];
     expect(TOOL_LIST.filter((t) => t.status === "live").map((t) => t.id)).toEqual(live);
     expect(TOOLS.stitch.route).toBe("/stitch-screenshots");
     expect(LIVE_TOOLS).toEqual(live);
     expect(UPCOMING_TOOLS).toEqual([]);
+  });
+
+  it("keeps the deferred HEIC converter out of release discovery and indexing", () => {
+    expect(toolByRoute("/heic-to-jpg")).toBeUndefined();
+    expect(sitemapPaths()).not.toContain("/heic-to-jpg");
+    expect(TOOL_GROUPS.flatMap((group) => group.tools)).not.toContain("heic-to-jpg");
   });
 
   it("ships the Screenshot Editor at one canonical route", () => {
@@ -88,7 +94,7 @@ describe("tool registry", () => {
     expect(TOOLS.batch.seo.title).toBe("Batch Process Screenshots Online – Compress, Convert & Resize | Shotexa");
     expect(TOOLS.batch.seo.h1).toBe("Batch Process Screenshots Online");
     for (const synonym of ["/batch-compress", "/batch-convert", "/bulk-resize", "/bulk-screenshot-tools"]) expect(toolByRoute(synonym)).toBeUndefined();
-    expect(continuationsFor("batch")).toEqual(["editor", "safe-share", "extract-text", "pdf"]);
+    expect(continuationsFor("batch")).toEqual(["beautify", "editor", "safe-share", "extract-text", "pdf"]);
   });
 
   it("ships Background Remover at one canonical route", () => {
@@ -101,8 +107,8 @@ describe("tool registry", () => {
 
   it("ships the Screenshot Beautifier at one canonical route", () => {
     expect(TOOLS.beautify).toMatchObject({ route: "/screenshot-beautifier", status: "live", category: "create", minFiles: 1 });
-    expect(TOOLS.beautify.seo.title).toBe("Screenshot Beautifier – Make Screenshots Look Better | Shotexa");
-    expect(TOOLS.beautify.seo.h1).toBe("Beautify a Screenshot Online");
+    expect(TOOLS.beautify.seo.title).toBe("Screenshot Beautifier, Watermarks & Brand Kits | Shotexa");
+    expect(TOOLS.beautify.seo.h1).toBe("Beautify Screenshots With Templates and Backgrounds");
     // Frame styles live inside this one tool, not as separate routes.
     for (const synonym of ["/browser-frame", "/phone-mockup", "/screenshot-frame", "/screenshot-mockup"]) expect(toolByRoute(synonym)).toBeUndefined();
     // Every result worth presenting can hand off to it.
@@ -115,10 +121,10 @@ describe("tool registry", () => {
     expect([...grouped].sort()).toEqual([...LIVE_TOOLS].sort());
     expect(new Set(grouped).size).toBe(grouped.length);
     expect(TOOL_GROUPS.map((g) => g.id)).toEqual(["create", "protect", "documents", "edit"]);
-    expect(TOOL_GROUPS.find((g) => g.id === "edit")?.tools).toEqual(["editor", "annotate", "split", "compress", "convert", "remove-background", "batch"]);
+    expect(TOOL_GROUPS.find((g) => g.id === "edit")?.tools).toEqual(["svg-to-png", "editor", "annotate", "split", "compress", "convert", "remove-background", "batch"]);
     expect(TOOL_GROUPS.find((g) => g.id === "create")?.tools).toEqual(["stitch", "combine", "beautify", "compare"]);
     expect(TOOL_GROUPS.find((g) => g.id === "protect")?.tools).toEqual(["safe-share", "blur", "metadata"]);
-    expect(TOOL_GROUPS.find((g) => g.id === "documents")?.tools).toEqual(["extract-text", "structured-data", "pdf", "searchable-pdf"]);
+    expect(TOOL_GROUPS.find((g) => g.id === "documents")?.tools).toEqual(["pdf-to-jpg", "extract-text", "structured-data", "pdf", "searchable-pdf"]);
     // Blur must stay reachable from navigation, not only from its own URL.
     expect(grouped).toContain("blur");
   });
@@ -177,14 +183,14 @@ describe("tool registry", () => {
 
 describe("SEO config", () => {
   it("sitemap lists indexable static pages and live tools only", () => {
-    expect(sitemapPaths()).toEqual(["/", "/tools", "/workflows", "/privacy", "/alternatives", "/alternatives/xnapper", "/alternatives/cleanshot-x", "/alternatives/snagit", "/alternatives/pika", "/alternatives/shots-so", "/stitch-screenshots", "/combine-screenshots", "/screenshot-beautifier", "/compare-screenshots", "/redact-screenshot", "/blur-screenshot", "/screenshot-to-text", "/screenshot-to-data", "/screenshot-to-pdf", "/screenshot-to-searchable-pdf", "/screenshot-editor", "/annotate-screenshot", "/split-long-screenshot", "/compress-screenshot", "/convert-screenshot", "/remove-image-metadata", "/remove-background", "/batch-screenshots"]);
+    expect(sitemapPaths()).toEqual(["/", "/tools", "/workflows", "/privacy", "/alternatives", "/alternatives/xnapper", "/alternatives/cleanshot-x", "/alternatives/snagit", "/alternatives/pika", "/alternatives/shots-so", "/alternatives/freeconvert", "/alternatives/convertio", "/alternatives/ilovepdf", "/pdf-to-png", "/svg-to-jpg", "/webp-to-png", "/webp-to-jpg", "/png-to-jpg", "/jpg-to-png", "/pdf-to-jpg", "/svg-to-png", "/stitch-screenshots", "/combine-screenshots", "/screenshot-beautifier", "/compare-screenshots", "/redact-screenshot", "/blur-screenshot", "/screenshot-to-text", "/screenshot-to-data", "/screenshot-to-pdf", "/screenshot-to-searchable-pdf", "/screenshot-editor", "/annotate-screenshot", "/split-long-screenshot", "/compress-screenshot", "/convert-screenshot", "/remove-image-metadata", "/remove-background", "/batch-screenshots"]);
     expect(sitemapPaths().some((p) => p.startsWith("/spikes"))).toBe(false);
   });
 
   it("sitemap.xml uses absolute URLs on the site origin", () => {
     vi.stubEnv("NEXT_PUBLIC_SITE_URL", "");
     const entries = sitemap();
-    expect(entries.length).toBe(28);
+    expect(entries.length).toBe(sitemapPaths().length);
     for (const e of entries) expect(e.url).toMatch(/^https:\/\/[^/]+(\/|$)/);
   });
 
@@ -206,7 +212,7 @@ describe("SEO config", () => {
       robots: { index: true },
     });
     expect(toolMetadata("beautify")).toMatchObject({
-      title: "Screenshot Beautifier – Make Screenshots Look Better | Shotexa",
+      title: "Screenshot Beautifier, Watermarks & Brand Kits | Shotexa",
       alternates: { canonical: "/screenshot-beautifier" },
       robots: { index: true },
     });

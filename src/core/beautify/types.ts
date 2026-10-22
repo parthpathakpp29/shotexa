@@ -16,7 +16,7 @@ export type BeautifyMode =
   | "tablet"
   | "laptop"
   | "monitor";
-export type BackgroundKind = "solid" | "gradient" | "mesh" | "radial" | "aurora" | "soft-blur" | "noise" | "pattern" | "screenshot" | "custom-image";
+export type BackgroundKind = "solid" | "gradient" | "mesh" | "radial" | "aurora" | "soft-blur" | "noise" | "pattern" | "screenshot" | "custom-image" | "studio";
 /** Gradient direction, in degrees clockwise from "top to bottom". */
 export type GradientAngle = 0 | 45 | 90 | 135;
 export type ShadowPreset = "none" | "soft" | "float" | "strong" | "deep" | "hard" | "ambient" | "glow" | "studio" | "custom";
@@ -74,6 +74,8 @@ export interface BeautifyBackground {
   /** Optional local workspace image. The Blob remains in AssetRegistry. */
   assetId?: string | null;
   pattern?: "dots" | "grid" | "diagonal";
+  /** Original, resolution-independent artwork rendered by the shared canvas pipeline. */
+  studioId?: string;
 }
 
 export interface BeautifyBorder {
@@ -149,6 +151,28 @@ export interface BeautifyBranding {
   margin: number;
 }
 
+/** Percent coordinates are relative to the whole output canvas, independent of export scale. */
+export interface WatermarkLayer {
+  id: string;
+  kind: "text" | "image";
+  text: string;
+  assetId: string | null;
+  x: number;
+  y: number;
+  /** Image width, or text size, as a percentage of the canvas short side. */
+  size: number;
+  rotation: number;
+  opacity: number;
+  color: string;
+  font: FontFamily;
+  letterSpacing: number;
+  tiled: boolean;
+  /** Legacy tiled marks default to canvas; new marks can stay inside screenshot pixels. */
+  tileScope?: "canvas" | "screenshot";
+  /** Distance between repeated marks as a percentage of the canvas short side. */
+  tileGap: number;
+}
+
 export interface BeautifyAnimation {
   preset: AnimationPreset;
   duration: number;
@@ -209,6 +233,7 @@ export interface BeautifySettings {
   perspective: BeautifyPerspective;
   composition: BeautifyComposition;
   branding: BeautifyBranding;
+  watermarks?: WatermarkLayer[];
   animation: BeautifyAnimation;
 }
 
@@ -223,6 +248,7 @@ export interface BackgroundPaint {
   intensity?: number;
   assetId?: string | null;
   pattern?: "dots" | "grid" | "diagonal";
+  studioId?: string;
 }
 
 export interface ShadowPaint {
@@ -315,6 +341,7 @@ export interface BeautifyLayout {
   perspective: PerspectiveLayout;
   composition: BeautifyComposition;
   branding: BeautifyBranding;
+  watermarks: WatermarkLayer[];
 }
 
 export interface BeautifyDrawResource {

@@ -8,11 +8,11 @@ export const metadata = staticMetadata("/privacy");
 const POINTS = [
   {
     title: "Your screenshots are processed on your device",
-    body: "When you paste, drop or choose a screenshot, your browser reads the file into this tab’s memory. Stitching, previews and exports are computed by your browser — including in background workers — without sending the image to a server.",
+    body: "When you paste, drop or choose a screenshot, your browser reads the file into this tab’s memory. Editing, previews and exports are computed in your browser.",
   },
   {
-    title: "Nothing is saved after you leave",
-    body: "Screenshots stay available while you move between Shotexa tools in the same tab. Closing or refreshing the tab clears them. Shotexa does not store your screenshots in browser storage or anywhere else. The only things kept between visits are small preferences you create yourself, such as a saved workflow recipe or a custom detection rule, and those stay in this browser.",
+    title: "Local workspace and optional storage",
+    body: "Screenshots stay available while you move between local tools in the same tab. Closing or refreshing clears the workspace. Saved preferences and Brand Kits remain in this browser.",
   },
   {
     title: "No account",
@@ -28,7 +28,7 @@ const POINTS = [
   },
   {
     title: "Exports",
-    body: "When you export, the file is created in your browser and saved through your browser’s normal download. Where it goes from there is up to you.",
+    body: "Local exports are created in your browser and saved through your browser’s normal download.",
   },
   {
     title: "Cookieless Vercel Analytics",

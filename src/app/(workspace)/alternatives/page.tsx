@@ -38,6 +38,9 @@ const ALTERNATIVES = [
     desc: "Compare Shotexa's screenshot utility tools with Shots.so's design templates.",
     route: "/alternatives/shots-so",
   },
+  { id: "freeconvert", name: "FreeConvert", desc: "Local screenshot conversion versus a broad cloud-based format catalog.", route: "/alternatives/freeconvert" },
+  { id: "convertio", name: "Convertio", desc: "Compare browser-local PNG, JPG and WebP work with cloud conversion and batch options.", route: "/alternatives/convertio" },
+  { id: "ilovepdf", name: "iLovePDF", desc: "Selected PDF page images versus a complete PDF editing and extraction suite.", route: "/alternatives/ilovepdf" },
 ];
 
 export default function AlternativesHubPage() {
@@ -51,7 +54,7 @@ export default function AlternativesHubPage() {
           eyebrow="Compare" 
           title="Shotexa" 
           accent="Alternatives" 
-          lead="Detailed comparisons between Shotexa and popular screenshot tools to help you choose the right workflow." 
+          lead="Detailed comparisons between Shotexa and screenshot, converter and PDF tools to help you choose the right workflow."
         />
         
         <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -78,6 +81,9 @@ export default function AlternativesHubPage() {
             </p>
             <p>
               Choose Snagit when you create professional documentation, tutorials, step-by-step guides, or screen recordings. Its desktop capture and annotation workflow is built for that work. Choose Pika or Shots.so when the priority is design-heavy marketing mockups, device presentations, and animation rather than screenshot utility tasks.
+            </p>
+            <p>
+              For a wide range of file formats and cloud imports, compare FreeConvert and Convertio. If you need to edit, merge, sign, or extract embedded images from PDFs, iLovePDF has a broader PDF toolkit. Shotexa focuses on local screenshot conversion and selected PDF page images, so choose based on the work you need to complete.
             </p>
             <p>
               Choose Shotexa when you already have the screenshot and want a browser-based workspace to work with it. You can upload, paste, or drag and drop screenshots to edit and beautify them; use manual Blur, Pixelate, or Blackout; extract text with OCR; stitch, combine, compare, or split images; create PDFs or searchable PDFs; compress or convert files; clean metadata; and process batches. It does not replace native capture or screen recording, so the right choice depends on whether you need to capture first or process a screenshot you already have.

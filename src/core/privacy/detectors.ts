@@ -198,6 +198,17 @@ export function detectSensitiveText(result: OcrResult, config: PrivacyScanConfig
     .map(candidateToFinding);
 }
 
+/** OCR can suggest familiar registration strings; it does not detect a physical plate. */
+export function detectPlateText(result: OcrResult): PrivacyFinding[] {
+  const lines = lineList(result);
+  const candidates = lines.flatMap((line) => candidatesForRegex(
+    unit([line]),
+    /\b[A-Z]{2}[ -]?\d{1,2}[ -]?[A-Z]{1,3}[ -]?\d{3,4}\b/i,
+    () => ({ subtype: "license-plate", category: "visual", label: "Possible plate text", confidence: "medium", severity: "medium", reason: "Indian-style registration pattern in readable text. Check the entire plate and add a manual region if needed.", detector: "plate-text", recommendation: "review" }),
+  ));
+  return dedupe(candidates).map(candidateToFinding);
+}
+
 export function findingsToRegions(findings: PrivacyFinding[]): ImageRect[] {
   return findings.filter((finding) => finding.selected && !finding.ignored).flatMap((finding) => finding.regions);
 }

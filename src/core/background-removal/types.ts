@@ -1,6 +1,8 @@
 import type { OutputFormat } from "@/core/image-encode/formats";
 
-export type BackgroundRemovalProvider = "webgpu" | "wasm";
+export type BackgroundRemovalProvider = "webgpu" | "wasm" | "local";
+export type RemovalMethod = "object" | "ink";
+export interface InkMatte { background: [number, number, number]; foreground: [number, number, number]; }
 export type MaskBrushMode = "restore" | "erase";
 export type RemovalPreviewMode = "original" | "removed" | "split" | "checkerboard" | "mask";
 export type EdgePreset = "natural" | "crisp" | "soft" | "product" | "portrait";
@@ -48,7 +50,8 @@ export interface SegmentationResult {
   width: number;
   height: number;
   provider: BackgroundRemovalProvider;
-  model: "u2netp";
+  model: "u2netp" | "single-ink";
+  matte?: InkMatte;
   modelBytes: number;
   modelLoadMs: number;
   inferenceMs: number;
@@ -57,7 +60,7 @@ export interface SegmentationResult {
 
 export interface BackgroundRemovalRenderOptions {
   source: { width: number; height: number };
-  mask: { data: Uint8ClampedArray; width: number; height: number };
+  mask: { data: Uint8ClampedArray; width: number; height: number; matte?: InkMatte };
   settings: BackgroundRemovalSettings;
   format: OutputFormat;
   quality?: number;
@@ -82,7 +85,9 @@ export type BackgroundRemovalErrorCode =
   | "BACKGROUND_CUSTOM_IMAGE_MISSING"
   | "BACKGROUND_MASK_MISSING"
   | "BACKGROUND_CANCELLED"
-  | "BACKGROUND_MEMORY_PRESSURE";
+  | "BACKGROUND_MEMORY_PRESSURE"
+  | "BACKGROUND_INK_UNSUITABLE"
+  | "BACKGROUND_INK_TOO_LARGE";
 
 export class BackgroundRemovalError extends Error {
   constructor(readonly code: BackgroundRemovalErrorCode) { super(code); this.name = "BackgroundRemovalError"; }

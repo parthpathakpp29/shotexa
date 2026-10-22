@@ -12,7 +12,7 @@ export const metadata = staticMetadata("/alternatives/cleanshot-x");
 const TABLE_DATA = [
   { feature: "Native screenshot capture", shotexa: "No", competitor: "Yes" },
   { feature: "Platform", shotexa: "Web Browser", competitor: "macOS native app" },
-  { feature: "Price", shotexa: "Free", competitor: "~$35 one-time or $10/mo" },
+  { feature: "Price", shotexa: "Free", competitor: "Paid app and cloud plans; see current pricing" },
   { feature: "Screen Recording", shotexa: "No", competitor: "Yes" },
   { feature: "Cloud Hosting / Link Sharing", shotexa: "No", competitor: "Yes" },
   { feature: "Long Content Capture", shotexa: "Smart Stitching", competitor: "Scrolling Capture" },
@@ -132,7 +132,7 @@ export default function CleanShotXAlternativePage() {
           </div>
 
           <p className="t-body-sm mt-12 text-center text-ink-3">
-            Last checked: October 2026. Competitor features and pricing were reviewed against publicly available official product and pricing pages.
+            Published by Shotexa. Reviewed October 20, 2026 against the official sources below. Features and plans can change; verify your requirements before choosing.
           </p>
 
           <div className="mt-6 rounded-lg border border-line bg-surface p-5">

@@ -157,6 +157,8 @@ export interface WorkspaceRuntime {
   broker: WorkerBroker;
   caps: Capabilities;
   ingest(files: File[], source: FileSource): Promise<IngestResult>;
+  /** Validated local image for branding; it does not become a screenshot. */
+  ingestResource(file: File): Promise<IngestResult>;
   removeFile(id: FileId): void;
   clear(): void;
   analyseStitch(): Promise<void>;
@@ -217,6 +219,9 @@ export interface WorkspaceRuntime {
   /** Whether the asset has transparent pixels (checked on its preview); null until known. */
   hasTransparency(assetId: FileId): Promise<boolean | null>;
   exportSafeShare(assetId?: FileId): Promise<WorkspaceSafeShareResult>;
+  prepareSafeShare(assetId?: FileId): Promise<WorkspaceSafeShareResult>;
+  publishPreparedSafeShare(id: FileId): FileId;
+  discardPreparedSafeShare(id: FileId): void;
   inspectMetadata(assetId?: FileId): Promise<MetadataInspectRun>;
   cleanMetadata(assetId?: FileId): Promise<WorkspaceMetadataCleanResult>;
   extractText(assetId?: FileId, language?: OcrLanguageChoice, silent?: boolean): Promise<WorkspaceOcrResult>;
@@ -225,7 +230,7 @@ export interface WorkspaceRuntime {
   cancelStructuredData(): void;
   scanPrivacy(assetId: FileId, config: PrivacyScanConfig, onStage?: (stage: string) => void): Promise<PrivacyScanResult>;
   cancelPrivacyScan(): Promise<void>;
-  removeBackground(assetId: FileId, onStage?: (stage: string) => void, silent?: boolean): Promise<SegmentationResult>;
+  removeBackground(assetId: FileId, onStage?: (stage: string) => void, silent?: boolean, method?: "object" | "ink"): Promise<SegmentationResult>;
   cancelBackgroundRemoval(): void;
   exportRemovedBackground(assetId: FileId, settings?: BackgroundRemovalSettings, backgroundImage?: Blob): Promise<EditorExportResult>;
   planPdf(inputIds: FileId[], setup: PageSetup, smart: boolean, edits?: Record<FileId, PdfBreakEdit>): Promise<PaginationPlan>;
@@ -239,6 +244,7 @@ export interface WorkspaceRuntime {
   retryBatchFailed(): Promise<{ completed: number; failed: number; cancelled: number }>;
   createBatchZip(): Promise<{ blob: Blob; names: string[] }>;
   addBatchResults(): FileId[];
+  addConvertedImage(blob: Blob, name: string, width: number, height: number, producedBy: "pdf-to-jpg" | "svg-to-png"): FileId;
   dispose(): void;
 }
 
@@ -251,6 +257,7 @@ export function createWorkspaceRuntime(opts: {
   pageEvents?: EventTarget | null;
 } = {}): WorkspaceRuntime {
   const registry = new AssetRegistry();
+  const pendingSafeShares = new Map<FileId, { sourceId: FileId; blob: Blob; width: number; height: number; mime: ImageMime; producedBy: "safe-share" | "blur" }>();
   const ocrResults = new OcrResultRegistry();
   const structuredResults = new StructuredResultRegistry();
   const privacyScans = new PrivacyScanRegistry();
@@ -260,6 +267,10 @@ export function createWorkspaceRuntime(opts: {
   const compareAnalyses = new CompareAnalysisRegistry();
   const store = createWorkspaceStore((id) => {
     registry.remove(id);
+    for (const [pendingId, pending] of pendingSafeShares) if (pending.sourceId === id) {
+      registry.remove(pendingId);
+      pendingSafeShares.delete(pendingId);
+    }
     ocrResults.removeAsset(id);
     structuredResults.removeAsset(id);
     privacyScans.removeAsset(id);
@@ -327,8 +338,11 @@ export function createWorkspaceRuntime(opts: {
     const blob = registry.blob(id);
     if (!blob || disposed || leaving) return;
     let bitmap: ImageBitmap;
+    let displaySize: { width: number; height: number } | undefined;
     try {
-      bitmap = (await broker.run("image", "image.preview", { image: blob, ...PREVIEW })).bitmap;
+      const preview = await broker.run("image", "image.preview", { image: blob, ...PREVIEW });
+      bitmap = preview.bitmap;
+      displaySize = { width: preview.width, height: preview.height };
     } catch (error) {
       // Decode on the page only when the worker ran and could not do something the page can.
       // Never after the page starts going away (see `leaving`), and never because the worker
@@ -339,10 +353,13 @@ export function createWorkspaceRuntime(opts: {
       // main thread, and a failed decode would fail identically there.
       if (disposed || leaving) return;
       if (NO_PAGE_FALLBACK.has(codeOf(error))) throw error;
-      const f = store.getState().files[id];
-      if (!f) return;
-      const s = Math.min(1, PREVIEW.maxWidth / f.width, Math.sqrt(PREVIEW.maxPixels / (f.width * f.height)));
-      bitmap = await createImageBitmap(blob, { resizeWidth: Math.max(1, Math.round(f.width * s)), resizeHeight: Math.max(1, Math.round(f.height * s)), resizeQuality: "high" });
+      if (!store.getState().files[id]) return;
+      const full = await createImageBitmap(blob);
+      displaySize = { width: full.width, height: full.height };
+      const s = Math.min(1, PREVIEW.maxWidth / full.width, Math.sqrt(PREVIEW.maxPixels / (full.width * full.height)));
+      try {
+        bitmap = await createImageBitmap(full, { resizeWidth: Math.max(1, Math.round(full.width * s)), resizeHeight: Math.max(1, Math.round(full.height * s)), resizeQuality: "high" });
+      } finally { full.close(); }
     }
     if (disposed || !store.getState().files[id]) {
       bitmap.close();
@@ -350,12 +367,12 @@ export function createWorkspaceRuntime(opts: {
     }
     registry.setPreview(id, bitmap);
     proxies.delete(id);
-    store.getState().markPreview(id);
+    store.getState().markPreview(id, displaySize);
   }
 
   /** After a back/forward-cache restore: previews interrupted by `pagehide` are made now. */
   function resumePreviews() {
-    for (const id of store.getState().order) {
+    for (const id of Object.keys(store.getState().files)) {
       if (registry.preview(id)) continue;
       previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
     }
@@ -467,7 +484,7 @@ export function createWorkspaceRuntime(opts: {
     job("overlap", "overlap-check", "done");
   }
 
-  async function ingest(files: File[], source: FileSource): Promise<IngestResult> {
+  async function ingest(files: File[], source: FileSource, asResource = false): Promise<IngestResult> {
     const rejected: IngestResult["rejected"] = [];
     const metas: WorkspaceFile[] = [];
     for (const file of files) {
@@ -502,12 +519,15 @@ export function createWorkspaceRuntime(opts: {
       // Sanitised once, here: the name reaches download attributes and ZIP entries later.
       const name = source === "paste" || !file.name ? `Pasted screenshot ${++pasteCount}.${EXT[v.type]}` : safeFileName(file.name, `screenshot.${EXT[v.type]}`);
       registry.put(id, file);
-      metas.push({ id, name, type: v.type, bytes: file.size, width: size.width, height: size.height, source, kind: "original", addedAt: Date.now(), previewVersion: 0 });
+      metas.push({ id, name, type: v.type, bytes: file.size, width: size.width, height: size.height, source, kind: asResource ? "resource" : "original", addedAt: Date.now(), previewVersion: 0 });
     }
     // WorkspaceProvider already presents one concise, aria-live ingestion summary. Keep
     // that established notice as the sole file-add/rejection announcement rather than
     // showing a second toast for the same action.
-    if (metas.length) store.getState().addFiles(metas);
+    if (metas.length) {
+      if (asResource) store.getState().addResources(metas);
+      else store.getState().addFiles(metas);
+    }
     // Previews one at a time (each is a full decode transiently — Spike B), then the hint.
     for (const m of metas) {
       previewChain = previewChain.then(async () => {
@@ -520,7 +540,7 @@ export function createWorkspaceRuntime(opts: {
         }
       });
     }
-    previewChain = previewChain.then(() => checkOverlap());
+    if (!asResource) previewChain = previewChain.then(() => checkOverlap());
     await previewChain;
     return { added: metas.map((m) => m.id), rejected };
   }
@@ -1243,7 +1263,7 @@ export function createWorkspaceRuntime(opts: {
     const source = { width: file.width, height: file.height };
     const { DEFAULT_BEAUTIFY } = await import("@/core/beautify/presets");
     const settings = s.beautify.byAsset[sourceId] ?? DEFAULT_BEAUTIFY;
-    const resourceIds = [...new Set([...settings.composition.assetIds, settings.branding.assetId, settings.background.assetId].filter((id): id is string => !!id && id !== sourceId))];
+    const resourceIds = [...new Set([...settings.composition.assetIds, settings.branding.assetId, settings.background.assetId, ...(settings.watermarks ?? []).map((layer) => layer.assetId)].filter((id): id is string => !!id && id !== sourceId))];
     const resources = resourceIds.flatMap((id) => {
       const resourceFile = s.files[id];
       const resourceBlob = registry.blob(id);
@@ -1629,6 +1649,20 @@ export function createWorkspaceRuntime(opts: {
     return added.map((f) => f.id);
   }
 
+  /** Register a locally converted raster in the same lifecycle as other workspace outputs. */
+  function addConvertedImage(blob: Blob, name: string, width: number, height: number, producedBy: "pdf-to-jpg" | "svg-to-png"): FileId {
+    if (disposed || leaving || (blob.type !== "image/png" && blob.type !== "image/jpeg")) throw new Error("Conversion output is unavailable");
+    const id = newId();
+    registry.put(id, blob);
+    store.getState().addArtifact({
+      id, name: safeFileName(name, `converted.${blob.type === "image/png" ? "png" : "jpg"}`),
+      type: blob.type, bytes: blob.size, width, height,
+      source: "artifact", kind: "artifact", producedBy, addedAt: Date.now(), previewVersion: 0,
+    });
+    previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
+    return id;
+  }
+
   function selected(assetId?: FileId) {
     const id = assetId ?? store.getState().selectedId;
     const file = id ? store.getState().files[id] : undefined;
@@ -1659,7 +1693,7 @@ export function createWorkspaceRuntime(opts: {
     return id;
   }
 
-  async function exportSafeShare(assetId?: FileId): Promise<WorkspaceSafeShareResult> {
+  async function renderSafeShareArtifact(assetId?: FileId, pendingReview = false): Promise<WorkspaceSafeShareResult> {
     const { id: sourceId, blob } = selected(assetId);
     const s = store.getState();
     const operations = s.redaction.byAsset[sourceId] ?? [];
@@ -1680,7 +1714,11 @@ export function createWorkspaceRuntime(opts: {
       const mime: ImageMime = format === "png" ? "image/png" : format === "jpeg" ? "image/jpeg" : "image/webp";
       const producedBy = s.activeTool === "blur" ? "blur" : "safe-share";
       const { blob: outputBlob, ...rest } = result;
-      const artifactId = registerArtifact(outputBlob, `safe-copy.${EXT[mime]}`, sourceId, producedBy, result.width, result.height);
+      const artifactId = pendingReview ? newId() : registerArtifact(outputBlob, `safe-copy.${EXT[mime]}`, sourceId, producedBy, result.width, result.height);
+      if (pendingReview) {
+        registry.put(artifactId, outputBlob);
+        pendingSafeShares.set(artifactId, { sourceId, blob: outputBlob, width: result.width, height: result.height, mime, producedBy });
+      }
       job(jobId, "redaction-export", "done", 1);
       return { ...rest, id: artifactId, bytes: outputBlob.size };
     } catch (e) {
@@ -1688,6 +1726,26 @@ export function createWorkspaceRuntime(opts: {
       job(jobId, "redaction-export", "failed", null, code);
       throw Object.assign(new Error(code), { code });
     }
+  }
+
+  const exportSafeShare = (assetId?: FileId) => renderSafeShareArtifact(assetId);
+  const prepareSafeShare = (assetId?: FileId) => renderSafeShareArtifact(assetId, true);
+  function publishPreparedSafeShare(id: FileId): FileId {
+    const pending = pendingSafeShares.get(id);
+    if (!pending || !store.getState().files[pending.sourceId] || !registry.blob(id)) throw new Error("Reviewed image is no longer available");
+    store.getState().addArtifact({
+      id, name: `safe-copy.${EXT[pending.mime]}`, type: pending.mime, bytes: pending.blob.size,
+      width: pending.width, height: pending.height, source: "artifact", kind: "artifact",
+      derivedFrom: [pending.sourceId], producedBy: pending.producedBy, addedAt: Date.now(), previewVersion: 0,
+    });
+    pendingSafeShares.delete(id);
+    previewChain = previewChain.then(() => makePreview(id)).catch(() => undefined);
+    return id;
+  }
+  function discardPreparedSafeShare(id: FileId): void {
+    if (!pendingSafeShares.has(id)) return;
+    pendingSafeShares.delete(id);
+    registry.remove(id);
   }
 
   async function inspectMetadata(assetId?: FileId): Promise<MetadataInspectRun> {
@@ -1851,14 +1909,34 @@ export function createWorkspaceRuntime(opts: {
     job(jobId, "privacy-scan", "running", null);
     try {
       onStage?.("Reading screenshot…");
-      let ocr = ocrResults.forAsset(assetId);
-      if (!ocr) {
+      const textRequested = config.enabledCategories.some((category) => category !== "visual") || Boolean(config.detectPlateText && config.enabledCategories.includes("visual"));
+      let ocr = textRequested ? ocrResults.forAsset(assetId) : undefined;
+      if (textRequested && !ocr) {
         onStage?.("Extracting text…");
         ocr = (await extractText(assetId, undefined, true)).result;
       }
       if (abort.signal.aborted) throw Object.assign(new Error("PRIVACY_SCAN_CANCELLED"), { code: "PRIVACY_SCAN_CANCELLED" });
+      let faces: import("@/core/privacy/face-detect").FaceSuggestion[] = [];
+      let faceSupport: PrivacyScanResult["faceSupport"] = "not-requested";
+      if (config.detectFaces && config.enabledCategories.includes("visual")) {
+        const { faceScanAllowed } = await import("@/core/privacy/face-detect");
+        const deviceMemoryGb = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
+        if (!faceScanAllowed(selectedAsset.file, deviceMemoryGb)) faceSupport = "too-large";
+        else if (!caps.offscreenCanvas) faceSupport = "unavailable";
+        else {
+          onStage?.("Finding faces…");
+          try {
+            faces = await broker.run("privacy", "privacy.faces", { image: selectedAsset.blob }, { signal: abort.signal, onProgress: (_progress, stage) => { if (stage) onStage?.(stage); } });
+            faceSupport = "supported";
+          } catch {
+            if (abort.signal.aborted) throw Object.assign(new Error("PRIVACY_SCAN_CANCELLED"), { code: "PRIVACY_SCAN_CANCELLED" });
+            faceSupport = "unavailable";
+          } finally { broker.release("privacy"); }
+        }
+      }
+      if (abort.signal.aborted) throw Object.assign(new Error("PRIVACY_SCAN_CANCELLED"), { code: "PRIVACY_SCAN_CANCELLED" });
       const { buildPrivacyScan } = await import("@/core/privacy/scan");
-      const result = await buildPrivacyScan({ assetId, blob: selectedAsset.blob, ocr, config, signal: abort.signal, onStage });
+      const result = await buildPrivacyScan({ assetId, blob: selectedAsset.blob, ocr, faces, faceSupport, config, signal: abort.signal, onStage });
       privacyScans.put(result);
       job(jobId, "privacy-scan", "done", 1);
       toast({ type: "success", message: "Privacy scan complete", description: `${result.findings.length} possible sensitive item${result.findings.length === 1 ? "" : "s"} found. Review before redacting.` });
@@ -1880,10 +1958,10 @@ export function createWorkspaceRuntime(opts: {
     const active = activePrivacyAbort;
     active?.abort();
     activePrivacyAbort = null;
-    if (active) await cancelOcr(undefined, true);
+    if (active) { broker.release("privacy"); await cancelOcr(undefined, true); }
   }
 
-  async function removeBackground(assetId: FileId, onStage?: (stage: string) => void, silent = false): Promise<SegmentationResult> {
+  async function removeBackground(assetId: FileId, onStage?: (stage: string) => void, silent = false, method: "object" | "ink" = "object"): Promise<SegmentationResult> {
     const { file, blob } = selected(assetId);
     activeBackgroundAbort?.abort();
     const abort = new AbortController();
@@ -1892,8 +1970,10 @@ export function createWorkspaceRuntime(opts: {
     job(jobId, "background-remove", "running", null);
     try {
       const result = caps.offscreenCanvas
-        ? await broker.run("background", "background.remove", { image: blob }, { signal: abort.signal, onProgress: (_progress, stage) => { if (stage) onStage?.(stage); } })
-        : await (await import("@/core/background-removal/inference")).segmentImage(blob, location.origin, abort.signal, onStage, (width, height) => Object.assign(document.createElement("canvas"), { width, height }));
+        ? await broker.run("background", "background.remove", { image: blob, method }, { signal: abort.signal, onProgress: (_progress, stage) => { if (stage) onStage?.(stage); } })
+        : method === "ink"
+          ? await (await import("@/core/background-removal/ink")).segmentInk(blob, abort.signal, (width, height) => Object.assign(document.createElement("canvas"), { width, height }))
+          : await (await import("@/core/background-removal/inference")).segmentImage(blob, location.origin, abort.signal, onStage, (width, height) => Object.assign(document.createElement("canvas"), { width, height }));
       if (abort.signal.aborted) throw Object.assign(new Error("BACKGROUND_CANCELLED"), { code: "BACKGROUND_CANCELLED" });
       backgroundMasks.put(assetId, result);
       // Avoid retaining the inference heap beside a later full-resolution canvas on large files.
@@ -1922,7 +2002,7 @@ export function createWorkspaceRuntime(opts: {
     const mask = backgroundMasks.materialize(assetId);
     const entry = backgroundMasks.get(assetId);
     if (!mask || !entry) throw Object.assign(new Error("BACKGROUND_MASK_MISSING"), { code: "BACKGROUND_MASK_MISSING" });
-    const input = { image: blob, source: { width: file.width, height: file.height }, mask: { data: mask, width: entry.result.width, height: entry.result.height }, settings, format, quality, backgroundImage };
+    const input = { image: blob, source: { width: file.width, height: file.height }, mask: { data: mask, width: entry.result.width, height: entry.result.height, matte: entry.result.matte }, settings, format, quality, backgroundImage };
     return caps.offscreenCanvas
       ? broker.run("background", "background.export", input, { signal })
       : (await import("@/core/background-removal/render")).renderRemovedBackground(blob, { ...input, createCanvas: (width, height) => Object.assign(document.createElement("canvas"), { width, height }), signal });
@@ -2123,6 +2203,7 @@ export function createWorkspaceRuntime(opts: {
     broker,
     caps,
     ingest,
+    ingestResource: (file) => ingest([file], "picker", true),
     removeFile: (id) => {
       proxies.delete(id);
       store.getState().removeFile(id);
@@ -2131,6 +2212,8 @@ export function createWorkspaceRuntime(opts: {
     clear: () => {
       proxies.clear();
       store.getState().clear();
+      for (const id of pendingSafeShares.keys()) registry.remove(id);
+      pendingSafeShares.clear();
     },
     analyseStitch,
     stitchPlan,
@@ -2154,6 +2237,9 @@ export function createWorkspaceRuntime(opts: {
     saveEncoded,
     hasTransparency,
     exportSafeShare,
+    prepareSafeShare,
+    publishPreparedSafeShare,
+    discardPreparedSafeShare,
     inspectMetadata,
     cleanMetadata,
     extractText,
@@ -2176,6 +2262,7 @@ export function createWorkspaceRuntime(opts: {
     retryBatchFailed,
     createBatchZip: zipBatch,
     addBatchResults,
+    addConvertedImage,
     dispose() {
       disposed = true;
       pageAbort.abort();
@@ -2186,6 +2273,7 @@ export function createWorkspaceRuntime(opts: {
       pageEvents?.removeEventListener("keydown", onStillHere);
       unsubscribe();
       store.getState().clear();
+      pendingSafeShares.clear();
       registry.clear();
       ocrResults.clear();
       structuredResults.clear();

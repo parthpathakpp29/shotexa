@@ -30,5 +30,17 @@
     "runtimePath": "/vendor/onnxruntime/1.30.0/",
     "runtimeModulePath": "/vendor/onnxruntime/1.30.0/ort-wasm-simd-threaded.jsep.mjs",
     "runtimeWasmPath": "/vendor/onnxruntime/1.30.0/ort-wasm-simd-threaded.jsep.wasm"
+  },
+  "faceDetection": {
+    "model": "YuNet",
+    "modelVersion": "2023mar",
+    "modelBytes": 232589,
+    "modelSha256": "8f2383e4dd3cfbb4553ea8718107fc0423210dc964f9f4280604804ed2552fa4",
+    "modelPath": "/vendor/privacy/yunet-2023mar/face_detection_yunet_2023mar.onnx",
+    "modelLicensePath": "/vendor/privacy/yunet-2023mar/LICENSE.txt",
+    "runtime": "onnxruntime-web",
+    "runtimeVersion": "1.30.0",
+    "runtimeModulePath": "/vendor/onnxruntime/1.30.0/ort-wasm-simd-threaded.jsep.mjs",
+    "runtimeWasmPath": "/vendor/onnxruntime/1.30.0/ort-wasm-simd-threaded.jsep.wasm"
   }
 }

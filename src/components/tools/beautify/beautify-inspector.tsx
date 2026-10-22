@@ -9,11 +9,15 @@ import { useWorkspace, useWorkspaceContext } from "@/components/workspace/worksp
 import { backgroundFromPixels } from "@/core/beautify/auto-background";
 import { autoDesignFromPixels } from "@/core/beautify/auto-design";
 import { beautifyLayout, withMode } from "@/core/beautify/layout";
-import { autoLayout, BACKGROUND_PRESETS, DEFAULT_ADDRESS, DEFAULT_BEAUTIFY, GRADIENT_ANGLES, MAX_PADDING, OUTPUT_PRESETS, PADDING_PRESETS, SHADOW_LABELS, STYLE_PRESETS, TEXT_PRESETS } from "@/core/beautify/presets";
+import { autoLayout, BACKGROUND_PRESETS, DEFAULT_ADDRESS, DEFAULT_BEAUTIFY, GRADIENT_ANGLES, MAX_PADDING, OUTPUT_PRESETS, PADDING_PRESETS, SHADOW_LABELS, TEXT_PRESETS } from "@/core/beautify/presets";
 import { perspectiveForPreset, PERSPECTIVE_PRESETS } from "@/core/beautify/perspective";
+import { STUDIO_BACKGROUNDS } from "@/core/beautify/studio-library";
 import { ANIMATION_PRESETS } from "@/core/beautify/animation";
 import type { AnimationPreset, BackgroundKind, BeautifyMode, BeautifySettings, BorderKind, CaptionPlacement, ExportScale, FontFamily, FontWeight, FrameTheme, GradientAngle, MultiLayout, OutputPreset, PerspectivePreset, ScreenFit, ShadowPreset, TextAlignment } from "@/core/beautify/types";
 import { cn } from "@/lib/cn";
+import { RecipeGallery, StudioBackgrounds, StudioTemplates } from "./studio-gallery";
+import { WatermarkInspector } from "./watermark-inspector";
+import { BrandKitPanel } from "./brand-kit-panel";
 
 const MODES: { value: BeautifyMode; label: string }[] = [
   { value: "clean", label: "Clean" },
@@ -33,6 +37,7 @@ const BACKGROUND_KINDS: { value: BackgroundKind; label: string }[] = [
   { value: "radial", label: "Radial" }, { value: "aurora", label: "Aurora" }, { value: "soft-blur", label: "Soft blur" },
   { value: "noise", label: "Noise / grain" }, { value: "pattern", label: "Pattern" }, { value: "screenshot", label: "Screenshot-derived" },
   { value: "custom-image", label: "Custom image" },
+  { value: "studio", label: "Studio artwork" },
 ];
 
 function ProSection({ title, action, children, defaultOpen }: { title: ReactNode; action?: ReactNode; children: ReactNode; defaultOpen?: boolean }) {
@@ -69,7 +74,7 @@ function NumberField({ label, value, min, max, onChange, testId }: { label: stri
   );
 }
 
-export function BeautifyInspector({ assetId }: { assetId: string }) {
+export function BeautifyInspector({ assetId, selectedWatermark = null, onSelectWatermark = () => undefined }: { assetId: string; selectedWatermark?: string | null; onSelectWatermark?(id: string | null): void }) {
   const { runtime } = useWorkspaceContext();
   const file = useWorkspace((s) => s.files[assetId]);
   const stored = useWorkspace((s) => s.beautify.byAsset[assetId]);
@@ -86,6 +91,7 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
   const freeX = layout.canvas.width - layout.content.width;
   const freeY = layout.canvas.height - (layout.caption?.rect.height ?? 0) - layout.content.height;
   const gradient = settings.background.kind === "gradient";
+  const twoColors = gradient || settings.background.kind === "studio";
   const activePreset = BACKGROUND_PRESETS.find((p) => p.color === settings.background.color && (!gradient || p.color2 === settings.background.color2));
   const resetAction = (label: string, onClick: () => void) => (
     <button type="button" onClick={onClick} className="inline-flex min-h-9 items-center gap-1 text-xs font-medium text-ink-2 hover:text-ink max-md:min-h-11">
@@ -143,6 +149,15 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
 
   return (
     <div data-testid="beautify-inspector">
+      <ProSection title="Templates" defaultOpen>
+        <StudioTemplates assetId={assetId} settings={settings} onApply={apply} />
+      </ProSection>
+      <ProSection title="Brand Kit">
+        <BrandKitPanel assetId={assetId} settings={settings} />
+      </ProSection>
+      <ProSection title="Watermark Stamp Pro">
+        <WatermarkInspector assetId={assetId} settings={settings} selectedId={selectedWatermark} onSelect={onSelectWatermark} />
+      </ProSection>
       <ProSection title="Layout">
         <Button variant="primary" size="sm" className="mb-4 w-full max-md:h-11" data-testid="beautify-auto-design" onClick={applyAutoDesign}><WandSparkles /> Auto Design</Button>
         <p className="t-body-sm -mt-2 mb-4 text-ink-3">Deterministically samples the local preview to choose contrast, palette, padding, radius and shadow. No AI or upload.</p>
@@ -151,14 +166,8 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
           {settings.mode === "clean" ? "Your screenshot on a styled background." : settings.mode === "browser" ? "Inside a plain browser window — no real browser's logo." : "Inside a generic phone shell, not a specific handset."}
         </p>
         <div className="mt-4">
-          <FieldLabel>Style recipe</FieldLabel>
-          <div className="mt-2 grid grid-cols-2 gap-2">
-            {STYLE_PRESETS.map((preset) => (
-              <Button key={preset.id} type="button" variant="secondary" size="sm" className="h-auto min-h-8 justify-start whitespace-normal px-2.5 py-1.5 text-left leading-tight [overflow-wrap:anywhere] max-md:min-h-11" data-testid={`beautify-style-${preset.id}`} onClick={() => apply(preset.settings)}>
-                {preset.label}
-              </Button>
-            ))}
-          </div>
+          <FieldLabel>Classic recipes</FieldLabel>
+          <div className="mt-2"><RecipeGallery assetId={assetId} settings={settings} onApply={apply} /></div>
           <p className="t-body-sm mt-2 text-ink-3">Recipes only set the controls below; you can refine any value afterwards.</p>
         </div>
         <Disclosure title="Multi-screenshot layout" className="mt-4">
@@ -198,6 +207,8 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
       </ProSection>
 
       <ProSection title="Background" action={resetAction("Reset", () => apply({ background: DEFAULT_BEAUTIFY.background }))}>
+        <StudioBackgrounds assetId={assetId} settings={settings} onApply={apply} />
+        <p className="t-micro mb-2 mt-5 text-ink-3">Classic colors</p>
         <div role="radiogroup" aria-label="Background preset" className="flex flex-wrap gap-2">
           {BACKGROUND_PRESETS.map((p) => {
             const active = activePreset?.id === p.id;
@@ -220,7 +231,7 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
           })}
         </div>
         <div className="mt-4">
-          <SegmentedControl<BackgroundKind> label="Background type" size="sm" value={settings.background.kind} onChange={(kind) => apply({ background: { ...settings.background, kind } })} options={BACKGROUND_KINDS.map((kind) => ({ ...kind, label: kind.value === "screenshot" ? "Blurred shot" : kind.label }))} className="grid-flow-row grid-cols-2" />
+          <SegmentedControl<BackgroundKind> label="Background type" size="sm" value={settings.background.kind} onChange={(kind) => apply({ background: kind === "studio" ? STUDIO_BACKGROUNDS[0].background : { ...settings.background, kind } })} options={BACKGROUND_KINDS.map((kind) => ({ ...kind, label: kind.value === "screenshot" ? "Blurred shot" : kind.label }))} className="grid-flow-row grid-cols-2" />
         </div>
         <Button variant="secondary" size="sm" className="mt-4 w-full max-md:h-11" data-testid="beautify-auto-background" onClick={sampleScreenshotColours}>
           <WandSparkles /> Use screenshot colours
@@ -228,8 +239,8 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
         <p className="t-body-sm mt-2 text-ink-3">Samples the already-local preview to make a related two-stop background. It does not read text or send your image anywhere.</p>
         {settings.background.kind === "custom-image" && <label className="mt-3 block"><span className="t-micro mb-1.5 block text-ink-3">Local background image</span><select aria-label="Custom background image" value={settings.background.assetId ?? ""} onChange={(event) => apply({ background: { ...settings.background, assetId: event.target.value || null } })} className="h-10 w-full rounded-sm border border-line bg-surface px-2.5 text-sm text-ink max-md:h-11"><option value="">Choose a workspace image</option>{order.filter((id) => id !== assetId).map((id) => <option key={id} value={id}>{files[id]?.name ?? "Local image"}</option>)}</select></label>}
         <div className="mt-3 flex flex-wrap gap-2">
-          <ColorField label={gradient ? "From" : "Colour"} value={settings.background.color} onChange={(color) => apply({ background: { ...settings.background, color } }, "bg-color")} testId="beautify-color" />
-          {gradient && <ColorField label="To" value={settings.background.color2} onChange={(color2) => apply({ background: { ...settings.background, color2 } }, "bg-color2")} testId="beautify-color2" />}
+          <ColorField label={twoColors ? "Base" : "Colour"} value={settings.background.color} onChange={(color) => apply({ background: { ...settings.background, color } }, "bg-color")} testId="beautify-color" />
+          {twoColors && <ColorField label="Edge" value={settings.background.color2} onChange={(color2) => apply({ background: { ...settings.background, color2 } }, "bg-color2")} testId="beautify-color2" />}
         </div>
         {gradient && (
           <div className="mt-4">
@@ -556,7 +567,8 @@ export function BeautifyInspector({ assetId }: { assetId: string }) {
       )}
 
       <ProSection title="Branding">
-        <label className="block"><span className="t-micro mb-1.5 block text-ink-3">Logo / watermark</span><select aria-label="Logo or watermark image" value={settings.branding.assetId ?? ""} onChange={(event) => apply({ branding: { ...settings.branding, assetId: event.target.value || null } })} className="h-10 w-full rounded-sm border border-line bg-surface px-2.5 text-sm text-ink max-md:h-11"><option value="">None</option>{order.filter((id) => id !== assetId).map((id) => <option key={id} value={id}>{files[id]?.name ?? "Local image"}</option>)}</select></label>
+        <p className="t-body-sm mb-3 text-ink-3">A quick anchored logo. Use Watermark Stamp Pro above for free positioning and patterns.</p>
+        <label className="block"><span className="t-micro mb-1.5 block text-ink-3">Logo / watermark</span><select aria-label="Logo or watermark image" value={settings.branding.assetId ?? ""} onChange={(event) => apply({ branding: { ...settings.branding, assetId: event.target.value || null } })} className="h-10 w-full rounded-sm border border-line bg-surface px-2.5 text-sm text-ink max-md:h-11"><option value="">None</option><optgroup label="Brand assets">{Object.values(files).filter((file) => file.kind === "resource").map((file) => <option key={file.id} value={file.id}>{file.name}</option>)}</optgroup><optgroup label="Workspace screenshots">{order.filter((id) => id !== assetId).map((id) => <option key={id} value={id}>{files[id]?.name ?? "Local image"}</option>)}</optgroup></select></label>
         {settings.branding.assetId && <div className="mt-3 space-y-3"><SegmentedControl<BeautifySettings["branding"]["position"]> label="Watermark position" size="sm" value={settings.branding.position} onChange={(position) => apply({ branding: { ...settings.branding, position } })} options={[{ value: "top-left", label: "Top left" }, { value: "top-right", label: "Top right" }, { value: "bottom-left", label: "Bottom left" }, { value: "bottom-right", label: "Bottom right" }, { value: "center", label: "Centre" }]} className="grid-flow-row grid-cols-2" /><div><FieldLabel value={`${settings.branding.scale}%`}>Scale</FieldLabel><Slider label="Watermark scale" value={settings.branding.scale} min={5} max={60} onChange={(scale) => apply({ branding: { ...settings.branding, scale } }, "branding-scale")} /></div><div><FieldLabel value={`${settings.branding.opacity}%`}>Opacity</FieldLabel><Slider label="Watermark opacity" value={settings.branding.opacity} min={5} max={100} onChange={(opacity) => apply({ branding: { ...settings.branding, opacity } }, "branding-opacity")} /></div><div><FieldLabel value={`${settings.branding.margin}%`}>Margin</FieldLabel><Slider label="Watermark margin" value={settings.branding.margin} min={0} max={20} onChange={(margin) => apply({ branding: { ...settings.branding, margin } }, "branding-margin")} /></div></div>}
         <p className="t-body-sm mt-2 text-ink-3">Choose another local workspace image. It stays in this browser session.</p>
       </ProSection>

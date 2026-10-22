@@ -131,7 +131,10 @@ test.describe.configure({ timeout: 180_000 });
 
 test.describe("Phase 2J Compress + Convert", () => {
   test.use({ viewport: { width: 1440, height: 960 } });
-  test.beforeEach(({ browserName }) => {
+  test.beforeEach(async ({ page, browserName }) => {
+    // The local production server has no Vercel Analytics endpoint. Persist the explicit
+    // rejection before navigation so its consent panel cannot cover low-page controls.
+    await page.addInitScript(() => window.localStorage.setItem("shotexa.analytics-consent.v1", "rejected"));
     // Same host limitation as Phases 2D–2I: this machine's Playwright Firefox fails to create a
     // page before app code loads. Chromium and WebKit (main-thread fallback) cover the flows.
     test.skip(browserName === "firefox", "Local Playwright Firefox cannot create a page on this host.");

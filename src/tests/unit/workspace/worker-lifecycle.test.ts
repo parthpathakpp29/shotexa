@@ -12,7 +12,7 @@ class FakeWorker extends EventTarget {
 describe("WorkerBroker suspension", () => {
   it("refuses jobs while suspended without creating a worker, and accepts them again after resume", async () => {
     const factory = vi.fn(() => new FakeWorker() as unknown as Worker);
-    const broker = new WorkerBroker({ image: factory, vision: factory, document: factory, background: factory });
+    const broker = new WorkerBroker({ image: factory, vision: factory, document: factory, background: factory, privacy: factory });
     broker.suspend();
     await expect(broker.run("image", "image.preview", {} as never)).rejects.toMatchObject({ code: "CANCELLED" });
     expect(factory).not.toHaveBeenCalled();

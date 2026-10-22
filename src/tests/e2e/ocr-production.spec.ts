@@ -98,7 +98,9 @@ test.describe("Phase 2B production OCR", () => {
     await page.mouse.down();
     await page.mouse.move(box.x + box.width * 0.3, box.y + box.height * 0.14);
     await page.mouse.up();
-    await Promise.all([page.waitForEvent("download"), page.getByTestId("export").click()]);
+    await page.getByTestId("export").click();
+    await expect(page.getByLabel("Final sanitized image")).toBeVisible({ timeout: 120_000 });
+    await page.getByRole("checkbox", { name: /I inspected the final image/ }).check();
     await page.getByTestId("safe-share-result").getByRole("link", { name: /Extract Text/ }).click();
     await expect(page).toHaveURL(/\/screenshot-to-text$/);
     await expect(page.getByTestId("file-item").last()).toContainText("safe-copy.png");

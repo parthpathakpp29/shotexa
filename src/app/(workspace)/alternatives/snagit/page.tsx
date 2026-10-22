@@ -131,7 +131,7 @@ export default function SnagitAlternativePage() {
           </div>
 
           <p className="t-body-sm mt-12 text-center text-ink-3">
-            Last checked: October 2026. Competitor features and pricing were reviewed against publicly available official product and pricing pages.
+            Published by Shotexa. Reviewed October 20, 2026 against the official sources below. Features and plans can change; verify your requirements before choosing.
           </p>
 
           <div className="mt-6 rounded-lg border border-line bg-surface p-5">

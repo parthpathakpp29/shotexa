@@ -181,7 +181,8 @@ describe("preview decoding while the page is being left", () => {
     const { broker: b } = broker(async () => { throw Object.assign(new Error("no worker decode"), { code: "UNSUPPORTED" }); });
     const rt = createWorkspaceRuntime({ broker: b, caps: CAPS, pageEvents: page });
     const { added } = await rt.ingest([png()], "picker");
-    expect(pageDecode).toHaveBeenCalledOnce();
+    expect(pageDecode).toHaveBeenCalledTimes(2); // full display orientation, then bounded preview
+    expect(rt.store.getState().files[added[0]]).toMatchObject({ width: 10, height: 20 });
     expect(rt.store.getState().files[added[0]].previewVersion).toBeGreaterThan(0);
     rt.dispose();
   });

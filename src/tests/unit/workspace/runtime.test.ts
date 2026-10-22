@@ -38,6 +38,23 @@ function fakeBroker(handlers: Record<string, (input: unknown) => unknown>) {
 const CAPS = { offscreenCanvas: true, compressionStream: true, createImageBitmapResize: true };
 
 describe("WorkspaceRuntime", () => {
+  it("validates a brand image without adding it to screenshots or batch input", async () => {
+    const close = vi.fn();
+    const { broker } = fakeBroker({ "image.preview": () => ({ bitmap: { width: 200, height: 100, close } }) });
+    const rt = createWorkspaceRuntime({ broker, caps: CAPS });
+    const source = await rt.ingest([png("chat-light/a.png")], "picker");
+    const resource = await rt.ingestResource(png("chat-light/b.png"));
+    expect(resource.added).toHaveLength(1);
+    expect(rt.store.getState().files[resource.added[0]].kind).toBe("resource");
+    expect(rt.store.getState().order).toEqual(source.added);
+    expect(rt.store.getState().selectedId).toBe(source.added[0]);
+    expect(rt.registry.blob(resource.added[0])).toBeDefined();
+    rt.clear();
+    expect(rt.registry.stats().blobs).toBe(0);
+    expect(close).toHaveBeenCalled();
+    rt.dispose();
+  });
+
   it("keeps segmentation behind the mocked worker boundary, exports an artifact and cleans mask resources", async () => {
     let exportInput: { mask?: { data: Uint8ClampedArray } } | undefined;
     const { broker, calls } = fakeBroker({
@@ -568,6 +585,19 @@ describe("WorkspaceRuntime", () => {
     });
     expect(rt.store.getState().selectedId).toBe(out.id);
     expect(rt.registry.blob(out.id)).toBe(safeBlob);
+
+    const prepared = await rt.prepareSafeShare(added[0]);
+    expect(rt.registry.blob(prepared.id)).toBe(safeBlob);
+    expect(rt.store.getState().files[prepared.id]).toBeUndefined();
+    expect(rt.store.getState().selectedId).toBe(out.id);
+    rt.publishPreparedSafeShare(prepared.id);
+    expect(rt.store.getState().files[prepared.id]).toMatchObject({ producedBy: "safe-share", derivedFrom: [added[0]] });
+    expect(rt.store.getState().selectedId).toBe(prepared.id);
+
+    const abandoned = await rt.prepareSafeShare(added[0]);
+    rt.discardPreparedSafeShare(abandoned.id);
+    expect(rt.registry.blob(abandoned.id)).toBeUndefined();
+    expect(rt.store.getState().files[abandoned.id]).toBeUndefined();
   });
 
   it("keeps metadata inspection and container cleaning behind the image worker", async () => {
